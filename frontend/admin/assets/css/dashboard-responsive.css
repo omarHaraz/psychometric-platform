@@ -1,0 +1,259 @@
+/* ==========================================================
+   DASHBOARD RESPONSIVE ADD-ON
+========================================================== */
+
+:root{
+    --sidenav-width:250px;
+}
+
+/* Prevent horizontal scrolling */
+html,
+body{
+    overflow-x:hidden;
+}
+
+/* ==========================================================
+   SIDENAV
+========================================================== */
+
+@media (max-width:1199.98px){
+
+    #sidenav-main{
+        position:fixed !important;
+        top:0;
+        left:0;
+        height:100vh;
+        width:min(var(--sidenav-width),82vw);
+        max-width:var(--sidenav-width);
+
+        margin:0 !important;
+        border-radius:0 !important;
+
+        transform:translateX(-105%);
+        transition:transform .3s ease;
+
+        z-index:1200 !important;
+    }
+
+    body.g-sidenav-show #sidenav-main{
+        transform:translateX(0);
+        box-shadow:0 0 40px rgba(0,0,0,.25);
+    }
+
+    .main-content{
+        margin-left:0 !important;
+    }
+
+    #navbarBlur{
+        z-index:1150 !important;
+    }
+
+    body.g-sidenav-show::after{
+        content:"";
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.45);
+        z-index:1100;
+    }
+
+    body.g-sidenav-show{
+        overflow:hidden;
+    }
+}
+
+@media (max-width:480px){
+    #sidenav-main{
+        width:86vw;
+    }
+}
+
+/* ==========================================================
+   NAVBAR
+========================================================== */
+
+#navbarBlur{
+    position:fixed;
+    top:0;
+    left:17rem;
+    right:0;
+    z-index:1200;
+    background:rgba(255,255,255,.97);
+    border-bottom:1px solid rgba(0,0,0,.08);
+    backdrop-filter:blur(10px);
+}
+
+.main-content{
+    padding-top:90px;
+}
+
+#navbarBlur .container-fluid{
+    flex-wrap:nowrap;
+    gap:8px;
+}
+
+#navbarBlur .navbar-nav{
+    flex-wrap:nowrap;
+    gap:0;
+}
+
+@media (max-width:575.98px){
+
+    #navbarBlur .breadcrumb-item:first-child{
+        display:none;
+    }
+
+    #navbarBlur .breadcrumb{
+        margin-right:8px !important;
+    }
+}
+
+/* ==========================================================
+   MOBILE NAVBAR
+========================================================== */
+
+@media (max-width:991.98px){
+
+    /* Always show the navbar icons on mobile/tablet, regardless of
+       whether the off-canvas sidenav drawer is open or closed.
+       (Previously gated behind body.g-sidenav-show, which is the
+       SAME class dashboard-responsive.js toggles to open/close the
+       mobile drawer — so icons only appeared while the drawer was
+       open. Those are two unrelated states and shouldn't share a class.) */
+    .navbar-main .navbar-collapse{
+        display:flex !important;
+        flex-basis:auto;
+        flex-grow:1;
+    }
+
+    /* Keep everything on ONE ROW */
+    #navbarContent{
+        position:static !important;
+        display:flex !important;
+        flex-direction:row !important;
+        align-items:center !important;
+        justify-content:flex-end !important;
+        background:transparent !important;
+        padding:0 !important;
+        box-shadow:none !important;
+        border-radius:0 !important;
+    }
+
+    #navbarContent .ms-md-auto{
+        margin-left:auto !important;
+        margin-right:1rem !important;
+        width:180px;
+    }
+
+    #navbarContent .input-group{
+        width:100%;
+        margin-bottom:0;
+    }
+
+    #navbarContent .navbar-nav{
+        display:flex;
+        flex-direction:row;
+        flex-wrap:nowrap;
+        align-items:center;
+        justify-content:flex-end;
+        gap:.5rem;
+        margin-top:0;
+    }
+}
+
+@media (max-width:1200px){
+    #navbarBlur{
+        left:0;
+    }
+}
+
+@media (max-width:575.98px){
+
+    #navbarContent .ms-md-auto{
+        display:none;
+    }
+
+    #navbarBlur .btn.btn-outline-primary.btn-sm{
+        padding:6px 10px;
+        font-size:12px;
+        white-space:nowrap;
+    }
+
+    #navbarBlur .dropdown-menu{
+        position:fixed !important;
+        left:4vw !important;
+        right:4vw !important;
+        top:64px !important;
+        width:92vw;
+        max-width:92vw;
+    }
+
+    #navbarBlur .nav-item.px-3{
+        padding-left:.5rem !important;
+        padding-right:.5rem !important;
+    }
+}
+
+#navbarBlur .dropdown-menu{
+    max-width:92vw;
+}
+
+/* ==========================================================
+   FIX: navbar icons clipped off-screen on very narrow widths
+   Flex children don't shrink below their content size by default,
+   so the breadcrumb pushes the icon group past the viewport edge
+   and (since body has overflow-x:hidden) it's invisibly clipped.
+========================================================== */
+
+#navbarBlur .container-fluid{
+    min-width:0;
+}
+
+#navbarBlur .breadcrumb{
+    min-width:0;
+    flex-shrink:1;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+
+#navbarBlur .breadcrumb-item{
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+#navbarContent,
+#navbarContent .navbar-nav{
+    flex-shrink:0;
+}
+
+@media (max-width:400px){
+    #navbarBlur .container-fluid{
+        gap:4px;
+        padding-left:8px;
+        padding-right:8px;
+        flex-wrap:wrap !important;
+        row-gap:4px;
+    }
+
+    #navbarContent{
+        flex-basis:100%;
+        justify-content:flex-end !important;
+    }
+
+    #navbarContent .navbar-nav{
+        gap:.25rem;
+        flex-wrap:wrap !important;
+        width:100%;
+        row-gap:4px;
+    }
+
+    #navbarBlur .nav-item.px-3{
+        padding-left:.25rem !important;
+        padding-right:.25rem !important;
+    }
+
+    #navbarBlur .breadcrumb{
+        max-width:none;
+        flex:1 1 auto;
+    }
+}
