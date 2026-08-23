@@ -20,6 +20,7 @@ let bootstrapModalInstance = null;
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadCandidates();
+
     const modalEl = document.getElementById('candidateModal');
     if (modalEl && typeof bootstrap !== 'undefined') {
         bootstrapModalInstance = new bootstrap.Modal(modalEl);
@@ -28,6 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const formEl = document.getElementById('candidateForm');
     if (formEl) {
         formEl.addEventListener('submit', saveCandidateForm);
+    }
+
+    const addBtn = document.getElementById('addCandidateBtn');
+    if (addBtn) {
+        addBtn.addEventListener('click', openCreateModal);
     }
 });
 
@@ -53,7 +59,7 @@ async function loadCandidates() {
         activeCandidatesList.forEach(candidate => {
             const statusBadge = candidate.enabled
                 ? '<span class="badge badge-sm bg-gradient-success">Active</span>'
-                : '<span class="badge badge-sm bg-gradient-danger">Deactivated</span>';
+                : '<span class="badge badge-sm bg-gradient-warning">Pending / Deactivated</span>';
 
             const row = `
              <tr>                      
@@ -75,7 +81,7 @@ async function loadCandidates() {
                      ${
                          candidate.enabled
                          ? `<button class="btn btn-link text-danger mb-0 deactivate-btn" data-id="${candidate.id}">Deactivate</button>`
-                         : `<button class="btn btn-link text-success mb-0 reactivate-btn" data-id="${candidate.id}">Reactivate</button>`
+                         : `<button class="btn btn-link text-success mb-0 reactivate-btn" data-id="${candidate.id}">Enable / Activate</button>`
                      }
                  </td>
              </tr>
@@ -115,6 +121,22 @@ function attachActionListeners() {
     });
 }
 
+function openCreateModal() {
+    document.getElementById('candidateId').value = '';
+    document.getElementById('candidateName').value = '';
+    document.getElementById('candidateEmail').value = '';
+    const passInput = document.getElementById('candidatePassword');
+    passInput.value = '';
+    passInput.required = true;
+    passInput.setAttribute('minlength', '6');
+    document.getElementById('passwordHelp').classList.add('d-none');
+    document.getElementById('candidateModalLabel').textContent = 'Add Candidate';
+
+    if (bootstrapModalInstance) {
+        bootstrapModalInstance.show();
+    }
+}
+
 function openEditModal(id) {
     const candidate = activeCandidatesList.find(c => String(c.id) === String(id));
     if (!candidate) return;
@@ -122,7 +144,12 @@ function openEditModal(id) {
     document.getElementById('candidateId').value = candidate.id;
     document.getElementById('candidateName').value = candidate.name;
     document.getElementById('candidateEmail').value = candidate.email;
-    document.getElementById('candidatePassword').value = '';
+    const passInput = document.getElementById('candidatePassword');
+    passInput.value = '';
+    passInput.required = false;
+    passInput.removeAttribute('minlength');
+    document.getElementById('passwordHelp').classList.remove('d-none');
+    document.getElementById('candidateModalLabel').textContent = 'Edit Candidate';
 
     if (bootstrapModalInstance) {
         bootstrapModalInstance.show();
@@ -137,20 +164,35 @@ async function saveCandidateForm(e) {
     const email = document.getElementById('candidateEmail').value.trim();
     const password = document.getElementById('candidatePassword').value;
 
-    const payload = { name, email };
-    if (password) {
-        payload.password = password;
-    }
-
     try {
-        const response = await fetch(`${API_BASE_URL}/${id}`, {
-            method: 'PUT',
-            headers: authHeader,
-            body: JSON.stringify(payload)
-        });
+        let response;
+        if (id) {
+            // Edit existing candidate
+            const payload = { name, email };
+            if (password) {
+                payload.password = password;
+            }
+            response = await fetch(`${API_BASE_URL}/${id}`, {
+                method: 'PUT',
+                headers: authHeader,
+                body: JSON.stringify(payload)
+            });
+        } else {
+            // Create new candidate from Admin Panel (default enabled = true)
+            if (!password || password.length < 6) {
+                alert('Password must be at least 6 characters.');
+                return;
+            }
+            response = await fetch(API_BASE_URL, {
+                method: 'POST',
+                headers: authHeader,
+                body: JSON.stringify({ name, email, password })
+            });
+        }
 
         if (!response.ok) {
-            throw new Error('Failed to update candidate');
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.message || (id ? 'Failed to update candidate' : 'Failed to create candidate'));
         }
 
         if (bootstrapModalInstance) {
@@ -159,8 +201,8 @@ async function saveCandidateForm(e) {
         await loadCandidates();
 
     } catch (err) {
-        console.error('Error updating candidate:', err);
-        alert(err.message || 'Error updating candidate');
+        console.error('Error saving candidate:', err);
+        alert(err.message || 'Error saving candidate');
     }
 }
 
@@ -173,7 +215,8 @@ async function toggleCandidateStatus(id, method) {
         });
 
         if (!response.ok) {
-            throw new Error('Action failed');
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.message || 'Action failed');
         }
 
         await loadCandidates();

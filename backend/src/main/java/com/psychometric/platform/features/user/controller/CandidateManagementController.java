@@ -4,6 +4,8 @@ import com.psychometric.platform.features.user.entity.User;
 
 import com.psychometric.platform.features.user.dto.response.CandidateResponse;
 import com.psychometric.platform.features.user.dto.request.CandidateUpdateRequest;
+import com.psychometric.platform.features.user.dto.request.CandidateCreateRequest;
+import org.springframework.http.HttpStatus;
 import com.psychometric.platform.features.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,15 @@ public class CandidateManagementController
 
     @Autowired
     private UserService userService;
+
+    @GetMapping
+    
+    @PostMapping
+    public ResponseEntity<CandidateResponse> createCandidate(
+            @Valid @RequestBody CandidateCreateRequest request) {
+        CandidateResponse response = userService.createCandidateUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
     @GetMapping
     public ResponseEntity<List<CandidateResponse>> getCustomers() {

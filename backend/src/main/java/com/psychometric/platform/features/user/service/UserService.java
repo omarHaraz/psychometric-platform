@@ -7,6 +7,8 @@ import com.psychometric.platform.features.user.dto.response.AdminResponse;
 import com.psychometric.platform.features.auth.dto.request.SignupRequest;
 import com.psychometric.platform.features.user.dto.response.CandidateResponse;
 import com.psychometric.platform.features.user.dto.request.CandidateUpdateRequest;
+import com.psychometric.platform.features.user.dto.request.CandidateCreateRequest;
+import com.psychometric.platform.common.exception.DuplicateResourceException;
 import com.psychometric.platform.features.user.entity.User;
 import com.psychometric.platform.features.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +49,7 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles(request.getRoles());
-        user.setEnabled(true); // Active immediately
+        user.setEnabled(false); // Active immediately
 
         User savedUser = userRepository.save(user);
         return new AdminResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(), savedUser.getRoles(), savedUser.isEnabled());
@@ -90,6 +92,32 @@ public class UserService {
         user.setRoles(roles);
         user.setEnabled(true);
         return userRepository.save(user);
+    }
+
+    
+    public CandidateResponse createCandidateUser(CandidateCreateRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new DuplicateResourceException("An account with this email already exists.");
+        }
+
+        User user = new User();
+        user.setName(HtmlSanitizer.sanitize(request.getName()));
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        Set<String> roles = new java.util.HashSet<>();
+        roles.add("ROLE_CANDIDATE");
+        user.setRoles(roles);
+        user.setEnabled(true); // Default is enabled = true when created from Admin Panel
+
+        User savedUser = userRepository.save(user);
+
+        return new CandidateResponse(
+                savedUser.getId(),
+                savedUser.getName(),
+                savedUser.getEmail(),
+                savedUser.isEnabled()
+        );
     }
 
     public List<CandidateResponse> getAllUsers() {

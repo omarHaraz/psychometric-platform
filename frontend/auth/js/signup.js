@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            await AuthService.verifyOtp(signupEmail, code);
+            const verifyRes = await AuthService.verifyOtp(signupEmail, code);
 
             const repoPrefix = window.location.pathname.includes("/customer/")
                 ? window.location.pathname.split("/customer/")[0]
@@ -261,7 +261,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         ? window.location.pathname.split("/admin/")[0]
                         : "";
 
-            window.location.href = `${repoPrefix}/customer/pages/home.html`;
+            alert(verifyRes.message || "Account registered successfully! The team must enable your account first before you can access the web application.");
+            window.location.href = `${repoPrefix}/auth/login.html`;
 
         } catch (error) {
 

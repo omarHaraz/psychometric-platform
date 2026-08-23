@@ -84,7 +84,7 @@ if (roles.includes("ROLE_ADMIN") || roles.includes("ROLE_SUPER_ADMIN")) {
         } else if (resData && typeof resData === 'object' && resData.message) {
             formError.textContent = resData.message;
         } else {
-            formError.textContent = typeof resData === 'string' ? resData : 'Login failed. Please check your credentials.';
+            formError.textContent = error.message || (typeof resData === 'string' ? resData : 'Login failed. Please check your credentials.');
         }
     }
 });

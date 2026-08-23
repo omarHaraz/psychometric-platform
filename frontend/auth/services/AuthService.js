@@ -9,7 +9,11 @@ const axios = {
             credentials: config.withCredentials ? 'include' : 'same-origin'
         });
         const responseData = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(responseData.message || `HTTP ${res.status}`);
+        if (!res.ok) {
+            const err = new Error(responseData.message || `HTTP ${res.status}`);
+            err.response = { status: res.status, data: responseData };
+            throw err;
+        }
         return { data: responseData };
     },
     async get(url, config = {}) {
@@ -19,7 +23,11 @@ const axios = {
             credentials: config.withCredentials ? 'include' : 'same-origin'
         });
         const responseData = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(responseData.message || `HTTP ${res.status}`);
+        if (!res.ok) {
+            const err = new Error(responseData.message || `HTTP ${res.status}`);
+            err.response = { status: res.status, data: responseData };
+            throw err;
+        }
         return { data: responseData };
     }
 };

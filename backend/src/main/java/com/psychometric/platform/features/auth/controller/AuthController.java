@@ -159,15 +159,11 @@ public class AuthController {
 
             otpService.deletePendingSignup(signup.getEmail());
 
-            User user = userRepository.findByEmail(signup.getEmail())
-                    .orElseThrow();
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("message", "Account registered successfully. The team must enable your account first before you can access the web application.");
+            response.put("pendingApproval", true);
 
-            String jwt = tokenProvider.generateToken(
-                    user.getEmail(),
-                    user.getRoles()
-            );
-
-            return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
 
