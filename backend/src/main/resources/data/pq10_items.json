@@ -1,0 +1,1682 @@
+[
+  {
+    "item_code": "GCAT-PQ-41",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "عندما أواجه عقبة، أنتظر أن يحلها شخص آخر بدلاً من البحث عن حل بنفسي.",
+    "justification_ar": "تقيس المبادرة وتحمل المسؤولية في حل المشكلات والتعامل مع العقبات التشغيلية.",
+    "selected_competencies": [
+      "المبادرة",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-42",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أطلب دائماً توثيق الطلبات المهمة كتابياً لتجنب سوء الفهم.",
+    "justification_ar": "تقيس الحوكمة المهنية وإدارة التوثيق المؤسسي لضمان وضوح المسؤوليات.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-43",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشجّع فريقي على تحمل مسؤوليات تتجاوز قدراتهم الحالية لتنمية طاقاتهم.",
+    "justification_ar": "تقيس التمكين القيادي وتنمية الكفاءات وبناء الصف الثاني في المؤسسة.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-44",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أرى النقد الموجه لأدائي دليلاً على عدم كفاءتي كقائد.",
+    "justification_ar": "تقيس تقبل التغذية الراجعة والمرونة النفسية في التعامل مع الملاحظات المهنية.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-45",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أعدّل أسلوب تواصلي بحسب الشخص الذي أتحدث معه والموقف الذي أواجهه.",
+    "justification_ar": "تقيس الذكاء التواصلي والمرونة في إدارة أصحاب المصلحة والمواقف المختلفة.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-46",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أُربط الانتقام بالعدالة عندما يتعرض شخص مقرب مني للإساءة.",
+    "justification_ar": "تقيس النضج الانفعالي والاحترافية والفصل بين المشاعر الشخصية والقرارات المهنية.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-47",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "لدي حاجة مستمرة لجذب الانتباه في كل اجتماع أو مناسبة عمل.",
+    "justification_ar": "تقيس النضج القيادي والتركيز على المصلحة العامة وتجنب التمركز حول الذات.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-48",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستمد شرعيتي القيادية من فرض قراراتي دون تفسير أو حوار.",
+    "justification_ar": "تقيس النمط القيادي التشاركي وأهمية الإقناع وبناء التوافق مع فرق العمل.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-49",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع العمل بفعالية وصناعة الوضوح حتى عندما تكون المهام غامضة جزئياً.",
+    "justification_ar": "تقيس التعامل مع الغموض واستشراف الحلول وتوجيه الفرق في البيئات غير المستقرة.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-50",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "لا أحبذ اعتماد 'التجربة والخطأ' في مهمة ذات عواقب وخيمة على السلامة.",
+    "justification_ar": "تقيس إدارة المخاطر والالتزام الصارم بمعايير الجودة والسلامة المهنية.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-51",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "في الأزمات، أتخذ قراراً سريعاً بناءً على الخبرة لا بالانتظار الكامل للبيانات.",
+    "justification_ar": "تقيس الحسم وسرعة الاستجابة في إدارة الأزمات والمواقف الطارئة.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-52",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشعر بالانزعاج عندما يطرح الآخرون أسئلة توضيحية أثناء عرضي.",
+    "justification_ar": "تقيس الانفتاح على الاستفسارات وإدارة الحوار والتفاعل الإيجابي مع الجمهور.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-53",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أُعطي الأولوية لإنجاز المهام في وقتها المحدد على حساب المثالية المفرطة.",
+    "justification_ar": "تقيس التوازن بين جودة المخرجات والالتزام بالجداول الزمنية التشغيلية.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-54",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشعر بالرضا الكافي عن أدائي حتى لو لم أحقق كل ما كنت أطمح إليه.",
+    "justification_ar": "تقيس التوازن النفسي والدافعية المستمرة للتحسين دون إحباط.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "محايد - 3",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-55",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشعر بالحزن أو التشاؤم المستمر تجاه مستقبل عملي ومشاريعي.",
+    "justification_ar": "تقيس التفاؤل القيادي وبث الطاقة الإيجابية والمرونة المعنوية.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-56",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع تصور نتائج قراراتي على المدى البعيد قبل اتخاذها.",
+    "justification_ar": "تقيس الرؤية الاستشرافية وتحليل الآثار المستقبلية للقرارات القيادية.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-57",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أفضل تكليف المهام لمن يمتلك الخبرة الكافية بالفعل دون تدريب موظفين جدد عليها.",
+    "justification_ar": "تقيس الاستثمار في تنمية رأس المال البشري وبناء القدرات المؤسسية.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-58",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع التعبير عن رأيي بوضوح وثقة أمام مجموعة كبيرة من الناس.",
+    "justification_ar": "تقيس الجرأة الإدارية ومهارات العرض والتحدث أمام الجمهور.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-59",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أساعد زملائي على تعلّم مهارة أنا أتقنها دون انتظار مقابل شخصي.",
+    "justification_ar": "تقيس نشر المعرفة ودعم الزملاء وبناء بيئة عمل تعاونية.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-60",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "يمكن وصفي بأنني واثق ومستقل في تفكيري وقراراتي المهنية.",
+    "justification_ar": "تقيس الاستقلالية والقدرة على التقييم الموضوعي وحسم القرارات.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-61",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أفضل ترك القرارات الصغيرة لغيري حتى لا أتحمل تبعات الخطأ.",
+    "justification_ar": "تقيس تحمل المسؤولية والمبادرة في حسم المواقف وتجنب التردد والتهرب.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "المبادرة"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-62",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أوضح لفريقي 'الأثر' الذي يحدثه سلوكهم قبل أن أطلب منهم التغيير.",
+    "justification_ar": "تقيس التوجيه السلوكي القائم على الإقناع وربط الأداء بالأثر المؤسسي.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-63",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "عندما أرى مشكلة في مكان آخر غير قسمي، أتحدث عنها وأقترح حلاً.",
+    "justification_ar": "تقيس الشمولية والتعاون بين الإدارات وتقديم الحلول الاستباقية.",
+    "selected_competencies": [
+      "المبادرة",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-64",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أنا مستعد لتحمل اللوم عن أخطاء فريقي لحماية معنوياتهم أمام الإدارة العليا.",
+    "justification_ar": "تقيس الحماية والمساءلة القيادية وبناء الأمان النفسي لفرق العمل.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-65",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "عندما يفشل قرار اتخذته، أوضح أن الأسباب كانت خارجة عن سيطرتي تماماً.",
+    "justification_ar": "تقيس المساءلة الذاتية والاعتراف بالأخطاء واستخلاص الدروس.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-66",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أُشرك فريقي في تحليل القرارات المهمة لضمان دقتها حتى لو استغرق ذلك وقتاً إضافياً.",
+    "justification_ar": "تقيس القيادة التشاركية والتحليل المنهجي المعمق لرفع دقة القرارات.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-67",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع تشجيع نفسي عندما أشعر بالحزن أو الإحباط في العمل.",
+    "justification_ar": "تقيس الدافعية الذاتية والمرونة النفسية في تجاوز الضغوط المهنية.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-68",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أضع لنفسي أهدافاً واضحة وقابلة للقياس في كل مهمة أتولاها.",
+    "justification_ar": "تقيس التخطيط المنهجي وتحديد مؤشرات الإنجاز الدقيقة للمهام.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-69",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أرى أن النجاح هو التفوق على الآخرين وليس بالضرورة تحقيق الأهداف المشتركة.",
+    "justification_ar": "تقيس الروح الجماعية والتركيز على نجاح المؤسسة بدلاً من المنافسة الفردية.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-70",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أُكيّف لغتي ومصطلحاتي بحسب الجهة التي أتحدث معها لضمان الفهم الكامل.",
+    "justification_ar": "تقيس المرونة التواصلية والقدرة على مخاطبة مختلف المستويات والجهات.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-71",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتعلم أفضل من خلال الممارسة العملية والمشاريع الصعبة بدلاً من النظرية فقط.",
+    "justification_ar": "تقيس التعلم التجريبي والتطبيق العملي واكتساب الخبرات من التحديات.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "المبادرة"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-72",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتمكن من البقاء هادئاً أثناء الصراعات الحادة بين أعضاء الفريق.",
+    "justification_ar": "تقيس ضبط النفس وإدارة النزاعات والحيادية في بيئة العمل.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-73",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أسمح لمشاعري الشخصية بالتأثير على قراراتي المهنية عند الضغط.",
+    "justification_ar": "تقيس الحيادية والاتزان الانفعالي والموضوعية في صناعة القرار.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-74",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "تقديري لذاتي يعتمد بشكل كبير على آراء الآخرين فيّ.",
+    "justification_ar": "تقيس الثقة بالنفس والاستقرار الداخلي والاستقلال في التقييم الذاتي.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-75",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أميل إلى التفكير الزائد (Overthinking) في كل التفاصيل الصغيرة قبل التصرف.",
+    "justification_ar": "تقيس سرعة الإنجاز والموازنة بين التحليل الدقيق وسرعة التنفيذ.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-76",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أجد صعوبة كبيرة في التكيف مع أي تغيير مفاجئ في خطة العمل.",
+    "justification_ar": "تقيس المرونة والاستجابة السريعة للمتغيرات التشغيلية والميدانية.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-77",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشعر بالامتنان لكل ما أملكه من فرص وإمكانيات في مسيرتي المهنية.",
+    "justification_ar": "تقيس الإيجابية والرضا المهني وتقدير الفرص المتاحة للتطور.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-78",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أحرص على اختيار كلماتي بعناية عند التحدث مع فريقي أو رؤسائي.",
+    "justification_ar": "تقيس اللباقة وحسن اختيار العبارات بما يعزز الاحترام والتأثير الإيجابي.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-79",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أبني علاقات مع فريقي مبنية على الاحترام المتبادل بدلاً من الخوف.",
+    "justification_ar": "تقيس القيادة الأخلاقية وبناء بيئة عمل قائمة على الثقة والتقدير المتبادل.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-80",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أخصص وقتاً منتظماً للقراءة والتعلم في مجال تخصصي.",
+    "justification_ar": "تقيس التعلم المستمر ومتابعة أحدث الممارسات والتوجهات المهنية.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-81",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتجنب النقاشات الصعبة على أمل أن تُحل نفسها بمرور الوقت.",
+    "justification_ar": "تقيس الجرأة الإدارية والمواجهة البناءة للمشكلات لمنع تفاقمها.",
+    "selected_competencies": [
+      "المبادرة",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-82",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أطرح أفكاراً جديدة في الاجتماعات حتى لو لم أُسأل عن رأيي مباشرة.",
+    "justification_ar": "تقيس المبادرة والمشاركة الفعالة في تقديم المقترحات التطويرية.",
+    "selected_competencies": [
+      "المبادرة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-83",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أؤمن بنفسي وبقدرتي على اتخاذ القرارات الصعبة عند الحاجة.",
+    "justification_ar": "تقيس الثقة والجسارة القيادية في حسم القرارات المصيرية.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-84",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أزدهر في التعامل مع المفاجآت وأحولها إلى فرص بدلاً من أن أراها تهديدات.",
+    "justification_ar": "تقيس تحويل التحديات إلى فرص والتعامل الإيجابي مع التغيرات المفاجئة.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-85",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع السيطرة على اندفاعي معظم الوقت حتى تحت الضغط الشديد.",
+    "justification_ar": "تقيس ضبط الانفعالات والرزانة والتحكم في ردود الأفعال تحت الضغط.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-86",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أجرّب الأدوات والطرق الأحدث في عملي حتى لو كنت متمكناً من الأسلوب القديم.",
+    "justification_ar": "تقيس تبني الابتكار والتحسين المستمر ومواكبة الأدوات والتقنيات الحديثة.",
+    "selected_competencies": [
+      "المبادرة",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-87",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أسعى باستمرار لتطوير مهاراتي الحالية حتى لو كانت كافية لأداء عملي اليوم.",
+    "justification_ar": "تقيس الطموح والتطوير المهني الذاتي وتجاوز متطلبات الأداء الراهن.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "المبادرة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-88",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أُركّز على نجاح فريقي ككل حتى لو لم يُسلَّط الضوء على إنجازي الشخصي.",
+    "justification_ar": "تقيس إنكار الذات وتغليب الإنجاز الجماعي وبناء الروح المعنوية للفريق.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-89",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أُركّز على الحفاظ على الوضع الحالي لأنه أثبت فعاليته سابقاً.",
+    "justification_ar": "تقيس الرغبة في التحديث ومقاومة الجمود والانفتاح على آليات العمل الجديدة.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "المبادرة"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-90",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع العمل بكفاءة في بيئات متعددة ومتغيرة دون فقدان تركيزي.",
+    "justification_ar": "تقيس المرونة العالية والقدرة على الإنتاجية عبر سياقات وبيئات متنوعة.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-91",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتخذ قراراتي بناءً على البيانات المتاحة، ولا أسمح لمزاجي بالتأثير عليها.",
+    "justification_ar": "تقيس اتخاذ القرار المبني على الأدلة والموضوعية التامة بعيداً عن المزاجية.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-92",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "غالباً ما أقول للناس ما يريدون سماعه لتجنب الانزعاج.",
+    "justification_ar": "تقيس النزاهة والشفافية والصراحة المهنية في إبداء الملاحظات والتوجيه.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-93",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أبحث بانتظام عن فرص لتدريب نفسي على مهارات جديدة تخدم عملي.",
+    "justification_ar": "تقيس الاستباقية في التعلم وتوسيع المهارات لمواكبة متطلبات العمل المستقبلي.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "المبادرة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-94",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أحاول دائماً أن أختار كلماتي بعناية لأن الكلمة أداة القائد الأهم.",
+    "justification_ar": "تقيس قوة التأثير اللفظي والوعي بأثر الخطاب القيادي على المعنويات والأداء.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-95",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أراجع النتائج بعد انتهاء كل مشروع لاستخلاص الدروس المستفادة.",
+    "justification_ar": "تقيس التقييم الختامي والتحسين المستمر والتوثيق المنهجي للخبرات المكتسبة.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-96",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أعتمد على حدسي فقط في القرارات المهمة دون تحليل البيانات المتاحة.",
+    "justification_ar": "تقيس المنهجية والاعتماد على التحليل الواقعي والبيانات في القرارات الحيوية.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-97",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أنا مستعد للتخلي عن مشروع طويل استغرق وقتاً كبيراً إذا ثبت عدم جدواه.",
+    "justification_ar": "تقيس الحكمة والشجاعة في وقف الهدر وإعادة توجيه الموارد نحو الأهداف المجدية.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-98",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتخذ القرارات في المواقف الواضحة والبسيطة بسرعة ودون تردد.",
+    "justification_ar": "تقيس الكفاءة والسرعة التشغيلية في حسم المهام الروتينية والواضحة.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-99",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتحمل مسؤولية المهام الصعبة التي يتجنبها الآخرون.",
+    "justification_ar": "تقيس الجسارة وتحمل الأعباء والمبادرة في قيادة الملفات المعقدة.",
+    "selected_competencies": [
+      "المبادرة",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-100",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع توجيه فريق كامل نحو هدف مشترك حتى في ظل ظروف ضاغطة.",
+    "justification_ar": "تقيس القدرة على الحشد والتحفيز وتوجيه الطاقات تحت وطأة الضغوط.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-101",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشعر بعدم الراحة أثناء المفاوضات المهنية مع الشركات أو الموردين.",
+    "justification_ar": "تقيس الحضور التفاوضي والقدرة على تمثيل المؤسسة بثقة وتحقيق مكاسبها.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-102",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أرى التغيير المستمر في بيئة العمل فرصة للابتكار وليس تهديداً للاستقرار.",
+    "justification_ar": "تقيس العقلية الابتكارية والنظرة الإيجابية للتحولات والفرص الناشئة.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-103",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أربط تفاصيل عملي اليومية دائماً برؤية المشروع الأكبر على المدى البعيد.",
+    "justification_ar": "تقيس المواءمة الاستراتيجية وربط العمليات التشغيلية بالأهداف الكبرى.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-104",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أرى نفسي شخصاً محظوظاً بشكل عام في حياتي المهنية.",
+    "justification_ar": "تقيس التفاؤل والدافعية الإيجابية وتقدير المكتسبات المهنية.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-105",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أطلب تغذية راجعة من زملائي ومرؤوسي لتحسين أسلوبي في العمل.",
+    "justification_ar": "تقيس التواضع المهني والحرص المستمر على تطوير الأداء والأساليب القيادية.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-106",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "لا أحب أن يتحدث الناس عن مشاعرهم الشخصية أمامي في بيئة العمل.",
+    "justification_ar": "تقيس التعاطف وبناء مساحات إنسانية آمنة تدعم الروح المعنوية للفريق.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-107",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشعر أحياناً أن الناس يسيئون فهمي بشكل متكرر ومتعمد.",
+    "justification_ar": "تقيس النضج الانفعالي والاتزان الداخلي وبناء الثقة في التواصل مع المحيطين.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-108",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أبحث بانتظام عن فرص لتحسين العمليات دون أن يُطلب مني ذلك.",
+    "justification_ar": "تقيس المبادرة والابتكار في تحسين كفاءة العمليات وسير العمل المؤسسي.",
+    "selected_competencies": [
+      "المبادرة",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-109",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "عندما أطلب رأي فريقي فأنا أستمع لهم بصدق وليس مجرد إجراء شكلي.",
+    "justification_ar": "تقيس الشورى القيادية الصادقة وتمكين الفرق من المشاركة الحقيقية في القرار.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-110",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أميل إلى التفكير الزائد (Overthinking) في كل التفاصيل حتى الصغيرة منها.",
+    "justification_ar": "تقيس سرعة اتخاذ القرارات والتحكم في الإفراط التحليلي الذي قد يسبب الشلل الإداري.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-111",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أفضل اتخاذ القرارات منفرداً في كل الأحوال حتى في الأمور التي تخص الفريق بأكمله.",
+    "justification_ar": "تقيس العمل التشاركي وتجنب المركزية والاستبداد بالرأي في القضايا الجماعية.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-112",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أرى أن التغيير المستمر في السوق هو فرصة للابتكار وليس تهديداً للاستقرار.",
+    "justification_ar": "تقيس الاستباقية الاستراتيجية واستثمار تغيرات السوق لتطوير الحلول والخدمات.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-113",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أُفضّل البدء بالتنفيذ الفوري دون تخطيط مسبق لأن التخطيط يبطئ الحركة.",
+    "justification_ar": "تقيس التوازن بين التخطيط المحكم والتنفيذ وتجنب الارتجالية غير المحسوبة.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-114",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أواجه الأفراد بمسؤولياتهم مباشرة عند ارتكاب أخطاء جسيمة تؤثر على العمل.",
+    "justification_ar": "تقيس الحزم والمساءلة المباشرة لمعالجة الأخطاء وحماية مسار الإنجاز.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-115",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع معرفة متى يكون أحد زملائي منزعجاً حتى دون أن يصرّح بذلك.",
+    "justification_ar": "تقيس الحس الإنساني وقراءة الإشارات غير اللفظية لدعم الفريق واحتواء التوتر.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-116",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتحرك وأبدأ العمل فوراً حتى مع وجود بعض الغموض في التفاصيل الثانوية.",
+    "justification_ar": "تقيس الدافعية نحو الإنجاز والتعامل العملي مع نقص المعلومات البسيطة.",
+    "selected_competencies": [
+      "المبادرة",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-117",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتقبل تغيير خططي المرسومة مسبقاً بروح إيجابية عندما تتطلب الظروف ذلك.",
+    "justification_ar": "تقيس المرونة التخطيطية وسرعة مواءمة الخطط مع المستجدات الواقعية.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-118",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "لا أستطيع أن أعمل بجدية إذا لم يكن هناك اعتراف علني بجهودي.",
+    "justification_ar": "تقيس الدافعية الداخلية للعمل والالتزام المهني بمعزل عن الأضواء والمديح.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-119",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشعر بعدم الارتياح الشديد عندما يبدأ أحد الزملاء بالبكاء أمامي.",
+    "justification_ar": "تقيس الثبات الانفعالي واحتواء المواقف الإنسانية الحرجة بمهنية ودعم مناسب.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-120",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتوقع غالباً أن تسوء الأمور حتى قبل أن تبدأ المشاريع الجديدة.",
+    "justification_ar": "تقيس التفاؤل الاستراتيجي وبث الثقة في المشاريع بدلاً من التوجس والتشاؤم المعيق.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-121",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع تلخيص نقاشات معقدة وطويلة في نقاط واضحة وموجزة.",
+    "justification_ar": "تقيس مهارة التلخيص والتركيز على الجوهر وتوصيل الرسائل بوضوح ودقة.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-122",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستخدم البيانات والأرقام لدعم مقترحاتي أمام الإدارة العليا بدلاً من الانطباعات فقط.",
+    "justification_ar": "تقيس المنهجية المدعومة بالبيانات والإقناع المؤسسي القائم على الأدلة الصلبة.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-123",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشجع فريقي على مشاركة أفضل أساليب العمل مع الآخرين لرفع الأداء العام.",
+    "justification_ar": "تقيس إدارة ونقل المعرفة ونشر أفضل الممارسات بين الوحدات المختلفة.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-124",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع اتخاذ قرار حاسم بسرعة في الأزمات بناءً على خبرتي المتوفرة.",
+    "justification_ar": "تقيس سرعة البديهة والجرأة في اتخاذ القرارات الحاسمة أثناء الأزمات.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-125",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أنا جيد في تلخيص المناقشات الطويلة المعقدة في نقاط موجزة وقابلة للتنفيذ.",
+    "justification_ar": "تقيس تحويل المخرجات الحوارية المعقدة إلى خطط عمل ونقاط قابلة للتطبيق.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-126",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "يمكن وصفي بأنني واثق ومستقل في قراراتي المهنية.",
+    "justification_ar": "تقيس الثقة بالنفس والاعتماد على التحليل الموضوعي في صناعة القرار.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-127",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع تمييز المشاعر السلبية عندما تظهر لدي أو لدى فريقي.",
+    "justification_ar": "تقيس الوعي الذاتي والاجتماعي ورصد مؤشرات الإحباط لمعالجتها مبكراً.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-128",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أجد أن التخطيط طويل المدى مضيعة للوقت في بيئة سريعة التغير.",
+    "justification_ar": "تقيس الرؤية الاستراتيجية والربط بين الرؤية المستقبلية والمرونة التشغيلية.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-129",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أقترح حلولاً بديلة عندما تظهر عقبة أمام تنفيذ خطة أصلية.",
+    "justification_ar": "تقيس المبادرة وابتكار الحلول البديلة لضمان استمرارية الأعمال والمشاريع.",
+    "selected_competencies": [
+      "المبادرة",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-130",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أُشرك أفراداً من مستويات مختلفة في التخطيط لضمان شمولية القرار.",
+    "justification_ar": "تقيس الشمولية والتنوع في التخطيط والاستفادة من خبرات مختلف المستويات.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-131",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أضيف اقتراحاتي الشخصية عند تنفيذ المهام حتى لو لم يُطلب مني ذلك.",
+    "justification_ar": "تقيس القيمة المضافة والمبادرة الفردية في إثراء المهام الموكلة.",
+    "selected_competencies": [
+      "المبادرة",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-132",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أثني على نجاحات فريقي أمام الآخرين وأناقش الأخطاء في اجتماعات خاصة.",
+    "justification_ar": "تقيس القيادة الحكيمة في تحفيز الفريق وصيانة كرامتهم ومعالجة القصور بمهنية.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-133",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أعيد تقييم استراتيجيتي بعد كل فشل لتحسين النهج القادم.",
+    "justification_ar": "تقيس التعلم من الإخفاقات والتطوير الاستراتيجي المستمر للأداء والخطط.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-134",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أحافظ على قرب مناسب من فريقي يسهّل التوجيه ويزيد شعورهم بالانتماء.",
+    "justification_ar": "تقيس تعزيز الولاء المؤسسي والتواصل المباشر والفعال مع أعضاء الفريق.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-135",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشجع أعضاء فريقي على حضور دورات تدريبية لتطوير مهاراتهم الفنية والإدارية.",
+    "justification_ar": "تقيس الاستثمار المنهجي في تطوير كفاءات وقدرات الفريق.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-136",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أحرص على أن يشعر كل فرد في فريقي بأن دوره مهم لنجاح المشروع الكلي.",
+    "justification_ar": "تقيس تعزيز الإحساس بالقيمة والأثر وربط كل دور بنجاح الرؤية الجماعية.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-137",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أنا مرن بما يكفي لتغيير استراتيجيتي بالكامل عند ظهور بيانات جديدة حاسمة.",
+    "justification_ar": "تقيس الرشاقة والمرونة الاستراتيجية في إعادة التوجيه بناءً على المعطيات الجديدة.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-138",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أجد نفسي أقل رغبة في مشاركة معلومات قد تساعد زميلاً يُعتبر منافساً لي.",
+    "justification_ar": "تقيس الاحترافية المؤسسية وتغليب الصالح العام ومشاركة المعرفة بلا حجب.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-139",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أنا مرن في تغيير استراتيجياتي بالكامل عند ظهور بيانات حاسمة جديدة.",
+    "justification_ar": "تقيس سرعة التكيف وإعادة هندسة الخطط بناءً على المستجدات الحاسمة.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-140",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أضع خططاً بديلة (Plan B) قبل حدوث الأزمات لا بعدها.",
+    "justification_ar": "تقيس الاستباقية وإدارة الطوارئ ووضع سيناريوهات متعددة للتعامل مع المخاطر.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-141",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستمتع ببناء العلاقات الاجتماعية والتعارف مع أشخاص جدد في العمل.",
+    "justification_ar": "تقيس بناء الشبكات المهنية والتواصل الإيجابي وتوسيع دائرة التأثير.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "المبادرة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-142",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أفضل الاستماع الكامل لأطراف النزاع قبل أن أعبر عن رأيي.",
+    "justification_ar": "تقيس الحكمة في الاستماع والتحليل المتأني وحل الخلافات بعدالة وموضوعية.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-143",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أرى أن هزيمة زملائي في العمل جزء طبيعي من المنافسة الصحية داخل المؤسسة.",
+    "justification_ar": "تقيس روح التعاون والتآزر وتجنب خلق بيئات عمل عدائية أو سامة.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-144",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أملك بوصلة واضحة تجاه أهدافي الخاصة ولا أشعر بالحيرة حولها.",
+    "justification_ar": "تقيس وضوح الرؤية الذاتية والتخطيط الموجه للأهداف بثبات واقتدار.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-145",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "لدي مهارات اجتماعية قوية تساعدني في التنسيق بين الأقسام المختلفة.",
+    "justification_ar": "تقيس التنسيق الفعال والعمل التكاملي وإزالة الحواجز بين الوحدات المؤسسية.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-146",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أترك إنجازاتي الشخصية تتحدث عن نفسها دون حاجة لتذكير الآخرين بها باستمرار.",
+    "justification_ar": "تقيس الثقة المهنية المتزنة والتركيز على النتائج الملموسة والعمل الجاد.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-147",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع رؤية الجانب الإيجابي حتى في المواقف الصعبة أو الأزمات.",
+    "justification_ar": "تقيس التفاؤل والتحمل النفسي واستخلاص الفرص من قلب الأزمات.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-148",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع تجميع معلومات متفرقة من مصادر مختلفة والوصول لخلاصة منطقية.",
+    "justification_ar": "تقيس التحليل التركيبي والربط المنطقي لصناعة رؤية استراتيجية واضحة.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-149",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتجنب المهام التي لا تدخل ضمن وصف وظيفتي رسمياً.",
+    "justification_ar": "تقيس المبادرة وتوسيع نطاق الإسهام لدعم أهداف المؤسسة بروح الفريق.",
+    "selected_competencies": [
+      "المبادرة",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-150",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "مزاجي الشخصي يؤثر بشكل واضح على إنتاجيتي في العمل.",
+    "justification_ar": "تقيس الانضباط المهني والفصل التام بين التقلبات المزاجية والإنتاجية.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-151",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أعبر عن آرائي بوضوح حتى لو كانت مخالفة لرأي الأغلبية في الاجتماع.",
+    "justification_ar": "تقيس الجرأة الإدارية وتجنب التفكير الجماعي المضلل وإثراء النقاشات الموضوعية.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-152",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستمتع بإضحاك الناس وكسر الجمود في بيئة العمل بروح الدعابة.",
+    "justification_ar": "تقيس خلق بيئة عمل إيجابية وتخفيف التوتر وبناء الألفة المهنية.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-153",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أضع خطة عمل مفصلة بخطوات واضحة قبل بدء أي مشروع مهم.",
+    "justification_ar": "تقيس التخطيط المنهجي المسبق ورسم مسارات العمل التنفيذية بدقة.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-154",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أفضل اتخاذ القرارات بمفردي دائماً لضمان السرعة دون التشاور مع الفريق.",
+    "justification_ar": "تقيس القيادة التشاركية وأهمية الاستفادة من آراء الفريق لضمان جودة القرارات.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-155",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أرحّب بالنقد البناء من مرؤوسيّ وأراه دليل ثقة لا تهديداً لسلطتي كقائد.",
+    "justification_ar": "تقيس الأمان النفسي والانفتاح على الملاحظات البناءة من جميع المستويات.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-156",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أراجع الوضع الحالي بانتظام وأبحث عن فرص لتحسينه حتى لو كان ناجحاً.",
+    "justification_ar": "تقيس ثقافة التحسين المستمر وتفادي الركون للنجاحات السابقة.",
+    "selected_competencies": [
+      "المبادرة",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-157",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "يمكنني تجميع معلومات متناثرة والخروج بخلاصة استراتيجية واضحة.",
+    "justification_ar": "تقيس التفكير الاستراتيجي وتركيب البيانات لاستشراف التوجهات والحلول.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-158",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أحب أن يُنظر إليّ كشخص مؤثر وذو نفوذ في بيئة العمل.",
+    "justification_ar": "تقيس توظيف التأثير الإيجابي والقيادة في توجيه وتحفيز فرق العمل.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق - 4",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-159",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أحرص على إعطاء ملاحظاتي السلبية للموظف في اجتماع خاص وليس أمام الجميع.",
+    "justification_ar": "تقيس الذكاء القيادي واللباقة في تقديم التغذية الراجعة لحفظ كرامة الموظفين.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-160",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أعتقد أن القائد يجب أن يحافظ على مسافة عن فريقه للحفاظ على السلطة والهيبة.",
+    "justification_ar": "تقيس كسر الحواجز والقيادة القريبة التي تدعم وتمكن الفريق من الأداء.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-161",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أرى النقد البناء من مرؤوسيّ علامة على ضعف سلطتي كقائد.",
+    "justification_ar": "تقيس الثقة القيادية واعتبار النقد البناء أداة للتطوير وليس تهديداً للمكانة.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-162",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أفضل العمل بمفردي تماماً وأتجنب التفاعل الاجتماعي داخل بيئة العمل قدر الإمكان.",
+    "justification_ar": "تقيس التفاعل الاجتماعي والعمل الجماعي وبناء الروابط المهنية الفعالة.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-163",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "عندما تتعارض الجودة مع الوقت في بيئة تقنية، أختار الجودة والأمانة مع التواصل الشفاف.",
+    "justification_ar": "تقيس النزاهة المهنية والالتزام بمعايير الجودة والتواصل الصريح عند التحديات.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-164",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أؤمن بأهمية الاعتراف بحدودي وقدراتي الحقيقية دون تضخيم أو تقليل.",
+    "justification_ar": "تقيس الوعي الذاتي الواقعي والنزاهة في تقييم القدرات الفردية.",
+    "selected_competencies": [
+      "تطوير المهارات",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-165",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "نادراً ما أؤجل ما يجب فعلي إنجازه من مهام مهمة.",
+    "justification_ar": "تقيس الانضباط الذاتي والالتزام الصارم بإنجاز الأولويات في مواعيدها.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-166",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أشعر بالراحة عندما أكون في موقع يسمح لي بتوجيه الآخرين نحو الأهداف.",
+    "justification_ar": "تقيس الشغف القيادي وتوجيه الطاقات نحو تحقيق مستهدفات المؤسسة.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-167",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "كثيراً ما أندم على كلام قلته بسرعة دون تفكير كافٍ.",
+    "justification_ar": "تقيس التروي والتحكم في الخطاب والتواصل المهني المدروس.",
+    "selected_competencies": [
+      "التواصل والتأثير الفعال",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-168",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "المفاجآت غير المخطط لها تجعلني غير مرتاح لدرجة تؤثر على أدائي.",
+    "justification_ar": "تقيس المرونة والتكيف العالي والقدرة على التعامل مع الطوارئ دون ارتباك.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-169",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أفضل أن يخاف مني فريقي حتى يلتزموا بالمواعيد والانضباط.",
+    "justification_ar": "تقيس القيادة القائمة على الاحترام والدافعية الإيجابية ورفض أسلوب التخويف.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-170",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أحياناً أتساءل بشكل متكرر إن كنت أستحق النجاح الذي حققته.",
+    "justification_ar": "تقيس الثقة الراسخة بالجدارة المهنية واستحقاق النجاح دون تشكيك ذاتي.",
+    "selected_competencies": [
+      "القيادة الملهمة",
+      "تطوير المهارات"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-171",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أتقبل التغييرات التنظيمية المفاجئة بروح إيجابية وأحاول الاستفادة منها.",
+    "justification_ar": "تقيس إدارة التغيير والمواءمة السريعة مع الهياكل والتوجيهات المؤسسية المستجدة.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-172",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع السيطرة على مشاعري عندما يتطلب الموقف المهني ذلك.",
+    "justification_ar": "تقيس النضج الانفعالي والاتزان الذاتي في المواقف الحساسة والضاغطة.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-173",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أستطيع تحديد المخاطر المحتملة في خطة ما قبل تنفيذها بوقت كافٍ.",
+    "justification_ar": "تقيس الاستشراف وإدارة المخاطر والتحليل المسبق لمسارات التنفيذ.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-174",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "غالباً ما يطلب مني الناس أن أهدأ لأنني أنفعل بسرعة.",
+    "justification_ar": "تقيس ضبط النفس والتحكم في سرعة الغضب للحفاظ على بيئة مهنية متوازنة.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "التواصل والتأثير الفعال"
+    ],
+    "ideal_target": "لا أوافق بشدة - 1",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-175",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أُركّز على الأهداف قصيرة المدى فقط لأنها الأسهل في القياس والمتابعة.",
+    "justification_ar": "تقيس الموازنة بين الأهداف العاجلة والرؤية الاستراتيجية طويلة المدى.",
+    "selected_competencies": [
+      "التفكير الاستراتيجي",
+      "التحليل والتخطيط المنهجي"
+    ],
+    "ideal_target": "لا أوافق - 2",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-176",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أنا دائماً على استعداد لتعديل أو إلغاء خطة إذا تغيرت المعطيات المحيطة بها.",
+    "justification_ar": "تقيس المرونة وسرعة الاستجابة وتعديل الخطط ببراغماتية عند تغير المعطيات.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-177",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "عندما يخطئ فريقي، أتحمل المسؤولية علناً وأعالج الخطأ داخلياً.",
+    "justification_ar": "تقيس القيادة المسؤولة وحماية سمعة الفريق ومعالجة الانحرافات بمهنية داخلية.",
+    "selected_competencies": [
+      "اتخاذ القرار وتحمل المسؤولية",
+      "القيادة الملهمة"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-178",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أُبقي على هدوئي وأدائي فعالاً عند تغير الأهداف فجأة ودون إشعار مسبق.",
+    "justification_ar": "تقيس التكيف السريع والفعالية العالية تحت وطأة التغير المفاجئ في الأولويات.",
+    "selected_competencies": [
+      "القدرة على التكيف",
+      "اتخاذ القرار وتحمل المسؤولية"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-179",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أبدأ العمل بناءً على فهمي للأولويات حتى عندما تكون التعليمات غامضة جزئياً.",
+    "justification_ar": "تقيس المبادرة وتوجيه العمل والقدرة على التعامل مع الغموض واستمرار الإنجاز.",
+    "selected_competencies": [
+      "المبادرة",
+      "القدرة على التكيف"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  },
+  {
+    "item_code": "GCAT-PQ-180",
+    "subtest_dimension": "PERSONALITY",
+    "statement_ar": "أحدد أولويات مهامي بوضوح بدلاً من التعامل معها بترتيب وصولها فقط.",
+    "justification_ar": "تقيس الترتيب المنهجي للأولويات وإدارة الوقت والموارد حسب الأهمية الاستراتيجية.",
+    "selected_competencies": [
+      "التحليل والتخطيط المنهجي",
+      "التفكير الاستراتيجي"
+    ],
+    "ideal_target": "أوافق بشدة - 5",
+    "exam_mode": "BOTH (Full & Quick)"
+  }
+]

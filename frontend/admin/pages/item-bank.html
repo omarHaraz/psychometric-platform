@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item Bank Management | Arab Experts Institute</title>
+  <link rel="icon" type="image/webp" href="../assets/img/favicon.webp">
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="../assets/css/nucleo-icons.css">
+  <link rel="stylesheet" href="../assets/css/nucleo-svg.css">
+  <link rel="stylesheet" href="../assets/css/material-dashboard.css?v=3.2.0">
+  <link rel="stylesheet" href="../assets/css/dashboard-responsive.css">
+
+  <style>
+    .main-content {
+      margin-left: 17rem;
+      transition: all .3s ease;
+    }
+
+    @media (max-width:1200px) {
+      .main-content {
+        margin-left: 0;
+      }
+    }
+
+    .arabic-text {
+      font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+      direction: rtl;
+      text-align: right;
+    }
+
+    .nav-pills .nav-link {
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: #344767;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-pills .nav-link.active {
+      background-color: #344767 !important;
+      color: #fff !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .table td {
+      vertical-align: middle;
+    }
+
+    .truncate-2-lines {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body class="g-sidenav-show bg-gray-100">
+
+  <!-- Sidebar -->
+  <div id="sidebar"></div>
+
+  <!-- Main Content -->
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+
+    <!-- Navbar -->
+    <div id="navbar"></div>
+
+    <!-- Page Content -->
+    <div class="container-fluid py-4">
+
+      <!-- Header & Dimension Switcher -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-3">
+              <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                  <h4 class="font-weight-bolder mb-1">Psychometric Item Bank Management</h4>
+                  <p class="text-sm text-secondary mb-0">Manage questions, scoring rubrics, taxonomies, and item rotations across all 4 psychometric dimensions.</p>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <button class="btn bg-gradient-dark mb-0 d-flex align-items-center gap-1 shadow-sm" id="addItemBtn">
+                    <i class="material-symbols-rounded text-sm">add_circle</i>
+                    <span>Add New Item</span>
+                  </button>
+                </div>
+              </div>
+
+              <hr class="horizontal dark my-3">
+
+              <!-- Dimension Tabs -->
+              <ul class="nav nav-pills nav-fill p-1 bg-gray-200 border-radius-lg" id="dimensionTabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link mb-0 px-0 py-2 active d-flex align-items-center justify-content-center" data-dimension="personality" role="tab">
+                    <i class="material-symbols-rounded text-sm me-2">psychology</i>
+                    <span>Personality (PQ10)</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mb-0 px-0 py-2 d-flex align-items-center justify-content-center" data-dimension="derailers" role="tab">
+                    <i class="material-symbols-rounded text-sm me-2">warning</i>
+                    <span>Derailers & Dark Traits</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mb-0 px-0 py-2 d-flex align-items-center justify-content-center" data-dimension="cognitive" role="tab">
+                    <i class="material-symbols-rounded text-sm me-2">calculate</i>
+                    <span>Cognitive Ability (GCAT)</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mb-0 px-0 py-2 d-flex align-items-center justify-content-center" data-dimension="sjt" role="tab">
+                    <i class="material-symbols-rounded text-sm me-2">assignment_turned_in</i>
+                    <span>Situational Judgment (SJT)</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Counters -->
+      <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-sm-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <p class="text-xs mb-0 text-capitalize font-weight-bold text-secondary">Total Bank Items</p>
+                  <h4 class="font-weight-bolder mb-0" id="statTotalItems">-</h4>
+                </div>
+                <div class="icon icon-shape bg-gradient-dark shadow text-center border-radius-md d-flex align-items-center justify-content-center">
+                  <i class="material-symbols-rounded opacity-10 text-white">dataset</i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <p class="text-xs mb-0 text-capitalize font-weight-bold text-success">Active in Rotation</p>
+                  <h4 class="font-weight-bolder mb-0 text-success" id="statActiveItems">-</h4>
+                </div>
+                <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md d-flex align-items-center justify-content-center">
+                  <i class="material-symbols-rounded opacity-10 text-white">check_circle</i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <p class="text-xs mb-0 text-capitalize font-weight-bold text-secondary">Disabled / Pulled</p>
+                  <h4 class="font-weight-bolder mb-0 text-secondary" id="statDisabledItems">-</h4>
+                </div>
+                <div class="icon icon-shape bg-gradient-secondary shadow text-center border-radius-md d-flex align-items-center justify-content-center">
+                  <i class="material-symbols-rounded opacity-10 text-white">pause_circle</i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <p class="text-xs mb-0 text-capitalize font-weight-bold text-info">Taxonomy Categories</p>
+                  <h4 class="font-weight-bolder mb-0 text-info" id="statTaxonomies">-</h4>
+                </div>
+                <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md d-flex align-items-center justify-content-center">
+                  <i class="material-symbols-rounded opacity-10 text-white">category</i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Item Table Card -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+
+            <div class="card-header pb-0 border-0">
+              <div class="row g-2 align-items-center">
+                <div class="col-md-4">
+                  <div class="input-group input-group-outline bg-white">
+                    <input type="text" class="form-control px-3" id="searchInput" placeholder="Search statements, keywords, codes...">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select px-3 border border-radius-md" id="statusFilter">
+                    <option value="ALL">Status: All (Active & Disabled)</option>
+                    <option value="ACTIVE" selected>Status: Active Only</option>
+                    <option value="DISABLED">Status: Disabled Only</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select px-3 border border-radius-md" id="modeFilter">
+                    <option value="ALL">Exam Mode: All</option>
+                    <option value="FULL">Exam Mode: FULL Only</option>
+                    <option value="QUICK">Exam Mode: QUICK Only</option>
+                    <option value="BOTH">Exam Mode: BOTH</option>
+                  </select>
+                </div>
+                <div class="col-md-2 text-end">
+                  <span class="text-xs text-secondary font-weight-bold" id="itemCountDisplay">Loading...</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body px-0 pt-3 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead class="bg-gray-100">
+                    <tr id="tableHeaders">
+                      <!-- Dynamic headers based on active dimension -->
+                    </tr>
+                  </thead>
+                  <tbody id="itemsTableBody">
+                    <tr>
+                      <td colspan="7" class="text-center py-5 text-secondary">
+                        <div class="spinner-border spinner-border-sm text-dark me-2" role="status"></div>
+                        <span>Loading item bank data...</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. Personality Item Modal -->
+  <div class="modal fade" id="personalityModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title font-weight-bold" id="personalityModalTitle">Add Personality Item (PQ10)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-3">
+          <form id="personalityForm">
+            <input type="hidden" id="pItemId">
+
+            <div class="mb-3">
+              <label class="form-label text-xs font-weight-bold text-dark">Statement in Arabic (نص العبارة بالعربية) *</label>
+              <textarea class="form-control px-3 arabic-text border" id="pStatementAr" rows="3" required placeholder="اكتب نص العبارة السلوكية..."></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-xs font-weight-bold text-dark">Justification in Arabic (التبرير)</label>
+              <textarea class="form-control px-3 arabic-text border" id="pJustificationAr" rows="3" placeholder="اكتب التبرير هنا..."></textarea>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label text-xs font-weight-bold text-dark">Available Competencies (Drag or Click)</label>
+                <div id="availableCompetencies" class="border p-2 rounded d-flex flex-wrap gap-2 align-items-start" style="min-height: 120px; background-color: #f8f9fa;">
+                  <!-- Populated via JS -->
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label text-xs font-weight-bold text-dark text-primary">Selected Competencies * (Drop Here)</label>
+                <div id="selectedCompetencies" class="border p-2 rounded d-flex flex-wrap gap-2 align-items-start" style="min-height: 120px; background-color: #e9ecef; border-style: dashed !important; border-width: 2px !important;">
+                  <!-- Populated via JS -->
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Ideal Target (1-5) *</label>
+                <select class="form-select px-3 border" id="pIdealTarget" required>
+                  <option value="1">1 - غير موافق بشدة</option>
+                  <option value="2">2 - غير موافق</option>
+                  <option value="3">3 - محايد</option>
+                  <option value="4">4 - موافق</option>
+                  <option value="5" selected>5 - موافق بشدة</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Exam Mode *</label>
+                <select class="form-select px-3 border" id="pExamMode" required>
+                  <option value="FULL">FULL</option>
+                  <option value="QUICK">QUICK</option>
+                  <option value="BOTH" selected>BOTH (Full & Quick)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="modal-footer border-0 px-0 pb-0">
+              <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn bg-gradient-dark btn-sm shadow-sm" id="pSubmitBtn">Save Item</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Derailer Item Modal -->
+  <div class="modal fade" id="derailerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title font-weight-bold" id="derailerModalTitle">Add Derailer Item (Dark Traits)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-3">
+          <form id="derailerForm">
+            <input type="hidden" id="dItemId">
+
+            <div class="mb-3">
+              <label class="form-label text-xs font-weight-bold text-dark">Statement in Arabic (نص العبارة بالعربية) *</label>
+              <textarea class="form-control px-3 arabic-text border" id="dStatementAr" rows="3" required placeholder="اكتب نص عبارة المخاطر والسمات المعطلة..."></textarea>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label text-xs font-weight-bold text-dark">Derailer Type (نوع السلوك المعطل) *</label>
+                <select class="form-select px-3 border" id="dDerailerTypeId" required>
+                  <!-- Populated via JS -->
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Ideal Target (1-5) *</label>
+                <select class="form-select px-3 border" id="dIdealTarget" required>
+                  <option value="1" selected>1 - نادراً / لا ينطبق (Target)</option>
+                  <option value="2">2 - أحياناً قليلة</option>
+                  <option value="3">3 - في بعض الأوقات</option>
+                  <option value="4">4 - غالباً</option>
+                  <option value="5">5 - دائماً</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Exam Mode *</label>
+                <select class="form-select px-3 border" id="dExamMode" required>
+                  <option value="FULL" selected>FULL</option>
+                  <option value="QUICK">QUICK</option>
+                  <option value="BOTH">BOTH</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="modal-footer border-0 px-0 pb-0">
+              <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn bg-gradient-dark btn-sm shadow-sm" id="dSubmitBtn">Save Item</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. GCAT Cognitive Item Modal -->
+  <div class="modal fade" id="gcatModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title font-weight-bold" id="gcatModalTitle">Add Cognitive Question (GCAT)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-3" style="max-height: 80vh; overflow-y: auto;">
+          <form id="gcatForm">
+            <input type="hidden" id="gcatId">
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Item Code *</label>
+                <input type="text" class="form-control px-3 border" id="gcatItemCode" required placeholder="GCAT-ABS-01">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Subtest Dimension *</label>
+                <select class="form-select px-3 border" id="gcatSubtestCode" required>
+                  <option value="ABSTRACT">ABSTRACT (الاستدلال المجرد)</option>
+                  <option value="NUMERICAL">NUMERICAL (الاستدلال العددي)</option>
+                  <option value="VERBAL">VERBAL (الاستدلال اللفظي)</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Difficulty *</label>
+                <select class="form-select px-3 border" id="gcatDifficulty" required>
+                  <option value="EASY">EASY</option>
+                  <option value="MEDIUM" selected>MEDIUM</option>
+                  <option value="HARD">HARD</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Exam Mode *</label>
+                <select class="form-select px-3 border" id="gcatExamMode" required>
+                  <option value="FULL" selected>FULL</option>
+                  <option value="QUICK">QUICK</option>
+                  <option value="BOTH">BOTH</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label text-xs font-weight-bold text-dark">Title in Arabic (العنوان بالعربية) *</label>
+                <input type="text" class="form-control px-3 arabic-text border" id="gcatTitleAr" required placeholder="مثال: مصفوفة الأشكال المتتابعة">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label text-xs font-weight-bold text-dark">Pattern Type (نوع النمط)</label>
+                <input type="text" class="form-control px-3 arabic-text border" id="gcatPatternTypeAr" placeholder="مثال: دوران قطري، تقدم منطقي">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-xs font-weight-bold text-dark">Prompt Text (نص التوجيه أو المسألة)</label>
+              <textarea class="form-control px-3 arabic-text border" id="gcatPromptTextAr" rows="2" placeholder="أكمل الشكل المنطقي التالي..."></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-xs font-weight-bold text-dark">Cloudinary Image Asset (صورة المسألة / مصفوفة الأشكال)</label>
+              <div class="input-group mb-2">
+                <input type="file" class="form-control px-3 border" id="gcatImageFileInput" accept="image/*">
+                <button class="btn btn-outline-dark mb-0" type="button" id="gcatUploadBtn">
+                  <i class="material-symbols-rounded text-sm align-middle">cloud_upload</i> Upload to CDN
+                </button>
+              </div>
+              <input type="url" class="form-control px-3 border" id="gcatImageUrl" placeholder="https://res.cloudinary.com/... (auto-filled on upload)">
+              <input type="hidden" id="gcatImagePublicId">
+              <div id="gcatImagePreviewContainer" class="mt-2 text-center p-2 border border-radius-md bg-light d-none">
+                <img id="gcatImagePreview" src="" alt="GCAT Asset Preview" class="img-fluid border-radius-md shadow-sm" style="max-height: 180px;">
+              </div>
+            </div>
+
+            <!-- GCAT Response Options Section (5 Options: A, B, C, D, E) -->
+            <div class="card bg-gray-100 border-0 p-3 mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="text-xs font-weight-bolder text-uppercase text-secondary mb-0">
+                  Question Response Options (خيارات الإجابة الخمسة A - E)
+                </h6>
+                <span class="badge badge-sm bg-gradient-dark">4-5 Options (Option E Optional)</span>
+              </div>
+
+              <!-- Option A -->
+              <div class="p-2 mb-2 bg-white border-radius-md shadow-xs border">
+                <div class="row g-2 align-items-center">
+                  <div class="col-auto">
+                    <span class="badge bg-gradient-primary">A</span>
+                  </div>
+                  <div class="col-md-5">
+                    <input type="text" class="form-control px-2 arabic-text border" id="gcatOptTextA" placeholder="نص الخيار A بالعربية *" required>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                      <input type="file" class="form-control px-2 border" id="gcatOptFileA" accept="image/*" title="اختر صورة للخيار A">
+                      <button class="btn btn-outline-dark mb-0 btn-sm gcat-opt-upload-btn" type="button" data-key="A" title="Upload Option A Image">
+                        <i class="material-symbols-rounded text-xs align-middle">cloud_upload</i>
+                      </button>
+                    </div>
+                    <input type="hidden" id="gcatOptImgA">
+                  </div>
+                  <div class="col-md-2 text-center">
+                    <div id="gcatOptPreviewContainerA" class="d-none position-relative d-inline-block">
+                      <img id="gcatOptPreviewA" src="" alt="Opt A" class="img-fluid border border-radius-sm shadow-xs" style="height: 38px; width: 38px; object-fit: contain; background: #f8f9fa;">
+                      <button type="button" class="btn btn-link text-danger p-0 position-absolute top-0 end-0 gcat-opt-remove-btn" data-key="A" title="Remove photo" style="transform: translate(40%, -40%); font-size: 14px;">
+                        <i class="material-symbols-rounded text-xs">cancel</i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Option B -->
+              <div class="p-2 mb-2 bg-white border-radius-md shadow-xs border">
+                <div class="row g-2 align-items-center">
+                  <div class="col-auto">
+                    <span class="badge bg-gradient-primary">B</span>
+                  </div>
+                  <div class="col-md-5">
+                    <input type="text" class="form-control px-2 arabic-text border" id="gcatOptTextB" placeholder="نص الخيار B بالعربية *" required>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                      <input type="file" class="form-control px-2 border" id="gcatOptFileB" accept="image/*" title="اختر صورة للخيار B">
+                      <button class="btn btn-outline-dark mb-0 btn-sm gcat-opt-upload-btn" type="button" data-key="B" title="Upload Option B Image">
+                        <i class="material-symbols-rounded text-xs align-middle">cloud_upload</i>
+                      </button>
+                    </div>
+                    <input type="hidden" id="gcatOptImgB">
+                  </div>
+                  <div class="col-md-2 text-center">
+                    <div id="gcatOptPreviewContainerB" class="d-none position-relative d-inline-block">
+                      <img id="gcatOptPreviewB" src="" alt="Opt B" class="img-fluid border border-radius-sm shadow-xs" style="height: 38px; width: 38px; object-fit: contain; background: #f8f9fa;">
+                      <button type="button" class="btn btn-link text-danger p-0 position-absolute top-0 end-0 gcat-opt-remove-btn" data-key="B" title="Remove photo" style="transform: translate(40%, -40%); font-size: 14px;">
+                        <i class="material-symbols-rounded text-xs">cancel</i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Option C -->
+              <div class="p-2 mb-2 bg-white border-radius-md shadow-xs border">
+                <div class="row g-2 align-items-center">
+                  <div class="col-auto">
+                    <span class="badge bg-gradient-primary">C</span>
+                  </div>
+                  <div class="col-md-5">
+                    <input type="text" class="form-control px-2 arabic-text border" id="gcatOptTextC" placeholder="نص الخيار C بالعربية *" required>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                      <input type="file" class="form-control px-2 border" id="gcatOptFileC" accept="image/*" title="اختر صورة للخيار C">
+                      <button class="btn btn-outline-dark mb-0 btn-sm gcat-opt-upload-btn" type="button" data-key="C" title="Upload Option C Image">
+                        <i class="material-symbols-rounded text-xs align-middle">cloud_upload</i>
+                      </button>
+                    </div>
+                    <input type="hidden" id="gcatOptImgC">
+                  </div>
+                  <div class="col-md-2 text-center">
+                    <div id="gcatOptPreviewContainerC" class="d-none position-relative d-inline-block">
+                      <img id="gcatOptPreviewC" src="" alt="Opt C" class="img-fluid border border-radius-sm shadow-xs" style="height: 38px; width: 38px; object-fit: contain; background: #f8f9fa;">
+                      <button type="button" class="btn btn-link text-danger p-0 position-absolute top-0 end-0 gcat-opt-remove-btn" data-key="C" title="Remove photo" style="transform: translate(40%, -40%); font-size: 14px;">
+                        <i class="material-symbols-rounded text-xs">cancel</i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Option D -->
+              <div class="p-2 mb-2 bg-white border-radius-md shadow-xs border">
+                <div class="row g-2 align-items-center">
+                  <div class="col-auto">
+                    <span class="badge bg-gradient-primary">D</span>
+                  </div>
+                  <div class="col-md-5">
+                    <input type="text" class="form-control px-2 arabic-text border" id="gcatOptTextD" placeholder="نص الخيار D بالعربية *" required>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                      <input type="file" class="form-control px-2 border" id="gcatOptFileD" accept="image/*" title="اختر صورة للخيار D">
+                      <button class="btn btn-outline-dark mb-0 btn-sm gcat-opt-upload-btn" type="button" data-key="D" title="Upload Option D Image">
+                        <i class="material-symbols-rounded text-xs align-middle">cloud_upload</i>
+                      </button>
+                    </div>
+                    <input type="hidden" id="gcatOptImgD">
+                  </div>
+                  <div class="col-md-2 text-center">
+                    <div id="gcatOptPreviewContainerD" class="d-none position-relative d-inline-block">
+                      <img id="gcatOptPreviewD" src="" alt="Opt D" class="img-fluid border border-radius-sm shadow-xs" style="height: 38px; width: 38px; object-fit: contain; background: #f8f9fa;">
+                      <button type="button" class="btn btn-link text-danger p-0 position-absolute top-0 end-0 gcat-opt-remove-btn" data-key="D" title="Remove photo" style="transform: translate(40%, -40%); font-size: 14px;">
+                        <i class="material-symbols-rounded text-xs">cancel</i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Option E (Optional) -->
+              <div class="p-2 align-items-center bg-white border-radius-md shadow-xs border">
+                <div class="row g-2 align-items-center">
+                  <div class="col-auto">
+                    <span class="badge bg-gradient-secondary">E</span>
+                  </div>
+                  <div class="col-md-5">
+                    <input type="text" class="form-control px-2 arabic-text border" id="gcatOptTextE" placeholder="نص الخيار E بالعربية (اختياري)">
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                      <input type="file" class="form-control px-2 border" id="gcatOptFileE" accept="image/*" title="اختر صورة للخيار E">
+                      <button class="btn btn-outline-dark mb-0 btn-sm gcat-opt-upload-btn" type="button" data-key="E" title="Upload Option E Image">
+                        <i class="material-symbols-rounded text-xs align-middle">cloud_upload</i>
+                      </button>
+                    </div>
+                    <input type="hidden" id="gcatOptImgE">
+                  </div>
+                  <div class="col-md-2 text-center">
+                    <div id="gcatOptPreviewContainerE" class="d-none position-relative d-inline-block">
+                      <img id="gcatOptPreviewE" src="" alt="Opt E" class="img-fluid border border-radius-sm shadow-xs" style="height: 38px; width: 38px; object-fit: contain; background: #f8f9fa;">
+                      <button type="button" class="btn btn-link text-danger p-0 position-absolute top-0 end-0 gcat-opt-remove-btn" data-key="E" title="Remove photo" style="transform: translate(40%, -40%); font-size: 14px;">
+                        <i class="material-symbols-rounded text-xs">cancel</i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cognitive Rubric Section -->
+            <div class="card bg-gray-100 border-0 p-3 mb-3">
+              <h6 class="text-xs font-weight-bolder text-uppercase text-secondary mb-2">Cognitive Analysis & Scoring Rubric (تحليل النمط وقاعدة التصحيح)</h6>
+              <div class="row g-2 mb-2">
+                <div class="col-md-4">
+                  <label class="form-label text-xxs font-weight-bold text-dark">Observation (الملاحظة)</label>
+                  <input type="text" class="form-control px-2 arabic-text border bg-white" id="gcatObservationAr">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label text-xxs font-weight-bold text-dark">Rule (القاعدة الرياضية / المنطقية)</label>
+                  <input type="text" class="form-control px-2 arabic-text border bg-white" id="gcatRuleAr">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label text-xxs font-weight-bold text-dark">Application (التطبيق)</label>
+                  <input type="text" class="form-control px-2 arabic-text border bg-white" id="gcatApplicationAr">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Correct Option Key (الإجابة الصحيحة) *</label>
+                <select class="form-select px-3 border bg-white" id="gcatCorrectOptionKey" required>
+                  <option value="A">A (أ)</option>
+                  <option value="B">B (ب)</option>
+                  <option value="C">C (ج)</option>
+                  <option value="D">D (د)</option>
+                  <option value="E">E (هـ)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="modal-footer border-0 px-0 pb-0">
+              <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn bg-gradient-dark btn-sm shadow-sm" id="gcatSubmitBtn">Save Question</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. SJT Scenario Modal -->
+  <div class="modal fade" id="sjtModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title font-weight-bold" id="sjtModalTitle">Add Situational Judgment Scenario (SJT)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-3" style="max-height: 80vh; overflow-y: auto;">
+          <form id="sjtForm">
+            <input type="hidden" id="sjtId">
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Item Code *</label>
+                <input type="text" class="form-control px-3 border" id="sjtItemCode" required placeholder="SJT-DEC-01">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">SJT Domain *</label>
+                <select class="form-select px-3 border" id="sjtDomainId" required>
+                  <!-- Populated via JS -->
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Complexity *</label>
+                <select class="form-select px-3 border" id="sjtComplexity" required>
+                  <option value="DIRECT">DIRECT (مباشر)</option>
+                  <option value="TRADE_OFF" selected>TRADE_OFF (مفاضلة)</option>
+                  <option value="ESCALATION">ESCALATION (تصاعدي)</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-xs font-weight-bold text-dark">Exam Mode *</label>
+                <select class="form-select px-3 border" id="sjtExamMode" required>
+                  <option value="FULL" selected>FULL</option>
+                  <option value="QUICK">QUICK</option>
+                  <option value="BOTH">BOTH</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-xs font-weight-bold text-dark">Scenario Title (عنوان الموقف) *</label>
+              <input type="text" class="form-control px-3 arabic-text border" id="sjtTitleAr" required placeholder="مثال: التعامل مع خلاف بين أعضاء الفريق حول الموعد النهائي">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-xs font-weight-bold text-dark">Narrative in Arabic (نص الموقف الإداري / العملي) *</label>
+              <textarea class="form-control px-3 arabic-text border" id="sjtNarrativeAr" rows="4" required placeholder="اكتب السيناريو الإداري بالتفصيل..."></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-xs font-weight-bold text-dark">Scenario Image Asset (صورة توضيحية للموقف إن وجدت)</label>
+              <div class="input-group mb-2">
+                <input type="file" class="form-control px-3 border" id="sjtImageFileInput" accept="image/*">
+                <button class="btn btn-outline-dark mb-0" type="button" id="sjtUploadBtn">
+                  <i class="material-symbols-rounded text-sm align-middle">cloud_upload</i> Upload to CDN
+                </button>
+              </div>
+              <input type="url" class="form-control px-3 border" id="sjtImageUrl" placeholder="https://res.cloudinary.com/... (auto-filled on upload)">
+              <div id="sjtImagePreviewContainer" class="mt-2 text-center p-2 border border-radius-md bg-light d-none">
+                <img id="sjtImagePreview" src="" alt="SJT Scenario Preview" class="img-fluid border-radius-md shadow-sm" style="max-height: 180px;">
+              </div>
+            </div>
+
+            <!-- SJT Action Options (4 Actions: A, B, C, D) -->
+            <div class="card bg-gray-100 border-0 p-3 mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="text-xs font-weight-bolder text-uppercase text-secondary mb-0">
+                  Scenario Action Options & Scoring (خيارات التصرف السلوكي والأوزان A - D)
+                </h6>
+                <span class="badge badge-sm bg-gradient-dark">4 Actions Required</span>
+              </div>
+
+              <!-- Option A -->
+              <div class="p-2 mb-2 bg-white border-radius-md shadow-xs">
+                <div class="row g-2 align-items-center">
+                  <div class="col-md-1 text-center">
+                    <span class="badge badge-sm bg-gradient-success">A</span>
+                  </div>
+                  <div class="col-md-7">
+                    <input type="text" class="form-control px-2 arabic-text border" id="sjtOptTextA" placeholder="نص الإجراء أو التصرف A *" required>
+                  </div>
+                  <div class="col-md-2">
+                    <input type="number" class="form-control px-2 border" id="sjtOptScoreA" placeholder="الدرجة (1-4)" min="1" max="5" value="4" required>
+                  </div>
+                  <div class="col-md-2">
+                    <input type="text" class="form-control px-2 arabic-text border" id="sjtOptRationaleA" placeholder="تعليل الخيار A">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Option B -->
+              <div class="p-2 mb-2 bg-white border-radius-md shadow-xs">
+                <div class="row g-2 align-items-center">
+                  <div class="col-md-1 text-center">
+                    <span class="badge badge-sm bg-gradient-success">B</span>
+                  </div>
+                  <div class="col-md-7">
+                    <input type="text" class="form-control px-2 arabic-text border" id="sjtOptTextB" placeholder="نص الإجراء أو التصرف B *" required>
+                  </div>
+                  <div class="col-md-2">
+                    <input type="number" class="form-control px-2 border" id="sjtOptScoreB" placeholder="الدرجة (1-4)" min="1" max="5" value="3" required>
+                  </div>
+                  <div class="col-md-2">
+                    <input type="text" class="form-control px-2 arabic-text border" id="sjtOptRationaleB" placeholder="تعليل الخيار B">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Option C -->
+              <div class="p-2 mb-2 bg-white border-radius-md shadow-xs">
+                <div class="row g-2 align-items-center">
+                  <div class="col-md-1 text-center">
+                    <span class="badge badge-sm bg-gradient-success">C</span>
+                  </div>
+                  <div class="col-md-7">
+                    <input type="text" class="form-control px-2 arabic-text border" id="sjtOptTextC" placeholder="نص الإجراء أو التصرف C *" required>
+                  </div>
+                  <div class="col-md-2">
+                    <input type="number" class="form-control px-2 border" id="sjtOptScoreC" placeholder="الدرجة (1-4)" min="1" max="5" value="2" required>
+                  </div>
+                  <div class="col-md-2">
+                    <input type="text" class="form-control px-2 arabic-text border" id="sjtOptRationaleC" placeholder="تعليل الخيار C">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Option D -->
+              <div class="p-2 bg-white border-radius-md shadow-xs">
+                <div class="row g-2 align-items-center">
+                  <div class="col-md-1 text-center">
+                    <span class="badge badge-sm bg-gradient-success">D</span>
+                  </div>
+                  <div class="col-md-7">
+                    <input type="text" class="form-control px-2 arabic-text border" id="sjtOptTextD" placeholder="نص الإجراء أو التصرف D *" required>
+                  </div>
+                  <div class="col-md-2">
+                    <input type="number" class="form-control px-2 border" id="sjtOptScoreD" placeholder="الدرجة (1-4)" min="1" max="5" value="1" required>
+                  </div>
+                  <div class="col-md-2">
+                    <input type="text" class="form-control px-2 arabic-text border" id="sjtOptRationaleD" placeholder="تعليل الخيار D">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SJT Options & Scoring -->
+            <div class="card bg-gray-100 border-0 p-3 mb-3">
+              <h6 class="text-xs font-weight-bolder text-uppercase text-secondary mb-2">Scoring & Decision Rationales (مفاتيح التصحيح والتحليل)</h6>
+              <div class="row g-3 mb-2">
+                <div class="col-md-4">
+                  <label class="form-label text-xs font-weight-bold text-dark">Best Option Key (الخيار الأنسب) *</label>
+                  <select class="form-select px-3 border bg-white" id="sjtBestOptionKey" required>
+                    <option value="A">A (الخيار أ)</option>
+                    <option value="B">B (الخيار ب)</option>
+                    <option value="C">C (الخيار ج)</option>
+                    <option value="D">D (الخيار د)</option>
+                  </select>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label text-xs font-weight-bold text-dark">Rationale (التعليل القيادي والمنطقي)</label>
+                  <input type="text" class="form-control px-3 arabic-text border bg-white" id="sjtRationaleAr">
+                </div>
+              </div>
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <label class="form-label text-xxs font-weight-bold text-dark">Common Mistake (الخطأ الشائع)</label>
+                  <input type="text" class="form-control px-2 arabic-text border bg-white" id="sjtCommonMistakeAr">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-xxs font-weight-bold text-dark">Coaching Note (ملاحظة التوجيه والتطوير)</label>
+                  <input type="text" class="form-control px-2 arabic-text border bg-white" id="sjtCoachingNoteAr">
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer border-0 px-0 pb-0">
+              <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn bg-gradient-dark btn-sm shadow-sm" id="sjtSubmitBtn">Save Scenario</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core JS -->
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+
+  <!-- UI & Components -->
+  <script src="../assets/js/admin-ui.js"></script>
+  <script src="../assets/js/loadComponents.js"></script>
+  <script src="../assets/js/dashboard-responsive.js"></script>
+
+  <!-- Item Bank Management Script -->
+  <script type="module" src="../assets/js/dashboard/item-bank-management.js"></script>
+
+</body>
+
+</html>
