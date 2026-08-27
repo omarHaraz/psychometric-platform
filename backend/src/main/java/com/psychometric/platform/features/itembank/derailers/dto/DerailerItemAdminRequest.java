@@ -12,8 +12,10 @@ public class DerailerItemAdminRequest {
     @NotBlank(message = "نص العبارة مطلوب")
     private String statementAr;
 
-    @NotNull(message = "معرف نمط السلوك المعطل مطلوب")
-    private Long derailerTypeId;
+    private String justificationAr;
+
+    @NotNull(message = "معرفات أنماط السلوك المعطل مطلوبة")
+    private java.util.List<Long> derailerTypeIds;
 
     @NotNull(message = "المستوى المستهدف المثالي مطلوب")
     @Min(value = 1, message = "المستوى المستهدف يجب أن يكون بين 1 و 5")
@@ -29,9 +31,10 @@ public class DerailerItemAdminRequest {
     public DerailerItemAdminRequest() {
     }
 
-    public DerailerItemAdminRequest(String statementAr, Long derailerTypeId, Integer idealTarget, ResponseScaleType responseScaleType, ExamMode examMode) {
+    public DerailerItemAdminRequest(String statementAr, String justificationAr, java.util.List<Long> derailerTypeIds, Integer idealTarget, ResponseScaleType responseScaleType, ExamMode examMode) {
         this.statementAr = statementAr;
-        this.derailerTypeId = derailerTypeId;
+        this.justificationAr = justificationAr;
+        this.derailerTypeIds = derailerTypeIds;
         this.idealTarget = idealTarget;
         this.responseScaleType = responseScaleType;
         this.examMode = examMode;
@@ -45,12 +48,20 @@ public class DerailerItemAdminRequest {
         this.statementAr = statementAr;
     }
 
-    public Long getDerailerTypeId() {
-        return derailerTypeId;
+    public String getJustificationAr() {
+        return justificationAr;
     }
 
-    public void setDerailerTypeId(Long derailerTypeId) {
-        this.derailerTypeId = derailerTypeId;
+    public void setJustificationAr(String justificationAr) {
+        this.justificationAr = justificationAr;
+    }
+
+    public java.util.List<Long> getDerailerTypeIds() {
+        return derailerTypeIds;
+    }
+
+    public void setDerailerTypeIds(java.util.List<Long> derailerTypeIds) {
+        this.derailerTypeIds = derailerTypeIds;
     }
 
     public Integer getIdealTarget() {

@@ -15,9 +15,9 @@ public interface DerailerItemRepository extends JpaRepository<DerailerItem, Long
 
     List<DerailerItem> findByExamModeInAndActiveTrue(Collection<ExamMode> examModes);
 
-    List<DerailerItem> findByDerailerType_IdAndActiveTrue(Long derailerTypeId);
+    List<DerailerItem> findByDerailerTypes_IdAndActiveTrue(Long derailerTypeId);
 
-    @Query("SELECT d FROM DerailerItem d WHERE d.derailerType.id = :typeId AND d.examMode IN :modes AND d.active = true")
+    @Query("SELECT d FROM DerailerItem d JOIN d.derailerTypes dt WHERE dt.id = :typeId AND d.examMode IN :modes AND d.active = true")
     List<DerailerItem> findByTypeAndModes(
             @Param("typeId") Long typeId,
             @Param("modes") Collection<ExamMode> modes

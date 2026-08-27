@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AdminDerailerItemService {
@@ -35,12 +37,16 @@ public class AdminDerailerItemService {
 
     @Transactional
     public DerailerItemAdminResponse create(DerailerItemAdminRequest request) {
-        DerailerType derailerType = derailerTypeRepository.findById(request.getDerailerTypeId())
-                .orElseThrow(() -> new BadRequestException("DerailerType not found with ID: " + request.getDerailerTypeId()));
+        List<DerailerType> derailerTypesList = derailerTypeRepository.findAllById(request.getDerailerTypeIds());
+        if (derailerTypesList.size() != request.getDerailerTypeIds().size()) {
+            throw new BadRequestException("One or more DerailerTypes not found with provided IDs.");
+        }
+        Set<DerailerType> derailerTypes = new HashSet<>(derailerTypesList);
 
         DerailerItem item = new DerailerItem(
                 request.getStatementAr(),
-                derailerType,
+                request.getJustificationAr(),
+                derailerTypes,
                 request.getIdealTarget(),
                 request.getResponseScaleType(),
                 request.getExamMode()
@@ -66,11 +72,15 @@ public class AdminDerailerItemService {
     @Transactional
     public DerailerItemAdminResponse update(Long id, DerailerItemAdminRequest request) {
         DerailerItem item = findEntity(id);
-        DerailerType derailerType = derailerTypeRepository.findById(request.getDerailerTypeId())
-                .orElseThrow(() -> new BadRequestException("DerailerType not found with ID: " + request.getDerailerTypeId()));
+        List<DerailerType> derailerTypesList = derailerTypeRepository.findAllById(request.getDerailerTypeIds());
+        if (derailerTypesList.size() != request.getDerailerTypeIds().size()) {
+            throw new BadRequestException("One or more DerailerTypes not found with provided IDs.");
+        }
+        Set<DerailerType> derailerTypes = new HashSet<>(derailerTypesList);
 
         item.setStatementAr(request.getStatementAr());
-        item.setDerailerType(derailerType);
+        item.setJustificationAr(request.getJustificationAr());
+        item.setDerailerTypes(derailerTypes);
         item.setIdealTarget(request.getIdealTarget());
         item.setResponseScaleType(request.getResponseScaleType());
         item.setExamMode(request.getExamMode());
@@ -123,7 +133,7 @@ public class AdminDerailerItemService {
                         t.getNameAr(),
                         t.getDefinitionAr(),
                         t.getIndicators().stream().map(i -> new DerailerTypeIndicatorAdminDto(i.getId(), i.getIndicatorAr())).toList(),
-                        derailerItemRepository.findByDerailerType_IdAndActiveTrue(t.getId()).size()
+                        derailerItemRepository.findByDerailerTypes_IdAndActiveTrue(t.getId()).size()
                 ))
                 .toList();
     }
@@ -172,7 +182,7 @@ public class AdminDerailerItemService {
         List<DerailerTypeIndicatorAdminDto> indicatorDtos = saved.getIndicators().stream()
                 .map(i -> new DerailerTypeIndicatorAdminDto(i.getId(), i.getIndicatorAr()))
                 .toList();
-        long count = derailerItemRepository.findByDerailerType_IdAndActiveTrue(saved.getId()).size();
+        long count = derailerItemRepository.findByDerailerTypes_IdAndActiveTrue(saved.getId()).size();
         return new DerailerTypeAdminResponse(saved.getId(), saved.getNameAr(), saved.getDefinitionAr(), indicatorDtos, count);
     }
 
@@ -185,8 +195,9 @@ public class AdminDerailerItemService {
         return new DerailerItemAdminResponse(
                 item.getId(),
                 item.getStatementAr(),
-                item.getDerailerType() != null ? item.getDerailerType().getId() : null,
-                item.getDerailerType() != null ? item.getDerailerType().getNameAr() : null,
+                item.getJustificationAr(),
+                item.getDerailerTypes().stream().map(DerailerType::getId).toList(),
+                item.getDerailerTypes().stream().map(DerailerType::getNameAr).toList(),
                 item.getIdealTarget(),
                 item.getResponseScaleType(),
                 item.getExamMode(),

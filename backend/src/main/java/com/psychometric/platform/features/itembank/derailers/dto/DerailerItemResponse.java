@@ -5,7 +5,7 @@ import com.psychometric.platform.features.itembank.derailers.entity.ResponseScal
 public record DerailerItemResponse(
         Long id,
         String statementAr,
-        Long derailerTypeId,
+        java.util.List<Long> derailerTypeIds,
         ResponseScaleType responseScaleType
 ) {
 }

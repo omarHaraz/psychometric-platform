@@ -44,7 +44,7 @@ public class DerailerItemService {
                 .map(item -> new DerailerItemResponse(
                         item.getId(),
                         item.getStatementAr(),
-                        item.getDerailerType() != null ? item.getDerailerType().getId() : null,
+                        item.getDerailerTypes().stream().map(DerailerType::getId).toList(),
                         item.getResponseScaleType()
                 ))
                 .toList();

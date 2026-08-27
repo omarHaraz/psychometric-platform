@@ -340,29 +340,40 @@
               <textarea class="form-control px-3 arabic-text border" id="dStatementAr" rows="3" required placeholder="اكتب نص عبارة المخاطر والسمات المعطلة..."></textarea>
             </div>
 
+            <div class="mb-3">
+              <label class="form-label text-xs font-weight-bold text-dark">Justification in Arabic (التبرير)</label>
+              <textarea class="form-control px-3 arabic-text border" id="dJustificationAr" rows="3" placeholder="اكتب التبرير هنا..."></textarea>
+            </div>
+
             <div class="row g-3 mb-3">
               <div class="col-md-6">
-                <label class="form-label text-xs font-weight-bold text-dark">Derailer Type (نوع السلوك المعطل) *</label>
-                <select class="form-select px-3 border" id="dDerailerTypeId" required>
+                <label class="form-label text-xs font-weight-bold text-dark">Available Derailer Types (Drag or Click)</label>
+                <div id="availableDerailers" class="border p-2 rounded d-flex flex-wrap gap-2 align-items-start" style="min-height: 120px; background-color: #f8f9fa;">
                   <!-- Populated via JS -->
-                </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label text-xs font-weight-bold text-dark text-primary">Selected Derailer Types * (Drop Here)</label>
+                <div id="selectedDerailers" class="border p-2 rounded d-flex flex-wrap gap-2 align-items-start" style="min-height: 120px; background-color: #e9ecef; border-style: dashed !important; border-width: 2px !important;">
+                  <!-- Populated via JS -->
+                </div>
               </div>
               <div class="col-md-3">
                 <label class="form-label text-xs font-weight-bold text-dark">Ideal Target (1-5) *</label>
                 <select class="form-select px-3 border" id="dIdealTarget" required>
                   <option value="1" selected>1 - نادراً / لا ينطبق (Target)</option>
-                  <option value="2">2 - أحياناً قليلة</option>
-                  <option value="3">3 - في بعض الأوقات</option>
+                  <option value="2">2 - أحياناً</option>
+                  <option value="3">3 - محايد</option>
                   <option value="4">4 - غالباً</option>
-                  <option value="5">5 - دائماً</option>
+                  <option value="5">5 - دائماً / ينطبق بشدة</option>
                 </select>
               </div>
               <div class="col-md-3">
                 <label class="form-label text-xs font-weight-bold text-dark">Exam Mode *</label>
                 <select class="form-select px-3 border" id="dExamMode" required>
-                  <option value="FULL" selected>FULL</option>
+                  <option value="FULL">FULL</option>
                   <option value="QUICK">QUICK</option>
-                  <option value="BOTH">BOTH</option>
+                  <option value="BOTH" selected>BOTH (Full & Quick)</option>
                 </select>
               </div>
             </div>

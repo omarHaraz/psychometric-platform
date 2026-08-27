@@ -8,8 +8,9 @@ import java.time.Instant;
 public class DerailerItemAdminResponse {
     private Long id;
     private String statementAr;
-    private Long derailerTypeId;
-    private String derailerTypeNameAr;
+    private String justificationAr;
+    private java.util.List<Long> derailerTypeIds;
+    private java.util.List<String> derailerTypeNamesAr;
     private Integer idealTarget;
     private ResponseScaleType responseScaleType;
     private ExamMode examMode;
@@ -20,13 +21,14 @@ public class DerailerItemAdminResponse {
     public DerailerItemAdminResponse() {
     }
 
-    public DerailerItemAdminResponse(Long id, String statementAr, Long derailerTypeId, String derailerTypeNameAr,
+    public DerailerItemAdminResponse(Long id, String statementAr, String justificationAr, java.util.List<Long> derailerTypeIds, java.util.List<String> derailerTypeNamesAr,
                                      Integer idealTarget, ResponseScaleType responseScaleType, ExamMode examMode,
                                      boolean active, int exposureCount, Instant createdAt) {
         this.id = id;
         this.statementAr = statementAr;
-        this.derailerTypeId = derailerTypeId;
-        this.derailerTypeNameAr = derailerTypeNameAr;
+        this.justificationAr = justificationAr;
+        this.derailerTypeIds = derailerTypeIds;
+        this.derailerTypeNamesAr = derailerTypeNamesAr;
         this.idealTarget = idealTarget;
         this.responseScaleType = responseScaleType;
         this.examMode = examMode;
@@ -51,20 +53,28 @@ public class DerailerItemAdminResponse {
         this.statementAr = statementAr;
     }
 
-    public Long getDerailerTypeId() {
-        return derailerTypeId;
+    public String getJustificationAr() {
+        return justificationAr;
     }
 
-    public void setDerailerTypeId(Long derailerTypeId) {
-        this.derailerTypeId = derailerTypeId;
+    public void setJustificationAr(String justificationAr) {
+        this.justificationAr = justificationAr;
     }
 
-    public String getDerailerTypeNameAr() {
-        return derailerTypeNameAr;
+    public java.util.List<Long> getDerailerTypeIds() {
+        return derailerTypeIds;
     }
 
-    public void setDerailerTypeNameAr(String derailerTypeNameAr) {
-        this.derailerTypeNameAr = derailerTypeNameAr;
+    public void setDerailerTypeIds(java.util.List<Long> derailerTypeIds) {
+        this.derailerTypeIds = derailerTypeIds;
+    }
+
+    public java.util.List<String> getDerailerTypeNamesAr() {
+        return derailerTypeNamesAr;
+    }
+
+    public void setDerailerTypeNamesAr(java.util.List<String> derailerTypeNamesAr) {
+        this.derailerTypeNamesAr = derailerTypeNamesAr;
     }
 
     public Integer getIdealTarget() {

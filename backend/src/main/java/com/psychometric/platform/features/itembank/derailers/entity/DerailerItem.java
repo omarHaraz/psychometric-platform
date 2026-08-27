@@ -17,9 +17,16 @@ public class DerailerItem {
     @Column(name = "statement_ar", nullable = false, columnDefinition = "TEXT")
     private String statementAr;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "derailer_type_id", nullable = false)
-    private DerailerType derailerType;
+    @Column(name = "justification_ar", columnDefinition = "TEXT")
+    private String justificationAr;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "derailer_item_types",
+        joinColumns = @JoinColumn(name = "item_id"),
+        inverseJoinColumns = @JoinColumn(name = "type_id")
+    )
+    private java.util.Set<DerailerType> derailerTypes = new java.util.HashSet<>();
 
     @Column(name = "ideal_target", nullable = false)
     private Integer idealTarget = 1;
@@ -45,9 +52,10 @@ public class DerailerItem {
     public DerailerItem() {
     }
 
-    public DerailerItem(String statementAr, DerailerType derailerType, Integer idealTarget, ResponseScaleType responseScaleType, ExamMode examMode) {
+    public DerailerItem(String statementAr, String justificationAr, java.util.Set<DerailerType> derailerTypes, Integer idealTarget, ResponseScaleType responseScaleType, ExamMode examMode) {
         this.statementAr = statementAr;
-        this.derailerType = derailerType;
+        this.justificationAr = justificationAr;
+        this.derailerTypes = derailerTypes;
         this.idealTarget = idealTarget;
         this.responseScaleType = responseScaleType;
         this.examMode = examMode;
@@ -71,12 +79,20 @@ public class DerailerItem {
         this.statementAr = statementAr;
     }
 
-    public DerailerType getDerailerType() {
-        return derailerType;
+    public String getJustificationAr() {
+        return justificationAr;
     }
 
-    public void setDerailerType(DerailerType derailerType) {
-        this.derailerType = derailerType;
+    public void setJustificationAr(String justificationAr) {
+        this.justificationAr = justificationAr;
+    }
+
+    public java.util.Set<DerailerType> getDerailerTypes() {
+        return derailerTypes;
+    }
+
+    public void setDerailerTypes(java.util.Set<DerailerType> derailerTypes) {
+        this.derailerTypes = derailerTypes;
     }
 
     public Integer getIdealTarget() {

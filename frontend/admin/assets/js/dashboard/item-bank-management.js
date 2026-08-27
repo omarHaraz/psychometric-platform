@@ -240,12 +240,53 @@ function populateTaxonomyDropdowns() {
         });
     }
 
-    // Derailer Type Dropdown
-    const dTypeSelect = document.getElementById("dDerailerTypeId");
-    if (dTypeSelect) {
-        dTypeSelect.innerHTML = taxonomies.derailerTypes.map(t =>
-            `<option value="${t.id}">${t.nameAr}</option>`
-        ).join("");
+    // Derailer Types Dropdown
+    const dAvailBox = document.getElementById("availableDerailers");
+    const dSelBox = document.getElementById("selectedDerailers");
+    if (dAvailBox && dSelBox) {
+        dAvailBox.innerHTML = "";
+        dSelBox.innerHTML = "";
+        taxonomies.derailerTypes.forEach(t => {
+            const el = document.createElement("div");
+            el.className = "btn btn-outline-warning btn-sm mb-0 d-type-drag";
+            el.draggable = true;
+            el.dataset.id = t.id;
+            el.innerText = t.nameAr;
+            el.style.cursor = "grab";
+            
+            el.addEventListener("dragstart", (e) => {
+                e.dataTransfer.setData("text/plain", "d-" + t.id);
+                e.target.style.opacity = "0.5";
+            });
+            el.addEventListener("dragend", (e) => {
+                e.target.style.opacity = "1";
+            });
+            el.addEventListener("click", () => {
+                if (el.parentElement === dAvailBox) dSelBox.appendChild(el);
+                else dAvailBox.appendChild(el);
+            });
+            dAvailBox.appendChild(el);
+        });
+
+        [dAvailBox, dSelBox].forEach(box => {
+            box.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                box.style.opacity = "0.8";
+            });
+            box.addEventListener("dragleave", (e) => {
+                box.style.opacity = "1";
+            });
+            box.addEventListener("drop", (e) => {
+                e.preventDefault();
+                box.style.opacity = "1";
+                const data = e.dataTransfer.getData("text/plain");
+                if (data.startsWith("d-")) {
+                    const id = data.split("-")[1];
+                    const el = document.querySelector(`.d-type-drag[data-id="${id}"]`);
+                    if (el) box.appendChild(el);
+                }
+            });
+        });
     }
 
     // SJT Domain Dropdown
@@ -308,8 +349,8 @@ function updateTableHeaders(dim) {
 
     if (dim === "personality") {
         headersEl.innerHTML = `
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">ID</th>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Competency (الكفاءة)</th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3" style="width: 50px;">#</th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Competency (الجدارة)</th>
             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Statement (نص العبارة)</th>
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ideal Target</th>
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Exam Mode</th>
@@ -318,8 +359,8 @@ function updateTableHeaders(dim) {
         `;
     } else if (dim === "derailers") {
         headersEl.innerHTML = `
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">ID</th>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Derailer Type (نوع التعطيل)</th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3" style="width: 50px;">#</th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Derailer Type (نوع السلوك المعطل)</th>
             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Statement (نص العبارة)</th>
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Benchmark Target</th>
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Exam Mode</th>
@@ -355,15 +396,101 @@ function updateStats(dim) {
     const disabled = total - active;
 
     let taxCount = 0;
-    if (dim === "personality") taxCount = taxonomies.competencies.length;
-    else if (dim === "derailers") taxCount = taxonomies.derailerTypes.length;
-    else if (dim === "cognitive") taxCount = taxonomies.subtests.length;
-    else if (dim === "sjt") taxCount = taxonomies.sjtDomains.length;
+    let summaryLines = [];
+
+    if (dim === "personality") {
+        taxCount = taxonomies.competencies.length;
+        const counts = {};
+        taxonomies.competencies.forEach(c => counts[c.nameAr] = 0);
+        rawItems.forEach(item => {
+            if (item.competencyNamesAr) {
+                item.competencyNamesAr.forEach(name => {
+                    if (counts[name] !== undefined) counts[name]++;
+                    else counts[name] = 1;
+                });
+            }
+        });
+        summaryLines = Object.entries(counts).map(([name, count]) => `${name}: ${count} سؤال`);
+    } 
+    else if (dim === "derailers") {
+        taxCount = taxonomies.derailerTypes.length;
+        const counts = {};
+        taxonomies.derailerTypes.forEach(t => counts[t.nameAr] = 0);
+        rawItems.forEach(item => {
+            if (item.derailerTypeNamesAr) {
+                item.derailerTypeNamesAr.forEach(name => {
+                    if (counts[name] !== undefined) counts[name]++;
+                    else counts[name] = 1;
+                });
+            }
+        });
+        summaryLines = Object.entries(counts).map(([name, count]) => `${name}: ${count} سؤال`);
+    } 
+    else if (dim === "cognitive") {
+        taxCount = taxonomies.subtests.length;
+        // Optionally add counts for cognitive later
+    } 
+    else if (dim === "sjt") {
+        taxCount = taxonomies.sjtDomains.length;
+        const counts = {};
+        taxonomies.sjtDomains.forEach(d => counts[d.nameAr] = 0);
+        rawItems.forEach(item => {
+            if (item.domainNameAr) {
+                if (counts[item.domainNameAr] !== undefined) counts[item.domainNameAr]++;
+                else counts[item.domainNameAr] = 1;
+            }
+        });
+        summaryLines = Object.entries(counts).map(([name, count]) => `${name}: ${count} سؤال`);
+    }
 
     document.getElementById("statTotalItems").innerText = total;
     document.getElementById("statActiveItems").innerText = active;
     document.getElementById("statDisabledItems").innerText = disabled;
-    document.getElementById("statTaxonomies").innerText = taxCount;
+    
+    const taxElement = document.getElementById("statTaxonomies");
+    taxElement.innerText = taxCount;
+    
+    const cardElement = taxElement.closest('.card');
+    if (cardElement && typeof bootstrap !== "undefined") {
+        // Destroy existing tooltip if any
+        let existingTooltip = bootstrap.Tooltip.getInstance(cardElement);
+        if (existingTooltip) {
+            existingTooltip.dispose();
+        }
+
+        if (summaryLines.length > 0) {
+            cardElement.setAttribute('data-bs-toggle', 'tooltip');
+            cardElement.setAttribute('data-bs-html', 'true');
+            cardElement.setAttribute('data-bs-placement', 'bottom');
+            cardElement.style.cursor = "help";
+            
+            // Ensure custom CSS exists for tooltip to prevent wrapping
+            if (!document.getElementById("tax-tooltip-style")) {
+                const style = document.createElement("style");
+                style.id = "tax-tooltip-style";
+                style.innerHTML = ".taxonomy-tooltip .tooltip-inner { max-width: none !important; text-align: right !important; }";
+                document.head.appendChild(style);
+            }
+
+            // Format HTML for the tooltip
+            const htmlContent = `
+                <div class="p-1 arabic-text" style="line-height: 1.6; text-align: right; direction: rtl;">
+                    <strong class="d-block mb-2 border-bottom border-light pb-1 text-white text-center">التوزيع حسب الفئة</strong>
+                    ${summaryLines.map(line => `<div style="white-space: nowrap !important; margin-bottom: 2px;">${line}</div>`).join("")}
+                </div>
+            `;
+            cardElement.setAttribute('title', htmlContent);
+            
+            // Re-initialize tooltip with customClass
+            new bootstrap.Tooltip(cardElement, {
+                customClass: 'taxonomy-tooltip'
+            });
+        } else {
+            cardElement.removeAttribute("title");
+            cardElement.removeAttribute("data-bs-toggle");
+            cardElement.style.cursor = "default";
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -387,7 +514,8 @@ function applyFilters() {
             const statement = (item.statementAr || item.titleAr || item.narrativeAr || item.promptTextAr || "").toLowerCase();
             const code = (item.itemCode || "").toLowerCase();
             const pCompNames = (item.competencyNamesAr || []).join(" ");
-            const cat = (pCompNames || item.derailerTypeNameAr || item.subtestNameAr || item.domainNameAr || "").toLowerCase();
+            const dTypeNames = (item.derailerTypeNamesAr || []).join(" ");
+            const cat = (pCompNames || dTypeNames || item.subtestNameAr || item.domainNameAr || "").toLowerCase();
             if (!statement.includes(query) && !code.includes(query) && !cat.includes(query)) {
                 return false;
             }
@@ -422,26 +550,37 @@ function renderTable() {
         return;
     }
 
-    tableBody.innerHTML = filteredItems.map(item => {
+    tableBody.innerHTML = filteredItems.map((item, index) => {
         const statusBadge = item.active
             ? `<span class="badge badge-sm bg-gradient-success">Active</span>`
             : `<span class="badge badge-sm bg-gradient-secondary">Disabled</span>`;
 
-        const modeBadge = `<span class="badge badge-sm bg-light text-dark border">${item.examMode || "FULL"}</span>`;
+        const toggleActionBtn = item.active
+            ? `<button class="btn btn-link text-warning p-1 mb-0 action-toggle" data-id="${item.id}" data-action="disable" title="Disable item">
+                 <i class="material-symbols-rounded text-sm">pause_circle</i>
+               </button>`
+            : `<button class="btn btn-link text-success p-1 mb-0 action-toggle" data-id="${item.id}" data-action="enable" title="Enable item">
+                 <i class="material-symbols-rounded text-sm">play_circle</i>
+               </button>`;
+
+        const deleteActionBtn = `<button class="btn btn-link text-danger p-1 mb-0 action-toggle" data-id="${item.id}" data-action="delete" title="Delete item">
+                 <i class="material-symbols-rounded text-sm">delete</i>
+               </button>`;
 
         let col1 = "", col2 = "", col3 = "", col4 = "";
 
         if (currentDimension === "personality") {
-            col1 = `<span class="text-xs font-weight-bold">#${item.id}</span>`;
-            const compNames = (item.competencyNamesAr && item.competencyNamesAr.length > 0) ? item.competencyNamesAr.join("، ") : "N/A";
-            col2 = `<span class="text-xs font-weight-bold text-dark">${compNames}</span>`;
-            col3 = `<p class="text-xs arabic-text mb-0 truncate-2-lines">${item.statementAr}</p>`;
-            col4 = `<span class="badge badge-sm bg-gradient-info">${item.idealTarget} / 5</span>`;
+            const compNames = (item.competencyNamesAr && item.competencyNamesAr.length > 0) ? item.competencyNamesAr.join(" • ") : "N/A";
+            col1 = `<span class="text-xs font-weight-bold text-dark">${compNames}</span>`;
+            col2 = `<p class="text-xs arabic-text mb-0 truncate-2-lines">${item.statementAr}</p>`;
+            col3 = `<span class="badge badge-sm bg-gradient-info">${item.idealTarget} / 5</span>`;
+            col4 = "";
         } else if (currentDimension === "derailers") {
-            col1 = `<span class="text-xs font-weight-bold">#${item.id}</span>`;
-            col2 = `<span class="text-xs font-weight-bold text-dark">${item.derailerTypeNameAr || "Type " + item.derailerTypeId}</span>`;
-            col3 = `<p class="text-xs arabic-text mb-0 truncate-2-lines">${item.statementAr}</p>`;
-            col4 = `<span class="badge badge-sm bg-gradient-warning">Target: ${item.idealTarget}</span>`;
+            const typeNames = (item.derailerTypeNamesAr && item.derailerTypeNamesAr.length > 0) ? item.derailerTypeNamesAr.join(" • ") : "N/A";
+            col1 = `<span class="text-xs font-weight-bold text-dark">${typeNames}</span>`;
+            col2 = `<p class="text-xs arabic-text mb-0 truncate-2-lines">${item.statementAr}</p>`;
+            col3 = `<span class="badge badge-sm bg-gradient-warning">Target: ${item.idealTarget}</span>`;
+            col4 = "";
         } else if (currentDimension === "cognitive") {
             col1 = `<span class="text-xs font-weight-bold text-dark">${item.itemCode}</span><br><small class="text-xxs text-secondary">${item.subtestCode}</small>`;
             col2 = `<h6 class="text-xs arabic-text mb-0 font-weight-bold">${item.titleAr}</h6><small class="text-xxs text-secondary arabic-text">${item.promptTextAr || ""}</small>`;
@@ -454,35 +593,43 @@ function renderTable() {
             col4 = `<span class="badge badge-sm bg-gradient-success">Best: ${item.bestOptionKey}</span>`;
         }
 
-        const toggleActionBtn = item.active
-            ? `<button class="btn btn-link text-warning p-1 mb-0 action-toggle" data-id="${item.id}" data-action="disable" title="Disable item">
-                 <i class="material-symbols-rounded text-sm">pause_circle</i>
-               </button>`
-            : `<button class="btn btn-link text-success p-1 mb-0 action-toggle" data-id="${item.id}" data-action="enable" title="Enable item">
-                 <i class="material-symbols-rounded text-sm">play_circle</i>
-               </button>`;
-
-        const deleteTitle = item.active ? "Deactivate (Soft Delete)" : "Permanently Delete";
-
-        return `
+        let rowHtml = "";
+        if (currentDimension === "personality" || currentDimension === "derailers") {
+            rowHtml = `
             <tr>
-                <td class="ps-3">${col1}</td>
-                <td>${col2}</td>
-                <td style="max-width: 320px;">${col3}</td>
-                <td class="text-center">${col4}</td>
-                <td class="text-center">${modeBadge}</td>
-                <td class="text-center">${statusBadge}</td>
-                <td class="text-center pe-3">
-                    <button class="btn btn-link text-dark p-1 mb-0 action-edit" data-id="${item.id}" title="Edit item">
-                        <i class="material-symbols-rounded text-sm">edit</i>
-                    </button>
-                    ${toggleActionBtn}
-                    <button class="btn btn-link text-danger p-1 mb-0 action-delete" data-id="${item.id}" title="${deleteTitle}">
-                        <i class="material-symbols-rounded text-sm">delete</i>
-                    </button>
+                <td class="align-middle text-center"><span class="text-xs font-weight-bold text-secondary">${index + 1}</span></td>
+                <td class="align-middle">${col1}</td>
+                <td class="align-middle">${col2}</td>
+                <td class="align-middle text-center">${col3}</td>
+                <td class="align-middle text-center"><span class="text-secondary text-xs font-weight-bold">${item.examMode || 'BOTH'}</span></td>
+                <td class="align-middle text-center">${statusBadge}</td>
+                <td class="align-middle text-center pe-3">
+                  <button class="btn btn-link text-dark p-1 mb-0 action-edit" data-id="${item.id}" title="Edit item">
+                    <i class="material-symbols-rounded text-sm">edit</i>
+                  </button>
+                  ${toggleActionBtn}
+                  ${deleteActionBtn}
                 </td>
-            </tr>
-        `;
+            </tr>`;
+        } else {
+            rowHtml = `
+            <tr>
+                <td class="align-middle text-center">${col1}</td>
+                <td class="align-middle">${col2}</td>
+                <td class="align-middle">${col3}</td>
+                <td class="align-middle text-center">${col4}</td>
+                <td class="align-middle text-center"><span class="text-secondary text-xs font-weight-bold">${item.examMode || 'BOTH'}</span></td>
+                <td class="align-middle text-center">${statusBadge}</td>
+                <td class="align-middle text-center pe-3">
+                  <button class="btn btn-link text-dark p-1 mb-0 action-edit" data-id="${item.id}" title="Edit item">
+                    <i class="material-symbols-rounded text-sm">edit</i>
+                  </button>
+                  ${toggleActionBtn}
+                  ${deleteActionBtn}
+                </td>
+            </tr>`;
+        }
+        return rowHtml;
     }).join("");
 
     attachActionHandlers();
@@ -535,6 +682,15 @@ function openAddModal() {
     } else if (currentDimension === "derailers") {
         document.getElementById("derailerForm").reset();
         document.getElementById("dItemId").value = "";
+        
+        // Reset pills to available
+        const availBox = document.getElementById("availableDerailers");
+        document.querySelectorAll(".d-type-drag").forEach(pill => {
+            availBox.appendChild(pill);
+            pill.classList.add("btn-outline-warning");
+            pill.classList.remove("btn-warning", "text-white");
+        });
+        
         document.getElementById("derailerModalTitle").innerText = "Add Derailer Item (Dark Traits)";
         derailerModal?.show();
     } else if (currentDimension === "cognitive") {
@@ -611,7 +767,26 @@ function openEditModal(id) {
     } else if (currentDimension === "derailers") {
         document.getElementById("dItemId").value = item.id;
         document.getElementById("dStatementAr").value = item.statementAr || "";
-        document.getElementById("dDerailerTypeId").value = item.derailerTypeId;
+        document.getElementById("dJustificationAr").value = item.justificationAr || "";
+        
+        const availBox = document.getElementById("availableDerailers");
+        const selBox = document.getElementById("selectedDerailers");
+        const allPills = document.querySelectorAll(".d-type-drag");
+        const selectedIds = item.derailerTypeIds || [];
+        
+        allPills.forEach(pill => {
+            const id = Number(pill.dataset.id);
+            if (selectedIds.includes(id)) {
+                selBox.appendChild(pill);
+                pill.classList.remove("btn-outline-warning");
+                pill.classList.add("btn-warning", "text-white");
+            } else {
+                availBox.appendChild(pill);
+                pill.classList.add("btn-outline-warning");
+                pill.classList.remove("btn-warning", "text-white");
+            }
+        });
+        
         document.getElementById("dIdealTarget").value = item.idealTarget;
         document.getElementById("dExamMode").value = item.examMode || "FULL";
         document.getElementById("derailerModalTitle").innerText = `Edit Derailer Item #${item.id}`;
@@ -878,9 +1053,18 @@ async function handlePersonalitySubmit(e) {
 async function handleDerailerSubmit(e) {
     e.preventDefault();
     const id = document.getElementById("dItemId").value;
+    const selectedPills = document.querySelectorAll("#selectedDerailers .d-type-drag");
+    const selectedTypeIds = Array.from(selectedPills).map(pill => Number(pill.dataset.id));
+    
+    if (selectedTypeIds.length === 0) {
+        alert("Please select at least one derailer type.");
+        return;
+    }
+
     const body = {
         statementAr: document.getElementById("dStatementAr").value,
-        derailerTypeId: Number(document.getElementById("dDerailerTypeId").value),
+        justificationAr: document.getElementById("dJustificationAr").value,
+        derailerTypeIds: selectedTypeIds,
         idealTarget: Number(document.getElementById("dIdealTarget").value),
         responseScaleType: "FREQUENCY",
         examMode: document.getElementById("dExamMode").value
