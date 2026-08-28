@@ -10,6 +10,9 @@ The system delivers a complete end-to-end testing and analytics pipeline:
 * **Authentication & Identity:** Stateless HMAC-SHA256 JWT lifecycle, OTP-backed candidate registration, and password recovery via Redis.
 * **Role-Based Access Control (RBAC):** ROLE_SUPER_ADMIN (admin management), ROLE_ADMIN (candidate directory & sessions), and ROLE_CANDIDATE (test-taking).
 * **4-Battery Assessment Engine:**
+  * **Admin-Assigned Sessions:** Candidates cannot start an assessment on their own. Admins must explicitly create an `AssessmentAttempt` which triggers an email invitation with a secure token.
+  * **Forced-Sequential Execution:** The 4 batteries must be completed in a strict order (PQ10 -> SJT -> Derailers -> GCAT). Candidates cannot skip or re-enter completed batteries.
+  * **Server-Authoritative Timing:** All tests use strict Redis-backed timers for hard cutoffs.
   1. **Personality (PQ10) / تقييم الشخصية:** 140 Likert items measuring 10 core leadership competencies.
      * *Format:* 40 minutes - Likert scale
      * *Details:* Measuring leadership traits, reporting on strongest and weakest traits.

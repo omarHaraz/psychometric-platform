@@ -1,0 +1,349 @@
+import json
+import os
+
+json_data = r"""[
+  {
+    "item_code": "GCAT-NUM-03",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "MEDIUM",
+    "exam_mode": "FULL",
+    "title_in_arabic": "مسألة التسلسل الرقمي",
+    "pattern_type": "متتالية حسابية بتزايد مضاعف",
+    "prompt_text": "ما الاختيار التالي في سلسلة الأرقام؟\n\n25، 27، 31، 39، ؟",
+    "options": {
+      "A": "51",
+      "B": "47",
+      "C": "55",
+      "D": "49",
+      "E": "43"
+    },
+    "cognitive_analysis": {
+      "observation": "نلاحظ الفرق بين كل رقم والذي يليه: (27-25=2)، (31-27=4)، (39-31=8).",
+      "rule": "مقدار الزيادة يتضاعف في كل خطوة: (+2) ثم (+4) ثم (+8). الزيادة التالية يجب أن تكون ضعف الأخيرة (+16).",
+      "application": "بإضافة 16 إلى الرقم الأخير 39، يصبح الناتج: 39 + 16 = 55."
+    },
+    "correct_option_key": "C"
+  },
+  {
+    "item_code": "GCAT-NUM-04",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "EASY",
+    "exam_mode": "FULL",
+    "title_in_arabic": "مسألة التسلسل الرقمي",
+    "pattern_type": "متتالية حسابية بزيادة تصاعدية",
+    "prompt_text": "ما الرقم التالي في السلسلة؟\n\n2، 4، 7، 11، ؟",
+    "options": {
+      "A": "13",
+      "B": "14",
+      "C": "15",
+      "D": "16",
+      "E": "18"
+    },
+    "cognitive_analysis": {
+      "observation": "نلاحظ الفرق بين الأرقام: (4-2=2)، (7-4=3)، (11-7=4).",
+      "rule": "يتم إضافة أرقام صحيحة متتالية في كل خطوة: (+2)، (+3)، (+4). الزيادة القادمة يجب أن تكون (+5).",
+      "application": "بإضافة 5 إلى الرقم الأخير 11، يصبح الناتج: 11 + 5 = 16."
+    },
+    "correct_option_key": "D"
+  },
+  {
+    "item_code": "GCAT-NUM-05",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "EASY",
+    "exam_mode": "FULL",
+    "title_in_arabic": "مسألة التسلسل الرقمي",
+    "pattern_type": "متتالية حسابية بزيادة ثابتة",
+    "prompt_text": "ما الرقم التالي في السلسلة؟\n\n3، 6، 9، 12، ؟",
+    "options": {
+      "A": "14",
+      "B": "15",
+      "C": "16",
+      "D": "18",
+      "E": "21"
+    },
+    "cognitive_analysis": {
+      "observation": "نلاحظ أن السلسلة تتزايد بمقدار ثابت.",
+      "rule": "يتم إضافة الرقم (+3) بشكل ثابت لكل عنصر لإنتاج العنصر التالي.",
+      "application": "بإضافة 3 إلى الرقم الأخير 12، يصبح الناتج: 12 + 3 = 15."
+    },
+    "correct_option_key": "B"
+  },
+  {
+    "item_code": "GCAT-NUM-06",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "MEDIUM",
+    "exam_mode": "FULL",
+    "title_in_arabic": "حساب الكسور والنسب المتداخلة",
+    "pattern_type": "ضرب الكسور",
+    "prompt_text": "ما هو خمس ربع عشر الرقم 1000؟",
+    "options": {
+      "A": "7",
+      "B": "5",
+      "C": "6",
+      "D": "2",
+      "E": "4"
+    },
+    "cognitive_analysis": {
+      "observation": "المسألة تتطلب إيجاد كسور متتالية من رقم محدد: (1/5) × (1/4) × (1/10) من 1000.",
+      "rule": "لإيجاد القيمة، نقوم بضرب الكسور في بعضها أولاً للحصول على معامل واحد، ثم نضربه في الرقم الكلي.",
+      "application": "الكسر الإجمالي = (1/5) × (1/4) × (1/10) = (1/200). إذن: (1/200) × 1000 = 1000 ÷ 200 = 5."
+    },
+    "correct_option_key": "B"
+  },
+  {
+    "item_code": "GCAT-NUM-07",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "EASY",
+    "exam_mode": "FULL",
+    "title_in_arabic": "استنتاج العلاقة النسبية",
+    "pattern_type": "التناسب وتقسيم الأعداد",
+    "prompt_text": "الصلة بين 40 و10، توازي الصلة بين 16 و ؟",
+    "options": {
+      "A": "12",
+      "B": "2.6",
+      "C": "4",
+      "D": "6",
+      "E": "8"
+    },
+    "cognitive_analysis": {
+      "observation": "نبحث عن العلاقة الحسابية المباشرة التي تحول الرقم 40 إلى 10.",
+      "rule": "العلاقة هي القسمة على 4 (لأن 40 ÷ 4 = 10).",
+      "application": "بتطبيق نفس القاعدة على الرقم 16: نقسم 16 ÷ 4 = 4."
+    },
+    "correct_option_key": "C"
+  },
+  {
+    "item_code": "GCAT-NUM-08",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "MEDIUM",
+    "exam_mode": "FULL",
+    "title_in_arabic": "النسب في الأعداد العشرية",
+    "pattern_type": "التناسب العشري",
+    "prompt_text": "الصلة بين 0.21 و 0.07 توازي الصلة بين 0.48 و ؟",
+    "options": {
+      "A": "0.24",
+      "B": "0.21",
+      "C": "0.3",
+      "D": "0.16",
+      "E": "0.35"
+    },
+    "cognitive_analysis": {
+      "observation": "نبحث عن العامل الرياضي الذي يربط الرقم 0.21 بالرقم 0.07.",
+      "rule": "العلاقة هي القسمة على 3 (أو أن الرقم الثاني يمثل ثلث الرقم الأول).",
+      "application": "بتطبيق نفس القاعدة: 0.48 ÷ 3 = 0.16."
+    },
+    "correct_option_key": "D"
+  },
+  {
+    "item_code": "GCAT-NUM-09",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "MEDIUM",
+    "exam_mode": "FULL",
+    "title_in_arabic": "مسائل المسافات والنسب",
+    "pattern_type": "تكوين معادلة جبرية بسيطة",
+    "prompt_text": "تذهب أنت وزميلك إلى العمل، وقطعتم 30 كم، وقطعت ضعف مسافة زميلك. كم مسافة زميلك؟",
+    "options": {
+      "A": "10",
+      "B": "25",
+      "C": "5",
+      "D": "15",
+      "E": "20"
+    },
+    "cognitive_analysis": {
+      "observation": "المسافة الكلية هي 30 كم، ومسافتي تبلغ ضعفي مسافة الزميل.",
+      "rule": "إذا كانت مسافة الزميل (س)، فإن مسافتي هي (2س). مجموع المسافتين يساوي 30.",
+      "application": "س + 2س = 30 ➔ 3س = 30 ➔ س = 10 كم."
+    },
+    "correct_option_key": "A"
+  },
+  {
+    "item_code": "GCAT-NUM-10",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "EASY",
+    "exam_mode": "FULL",
+    "title_in_arabic": "استنتاج العدد المجهول",
+    "pattern_type": "المعادلات الجبرية المباشرة",
+    "prompt_text": "إذا كان نصف عدد يساوي 20، فما قيمة العدد الكامل؟",
+    "options": {
+      "A": "30",
+      "B": "35",
+      "C": "40",
+      "D": "45",
+      "E": "50"
+    },
+    "cognitive_analysis": {
+      "observation": "المعطى هو نصف العدد (1/2 س) والذي يساوي 20.",
+      "rule": "لإيجاد العدد الكامل، نقوم بضرب القيمة المعطاة في 2.",
+      "application": "20 × 2 = 40."
+    },
+    "correct_option_key": "C"
+  },
+  {
+    "item_code": "GCAT-NUM-11",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "HARD",
+    "exam_mode": "FULL",
+    "title_in_arabic": "مسائل الأعمار (فروق العمر الثابتة)",
+    "pattern_type": "حساب الفارق الزمني والنسبة",
+    "prompt_text": "جاسم عمره 12 سنة، وشقيقته ثلاثة أضعاف عمره. كم سيكون عمر شقيقته عندما يبلغ جاسم 25 سنة؟",
+    "options": {
+      "A": "55",
+      "B": "46",
+      "C": "37",
+      "D": "59",
+      "E": "49"
+    },
+    "cognitive_analysis": {
+      "observation": "يجب أولاً تحديد عمر شقيقته الحالي، ثم حساب فارق العمر الثابت بينهما.",
+      "rule": "عمر الشقيقة الحالي = 12 × 3 = 36 سنة. الفارق بينهما دائمًا ثابت وهو (36 - 12 = 24 سنة).",
+      "application": "عندما يصبح جاسم 25 سنة، سيكون عمر شقيقته: 25 + 24 = 49 سنة."
+    },
+    "correct_option_key": "E"
+  },
+  {
+    "item_code": "GCAT-NUM-12",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "EASY",
+    "exam_mode": "FULL",
+    "title_in_arabic": "مسائل الأعمار",
+    "pattern_type": "حساب الفارق العمري المباشر",
+    "prompt_text": "عمر أحمد 10 سنوات، وعمر أخيه أكبر منه بـ 5 سنوات. كم عمر أخيه؟",
+    "options": {
+      "A": "12",
+      "B": "13",
+      "C": "14",
+      "D": "15",
+      "E": "16"
+    },
+    "cognitive_analysis": {
+      "observation": "عمر أحمد 10 سنوات، والأخ الأكبر يزيد عنه بـ 5 سنوات.",
+      "rule": "نقوم بجمع فارق العمر مع عمر أحمد الحالي.",
+      "application": "10 + 5 = 15 سنة."
+    },
+    "correct_option_key": "D"
+  },
+  {
+    "item_code": "GCAT-NUM-13",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "EASY",
+    "exam_mode": "FULL",
+    "title_in_arabic": "مسائل الأعمار (الزمن المستقبلي)",
+    "pattern_type": "الجمع المباشر المعتمد على الزمن",
+    "prompt_text": "عمر شخص الآن 20 سنة، كم سيكون عمره بعد 5 سنوات؟",
+    "options": {
+      "A": "22",
+      "B": "23",
+      "C": "24",
+      "D": "25",
+      "E": "26"
+    },
+    "cognitive_analysis": {
+      "observation": "المطلوب حساب العمر المستقبلي بإضافة فترة زمنية محددة.",
+      "rule": "العمر المستقبلي = العمر الحالي + عدد السنوات القادمة.",
+      "application": "20 + 5 = 25 سنة."
+    },
+    "correct_option_key": "D"
+  },
+  {
+    "item_code": "GCAT-NUM-14",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "EASY",
+    "exam_mode": "FULL",
+    "title_in_arabic": "مسائل الأعمار (النسب والمضاعفات)",
+    "pattern_type": "حساب المضاعفات المباشرة",
+    "prompt_text": "عمر خالد ضعف عمر أخيه، إذا كان عمر أخيه 8 سنوات، فكم عمر خالد؟",
+    "options": {
+      "A": "12",
+      "B": "14",
+      "C": "16",
+      "D": "18",
+      "E": "20"
+    },
+    "cognitive_analysis": {
+      "observation": "نعرف عمر الأخ (8) ونعرف أن عمر خالد يمثل الضعف (مضروباً في 2).",
+      "rule": "عمر خالد = عمر الأخ × 2.",
+      "application": "8 × 2 = 16 سنة."
+    },
+    "correct_option_key": "C"
+  },
+  {
+    "item_code": "GCAT-NUM-15",
+    "subtest_dimension": "NUMERICAL",
+    "difficulty": "EASY",
+    "exam_mode": "FULL",
+    "title_in_arabic": "مسائل الأعمار والفروق",
+    "pattern_type": "الجمع لإيجاد العمر الأكبر",
+    "prompt_text": "فرق العمر بين شخصين 6 سنوات، إذا كان عمر الأصغر 20 سنة، فكم عمر الأكبر؟",
+    "options": {
+      "A": "12",
+      "B": "14",
+      "C": "16",
+      "D": "18",
+      "E": "26"
+    },
+    "cognitive_analysis": {
+      "observation": "نعرف عمر الشخص الأصغر والفرق العمري بينهما.",
+      "rule": "عمر الأكبر = عمر الأصغر + فرق العمر.",
+      "application": "20 + 6 = 26 سنة."
+    },
+    "correct_option_key": "E"
+  }
+]"""
+
+new_data = json.loads(json_data)
+
+try:
+    with open('backend/src/main/resources/data/gcat_items.json', 'r', encoding='utf-8') as f:
+        existing_data = json.load(f)
+except Exception:
+    existing_data = []
+
+existing_data.extend(new_data)
+with open('backend/src/main/resources/data/gcat_items.json', 'w', encoding='utf-8') as f:
+    json.dump(existing_data, f, ensure_ascii=False, indent=2)
+print("Appended gcat_items.json")
+
+# The mapping of subtest_dimension to ID
+subtest_mapping = {
+    "ABSTRACT": 4,
+    "NUMERICAL": 5,
+    "VERBAL": 6
+}
+
+sql = "SET NAMES utf8mb4;\n\n"
+
+for item in new_data:
+    item_code = item['item_code']
+    subtest_dim = item['subtest_dimension']
+    subtest_id = subtest_mapping.get(subtest_dim, 5)
+    
+    difficulty = item['difficulty']
+    exam_mode = item['exam_mode']
+    
+    title = item['title_in_arabic'].replace("'", "''")
+    pattern_type = item['pattern_type'].replace("'", "''")
+    prompt_text = item['prompt_text'].replace("'", "''")
+    
+    observation = item['cognitive_analysis']['observation'].replace("'", "''")
+    rule = item['cognitive_analysis']['rule'].replace("'", "''")
+    application = item['cognitive_analysis']['application'].replace("'", "''")
+    best_key = item['correct_option_key']
+    
+    sql += "INSERT INTO gcat_questions (item_code, subtest_id, difficulty, exam_mode, title_ar, pattern_type_ar, prompt_text_ar, observation_ar, rule_ar, application_ar, correct_option_key, is_active, exposure_count, created_at) "
+    sql += f"VALUES ('{item_code}', {subtest_id}, '{difficulty}', '{exam_mode}', '{title}', '{pattern_type}', '{prompt_text}', '{observation}', '{rule}', '{application}', '{best_key}', 1, 0, NOW());\n"
+    
+    sql += "SET @question_id = LAST_INSERT_ID();\n"
+    
+    for key, opt_text in item['options'].items():
+        opt_text = opt_text.replace("'", "''")
+        is_correct = 1 if key == best_key else 0
+        display_order = 1 if key == 'A' else 2 if key == 'B' else 3 if key == 'C' else 4 if key == 'D' else 5
+        
+        sql += f"INSERT INTO gcat_options (question_id, option_key, option_text_ar, is_correct, display_order) "
+        sql += f"VALUES (@question_id, '{key}', '{opt_text}', {is_correct}, {display_order});\n"
+        
+    sql += "\n"
+
+with open('seed_gcat.sql', 'w', encoding='utf-8') as f:
+    f.write(sql)
+print("Generated seed_gcat.sql")
