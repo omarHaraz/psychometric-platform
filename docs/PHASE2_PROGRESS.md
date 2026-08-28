@@ -42,3 +42,21 @@ This was done because:
 *   **Sequence Lock:** `batterySession.sequenceOrder` must equal `attempt.currentBatteryIndex`.
 *   **State Lock:** Battery actions (heartbeat/submit) are only accepted when the battery state is `IN_PROGRESS`.
 *   **Server-Side Timing:** The candidate's remaining time is computed server-side via a Redis `battery_session:{id}:timer` key. Client-provided elapsed times are ignored.
+
+---
+
+## Addendum: Item Randomization & Sampling (In Progress)
+
+Every battery samples a random subset of items from its respective item bank upon transitioning to IN_PROGRESS. This ensures candidates receive different variations of the assessment while maintaining strict quotas. 
+*   **Database Addition:** Added sampledItemIds (@ElementCollection List<Long>) to BatterySession to persist the chosen subset exactly once per attempt.
+*   **Sampling Moment:** Triggered at LOCKED -> IN_PROGRESS transition (via /start for the first battery and /submit for advancing to the next).
+*   **Methodology:** Independent selections using ORDER BY RAND() LIMIT ? on active items.
+*   **Composite Scoring Flag:** Scoring modules must calculate scores based on this specific generated subset, not a fixed canonical list.
+
+### Sampling Targets
+| Battery | Target Count | Quota / Strategy |
+|---|---|---|
+| DERAILERS | 60 | Uniform random |
+| SJT | 16 | Uniform random |
+| PQ10 | 140 | Uniform random |
+| GCAT | 42 | **Verbal (29 total):** 10 Easy, 9 Medium, 10 Hard. <br>**Abstract & Numerical (13 total):** *Pending User Confirmation on exact split and quotas.* |
