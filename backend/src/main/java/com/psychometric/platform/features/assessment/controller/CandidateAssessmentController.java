@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,6 +43,12 @@ public class CandidateAssessmentController {
         return ResponseEntity.ok(sessionService.startAttempt(token, username));
     }
 
+    @GetMapping("/battery-sessions/{id}/items")
+    public ResponseEntity<List<Map<String, Object>>> getBatteryItems(@PathVariable Long id,
+                                                                    @AuthenticationPrincipal String username) {
+        return ResponseEntity.ok(sessionService.getBatteryItems(id, username));
+    }
+
     @PostMapping("/battery-sessions/{id}/heartbeat")
     public ResponseEntity<Map<String, Long>> heartbeat(@PathVariable Long id,
                                                        @RequestBody HeartbeatRequest request,
@@ -59,7 +66,6 @@ public class CandidateAssessmentController {
     @GetMapping("/{token}/report")
     public ResponseEntity<?> getReport(@PathVariable String token,
                                        @AuthenticationPrincipal String username) {
-        // Stub for future reporting engine phase
         AssessmentAttempt attempt = sessionService.getAttemptByToken(token, username);
         if (attempt.getState() != com.psychometric.platform.features.assessment.domain.enums.AttemptState.SCORED) {
             return ResponseEntity.status(404).body("Report not ready");

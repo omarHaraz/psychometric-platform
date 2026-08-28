@@ -17,13 +17,13 @@ import com.psychometric.platform.features.user.entity.User;
 import com.psychometric.platform.features.user.repository.UserRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -33,18 +33,24 @@ public class AssessmentSessionService {
     private final CandidateResponseRepository responseRepo;
     private final UserRepository userRepo;
     private final RedisTemplate<String, String> redisTemplate;
+    private final ItemSamplingService samplingService;
+    private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
 
     public AssessmentSessionService(AssessmentAttemptRepository attemptRepo,
                                     BatterySessionRepository sessionRepo,
                                     CandidateResponseRepository responseRepo,
                                     UserRepository userRepo,
-                                    RedisTemplate<String, String> redisTemplate) {
+                                    RedisTemplate<String, String> redisTemplate,
+                                    ItemSamplingService samplingService,
+                                    JdbcTemplate jdbcTemplate) {
         this.attemptRepo = attemptRepo;
         this.sessionRepo = sessionRepo;
         this.responseRepo = responseRepo;
         this.userRepo = userRepo;
         this.redisTemplate = redisTemplate;
+        this.samplingService = samplingService;
+        this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.findAndRegisterModules();
     }
@@ -84,8 +90,6 @@ public class AssessmentSessionService {
         createBattery(attempt, 1, BatteryType.SJT, 2700);
         createBattery(attempt, 2, BatteryType.DERAILERS, 1200);
         createBattery(attempt, 3, BatteryType.GCAT, 1200);
-
-        // TODO: Trigger EmailService here to send attemptToken to candidate
 
         return attemptRepo.save(attempt);
     }
@@ -137,6 +141,10 @@ public class AssessmentSessionService {
         firstSession.setState(SessionState.IN_PROGRESS);
         firstSession.setStartTime(Instant.now());
 
+        // Perform stratified item sampling for battery 0 (PQ10)
+        List<Long> sampledIds = samplingService.sampleItemsForBattery(firstSession.getBatteryType());
+        firstSession.setSampledItemIds(sampledIds);
+
         // Set Redis Timer
         String timerKey = "battery_session:" + firstSession.getId() + ":timer";
         redisTemplate.opsForValue().set(timerKey, String.valueOf(firstSession.getStartTime().toEpochMilli()));
@@ -158,7 +166,7 @@ public class AssessmentSessionService {
         try {
             String respKey = "battery_session:" + sessionId + ":responses";
             String json = objectMapper.writeValueAsString(request.getResponses());
-            redisTemplate.opsForValue().set(respKey, json, remaining + 60, TimeUnit.SECONDS); // Expire shortly after timer
+            redisTemplate.opsForValue().set(respKey, json, remaining + 60, TimeUnit.SECONDS);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to serialize responses", e);
         }
@@ -195,6 +203,10 @@ public class AssessmentSessionService {
             
             nextSession.setState(SessionState.IN_PROGRESS);
             nextSession.setStartTime(Instant.now());
+
+            // Perform stratified item sampling for the newly unlocked battery
+            List<Long> sampledIds = samplingService.sampleItemsForBattery(nextSession.getBatteryType());
+            nextSession.setSampledItemIds(sampledIds);
             
             String timerKey = "battery_session:" + nextSession.getId() + ":timer";
             redisTemplate.opsForValue().set(timerKey, String.valueOf(nextSession.getStartTime().toEpochMilli()));
@@ -232,7 +244,6 @@ public class AssessmentSessionService {
                 }
                 redisTemplate.delete(respKey);
             } catch (Exception e) {
-                // Log failure, but do not block progression
                 e.printStackTrace();
             }
         }
@@ -263,7 +274,6 @@ public class AssessmentSessionService {
         String timerKey = "battery_session:" + session.getId() + ":timer";
         String startTimeStr = redisTemplate.opsForValue().get(timerKey);
         if (startTimeStr == null) {
-            // fallback if redis key expired/lost
             if (session.getStartTime() == null) { return 0; }
             startTimeStr = String.valueOf(session.getStartTime().toEpochMilli());
         }
@@ -273,5 +283,154 @@ public class AssessmentSessionService {
         long limitMs = session.getTimeLimitSeconds() * 1000L;
         long remainingSec = (limitMs - elapsedMs) / 1000;
         return Math.max(0, remainingSec);
+    }
+
+    /**
+     * Resolves and returns the sanitized items in the EXACT stored order of sampledItemIds.
+     */
+    public List<Map<String, Object>> getBatteryItems(Long sessionId, String username) {
+        BatterySession session = validateSessionAction(sessionId, username);
+        List<Long> sampledIds = session.getSampledItemIds();
+        if (sampledIds == null || sampledIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return switch (session.getBatteryType()) {
+            case PQ10 -> fetchSanitizedPersonalityItems(sampledIds);
+            case DERAILERS -> fetchSanitizedDerailerItems(sampledIds);
+            case SJT -> fetchSanitizedSjtItems(sampledIds);
+            case GCAT -> fetchSanitizedGcatItems(sampledIds);
+        };
+    }
+
+    private List<Map<String, Object>> fetchSanitizedPersonalityItems(List<Long> ids) {
+        Map<Long, Map<String, Object>> itemMap = new HashMap<>();
+        String inSql = String.join(",", Collections.nCopies(ids.size(), "?"));
+        jdbcTemplate.query(
+                "SELECT id, statement_ar FROM personality_items WHERE id IN (" + inSql + ")",
+                rs -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", rs.getLong("id"));
+                    map.put("statementAr", rs.getString("statement_ar"));
+                    itemMap.put(rs.getLong("id"), map);
+                },
+                ids.toArray()
+        );
+
+        List<Map<String, Object>> ordered = new ArrayList<>();
+        for (Long id : ids) {
+            if (itemMap.containsKey(id)) ordered.add(itemMap.get(id));
+        }
+        return ordered;
+    }
+
+    private List<Map<String, Object>> fetchSanitizedDerailerItems(List<Long> ids) {
+        Map<Long, Map<String, Object>> itemMap = new HashMap<>();
+        String inSql = String.join(",", Collections.nCopies(ids.size(), "?"));
+        jdbcTemplate.query(
+                "SELECT id, statement_ar, response_scale_type FROM derailer_items WHERE id IN (" + inSql + ")",
+                rs -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", rs.getLong("id"));
+                    map.put("statementAr", rs.getString("statement_ar"));
+                    map.put("responseScaleType", rs.getString("response_scale_type"));
+                    itemMap.put(rs.getLong("id"), map);
+                },
+                ids.toArray()
+        );
+
+        List<Map<String, Object>> ordered = new ArrayList<>();
+        for (Long id : ids) {
+            if (itemMap.containsKey(id)) ordered.add(itemMap.get(id));
+        }
+        return ordered;
+    }
+
+    private List<Map<String, Object>> fetchSanitizedSjtItems(List<Long> ids) {
+        Map<Long, Map<String, Object>> itemMap = new HashMap<>();
+        String inSql = String.join(",", Collections.nCopies(ids.size(), "?"));
+        jdbcTemplate.query(
+                "SELECT id, item_code, title_ar, narrative_ar, scenario_image_url FROM sjt_scenarios WHERE id IN (" + inSql + ")",
+                rs -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", rs.getLong("id"));
+                    map.put("itemCode", rs.getString("item_code"));
+                    map.put("titleAr", rs.getString("title_ar"));
+                    map.put("narrativeAr", rs.getString("narrative_ar"));
+                    map.put("scenarioImageUrl", rs.getString("scenario_image_url"));
+                    map.put("options", new ArrayList<Map<String, Object>>());
+                    itemMap.put(rs.getLong("id"), map);
+                },
+                ids.toArray()
+        );
+
+        // Fetch options without scoring key / expert rank
+        jdbcTemplate.query(
+                "SELECT id, scenario_id, option_key, statement_ar FROM sjt_options WHERE scenario_id IN (" + inSql + ") ORDER BY option_key ASC",
+                rs -> {
+                    Long scenarioId = rs.getLong("scenario_id");
+                    if (itemMap.containsKey(scenarioId)) {
+                        @SuppressWarnings("unchecked")
+                        List<Map<String, Object>> opts = (List<Map<String, Object>>) itemMap.get(scenarioId).get("options");
+                        Map<String, Object> opt = new HashMap<>();
+                        opt.put("id", rs.getLong("id"));
+                        opt.put("optionKey", rs.getString("option_key"));
+                        opt.put("statementAr", rs.getString("statement_ar"));
+                        opts.add(opt);
+                    }
+                },
+                ids.toArray()
+        );
+
+        List<Map<String, Object>> ordered = new ArrayList<>();
+        for (Long id : ids) {
+            if (itemMap.containsKey(id)) ordered.add(itemMap.get(id));
+        }
+        return ordered;
+    }
+
+    private List<Map<String, Object>> fetchSanitizedGcatItems(List<Long> ids) {
+        Map<Long, Map<String, Object>> itemMap = new HashMap<>();
+        String inSql = String.join(",", Collections.nCopies(ids.size(), "?"));
+        jdbcTemplate.query(
+                "SELECT id, item_code, title_ar, prompt_text_ar, pattern_type_ar, question_image_url FROM gcat_questions WHERE id IN (" + inSql + ")",
+                rs -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", rs.getLong("id"));
+                    map.put("itemCode", rs.getString("item_code"));
+                    map.put("titleAr", rs.getString("title_ar"));
+                    map.put("promptTextAr", rs.getString("prompt_text_ar"));
+                    map.put("patternTypeAr", rs.getString("pattern_type_ar"));
+                    map.put("questionImageUrl", rs.getString("question_image_url"));
+                    map.put("options", new ArrayList<Map<String, Object>>());
+                    itemMap.put(rs.getLong("id"), map);
+                },
+                ids.toArray()
+        );
+
+        // Fetch options without correct key
+        jdbcTemplate.query(
+                "SELECT id, question_id, option_key, text_ar, image_url FROM gcat_options WHERE question_id IN (" + inSql + ") ORDER BY option_key ASC",
+                rs -> {
+                    Long questionId = rs.getLong("question_id");
+                    if (itemMap.containsKey(questionId)) {
+                        @SuppressWarnings("unchecked")
+                        List<Map<String, Object>> opts = (List<Map<String, Object>>) itemMap.get(questionId).get("options");
+                        Map<String, Object> opt = new HashMap<>();
+                        opt.put("id", rs.getLong("id"));
+                        opt.put("optionKey", rs.getString("option_key"));
+                        opt.put("textAr", rs.getString("text_ar"));
+                        opt.put("imageUrl", rs.getString("image_url"));
+                        opts.add(opt);
+                    }
+                },
+                ids.toArray()
+        );
+
+        List<Map<String, Object>> ordered = new ArrayList<>();
+        for (Long id : ids) {
+            if (itemMap.containsKey(id)) ordered.add(itemMap.get(id));
+        }
+        return ordered;
     }
 }

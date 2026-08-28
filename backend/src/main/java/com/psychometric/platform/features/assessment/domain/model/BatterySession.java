@@ -38,6 +38,12 @@ public class BatterySession {
     @OneToMany(mappedBy = "batterySession", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CandidateResponse> responses = new ArrayList<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "battery_session_sampled_items", joinColumns = @JoinColumn(name = "session_id"))
+    @OrderColumn(name = "position")
+    @Column(name = "item_id")
+    private List<Long> sampledItemIds = new ArrayList<>();
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -57,4 +63,6 @@ public class BatterySession {
     public void setTimeLimitSeconds(Integer timeLimitSeconds) { this.timeLimitSeconds = timeLimitSeconds; }
     public List<CandidateResponse> getResponses() { return responses; }
     public void setResponses(List<CandidateResponse> responses) { this.responses = responses; }
+    public List<Long> getSampledItemIds() { return sampledItemIds; }
+    public void setSampledItemIds(List<Long> sampledItemIds) { this.sampledItemIds = sampledItemIds; }
 }
