@@ -7,6 +7,7 @@ import com.psychometric.platform.features.itembank.sjt.entity.*;
 import com.psychometric.platform.features.itembank.sjt.repository.SjtDomainRepository;
 import com.psychometric.platform.features.itembank.sjt.repository.SjtOptionRepository;
 import com.psychometric.platform.features.itembank.sjt.repository.SjtScenarioRepository;
+import com.psychometric.platform.features.itembank.common.service.CloudinaryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,16 @@ public class AdminSjtItemService {
     private final SjtScenarioRepository scenarioRepository;
     private final SjtDomainRepository domainRepository;
     private final SjtOptionRepository optionRepository;
+    private final CloudinaryService cloudinaryService;
 
     public AdminSjtItemService(SjtScenarioRepository scenarioRepository,
                                SjtDomainRepository domainRepository,
-                               SjtOptionRepository optionRepository) {
+                               SjtOptionRepository optionRepository,
+                               CloudinaryService cloudinaryService) {
         this.scenarioRepository = scenarioRepository;
         this.domainRepository = domainRepository;
         this.optionRepository = optionRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Transactional
@@ -103,6 +107,8 @@ public class AdminSjtItemService {
         SjtDomain domain = domainRepository.findById(request.getDomainId())
                 .orElseThrow(() -> new BadRequestException("SJT Domain not found with ID: " + request.getDomainId()));
 
+        String oldImageUrl = scenario.getScenarioImageUrl();
+
         scenario.setItemCode(request.getItemCode());
         scenario.setDomain(domain);
         scenario.setTitleAr(request.getTitleAr());
@@ -114,6 +120,10 @@ public class AdminSjtItemService {
         scenario.setCommonMistakeAr(request.getCommonMistakeAr());
         scenario.setCoachingNoteAr(request.getCoachingNoteAr());
         scenario.setExamMode(request.getExamMode());
+
+        if (oldImageUrl != null && !oldImageUrl.equals(request.getScenarioImageUrl())) {
+            cloudinaryService.deleteImageByUrl(oldImageUrl);
+        }
 
         if (request.getOptions() != null) {
             scenario.getOptions().clear();
@@ -143,6 +153,9 @@ public class AdminSjtItemService {
     public void softDelete(Long id) {
         SjtScenario scenario = findEntity(id);
         if (!scenario.isActive()) {
+            if (scenario.getScenarioImageUrl() != null) {
+                cloudinaryService.deleteImageByUrl(scenario.getScenarioImageUrl());
+            }
             scenarioRepository.delete(scenario);
             log.info("Permanently deleted disabled SJT Scenario with ID: {}", id);
         } else {

@@ -72,6 +72,25 @@ public class CloudinaryService {
         }
     }
 
+    public void deleteImageByUrl(String url) {
+        if (url == null || url.isBlank() || !url.contains("cloudinary.com")) {
+            return;
+        }
+        try {
+            int uploadIndex = url.indexOf("/upload/");
+            if (uploadIndex == -1) return;
+            String afterUpload = url.substring(uploadIndex + 8);
+            int slashIndex = afterUpload.indexOf('/');
+            if (slashIndex == -1) return;
+            String pathWithExtension = afterUpload.substring(slashIndex + 1);
+            int lastDot = pathWithExtension.lastIndexOf('.');
+            String publicId = lastDot != -1 ? pathWithExtension.substring(0, lastDot) : pathWithExtension;
+            deleteImage(publicId);
+        } catch (Exception e) {
+            log.error("Failed to parse Cloudinary URL or delete image: url={}", url, e);
+        }
+    }
+
     private void validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("Uploaded image file cannot be empty");

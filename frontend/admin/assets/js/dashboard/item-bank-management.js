@@ -106,9 +106,21 @@ function setupEventListeners() {
     document.getElementById("gcatUploadBtn")?.addEventListener("click", () => {
         uploadMediaFile("gcatImageFileInput", "gcatImageUrl", "gcatImagePublicId", "gcatImagePreviewContainer", "gcatImagePreview", "psychometric/gcat");
     });
+    
+    document.getElementById("gcatImageFileInput")?.addEventListener("change", (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            uploadMediaFile("gcatImageFileInput", "gcatImageUrl", "gcatImagePublicId", "gcatImagePreviewContainer", "gcatImagePreview", "psychometric/gcat");
+        }
+    });
 
     document.getElementById("sjtUploadBtn")?.addEventListener("click", () => {
         uploadMediaFile("sjtImageFileInput", "sjtImageUrl", null, "sjtImagePreviewContainer", "sjtImagePreview", "psychometric/sjt");
+    });
+
+    document.getElementById("sjtImageFileInput")?.addEventListener("change", (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            uploadMediaFile("sjtImageFileInput", "sjtImageUrl", null, "sjtImagePreviewContainer", "sjtImagePreview", "psychometric/sjt");
+        }
     });
 
     // Option Image Upload Listeners (A - E) for GCAT
@@ -563,7 +575,7 @@ function renderTable() {
                  <i class="material-symbols-rounded text-sm">play_circle</i>
                </button>`;
 
-        const deleteActionBtn = `<button class="btn btn-link text-danger p-1 mb-0 action-toggle" data-id="${item.id}" data-action="delete" title="Delete item">
+        const deleteActionBtn = `<button class="btn btn-link text-danger p-1 mb-0 action-delete" data-id="${item.id}" title="Delete item">
                  <i class="material-symbols-rounded text-sm">delete</i>
                </button>`;
 

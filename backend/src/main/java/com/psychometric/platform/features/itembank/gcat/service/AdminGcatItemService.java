@@ -7,6 +7,7 @@ import com.psychometric.platform.features.itembank.gcat.entity.*;
 import com.psychometric.platform.features.itembank.gcat.repository.GcatOptionRepository;
 import com.psychometric.platform.features.itembank.gcat.repository.GcatQuestionRepository;
 import com.psychometric.platform.features.itembank.gcat.repository.GcatSubtestRepository;
+import com.psychometric.platform.features.itembank.common.service.CloudinaryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,16 @@ public class AdminGcatItemService {
     private final GcatQuestionRepository questionRepository;
     private final GcatSubtestRepository subtestRepository;
     private final GcatOptionRepository optionRepository;
+    private final CloudinaryService cloudinaryService;
 
     public AdminGcatItemService(GcatQuestionRepository questionRepository,
                                 GcatSubtestRepository subtestRepository,
-                                GcatOptionRepository optionRepository) {
+                                GcatOptionRepository optionRepository,
+                                CloudinaryService cloudinaryService) {
         this.questionRepository = questionRepository;
         this.subtestRepository = subtestRepository;
         this.optionRepository = optionRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Transactional
@@ -106,6 +110,8 @@ public class AdminGcatItemService {
         GcatSubtest subtest = subtestRepository.findByCode(request.getSubtestCode())
                 .orElseThrow(() -> new BadRequestException("GCAT Subtest not found for code: " + request.getSubtestCode()));
 
+        String oldImageUrl = question.getQuestionImageUrl();
+
         question.setItemCode(request.getItemCode());
         question.setSubtest(subtest);
         question.setTitleAr(request.getTitleAr());
@@ -120,7 +126,19 @@ public class AdminGcatItemService {
         question.setDifficulty(request.getDifficulty());
         question.setExamMode(request.getExamMode());
 
+        if (oldImageUrl != null && !oldImageUrl.equals(request.getQuestionImageUrl())) {
+            cloudinaryService.deleteImageByUrl(oldImageUrl);
+        }
+
         if (request.getOptions() != null) {
+            for (GcatOption oldOpt : question.getOptions()) {
+                if (oldOpt.getOptionImageUrl() != null) {
+                    boolean kept = request.getOptions().stream().anyMatch(o -> oldOpt.getOptionImageUrl().equals(o.getOptionImageUrl()));
+                    if (!kept) {
+                        cloudinaryService.deleteImageByUrl(oldOpt.getOptionImageUrl());
+                    }
+                }
+            }
             question.getOptions().clear();
             int order = 1;
             for (GcatOptionAdminDto optDto : request.getOptions()) {
@@ -149,6 +167,14 @@ public class AdminGcatItemService {
     public void softDelete(Long id) {
         GcatQuestion question = findEntity(id);
         if (!question.isActive()) {
+            if (question.getQuestionImageUrl() != null) {
+                cloudinaryService.deleteImageByUrl(question.getQuestionImageUrl());
+            }
+            for (GcatOption opt : question.getOptions()) {
+                if (opt.getOptionImageUrl() != null) {
+                    cloudinaryService.deleteImageByUrl(opt.getOptionImageUrl());
+                }
+            }
             questionRepository.delete(question);
             log.info("Permanently deleted disabled GCAT Question with ID: {}", id);
         } else {
