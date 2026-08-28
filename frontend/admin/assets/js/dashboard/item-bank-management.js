@@ -440,7 +440,22 @@ function updateStats(dim) {
     } 
     else if (dim === "cognitive") {
         taxCount = taxonomies.subtests.length;
-        // Optionally add counts for cognitive later
+        const counts = {};
+        taxonomies.subtests.forEach(s => counts[s.nameAr] = { EASY: 0, MEDIUM: 0, HARD: 0 });
+        
+        rawItems.forEach(item => {
+            const subtestObj = taxonomies.subtests.find(s => s.code === item.subtestCode);
+            if (subtestObj) {
+                const diff = item.difficulty || "MEDIUM";
+                if (counts[subtestObj.nameAr][diff] !== undefined) {
+                    counts[subtestObj.nameAr][diff]++;
+                }
+            }
+        });
+        
+        summaryLines = Object.entries(counts).map(([name, diffs]) => {
+            return `${name}: ${diffs.EASY} Easy, ${diffs.MEDIUM} Med, ${diffs.HARD} Hard`;
+        });
     } 
     else if (dim === "sjt") {
         taxCount = taxonomies.sjtDomains.length;
