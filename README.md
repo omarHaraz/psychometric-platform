@@ -10,10 +10,18 @@ The system delivers a complete end-to-end testing and analytics pipeline:
 * **Authentication & Identity:** Stateless HMAC-SHA256 JWT lifecycle, OTP-backed candidate registration, and password recovery via Redis.
 * **Role-Based Access Control (RBAC):** ROLE_SUPER_ADMIN (admin management), ROLE_ADMIN (candidate directory & sessions), and ROLE_CANDIDATE (test-taking).
 * **4-Battery Assessment Engine:**
-  1. **Personality (PQ10):** 140 Likert items measuring 10 core leadership competencies.
-  2. **Situational Judgment Test (SJT):** 16 multi-stage scenarios with 4-option ranking (Kendall-tau rank concordance).
-  3. **Derailers & Drivers:** 60 items assessing behavioral derailment risk (Volatility, Micromanagement, Arrogance).
-  4. **General Cognitive Aptitude Test (GCAT):** 42-item timed cognitive assessment (Verbal, Numerical, Abstract).
+  1. **Personality (PQ10) / تقييم الشخصية:** 140 Likert items measuring 10 core leadership competencies.
+     * *Format:* 40 minutes - Likert scale
+     * *Details:* Measuring leadership traits, reporting on strongest and weakest traits.
+  2. **Situational Judgment Test (SJT) / الحكم على المواقف:** 16 multi-stage scenarios with 4-option ranking (Kendall-tau rank concordance).
+     * *Format:* 30-45 minutes - Ranking
+     * *Details:* Assessing leadership judgment, detailing and comparing situations.
+  3. **Derailers & Drivers / السلوكيات المعطلة:** 60 items assessing behavioral derailment risk (Volatility, Micromanagement, Arrogance).
+     * *Format:* 10-20 minutes - Likert scale
+     * *Details:* Derailer risk index, highlighting the highest derailer behaviors present.
+  4. **General Cognitive Aptitude Test (GCAT) / القدرات الإدراكية:** 42-item timed cognitive assessment.
+     * *Format:* 20 minutes strict
+     * *Details:* Verbal, Numerical, and Abstract reasoning, detailing answers and mistakes.
 * **Normative Scoring & Calibration:**
   * Weighted Composite Score (\% \text{ PQ10} + 22\% \text{ SJT} + 20\% \text{ Derailers} + 30\% \text{ GCAT}$).
   * Standardized Logistic Percentile Norms ($\\mu=75, \\sigma=6$) and 10 STEN scores.
