@@ -454,7 +454,7 @@ function updateStats(dim) {
         });
         
         summaryLines = Object.entries(counts).map(([name, diffs]) => {
-            return `${name}: ${diffs.EASY} Easy, ${diffs.MEDIUM} Med, ${diffs.HARD} Hard`;
+            return `${name}: ${diffs.EASY} سهل، ${diffs.MEDIUM} متوسط، ${diffs.HARD} صعب`;
         });
     } 
     else if (dim === "sjt") {

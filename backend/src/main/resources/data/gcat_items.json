@@ -1242,7 +1242,7 @@
   {
     "item_code": "GCAT-VER-01",
     "subtest_dimension": "VERBAL",
-    "difficulty": "EASY",
+    "difficulty": "HARD",
     "exam_mode": "FULL",
     "title_in_arabic": "تحديد المرادف",
     "pattern_type": "مرادف الكلمة المباشر",
@@ -1264,7 +1264,7 @@
   {
     "item_code": "GCAT-VER-02",
     "subtest_dimension": "VERBAL",
-    "difficulty": "EASY",
+    "difficulty": "HARD",
     "exam_mode": "FULL",
     "title_in_arabic": "تحديد المرادف",
     "pattern_type": "مرادف الكلمة المباشر",
@@ -1286,7 +1286,7 @@
   {
     "item_code": "GCAT-VER-03",
     "subtest_dimension": "VERBAL",
-    "difficulty": "EASY",
+    "difficulty": "HARD",
     "exam_mode": "FULL",
     "title_in_arabic": "تحديد المرادف",
     "pattern_type": "مرادف الكلمة المباشر",
@@ -1352,7 +1352,7 @@
   {
     "item_code": "GCAT-VER-06",
     "subtest_dimension": "VERBAL",
-    "difficulty": "EASY",
+    "difficulty": "HARD",
     "exam_mode": "FULL",
     "title_in_arabic": "تحديد التضاد",
     "pattern_type": "عكس الكلمة المباشر",
@@ -1374,7 +1374,7 @@
   {
     "item_code": "GCAT-VER-07",
     "subtest_dimension": "VERBAL",
-    "difficulty": "EASY",
+    "difficulty": "HARD",
     "exam_mode": "FULL",
     "title_in_arabic": "تحديد التضاد",
     "pattern_type": "عكس الكلمة المباشر",
@@ -1396,7 +1396,7 @@
   {
     "item_code": "GCAT-VER-08",
     "subtest_dimension": "VERBAL",
-    "difficulty": "EASY",
+    "difficulty": "HARD",
     "exam_mode": "FULL",
     "title_in_arabic": "تحديد التضاد",
     "pattern_type": "عكس الكلمة المباشر",
@@ -1418,7 +1418,7 @@
   {
     "item_code": "GCAT-VER-09",
     "subtest_dimension": "VERBAL",
-    "difficulty": "EASY",
+    "difficulty": "HARD",
     "exam_mode": "FULL",
     "title_in_arabic": "تحديد التضاد",
     "pattern_type": "عكس الكلمة المباشر",
@@ -1440,7 +1440,7 @@
   {
     "item_code": "GCAT-VER-10",
     "subtest_dimension": "VERBAL",
-    "difficulty": "EASY",
+    "difficulty": "HARD",
     "exam_mode": "FULL",
     "title_in_arabic": "تحديد التضاد",
     "pattern_type": "عكس الكلمة المباشر",
