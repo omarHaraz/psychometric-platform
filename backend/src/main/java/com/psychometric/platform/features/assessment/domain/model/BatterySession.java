@@ -14,6 +14,7 @@ public class BatterySession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attempt_id", nullable = false)
     private AssessmentAttempt attempt;
@@ -35,6 +36,7 @@ public class BatterySession {
     @Column(nullable = false)
     private Integer timeLimitSeconds;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "batterySession", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CandidateResponse> responses = new ArrayList<>();
 

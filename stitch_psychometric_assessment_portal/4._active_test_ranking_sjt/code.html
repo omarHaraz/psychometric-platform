@@ -1,0 +1,235 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Aptitude Assessment - Situational Judgment</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#3a485c",
+                        "on-primary-container": "#f4fffc",
+                        "secondary": "#515f74",
+                        "on-surface-variant": "#3d4947",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e2e7ff",
+                        "surface-container-highest": "#dae2fd",
+                        "secondary-container": "#d5e3fd",
+                        "primary": "#00685f",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#707579",
+                        "on-secondary-fixed": "#0d1c2f",
+                        "surface-variant": "#dae2fd",
+                        "on-tertiary-container": "#fbfcff",
+                        "on-primary-fixed": "#00201d",
+                        "outline-variant": "#bcc9c6",
+                        "surface-tint": "#006a61",
+                        "on-secondary-container": "#57657b",
+                        "secondary-fixed": "#d5e3fd",
+                        "tertiary-fixed-dim": "#c3c7cb",
+                        "tertiary-fixed": "#dfe3e7",
+                        "inverse-primary": "#6bd8cb",
+                        "surface-container": "#eaedff",
+                        "primary-fixed-dim": "#6bd8cb",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#faf8ff",
+                        "outline": "#6d7a77",
+                        "on-primary-fixed-variant": "#005049",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#eef0ff",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#b9c7e0",
+                        "primary-fixed": "#89f5e7",
+                        "tertiary": "#585d60",
+                        "surface-dim": "#d2d9f4",
+                        "on-surface": "#131b2e",
+                        "on-tertiary-fixed-variant": "#43474b",
+                        "surface-container-low": "#f2f3ff",
+                        "primary-container": "#008378",
+                        "inverse-surface": "#283044",
+                        "on-background": "#131b2e",
+                        "on-error-container": "#93000a",
+                        "surface": "#faf8ff",
+                        "on-tertiary-fixed": "#171c1f",
+                        "background": "#faf8ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "40px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xs": "4px",
+                        "container-max": "1024px",
+                        "gutter": "24px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .drag-handle-pattern {
+            background-image: radial-gradient(#6d7a77 1.5px, transparent 1.5px);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md antialiased md:pl-64 pt-[64px] md:pt-0">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex flex-col h-screen fixed left-0 top-0 z-40 bg-surface-container-low dark:bg-inverse-surface border-r border-outline-variant dark:border-outline w-64 transition-all duration-150 ease-in">
+<div class="p-lg border-b border-outline-variant dark:border-outline">
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5U6UEF9suU7N8AHhYYNPhAo2nEJPop9a0563atrQaXS6OP4dLmioS2vOccHN0FR_E7hJSf8qv5pWNZ1OKX2QqQVDr_5WYpbQvVf3cexh6uSwZXZYG0GnOkFMR68P54-fMnvbS5W675t5s0es9JpIZesultK5H_oJi9RZlDgl9k4UxZz3_6IKTqO3e9h4sp47rskCjSS4tAHy-ykAZGkpwlkpL7-rOJBTq1HL_b49uVb53tf19R3wrKb6OqKHzY4ODag" alt="Arab Experts Institute Logo" class="h-8 mb-sm object-contain"><h1 class="font-headline-md text-headline-md text-primary">Aptitude Assessment</h1>
+</div>
+<div class="p-md border-b border-outline-variant dark:border-outline flex items-center gap-md">
+<img class="w-10 h-10 rounded-full object-cover bg-surface-container-highest" data-alt="A small, professional avatar or status indicator icon in a minimal style, suitable for a corporate assessment platform, ensuring a secure and objective look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABHfiQ6uOf_fGHiXnDcOBP_8VSsklb4wDfp_sDlTwLFWlbScZGMs5VDxmTc3Kv8nCgduzDlsD9DdwYy5nfsuc3_SekoEp8J2T1LUlTsuWVmTZ0YHW1yRBkFCrBNBLFLxCzL87BzPxio_2g-LCW8nCt9Vt-iDzGfG4yM4R6PeuhOzQnl-3O-tiN8ajml_R6-DCKp1sx4P8qOuYBiPu576mLOVVE9ASoTkVCPmkv9HTQEgOtyGsuZ32I">
+<div>
+<p class="font-label-md text-label-md text-on-surface">Progress Overview</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Part 2 of 4</p>
+</div>
+</div>
+<ul class="flex-1 py-md">
+<li class=""><a class="flex items-center gap-md px-lg py-md text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-on-tertiary-fixed-variant transition-colors duration-200" href="#"><span class="material-symbols-outlined">person</span> <span class="font-label-md text-label-md">Part 1: Personality</span></a></li>
+<li class=""><a class="flex items-center gap-md px-lg py-md bg-secondary-container dark:bg-on-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed font-semibold hover:bg-surface-container-high dark:hover:bg-on-tertiary-fixed-variant transition-colors duration-200" href="#"><span class="material-symbols-outlined">psychology</span> <span class="font-label-md text-label-md">Part 2: SJT</span></a></li>
+<li class=""><a class="flex items-center gap-md px-lg py-md text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-on-tertiary-fixed-variant transition-colors duration-200" href="#"><span class="material-symbols-outlined">lightbulb</span> <span class="font-label-md text-label-md">Part 3: Cognitive</span></a></li>
+<li class=""><a class="flex items-center gap-md px-lg py-md text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-on-tertiary-fixed-variant transition-colors duration-200" href="#"><span class="material-symbols-outlined">check_circle</span> <span class="font-label-md text-label-md">Part 4: Conclusion</span></a></li>
+</ul>
+</nav>
+<!-- TopAppBar (Mobile / Persistent Top Bar Desktop Equivalent logic handled below, but keeping exact JSON topbar if needed. For this design, we blend the side nav and top requirements for the prompt). -->
+<!-- The prompt asks for a Persistent Top Bar specific to the test screen: 'Part 2: Situational Judgment', 'Progress: 3 / 10 scenarios', 'Time Remaining: 08:45' -->
+<header class="fixed top-0 left-0 w-full md:left-64 md:w-[calc(100%-16rem)] z-30 bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flat no shadows h-[64px] flex justify-between items-center px-lg py-sm transition-colors duration-200 ease-in-out">
+<div class="flex items-center gap-sm">
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3xwRP6lytzPj_xun9rHl2ZbN6ZB_hQ_amykk_uSTHzxtr63KS1l4GCTJFwWtEoJ3B7BzpWrJVqav2sTgztX56n9hWhCqCwc9g6EBhCgvDar71v_0XGeVUldo9KmjXGgBhDu-0U5x-Qv65UXU9o4r8oiqRLxUtqOYmRgj5kh7A-arv7UT0x4MdENxjCf2xCZFa_iFseIXMtSlZuSOZkOsCH74QKL7r4FwhKNxPcnuFAUijWtwXf3Q5" alt="Arab Experts Institute Logo" class="h-8 mr-md hidden md:inline object-contain"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3xwRP6lytzPj_xun9rHl2ZbN6ZB_hQ_amykk_uSTHzxtr63KS1l4GCTJFwWtEoJ3B7BzpWrJVqav2sTgztX56n9hWhCqCwc9g6EBhCgvDar71v_0XGeVUldo9KmjXGgBhDu-0U5x-Qv65UXU9o4r8oiqRLxUtqOYmRgj5kh7A-arv7UT0x4MdENxjCf2xCZFa_iFseIXMtSlZuSOZkOsCH74QKL7r4FwhKNxPcnuFAUijWtwXf3Q5" alt="Arab Experts Institute Logo" class="h-6 mr-sm md:hidden object-contain"><span class="font-headline-md text-headline-md text-primary hidden md:inline">Part 2: Situational Judgment</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary md:hidden">SJT</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-sm text-on-surface-variant">
+<span class="font-label-md text-label-md">Progress:</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">3 / 10 scenarios</span>
+</div>
+<div class="flex items-center gap-sm text-secondary">
+<span class="material-symbols-outlined text-[20px]">timer</span>
+<span class="font-label-md text-label-md">Time Remaining:</span>
+<span class="font-headline-md text-headline-md text-on-surface" style="font-size: 18px;">08:45</span>
+</div>
+</div>
+</header>
+<main class="flex-1 w-full max-w-container-max mx-auto px-md md:px-lg py-xl mt-md md:mt-xl">
+<!-- Scenario Prompt Card -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg md:p-xl mb-xl">
+<div class="flex items-start gap-md">
+<div class="mt-1">
+<span class="material-symbols-outlined text-primary text-[28px]">info</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-sm">Scenario Prompt</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                        A team member is consistently missing deadlines, affecting the overall project timeline. How would you handle this?
+                    </p>
+</div>
+</div>
+</section>
+<!-- Ranking Area -->
+<section>
+<div class="flex justify-between items-end mb-sm px-sm">
+<span class="font-label-md text-label-md text-primary uppercase tracking-wider">Most Effective</span>
+</div>
+<div class="flex flex-col gap-sm" id="sortable-list">
+<!-- Option 1 -->
+<div class="relative bg-surface-container-lowest border border-outline-variant rounded-lg p-md flex items-center gap-md cursor-move hover:bg-surface-container-low hover:border-outline transition-all duration-150 group">
+<div class="w-6 h-8 opacity-40 group-hover:opacity-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">drag_indicator</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center font-label-md text-label-md text-on-surface-variant font-semibold shrink-0">
+                        1
+                    </div>
+<p class="font-body-md text-body-md text-on-surface flex-1">
+                        Discuss privately
+                    </p>
+</div>
+<!-- Option 2 -->
+<div class="relative bg-surface-container-lowest border border-outline-variant rounded-lg p-md flex items-center gap-md cursor-move hover:bg-surface-container-low hover:border-outline transition-all duration-150 group">
+<div class="w-6 h-8 opacity-40 group-hover:opacity-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">drag_indicator</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center font-label-md text-label-md text-on-surface-variant font-semibold shrink-0">
+                        2
+                    </div>
+<p class="font-body-md text-body-md text-on-surface flex-1">
+                        Reassign tasks
+                    </p>
+</div>
+<!-- Option 3 -->
+<div class="relative bg-surface-container-lowest border border-outline-variant rounded-lg p-md flex items-center gap-md cursor-move hover:bg-surface-container-low hover:border-outline transition-all duration-150 group">
+<div class="w-6 h-8 opacity-40 group-hover:opacity-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">drag_indicator</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center font-label-md text-label-md text-on-surface-variant font-semibold shrink-0">
+                        3
+                    </div>
+<p class="font-body-md text-body-md text-on-surface flex-1">
+                        Wait and observe
+                    </p>
+</div>
+<!-- Option 4 -->
+<div class="relative bg-surface-container-lowest border border-outline-variant rounded-lg p-md flex items-center gap-md cursor-move hover:bg-surface-container-low hover:border-outline transition-all duration-150 group">
+<div class="w-6 h-8 opacity-40 group-hover:opacity-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">drag_indicator</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center font-label-md text-label-md text-on-surface-variant font-semibold shrink-0">
+                        4
+                    </div>
+<p class="font-body-md text-body-md text-on-surface flex-1">
+                        Report to HR
+                    </p>
+</div>
+</div>
+<div class="flex justify-between items-start mt-sm px-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Least Effective</span>
+</div>
+</section>
+<!-- Navigation Buttons -->
+<div class="mt-xl flex justify-between items-center border-t border-outline-variant pt-lg">
+<button class="px-lg py-md border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors">
+                Previous
+            </button>
+<button class="px-lg py-md bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors flex items-center gap-sm">
+                Next Scenario
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</main>
+
+
+
+
+</body></html>

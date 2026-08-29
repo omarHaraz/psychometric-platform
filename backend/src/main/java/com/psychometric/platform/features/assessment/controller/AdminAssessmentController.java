@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/attempts")
 @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class AdminAssessmentController {
 
     private final AssessmentSessionService sessionService;

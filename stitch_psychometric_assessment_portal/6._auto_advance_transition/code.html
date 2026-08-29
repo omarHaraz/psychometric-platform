@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Aptitude Assessment - Transition</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#3a485c",
+                        "on-primary-container": "#f4fffc",
+                        "secondary": "#515f74",
+                        "on-surface-variant": "#3d4947",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e2e7ff",
+                        "surface-container-highest": "#dae2fd",
+                        "secondary-container": "#d5e3fd",
+                        "primary": "#00685f",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#707579",
+                        "on-secondary-fixed": "#0d1c2f",
+                        "surface-variant": "#dae2fd",
+                        "on-tertiary-container": "#fbfcff",
+                        "on-primary-fixed": "#00201d",
+                        "outline-variant": "#bcc9c6",
+                        "surface-tint": "#006a61",
+                        "on-secondary-container": "#57657b",
+                        "secondary-fixed": "#d5e3fd",
+                        "tertiary-fixed-dim": "#c3c7cb",
+                        "tertiary-fixed": "#dfe3e7",
+                        "inverse-primary": "#6bd8cb",
+                        "surface-container": "#eaedff",
+                        "primary-fixed-dim": "#6bd8cb",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#faf8ff",
+                        "outline": "#6d7a77",
+                        "on-primary-fixed-variant": "#005049",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#eef0ff",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#b9c7e0",
+                        "primary-fixed": "#89f5e7",
+                        "tertiary": "#585d60",
+                        "surface-dim": "#d2d9f4",
+                        "on-surface": "#131b2e",
+                        "on-tertiary-fixed-variant": "#43474b",
+                        "surface-container-low": "#f2f3ff",
+                        "primary-container": "#008378",
+                        "inverse-surface": "#283044",
+                        "on-background": "#131b2e",
+                        "on-error-container": "#93000a",
+                        "surface": "#faf8ff",
+                        "on-tertiary-fixed": "#171c1f",
+                        "background": "#faf8ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "40px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xs": "4px",
+                        "container-max": "1024px",
+                        "gutter": "24px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .progress-bar-fill {
+            animation: fillProgress 3s linear forwards;
+        }
+        @keyframes fillProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .check-anim {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawCheck 0.6s ease-out forwards;
+            animation-delay: 0.2s;
+        }
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface h-screen w-screen flex flex-col overflow-hidden font-body-md antialiased selection:bg-secondary-container selection:text-on-secondary-container"><header class="w-full flex justify-center p-md bg-surface border-b border-outline-variant"><div class="h-12"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNrGjgJ_UUGq97McvX1gNGzhT3cwPocnikI4plDwzlQkMsD1vv0-r4mwiquTz7dsF-CNWYwRytoD7IFTYPLpjl4BNGLj3RElZwR3u376j6LVfLvsF7XGfo_JiCkoRyeMa3GinLzTRjLK0xGxCuWjrwq5D3ZgBY4VG6UReJ7cqgrYA9Qza8ygu3Q1Mqf6xGZlwe5OFKNkapIsha8Y-mClMhXtvfvUYoE2bsz-jzB-K9iZvo353R1beH3EOf1_q58wxuFQ" alt="Arab Experts Institute Logo" class="h-full w-auto object-contain"></div></header>
+<!-- Main Interstitial Container -->
+<main class="flex-1 flex flex-col items-center justify-center p-md">
+<div class="max-w-md w-full bg-surface rounded-xl border border-outline-variant p-xl flex flex-col items-center text-center fade-in-up shadow-[0_4px_12px_rgba(15,23,42,0.03)]">
+<!-- Animated Checkmark -->
+<div class="mb-gutter w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center relative overflow-hidden">
+<svg class="w-12 h-12 text-primary" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
+<path class="check-anim" d="M5 13l4 4L19 7"></path>
+</svg>
+</div>
+<!-- Content -->
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-sm">Part 2 Submitted</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl">Your responses have been saved successfully.</p>
+<!-- Transition Messaging -->
+<p class="font-label-md text-label-md text-secondary mb-sm tracking-wide">Transitioning to Part 3 automatically in <span class="font-bold text-primary" id="countdown">0</span> seconds...</p>
+<!-- Progress Bar -->
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary progress-bar-fill rounded-full"></div>
+</div>
+</div>
+</main>
+<script>
+        // Simple countdown logic for visual feedback
+        let timeLeft = 3;
+        const countdownEl = document.getElementById('countdown');
+        
+        const timer = setInterval(() => {
+            timeLeft--;
+            if (timeLeft >= 0) {
+                countdownEl.textContent = timeLeft;
+            }
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                // In a real scenario, navigation would happen here
+                // window.location.href = '/part3';
+            }
+        }, 1000);
+    </script>
+
+
+</body></html>

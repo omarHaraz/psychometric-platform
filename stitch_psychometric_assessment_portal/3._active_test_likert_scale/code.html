@@ -1,0 +1,286 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Aptitude Assessment - Part 1: Personality</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "on-secondary-fixed-variant": "#3a485c",
+                      "on-primary-container": "#f4fffc",
+                      "secondary": "#515f74",
+                      "on-surface-variant": "#3d4947",
+                      "on-primary": "#ffffff",
+                      "surface-container-high": "#e2e7ff",
+                      "surface-container-highest": "#dae2fd",
+                      "secondary-container": "#d5e3fd",
+                      "primary": "#00685f",
+                      "error": "#ba1a1a",
+                      "tertiary-container": "#707579",
+                      "on-secondary-fixed": "#0d1c2f",
+                      "surface-variant": "#dae2fd",
+                      "on-tertiary-container": "#fbfcff",
+                      "on-primary-fixed": "#00201d",
+                      "outline-variant": "#bcc9c6",
+                      "surface-tint": "#006a61",
+                      "on-secondary-container": "#57657b",
+                      "secondary-fixed": "#d5e3fd",
+                      "tertiary-fixed-dim": "#c3c7cb",
+                      "tertiary-fixed": "#dfe3e7",
+                      "inverse-primary": "#6bd8cb",
+                      "surface-container": "#eaedff",
+                      "primary-fixed-dim": "#6bd8cb",
+                      "on-tertiary": "#ffffff",
+                      "surface-bright": "#faf8ff",
+                      "outline": "#6d7a77",
+                      "on-primary-fixed-variant": "#005049",
+                      "error-container": "#ffdad6",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-on-surface": "#eef0ff",
+                      "on-secondary": "#ffffff",
+                      "secondary-fixed-dim": "#b9c7e0",
+                      "primary-fixed": "#89f5e7",
+                      "tertiary": "#585d60",
+                      "surface-dim": "#d2d9f4",
+                      "on-surface": "#131b2e",
+                      "on-tertiary-fixed-variant": "#43474b",
+                      "surface-container-low": "#f2f3ff",
+                      "primary-container": "#008378",
+                      "inverse-surface": "#283044",
+                      "on-background": "#131b2e",
+                      "on-error-container": "#93000a",
+                      "surface": "#faf8ff",
+                      "on-tertiary-fixed": "#171c1f",
+                      "background": "#faf8ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xl": "40px",
+                      "sm": "8px",
+                      "md": "16px",
+                      "base": "4px",
+                      "xs": "4px",
+                      "container-max": "1024px",
+                      "gutter": "24px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "30px",
+                              {
+                                      "lineHeight": "38px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC; /* Sub-surface Level 1 */
+        }
+        
+        .likert-btn.active {
+            background-color: #008378; /* primary-container */
+            color: #f4fffc; /* on-primary-container */
+            border-color: #008378;
+        }
+
+        .likert-btn:not(.active):hover {
+            background-color: #f2f3ff; /* surface-container-low */
+        }
+        
+        .timer-standard {
+            color: #515f74; /* secondary */
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased flex flex-col min-h-screen">
+<!-- SideNavBar (Suppressed for transactional test screen, using only TopAppBar for context) -->
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flat no shadows transition-colors duration-200 ease-in-out docked full-width top-0 z-50">
+<div class="flex justify-between items-center w-full px-lg py-sm max-w-container-max mx-auto">
+<div class="flex items-center gap-md gap-lg">
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3xwRP6lytzPj_xun9rHl2ZbN6ZB_hQ_amykk_uSTHzxtr63KS1l4GCTJFwWtEoJ3B7BzpWrJVqav2sTgztX56n9hWhCqCwc9g6EBhCgvDar71v_0XGeVUldo9KmjXGgBhDu-0U5x-Qv65UXU9o4r8oiqRLxUtqOYmRgj5kh7A-arv7UT0x4MdENxjCf2xCZFa_iFseIXMtSlZuSOZkOsCH74QKL7r4FwhKNxPcnuFAUijWtwXf3Q5" alt="Arab Experts Institute Logo" class="h-10 w-auto object-contain"><span class="font-headline-md text-headline-md font-semibold text-on-surface dark:text-inverse-on-surface">
+                    Aptitude Assessment
+                </span>
+<span class="hidden md:inline-block text-outline mx-sm">|</span>
+<span class="hidden md:inline-block font-label-md text-label-md text-on-surface-variant font-medium">
+                    Part 1: Personality
+                </span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="font-label-md text-label-md">Progress:</span>
+<span class="font-label-md text-label-md font-semibold">12 / 40 items</span>
+</div>
+<div class="flex items-center gap-sm bg-surface-container-low px-sm py-xs rounded-DEFAULT border border-outline-variant">
+<span class="material-symbols-outlined text-secondary" style="font-size: 20px;">timer</span>
+<span class="font-label-md text-label-md timer-standard font-mono">14:22</span>
+</div>
+</div>
+</div>
+<!-- Progress Bar Visual -->
+<div class="w-full h-1 bg-surface-container-highest">
+<div class="h-full bg-primary" style="width: 30%;"></div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow flex items-center justify-center p-md md:p-xl w-full max-w-container-max mx-auto">
+<div class="w-full max-w-[800px] bg-surface rounded-xl border border-[#E2E8F0] p-lg md:p-xl shadow-sm flex flex-col gap-xl">
+<!-- Question Section -->
+<div class="flex flex-col gap-sm text-center md:text-left">
+<span class="font-label-md text-label-md text-secondary uppercase tracking-wider">Statement 12</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-on-surface">
+                    I generally prefer structured environments to spontaneous ones.
+                </h2>
+</div>
+<!-- Likert Scale Response Area -->
+<div class="flex flex-col gap-lg mt-md">
+<div class="grid grid-cols-1 md:grid-cols-5 gap-sm w-full" id="likert-group">
+<button class="likert-btn flex flex-col items-center justify-center p-md border border-outline-variant rounded-lg transition-all duration-150 ease-in text-center gap-sm" data-value="1">
+<span class="w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center indicator"></span>
+<span class="font-label-md text-label-md text-on-surface">Strongly Disagree</span>
+</button>
+<button class="likert-btn flex flex-col items-center justify-center p-md border border-outline-variant rounded-lg transition-all duration-150 ease-in text-center gap-sm" data-value="2">
+<span class="w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center indicator"></span>
+<span class="font-label-md text-label-md text-on-surface">Disagree</span>
+</button>
+<button class="likert-btn flex flex-col items-center justify-center p-md border border-outline-variant rounded-lg transition-all duration-150 ease-in text-center gap-sm" data-value="3">
+<span class="w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center indicator"></span>
+<span class="font-label-md text-label-md text-on-surface">Neutral</span>
+</button>
+<button class="likert-btn flex flex-col items-center justify-center p-md border border-outline-variant rounded-lg transition-all duration-150 ease-in text-center gap-sm" data-value="4">
+<span class="w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center indicator"></span>
+<span class="font-label-md text-label-md text-on-surface">Agree</span>
+</button>
+<button class="likert-btn flex flex-col items-center justify-center p-md border border-outline-variant rounded-lg transition-all duration-150 ease-in text-center gap-sm" data-value="5">
+<span class="w-6 h-6 rounded-full border-2 border-outline flex items-center justify-center indicator"></span>
+<span class="font-label-md text-label-md text-on-surface">Strongly Agree</span>
+</button>
+</div>
+</div>
+<!-- Action Area -->
+<div class="flex justify-end mt-lg border-t border-outline-variant pt-lg">
+<button class="opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md px-xl py-sm rounded-DEFAULT flex items-center gap-xs" id="next-btn">
+                    Next
+                    <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const likertBtns = document.querySelectorAll('.likert-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            likertBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Reset all buttons
+                    likertBtns.forEach(b => {
+                        b.classList.remove('active', 'border-primary');
+                        b.classList.add('border-outline-variant');
+                        const indicator = b.querySelector('.indicator');
+                        indicator.innerHTML = '';
+                        indicator.classList.remove('border-on-primary-container', 'bg-on-primary-container');
+                        indicator.classList.add('border-outline');
+                        b.querySelector('span:not(.indicator)').classList.remove('text-on-primary-container');
+                        b.querySelector('span:not(.indicator)').classList.add('text-on-surface');
+                    });
+
+                    // Set active button
+                    btn.classList.add('active', 'border-primary');
+                    btn.classList.remove('border-outline-variant');
+                    
+                    const activeIndicator = btn.querySelector('.indicator');
+                    activeIndicator.classList.remove('border-outline');
+                    activeIndicator.classList.add('border-on-primary-container', 'bg-on-primary-container');
+                    activeIndicator.innerHTML = '<span class="material-symbols-outlined text-primary" style="font-size: 16px; font-weight: bold;">check</span>';
+                    
+                    btn.querySelector('span:not(.indicator)').classList.remove('text-on-surface');
+                    btn.querySelector('span:not(.indicator)').classList.add('text-on-primary-container');
+
+                    // Show next button
+                    nextBtn.classList.remove('opacity-0', 'pointer-events-none');
+                });
+            });
+        });
+    </script>
+
+
+
+
+</body></html>
