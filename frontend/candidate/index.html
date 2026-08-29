@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="light" dir="ltr">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Arab Experts Institute - Assessment Portal</title>
+    <title>Candidate Dashboard - Aptitude Assessment | Arab Experts Institute</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -74,41 +74,43 @@
             0%, 100% { color: #ba1a1a; background-color: #ffdad6; }
             50% { color: #ffffff; background-color: #ba1a1a; }
         }
-        
-        .drag-item {
-            user-select: none;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
     </style>
 </head>
-<body class="text-on-surface antialiased flex flex-col min-h-screen selection:bg-primary/20">
+<body class="bg-[#F8FAFC] text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary/20">
 
-    <!-- Top App Bar (Sticky) -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+    <!-- Top Navigation Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-2.5 flex justify-between items-center">
+            
+            <!-- Left: Logo & Portal Title -->
             <div class="flex items-center gap-3">
-                <img src="../auth/assets/images/logo.png" alt="Arab Experts Institute" class="h-9 w-auto object-contain">
-                <div class="hidden sm:block border-l border-slate-200 pl-3">
-                    <h1 class="text-sm font-bold text-on-surface leading-tight">Arab Experts Institute</h1>
-                    <p class="text-[11px] text-on-surface-variant leading-tight">Psychometric Assessment Portal</p>
-                </div>
+                <img src="../auth/assets/images/logo.png" alt="Arab Experts Institute" class="h-10 w-auto object-contain">
+                <span class="text-base font-bold text-on-surface">Aptitude Assessment</span>
             </div>
 
-            <!-- Candidate Profile & Actions -->
-            <div class="flex items-center gap-4">
+            <!-- Middle: Nav Tabs -->
+            <nav aria-label="Main Navigation" class="hidden md:flex items-center gap-6">
+                <a href="index.html" aria-current="page" class="text-primary font-bold border-b-2 border-primary py-2 text-sm transition-colors">Dashboard</a>
+                <a href="#historySection" class="text-slate-600 hover:text-primary py-2 text-sm transition-colors">Reports</a>
+                <a href="#supportSection" class="text-slate-600 hover:text-primary py-2 text-sm transition-colors">Settings</a>
+            </nav>
+
+            <!-- Right: User Info & Logout -->
+            <div class="flex items-center gap-3">
                 <div class="text-right hidden sm:block">
-                    <span id="userDisplayName" class="block text-xs font-semibold text-on-surface">Candidate</span>
-                    <span id="userDisplayEmail" class="block text-[11px] text-on-surface-variant">candidate@domain.com</span>
+                    <span id="userDisplayNameHeader" class="block text-xs font-semibold text-on-surface">Candidate</span>
+                    <span id="userDisplayEmailHeader" class="block text-[11px] text-on-surface-variant">candidate@example.com</span>
                 </div>
                 <button id="logoutBtn" class="p-2 text-slate-500 hover:text-red-600 rounded-lg hover:bg-slate-100 transition-colors" title="Sign Out">
                     <span class="material-symbols-outlined text-[20px]">logout</span>
                 </button>
             </div>
+
         </div>
     </header>
 
     <!-- MAIN APP CONTAINER -->
-    <main class="flex-grow flex flex-col justify-center p-4 sm:p-6 md:p-8 max-w-6xl w-full mx-auto">
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex-grow w-full flex flex-col justify-center">
         
         <!-- Loading State -->
         <div id="view-loading" class="flex flex-col items-center justify-center py-20 text-center space-y-4">
@@ -116,7 +118,7 @@
             <p class="text-sm font-medium text-on-surface-variant">Synchronizing Assessment Session...</p>
         </div>
 
-        <!-- 1. VIEW: NO ACTIVE ASSESSMENT ASSIGNED -->
+        <!-- 1. VIEW: NO ACTIVE ASSESSMENT ASSIGNED (Empty state) -->
         <div id="view-empty" class="hidden text-center py-16 max-w-lg mx-auto bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
             <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-outlined text-3xl">assignment_late</span>
@@ -130,94 +132,150 @@
             </button>
         </div>
 
-        <!-- 2. VIEW: PENDING ASSESSMENT PORTAL (Ready to start) -->
-        <div id="view-pending-portal" class="hidden space-y-6">
-            <!-- Hero Card -->
-            <div class="bg-gradient-to-r from-primary to-primary-container text-white rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div class="space-y-2 max-w-xl">
-                    <span class="inline-block px-2.5 py-1 bg-white/20 text-white rounded-full text-xs font-semibold uppercase tracking-wider">Assigned Battery</span>
-                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Executive Assessment Battery</h2>
-                    <p class="text-sm text-white/90 leading-relaxed">
-                        Your 4-battery evaluation is ready. The assessment runs in a strict sequential order under server-monitored timers. Please ensure you are in a quiet room with a reliable connection.
-                    </p>
-                </div>
-                <div class="shrink-0 w-full md:w-auto">
-                    <button id="startAssessmentBtn" class="w-full md:w-auto px-6 py-3.5 bg-white text-primary hover:bg-slate-50 font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
-                        <span>Begin Assessment</span>
-                        <span class="material-symbols-outlined text-lg">arrow_forward</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- 4 Battery Overview Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- 2. VIEW: CANDIDATE DASHBOARD PORTAL VIEW (2-Column Layout) -->
+        <div id="view-pending-portal" class="hidden">
+            <div class="flex flex-col md:flex-row gap-6 items-start">
                 
-                <!-- Battery 0: PQ10 -->
-                <div id="card-battery-0" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 relative overflow-hidden">
-                    <div class="flex justify-between items-start">
-                        <span class="text-2xl font-black text-primary">01</span>
-                        <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-primary border border-primary/20">PART 1</span>
+                <!-- Left Sidebar Column: Profile, Support & Language -->
+                <aside class="w-full md:w-1/3 flex flex-col gap-5 order-2 md:order-1">
+                    
+                    <!-- Candidate Profile Card -->
+                    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
+                        <div class="flex items-center gap-3.5 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-primary shrink-0">
+                                <span class="material-symbols-outlined text-[24px]">person</span>
+                            </div>
+                            <div>
+                                <h2 id="sidebarCandidateName" class="text-base font-bold text-on-surface">Ahmed Al-Masri</h2>
+                                <p id="sidebarCandidateId" class="text-xs text-on-surface-variant">ID: CAN-8942-771</p>
+                            </div>
+                        </div>
+                        <a href="javascript:void(0)" class="inline-flex items-center gap-1.5 text-primary text-xs font-semibold hover:underline">
+                            <span class="material-symbols-outlined text-[16px]">edit</span>
+                            <span>Update Profile</span>
+                        </a>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-base text-on-surface">Personality (PQ10)</h3>
-                        <p class="text-xs text-on-surface-variant arabic-text">تقييم الشخصية القيادية</p>
-                    </div>
-                    <div class="text-xs text-slate-500 space-y-1 pt-2 border-t border-slate-100">
-                        <div class="flex justify-between"><span>Items:</span> <strong class="text-slate-700">140 items</strong></div>
-                        <div class="flex justify-between"><span>Duration:</span> <strong class="text-slate-700">40 Minutes</strong></div>
-                        <div class="flex justify-between"><span>Format:</span> <strong class="text-slate-700">Likert Scale</strong></div>
-                    </div>
-                </div>
 
-                <!-- Battery 1: SJT -->
-                <div id="card-battery-1" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 relative overflow-hidden">
-                    <div class="flex justify-between items-start">
-                        <span class="text-2xl font-black text-slate-400">02</span>
-                        <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">PART 2</span>
+                    <!-- Technical Support Card -->
+                    <div id="supportSection" class="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-slate-600 mt-0.5">headset_mic</span>
+                            <div>
+                                <h3 class="text-sm font-bold text-on-surface mb-1">Technical Support</h3>
+                                <p class="text-xs text-on-surface-variant mb-3 leading-relaxed">Experiencing technical issues? Contact testing support for assistance.</p>
+                                <button onclick="alert('Technical Support: support@arabexperts.com\nPhone: +966 11 000 0000')" class="text-xs font-semibold text-primary border border-primary bg-white rounded-lg px-3.5 py-1.5 hover:bg-primary hover:text-white transition-colors">
+                                    Contact Support
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-base text-on-surface">Situational Judgment (SJT)</h3>
-                        <p class="text-xs text-on-surface-variant arabic-text">الحكم على المواقف والقرارات</p>
-                    </div>
-                    <div class="text-xs text-slate-500 space-y-1 pt-2 border-t border-slate-100">
-                        <div class="flex justify-between"><span>Items:</span> <strong class="text-slate-700">16 Scenarios</strong></div>
-                        <div class="flex justify-between"><span>Duration:</span> <strong class="text-slate-700">45 Minutes</strong></div>
-                        <div class="flex justify-between"><span>Format:</span> <strong class="text-slate-700">4-Option Ranking</strong></div>
-                    </div>
-                </div>
 
-                <!-- Battery 2: Derailers -->
-                <div id="card-battery-2" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 relative overflow-hidden">
-                    <div class="flex justify-between items-start">
-                        <span class="text-2xl font-black text-slate-400">03</span>
-                        <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">PART 3</span>
+                    <!-- Language Switcher Card -->
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 flex justify-between items-center">
+                        <span class="text-xs font-medium text-on-surface-variant">Language / لغة</span>
+                        <button id="rtlToggle" class="text-primary font-semibold text-xs px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                            Switch to Arabic
+                        </button>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-base text-on-surface">Derailers & Drivers</h3>
-                        <p class="text-xs text-on-surface-variant arabic-text">السلوكيات المعطلة ومؤشر الخطر</p>
-                    </div>
-                    <div class="text-xs text-slate-500 space-y-1 pt-2 border-t border-slate-100">
-                        <div class="flex justify-between"><span>Items:</span> <strong class="text-slate-700">60 items</strong></div>
-                        <div class="flex justify-between"><span>Duration:</span> <strong class="text-slate-700">20 Minutes</strong></div>
-                        <div class="flex justify-between"><span>Format:</span> <strong class="text-slate-700">Likert Scale</strong></div>
-                    </div>
-                </div>
 
-                <!-- Battery 3: GCAT -->
-                <div id="card-battery-3" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 relative overflow-hidden">
-                    <div class="flex justify-between items-start">
-                        <span class="text-2xl font-black text-slate-400">04</span>
-                        <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">PART 4</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-on-surface">Cognitive Aptitude (GCAT)</h3>
-                        <p class="text-xs text-on-surface-variant arabic-text">القدرات الإدراكية والتفكير التحليلي</p>
-                    </div>
-                    <div class="text-xs text-slate-500 space-y-1 pt-2 border-t border-slate-100">
-                        <div class="flex justify-between"><span>Items:</span> <strong class="text-slate-700">42 Questions</strong></div>
-                        <div class="flex justify-between"><span>Duration:</span> <strong class="text-slate-700">20 Min Strict</strong></div>
-                        <div class="flex justify-between"><span>Format:</span> <strong class="text-slate-700">Multiple Choice</strong></div>
-                    </div>
+                </aside>
+
+                <!-- Right Main Column: Active Assessment & Assessment History -->
+                <div class="w-full md:w-2/3 flex flex-col gap-6 order-1 md:order-2">
+                    
+                    <!-- 1. Active Assessment Card -->
+                    <section class="bg-white rounded-xl shadow-xs border-t-4 border-t-[#00685f] border-x border-b border-slate-200 p-6 space-y-5">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <div>
+                                <h1 class="text-xl sm:text-2xl font-bold text-on-surface">Executive Leadership Aptitude</h1>
+                                <div class="flex items-center gap-4 text-xs text-on-surface-variant mt-1">
+                                    <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">format_list_bulleted</span> 4 Parts</span>
+                                    <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> Approx. 90 mins</span>
+                                </div>
+                            </div>
+                            <span id="attemptStatusBadge" class="bg-emerald-50 text-primary border border-primary/20 px-2.5 py-1 rounded text-xs font-bold">
+                                Status: Pending
+                            </span>
+                        </div>
+
+                        <!-- Warning / Integrity Block -->
+                        <div id="warningBlock" class="bg-slate-50 border-l-4 border-l-[#131b2e] p-4 flex items-start gap-3 rounded-r text-xs text-on-surface-variant leading-relaxed">
+                            <span class="material-symbols-outlined text-[#131b2e] text-lg shrink-0 mt-0.5">lock</span>
+                            <p>
+                                <strong class="text-on-surface">Assessment Integrity Rule:</strong> This assessment must be completed in a single continuous sitting. Once started, you cannot pause the timer or return to previous sections. Ensure you have 90 minutes of uninterrupted time.
+                            </p>
+                        </div>
+
+                        <!-- 4 Battery Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            
+                            <!-- Battery 0: PQ10 -->
+                            <div id="card-battery-0" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-bold text-primary">01 &bull; Personality (PQ10)</span>
+                                    <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-primary border border-primary/20">READY</span>
+                                </div>
+                                <p class="text-[11px] text-slate-500">140 items &bull; 40 mins &bull; Likert</p>
+                            </div>
+
+                            <!-- Battery 1: SJT -->
+                            <div id="card-battery-1" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-bold text-slate-700">02 &bull; SJT Ranking</span>
+                                    <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
+                                </div>
+                                <p class="text-[11px] text-slate-500">16 scenarios &bull; 45 mins &bull; Ranking</p>
+                            </div>
+
+                            <!-- Battery 2: Derailers -->
+                            <div id="card-battery-2" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-bold text-slate-700">03 &bull; Derailers & Drivers</span>
+                                    <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
+                                </div>
+                                <p class="text-[11px] text-slate-500">60 items &bull; 20 mins &bull; Likert</p>
+                            </div>
+
+                            <!-- Battery 3: GCAT -->
+                            <div id="card-battery-3" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-bold text-slate-700">04 &bull; Cognitive (GCAT)</span>
+                                    <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
+                                </div>
+                                <p class="text-[11px] text-slate-500">42 questions &bull; 20 mins &bull; MCQ</p>
+                            </div>
+
+                        </div>
+
+                        <!-- Start Button -->
+                        <div class="pt-2">
+                            <button id="startAssessmentBtn" class="w-full sm:w-auto bg-[#00685f] hover:bg-[#005049] text-white font-bold text-xs px-6 py-3 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2">
+                                <span>Start Assessment</span>
+                                <span class="material-symbols-outlined text-base">arrow_forward</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- 2. Assessment History Card -->
+                    <section id="historySection" class="bg-white border border-slate-200 rounded-xl p-6 space-y-4">
+                        <h2 class="text-lg font-bold text-on-surface">Assessment History</h2>
+                        <div id="historyListContainer" class="flex flex-col gap-3 border-t border-slate-100 pt-4">
+                            
+                            <!-- Prior attempt items -->
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 bg-slate-50/70 rounded-lg border border-slate-100">
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-800">Executive Leadership Assessment</h3>
+                                    <p class="text-[11px] text-slate-500">Completed &bull; 4 Batteries Finished</p>
+                                </div>
+                                <span class="bg-secondary-container text-on-secondary-container px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">verified</span>
+                                    <span>Submitted to HR</span>
+                                </span>
+                            </div>
+
+                        </div>
+                    </section>
+
                 </div>
 
             </div>

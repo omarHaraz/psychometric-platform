@@ -97,11 +97,16 @@ function checkAuth() {
             return;
         }
 
-        // Set user profile in header
-        const nameEl = document.getElementById("userDisplayName");
-        const emailEl = document.getElementById("userDisplayEmail");
-        if (nameEl) nameEl.textContent = currentUser.name || "Candidate";
-        if (emailEl) emailEl.textContent = currentUser.email || "";
+        // Set user profile in header & sidebar
+        const nameHeader = document.getElementById("userDisplayNameHeader");
+        const emailHeader = document.getElementById("userDisplayEmailHeader");
+        const sidebarName = document.getElementById("sidebarCandidateName");
+        const sidebarId = document.getElementById("sidebarCandidateId");
+        
+        if (nameHeader) nameHeader.textContent = currentUser.name || "Candidate";
+        if (emailHeader) emailHeader.textContent = currentUser.email || "";
+        if (sidebarName) sidebarName.textContent = currentUser.name || "Candidate";
+        if (sidebarId) sidebarId.textContent = `ID: CAN-${currentUser.id ? String(currentUser.id).padStart(4, '0') : '8942'}-${currentUser.email ? currentUser.email.substring(0, 3).toUpperCase() : '771'}`;
     } catch (e) {
         localStorage.removeItem("user");
         window.location.href = "../auth/login.html";
@@ -122,6 +127,30 @@ function initEventListeners() {
         logoutBtn.addEventListener("click", () => {
             localStorage.removeItem("user");
             window.location.href = "../auth/login.html";
+        });
+    }
+
+    const rtlToggle = document.getElementById("rtlToggle");
+    if (rtlToggle) {
+        rtlToggle.addEventListener("click", () => {
+            const htmlEl = document.documentElement;
+            const currentDir = htmlEl.getAttribute("dir") || "ltr";
+            const warningBlock = document.getElementById("warningBlock");
+            if (currentDir === "ltr") {
+                htmlEl.setAttribute("dir", "rtl");
+                rtlToggle.textContent = "Switch to English";
+                if (warningBlock) {
+                    warningBlock.classList.remove("border-l-4", "border-l-[#131b2e]", "rounded-r");
+                    warningBlock.classList.add("border-r-4", "border-r-[#131b2e]", "rounded-l");
+                }
+            } else {
+                htmlEl.setAttribute("dir", "ltr");
+                rtlToggle.textContent = "Switch to Arabic";
+                if (warningBlock) {
+                    warningBlock.classList.remove("border-r-4", "border-r-[#131b2e]", "rounded-l");
+                    warningBlock.classList.add("border-l-4", "border-l-[#131b2e]", "rounded-r");
+                }
+            }
         });
     }
 
