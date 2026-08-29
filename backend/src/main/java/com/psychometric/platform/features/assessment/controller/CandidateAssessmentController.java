@@ -14,7 +14,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/attempts")
 @PreAuthorize("hasRole('CANDIDATE')")
-@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class CandidateAssessmentController {
 
     private final AssessmentSessionService sessionService;
