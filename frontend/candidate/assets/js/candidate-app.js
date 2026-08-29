@@ -101,12 +101,12 @@ function checkAuth() {
         const nameHeader = document.getElementById("userDisplayNameHeader");
         const emailHeader = document.getElementById("userDisplayEmailHeader");
         const sidebarName = document.getElementById("sidebarCandidateName");
-        const sidebarId = document.getElementById("sidebarCandidateId");
+        const sidebarEmail = document.getElementById("sidebarCandidateEmail");
         
         if (nameHeader) nameHeader.textContent = currentUser.name || "Candidate";
         if (emailHeader) emailHeader.textContent = currentUser.email || "";
         if (sidebarName) sidebarName.textContent = currentUser.name || "Candidate";
-        if (sidebarId) sidebarId.textContent = `ID: CAN-${currentUser.id ? String(currentUser.id).padStart(4, '0') : '8942'}-${currentUser.email ? currentUser.email.substring(0, 3).toUpperCase() : '771'}`;
+        if (sidebarEmail) sidebarEmail.textContent = currentUser.email || "";
     } catch (e) {
         localStorage.removeItem("user");
         window.location.href = "../auth/login.html";

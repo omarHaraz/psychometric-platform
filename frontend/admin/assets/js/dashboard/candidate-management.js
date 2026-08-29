@@ -95,9 +95,6 @@ async function loadCandidates() {
                     <div class="d-flex flex-column align-items-center">
                         <span class="badge badge-sm ${stateBadgeColor} mb-1">${attempt.state}</span>
                         <small class="text-xxs text-secondary">Battery ${attempt.currentBatteryIndex + 1}/4 (${currentBattery})</small>
-                        <button class="btn btn-link text-primary text-xxs p-0 mt-1 copy-link-btn" data-token="${attempt.attemptToken}">
-                            <i class="material-symbols-rounded text-xs">content_copy</i> Copy Link
-                        </button>
                     </div>
                 `;
             } else if (attempt && attempt.state === 'SCORED') {
@@ -143,9 +140,12 @@ async function loadCandidates() {
                      </button>
                      ${
                          candidate.enabled
-                         ? `<button class="btn btn-link text-danger mb-0 deactivate-btn" data-id="${candidate.id}">Deactivate</button>`
-                         : `<button class="btn btn-link text-success mb-0 reactivate-btn" data-id="${candidate.id}">Enable / Activate</button>`
+                         ? `<button class="btn btn-link text-warning mb-0 deactivate-btn" data-id="${candidate.id}">Deactivate</button>`
+                         : `<button class="btn btn-link text-success mb-0 reactivate-btn" data-id="${candidate.id}">Enable</button>`
                      }
+                     <button class="btn btn-link text-danger mb-0 delete-perm-btn" data-id="${candidate.id}">
+                         <i class="material-symbols-rounded text-xs">delete</i> Delete
+                     </button>
                  </td>
              </tr>
             `;
@@ -183,6 +183,30 @@ function attachActionListeners() {
         });
     });
 
+    document.querySelectorAll('.delete-perm-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const id = e.currentTarget.dataset.id;
+            if (confirm('Are you sure you want to PERMANENTLY delete this candidate account and all associated test data? This action cannot be undone.')) {
+                try {
+                    const res = await fetch(`${API_BASE_URL}/${id}/permanent`, {
+                        method: 'DELETE',
+                        headers: authHeader
+                    });
+                    if (res.ok || res.status === 204) {
+                        alert('Candidate permanently deleted successfully.');
+                        loadCandidates();
+                    } else {
+                        const err = await res.json().catch(() => ({}));
+                        alert(`Failed to delete candidate: ${err.message || res.statusText}`);
+                    }
+                } catch (err) {
+                    console.error('Error deleting candidate:', err);
+                    alert('Error deleting candidate permanently.');
+                }
+            }
+        });
+    });
+
     document.querySelectorAll('.assign-attempt-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             const candidateId = Number(e.currentTarget.dataset.id);
@@ -196,8 +220,7 @@ function attachActionListeners() {
                     body: JSON.stringify({ candidateId })
                 });
                 if (res.ok) {
-                    const attempt = await res.json();
-                    alert(`Assessment successfully assigned!\nAttempt Token: ${attempt.attemptToken}`);
+                    alert('Assessment successfully assigned! The candidate can now log in and take the exam.');
                     loadCandidates();
                 } else if (res.status === 409) {
                     alert('Candidate already has an active (non-scored) assessment attempt.');
@@ -209,19 +232,6 @@ function attachActionListeners() {
                 console.error('Error assigning attempt:', err);
                 alert('Error assigning assessment attempt.');
             }
-        });
-    });
-
-    document.querySelectorAll('.copy-link-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const token = e.currentTarget.dataset.token;
-            const origin = window.location.origin;
-            const testUrl = `${origin}/candidate/index.html?token=${token}`;
-            navigator.clipboard.writeText(testUrl).then(() => {
-                alert(`Test Link Copied to Clipboard:\n${testUrl}`);
-            }).catch(() => {
-                prompt('Copy this link:', testUrl);
-            });
         });
     });
 }

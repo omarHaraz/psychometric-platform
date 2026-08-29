@@ -29,6 +29,22 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired(required = false)
+    private com.psychometric.platform.features.assessment.repository.AssessmentAttemptRepository attemptRepository;
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteUserPermanently(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (attemptRepository != null) {
+            List<com.psychometric.platform.features.assessment.domain.model.AssessmentAttempt> attempts = attemptRepository.findByCandidateId(id);
+            if (attempts != null && !attempts.isEmpty()) {
+                attemptRepository.deleteAll(attempts);
+            }
+        }
+        userRepository.delete(user);
+    }
+
     public List<AdminResponse> getAllAdmins()
     {
         return userRepository.findAll().stream()

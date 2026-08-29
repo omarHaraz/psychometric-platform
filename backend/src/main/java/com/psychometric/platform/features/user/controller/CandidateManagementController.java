@@ -51,4 +51,10 @@ public class CandidateManagementController {
         userService.deactivateUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}/permanent")
+    public ResponseEntity<Void> deleteCandidatePermanently(@PathVariable Long id) {
+        userService.deleteUserPermanently(id);
+        return ResponseEntity.noContent().build();
+    }
 }
