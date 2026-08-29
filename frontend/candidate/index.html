@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Arab Experts Institute - Assessment Portal</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00685f",
+                        "primary-container": "#008378",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#f4fffc",
+                        "surface": "#faf8ff",
+                        "surface-dim": "#d2d9f4",
+                        "surface-container": "#eaedff",
+                        "surface-container-low": "#f2f3ff",
+                        "surface-container-high": "#e2e7ff",
+                        "surface-container-highest": "#dae2fd",
+                        "on-surface": "#131b2e",
+                        "on-surface-variant": "#3d4947",
+                        "secondary": "#515f74",
+                        "secondary-container": "#d5e3fd",
+                        "on-secondary-container": "#57657b",
+                        "outline": "#6d7a77",
+                        "outline-variant": "#bcc9c6",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.375rem",
+                        "xl": "0.5rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', 'Cairo', sans-serif; background-color: #F8FAFC; }
+        .arabic-text { font-family: 'Cairo', 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+        .likert-btn.active {
+            background-color: #008378;
+            color: #ffffff;
+            border-color: #008378;
+        }
+        .likert-btn.active .indicator {
+            background-color: #ffffff;
+            border-color: #ffffff;
+        }
+        .likert-btn:not(.active):hover {
+            background-color: #f2f3ff;
+        }
+        
+        .timer-warning {
+            animation: pulse-red 1.5s infinite;
+        }
+        @keyframes pulse-red {
+            0%, 100% { color: #ba1a1a; background-color: #ffdad6; }
+            50% { color: #ffffff; background-color: #ba1a1a; }
+        }
+        
+        .drag-item {
+            user-select: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased flex flex-col min-h-screen selection:bg-primary/20">
+
+    <!-- Top App Bar (Sticky) -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="../auth/assets/images/logo.png" alt="Arab Experts Institute" class="h-9 w-auto object-contain">
+                <div class="hidden sm:block border-l border-slate-200 pl-3">
+                    <h1 class="text-sm font-bold text-on-surface leading-tight">Arab Experts Institute</h1>
+                    <p class="text-[11px] text-on-surface-variant leading-tight">Psychometric Assessment Portal</p>
+                </div>
+            </div>
+
+            <!-- Candidate Profile & Actions -->
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <span id="userDisplayName" class="block text-xs font-semibold text-on-surface">Candidate</span>
+                    <span id="userDisplayEmail" class="block text-[11px] text-on-surface-variant">candidate@domain.com</span>
+                </div>
+                <button id="logoutBtn" class="p-2 text-slate-500 hover:text-red-600 rounded-lg hover:bg-slate-100 transition-colors" title="Sign Out">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="flex-grow flex flex-col justify-center p-4 sm:p-6 md:p-8 max-w-6xl w-full mx-auto">
+        
+        <!-- Loading State -->
+        <div id="view-loading" class="flex flex-col items-center justify-center py-20 text-center space-y-4">
+            <div class="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-sm font-medium text-on-surface-variant">Synchronizing Assessment Session...</p>
+        </div>
+
+        <!-- 1. VIEW: NO ACTIVE ASSESSMENT ASSIGNED -->
+        <div id="view-empty" class="hidden text-center py-16 max-w-lg mx-auto bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-outlined text-3xl">assignment_late</span>
+            </div>
+            <h2 class="text-xl font-bold text-on-surface mb-2">No Active Assessment Assigned</h2>
+            <p class="text-sm text-on-surface-variant mb-6">
+                You do not currently have any pending psychometric evaluations. Once your administrator or evaluation committee assigns your test battery, it will appear here automatically.
+            </p>
+            <button onclick="window.location.reload()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors">
+                <span class="material-symbols-outlined text-sm">refresh</span> Check Again
+            </button>
+        </div>
+
+        <!-- 2. VIEW: PENDING ASSESSMENT PORTAL (Ready to start) -->
+        <div id="view-pending-portal" class="hidden space-y-6">
+            <!-- Hero Card -->
+            <div class="bg-gradient-to-r from-primary to-primary-container text-white rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div class="space-y-2 max-w-xl">
+                    <span class="inline-block px-2.5 py-1 bg-white/20 text-white rounded-full text-xs font-semibold uppercase tracking-wider">Assigned Battery</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Executive Assessment Battery</h2>
+                    <p class="text-sm text-white/90 leading-relaxed">
+                        Your 4-battery evaluation is ready. The assessment runs in a strict sequential order under server-monitored timers. Please ensure you are in a quiet room with a reliable connection.
+                    </p>
+                </div>
+                <div class="shrink-0 w-full md:w-auto">
+                    <button id="startAssessmentBtn" class="w-full md:w-auto px-6 py-3.5 bg-white text-primary hover:bg-slate-50 font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                        <span>Begin Assessment</span>
+                        <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4 Battery Overview Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Battery 0: PQ10 -->
+                <div id="card-battery-0" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 relative overflow-hidden">
+                    <div class="flex justify-between items-start">
+                        <span class="text-2xl font-black text-primary">01</span>
+                        <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-primary border border-primary/20">PART 1</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-on-surface">Personality (PQ10)</h3>
+                        <p class="text-xs text-on-surface-variant arabic-text">تقييم الشخصية القيادية</p>
+                    </div>
+                    <div class="text-xs text-slate-500 space-y-1 pt-2 border-t border-slate-100">
+                        <div class="flex justify-between"><span>Items:</span> <strong class="text-slate-700">140 items</strong></div>
+                        <div class="flex justify-between"><span>Duration:</span> <strong class="text-slate-700">40 Minutes</strong></div>
+                        <div class="flex justify-between"><span>Format:</span> <strong class="text-slate-700">Likert Scale</strong></div>
+                    </div>
+                </div>
+
+                <!-- Battery 1: SJT -->
+                <div id="card-battery-1" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 relative overflow-hidden">
+                    <div class="flex justify-between items-start">
+                        <span class="text-2xl font-black text-slate-400">02</span>
+                        <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">PART 2</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-on-surface">Situational Judgment (SJT)</h3>
+                        <p class="text-xs text-on-surface-variant arabic-text">الحكم على المواقف والقرارات</p>
+                    </div>
+                    <div class="text-xs text-slate-500 space-y-1 pt-2 border-t border-slate-100">
+                        <div class="flex justify-between"><span>Items:</span> <strong class="text-slate-700">16 Scenarios</strong></div>
+                        <div class="flex justify-between"><span>Duration:</span> <strong class="text-slate-700">45 Minutes</strong></div>
+                        <div class="flex justify-between"><span>Format:</span> <strong class="text-slate-700">4-Option Ranking</strong></div>
+                    </div>
+                </div>
+
+                <!-- Battery 2: Derailers -->
+                <div id="card-battery-2" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 relative overflow-hidden">
+                    <div class="flex justify-between items-start">
+                        <span class="text-2xl font-black text-slate-400">03</span>
+                        <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">PART 3</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-on-surface">Derailers & Drivers</h3>
+                        <p class="text-xs text-on-surface-variant arabic-text">السلوكيات المعطلة ومؤشر الخطر</p>
+                    </div>
+                    <div class="text-xs text-slate-500 space-y-1 pt-2 border-t border-slate-100">
+                        <div class="flex justify-between"><span>Items:</span> <strong class="text-slate-700">60 items</strong></div>
+                        <div class="flex justify-between"><span>Duration:</span> <strong class="text-slate-700">20 Minutes</strong></div>
+                        <div class="flex justify-between"><span>Format:</span> <strong class="text-slate-700">Likert Scale</strong></div>
+                    </div>
+                </div>
+
+                <!-- Battery 3: GCAT -->
+                <div id="card-battery-3" class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 relative overflow-hidden">
+                    <div class="flex justify-between items-start">
+                        <span class="text-2xl font-black text-slate-400">04</span>
+                        <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">PART 4</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-on-surface">Cognitive Aptitude (GCAT)</h3>
+                        <p class="text-xs text-on-surface-variant arabic-text">القدرات الإدراكية والتفكير التحليلي</p>
+                    </div>
+                    <div class="text-xs text-slate-500 space-y-1 pt-2 border-t border-slate-100">
+                        <div class="flex justify-between"><span>Items:</span> <strong class="text-slate-700">42 Questions</strong></div>
+                        <div class="flex justify-between"><span>Duration:</span> <strong class="text-slate-700">20 Min Strict</strong></div>
+                        <div class="flex justify-between"><span>Format:</span> <strong class="text-slate-700">Multiple Choice</strong></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 3. VIEW: PRE-BATTERY INSTRUCTIONS -->
+        <div id="view-instructions" class="hidden max-w-2xl mx-auto w-full bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="text-center space-y-2 pb-4 border-b border-slate-100">
+                <span id="instPartNumber" class="text-xs font-bold text-primary uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-primary/20">Part 1 of 4</span>
+                <h2 id="instBatteryTitle" class="text-2xl font-bold text-on-surface">Personality Evaluation (PQ10)</h2>
+                <p id="instBatteryArabicTitle" class="text-sm text-on-surface-variant arabic-text">تقييم السمات القيادية</p>
+            </div>
+
+            <!-- Key Info Box -->
+            <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl text-center border border-slate-100">
+                <div>
+                    <span class="block text-[11px] text-slate-500 uppercase font-semibold">Total Items</span>
+                    <strong id="instItemCount" class="text-base text-slate-800">140</strong>
+                </div>
+                <div>
+                    <span class="block text-[11px] text-slate-500 uppercase font-semibold">Time Allowed</span>
+                    <strong id="instTimeLimit" class="text-base text-slate-800">40 Minutes</strong>
+                </div>
+                <div>
+                    <span class="block text-[11px] text-slate-500 uppercase font-semibold">Type</span>
+                    <strong id="instFormatType" class="text-base text-slate-800">Likert Scale</strong>
+                </div>
+            </div>
+
+            <!-- Instructions List -->
+            <div class="space-y-3 text-xs text-on-surface-variant leading-relaxed">
+                <h4 class="font-bold text-on-surface text-sm">Important Instructions:</h4>
+                <ul class="space-y-2 list-disc pl-5">
+                    <li>Read each item carefully and respond with your immediate, natural judgment.</li>
+                    <li>There are no "right" or "wrong" personality answers; consistency is evaluated.</li>
+                    <li>The test timer is strictly enforced by the server. Once started, it cannot be paused.</li>
+                    <li>Your answers auto-save continuously in real time.</li>
+                </ul>
+            </div>
+
+            <!-- Start Action Button -->
+            <button id="beginBatteryBtn" class="w-full py-3.5 bg-primary hover:bg-primary-container text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                <span>I Understand &bull; Begin Battery</span>
+                <span class="material-symbols-outlined text-lg">play_arrow</span>
+            </button>
+        </div>
+
+        <!-- 4. VIEW: ACTIVE TEST SCREEN -->
+        <div id="view-active-test" class="hidden space-y-6 w-full">
+            
+            <!-- Battery Header with Live Timer & Progress -->
+            <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <span id="activeBatteryBadge" class="px-2.5 py-1 bg-emerald-50 text-primary text-xs font-bold rounded-lg border border-primary/20 uppercase">PQ10</span>
+                    <div>
+                        <h3 id="activeBatteryTitle" class="font-bold text-sm sm:text-base text-on-surface">Personality Assessment</h3>
+                        <p id="activeProgressLabel" class="text-xs text-on-surface-variant font-medium">Question 1 of 140</p>
+                    </div>
+                </div>
+
+                <!-- Timer Component -->
+                <div id="timerContainer" class="flex items-center gap-2 px-3.5 py-1.5 bg-slate-100 rounded-lg border border-slate-200 text-slate-700">
+                    <span class="material-symbols-outlined text-lg">timer</span>
+                    <span id="timerDisplay" class="font-mono text-sm font-bold tracking-wider">39:59</span>
+                </div>
+            </div>
+
+            <!-- Global Progress Bar -->
+            <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                <div id="progressBarFill" class="bg-primary h-full transition-all duration-300" style="width: 1%;"></div>
+            </div>
+
+            <!-- QUESTION CARD CONTAINER -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-8 min-h-[380px] flex flex-col justify-between">
+                
+                <!-- Dynamic Question Body -->
+                <div id="questionBody" class="space-y-6">
+                    <!-- Dynamic Content Inserted by JS -->
+                </div>
+
+                <!-- Bottom Navigation & Submission Actions -->
+                <div class="flex justify-between items-center pt-6 border-t border-slate-100">
+                    <button id="prevQuestionBtn" class="px-4 py-2.5 border border-slate-300 text-slate-600 hover:bg-slate-50 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-30 disabled:pointer-events-none">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span> Previous
+                    </button>
+
+                    <div class="flex items-center gap-3">
+                        <button id="nextQuestionBtn" class="px-5 py-2.5 bg-primary hover:bg-primary-container text-white text-xs font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-1.5">
+                            Next <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </button>
+                        <button id="submitBatteryBtn" class="hidden px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-md transition-colors flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-sm">check_circle</span> Submit Battery
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 5. VIEW: FINAL ASSESSMENT COMPLETE -->
+        <div id="view-complete" class="hidden max-w-lg mx-auto w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center space-y-6">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                <span class="material-symbols-outlined text-3xl">verified</span>
+            </div>
+            
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-on-surface">Assessment Completed!</h2>
+                <p class="text-xs text-on-surface-variant">All 4 batteries have been successfully submitted and locked.</p>
+            </div>
+
+            <!-- Report Status Notice -->
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-left space-y-2 text-xs text-amber-800">
+                <div class="flex items-center gap-2 font-bold text-amber-900">
+                    <span class="material-symbols-outlined text-base">hourglass_top</span>
+                    <span>Executive Dossier in Processing</span>
+                </div>
+                <p class="leading-relaxed">
+                    Your psychometric responses and cognitive tests are currently being calculated by the scoring engine. Once evaluated by the board, your official 5-Page Leadership Dossier report will be released to your institution.
+                </p>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="window.location.reload()" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition-colors">
+                    Back to Portal Home
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- OVERLAYS & TRANSITIONS -->
+
+    <!-- Auto-Advance Interstitial Overlay -->
+    <div id="overlay-auto-advance" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center space-y-4 shadow-2xl animate-fade-in">
+            <div class="w-12 h-12 bg-emerald-50 text-primary rounded-full flex items-center justify-center mx-auto">
+                <span class="material-symbols-outlined text-2xl">check</span>
+            </div>
+            <h3 class="text-lg font-bold text-on-surface">Battery Completed!</h3>
+            <p class="text-xs text-on-surface-variant">Flushing responses to server and preparing next battery in sequence...</p>
+            <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-primary h-full animate-pulse w-full"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timed-Out Overlay -->
+    <div id="overlay-timeout" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center space-y-4 shadow-2xl border border-red-200">
+            <div class="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto">
+                <span class="material-symbols-outlined text-2xl">timer_off</span>
+            </div>
+            <h3 class="text-lg font-bold text-red-700">Time Cutoff Reached</h3>
+            <p class="text-xs text-on-surface-variant">Your allocated time for this battery has expired. Your answered items have been safely recorded.</p>
+            <p class="text-[11px] text-slate-400">Auto-advancing to the next assessment section...</p>
+        </div>
+    </div>
+
+    <!-- Candidate App Orchestrator JS -->
+    <script type="module" src="assets/js/candidate-app.js"></script>
+</body>
+</html>

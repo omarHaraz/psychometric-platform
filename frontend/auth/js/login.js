@@ -70,8 +70,8 @@ if (roles.includes("ROLE_ADMIN") || roles.includes("ROLE_SUPER_ADMIN")) {
     console.log("Redirecting to admin...");
     window.location.href = `${repoPrefix}/admin/pages/dashboard.html`;
 } else {
-    console.log("Redirecting to customer...");
-    window.location.href = `${repoPrefix}/customer/pages/home.html`;
+    console.log("Redirecting to candidate portal...");
+    window.location.href = `${repoPrefix}/candidate/index.html`;
 }
     } catch (error) {
         formError.hidden = false;

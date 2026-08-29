@@ -56,10 +56,70 @@ async function loadCandidates() {
 
         tableBody.innerHTML = '';
 
+        // Load assessment attempts for all candidates in parallel
+        const candidateAttemptsMap = {};
+        await Promise.all(activeCandidatesList.map(async (c) => {
+            try {
+                const attRes = await fetch(`${API_BASE}/api/admin/attempts?candidateId=${c.id}`, {
+                    headers: authHeader
+                });
+                if (attRes.ok) {
+                    const attempts = await attRes.json();
+                    if (attempts && attempts.length > 0) {
+                        // Get the latest non-scored attempt or latest attempt
+                        candidateAttemptsMap[c.id] = attempts[attempts.length - 1];
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to fetch attempts for candidate", c.id, e);
+            }
+        }));
+
         activeCandidatesList.forEach(candidate => {
             const statusBadge = candidate.enabled
                 ? '<span class="badge badge-sm bg-gradient-success">Active</span>'
                 : '<span class="badge badge-sm bg-gradient-warning">Pending / Deactivated</span>';
+
+            const attempt = candidateAttemptsMap[candidate.id];
+            let assessmentHtml = '';
+
+            if (attempt && attempt.state !== 'SCORED') {
+                const batteryNames = ['PQ10', 'SJT', 'DERAILERS', 'GCAT'];
+                const currentBattery = batteryNames[attempt.currentBatteryIndex] || 'PQ10';
+                
+                let stateBadgeColor = 'bg-gradient-info';
+                if (attempt.state === 'INIT') stateBadgeColor = 'bg-gradient-warning';
+                else if (attempt.state === 'ALL_SUBMITTED') stateBadgeColor = 'bg-gradient-success';
+
+                assessmentHtml = `
+                    <div class="d-flex flex-column align-items-center">
+                        <span class="badge badge-sm ${stateBadgeColor} mb-1">${attempt.state}</span>
+                        <small class="text-xxs text-secondary">Battery ${attempt.currentBatteryIndex + 1}/4 (${currentBattery})</small>
+                        <button class="btn btn-link text-primary text-xxs p-0 mt-1 copy-link-btn" data-token="${attempt.attemptToken}">
+                            <i class="material-symbols-rounded text-xs">content_copy</i> Copy Link
+                        </button>
+                    </div>
+                `;
+            } else if (attempt && attempt.state === 'SCORED') {
+                assessmentHtml = `
+                    <div class="text-center">
+                        <span class="badge badge-sm bg-gradient-dark">SCORED</span>
+                        <br><button class="btn btn-xs bg-gradient-primary mt-1 assign-attempt-btn" data-id="${candidate.id}">Re-assign</button>
+                    </div>
+                `;
+            } else {
+                assessmentHtml = `
+                    <div class="text-center">
+                        ${
+                            candidate.enabled
+                            ? `<button class="btn btn-xs bg-gradient-primary mb-0 assign-attempt-btn" data-id="${candidate.id}">
+                                <i class="material-symbols-rounded text-xs">assignment</i> Assign Test
+                               </button>`
+                            : `<span class="text-xxs text-muted">Enable account first</span>`
+                        }
+                    </div>
+                `;
+            }
 
             const row = `
              <tr>                      
@@ -73,6 +133,9 @@ async function loadCandidates() {
                  </td>
                  <td class="align-middle text-center text-sm">
                      ${statusBadge}
+                 </td>
+                 <td class="align-middle text-center">
+                     ${assessmentHtml}
                  </td>
                  <td class="align-middle text-center">
                      <button class="btn btn-link text-secondary mb-0 edit-btn" data-id="${candidate.id}">
@@ -117,6 +180,48 @@ function attachActionListeners() {
         btn.addEventListener('click', async (e) => {
             const id = e.currentTarget.dataset.id;
             await toggleCandidateStatus(id, 'PATCH');
+        });
+    });
+
+    document.querySelectorAll('.assign-attempt-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const candidateId = Number(e.currentTarget.dataset.id);
+            if (!confirm('Assign a new 4-Battery Assessment Attempt to this candidate?')) {
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/attempts`, {
+                    method: 'POST',
+                    headers: authHeader,
+                    body: JSON.stringify({ candidateId })
+                });
+                if (res.ok) {
+                    const attempt = await res.json();
+                    alert(`Assessment successfully assigned!\nAttempt Token: ${attempt.attemptToken}`);
+                    loadCandidates();
+                } else if (res.status === 409) {
+                    alert('Candidate already has an active (non-scored) assessment attempt.');
+                } else {
+                    const data = await res.json().catch(() => ({}));
+                    alert(`Failed to assign assessment: ${data.message || res.statusText}`);
+                }
+            } catch (err) {
+                console.error('Error assigning attempt:', err);
+                alert('Error assigning assessment attempt.');
+            }
+        });
+    });
+
+    document.querySelectorAll('.copy-link-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const token = e.currentTarget.dataset.token;
+            const origin = window.location.origin;
+            const testUrl = `${origin}/candidate/index.html?token=${token}`;
+            navigator.clipboard.writeText(testUrl).then(() => {
+                alert(`Test Link Copied to Clipboard:\n${testUrl}`);
+            }).catch(() => {
+                prompt('Copy this link:', testUrl);
+            });
         });
     });
 }
