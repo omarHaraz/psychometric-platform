@@ -40,7 +40,8 @@ public class BatterySession {
     @OneToMany(mappedBy = "batterySession", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CandidateResponse> responses = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "battery_session_sampled_items", joinColumns = @JoinColumn(name = "session_id"))
     @OrderColumn(name = "position")
     @Column(name = "item_id")

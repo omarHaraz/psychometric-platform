@@ -40,7 +40,7 @@ public class AssessmentAttempt {
     private Instant startTime;
     private Instant submitTime;
 
-    @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("sequenceOrder ASC")
     private List<BatterySession> batterySessions = new ArrayList<>();
 

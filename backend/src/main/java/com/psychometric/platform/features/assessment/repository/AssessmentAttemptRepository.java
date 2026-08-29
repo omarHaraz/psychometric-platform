@@ -10,7 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface AssessmentAttemptRepository extends JpaRepository<AssessmentAttempt, Long> {
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"candidate", "createdBy", "batterySessions"})
     Optional<AssessmentAttempt> findByAttemptToken(String attemptToken);
+
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"candidate", "createdBy", "batterySessions"})
     List<AssessmentAttempt> findByCandidateId(Long candidateId);
+
     boolean existsByCandidateIdAndStateNot(Long candidateId, AttemptState state);
 }
