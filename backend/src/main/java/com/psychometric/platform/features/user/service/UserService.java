@@ -37,7 +37,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         if (attemptRepository != null) {
-            List<com.psychometric.platform.features.assessment.domain.model.AssessmentAttempt> attempts = attemptRepository.findByCandidateId(id);
+            List<com.psychometric.platform.features.assessment.domain.model.AssessmentAttempt> attempts = attemptRepository.findByCandidateIdOrderByCreatedAtDesc(id);
             if (attempts != null && !attempts.isEmpty()) {
                 attemptRepository.deleteAll(attempts);
             }

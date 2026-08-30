@@ -70,8 +70,9 @@ public class AssessmentSessionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Candidate account is disabled");
         }
 
-        if (attemptRepo.existsByCandidateIdAndStateNot((long) candidate.getId(), AttemptState.SCORED)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Candidate already has an active attempt");
+        if (attemptRepo.existsByCandidateIdAndStateIn((long) candidate.getId(), 
+                java.util.List.of(com.psychometric.platform.features.assessment.domain.enums.AttemptState.INIT, com.psychometric.platform.features.assessment.domain.enums.AttemptState.IN_PROGRESS))) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT, "Candidate already has an active attempt");
         }
 
         AssessmentAttempt attempt = new AssessmentAttempt();
@@ -116,13 +117,18 @@ public class AssessmentSessionService {
     
     public AssessmentAttempt getPendingAttempt(String username) {
         User authenticatedUser = getUserByEmail(username);
-        List<AssessmentAttempt> attempts = attemptRepo.findByCandidateId((long) authenticatedUser.getId());
+        List<AssessmentAttempt> attempts = attemptRepo.findByCandidateIdOrderByCreatedAtDesc((long) authenticatedUser.getId());
         return attempts.stream()
                 .filter(a -> a.getState() != AttemptState.SCORED)
                 .findFirst()
                 .orElse(null);
     }
 
+    @Transactional(readOnly = true)
+    public List<AssessmentAttempt> getHistory(String username) {
+        User authenticatedUser = getUserByEmail(username);
+        return attemptRepo.findByCandidateIdOrderByCreatedAtDesc((long) authenticatedUser.getId());
+    }
     @Transactional
     public AssessmentAttempt startAttempt(String token, String username) {
         AssessmentAttempt attempt = getAttemptByToken(token, username);
@@ -201,15 +207,11 @@ public class AssessmentSessionService {
                     .findFirst()
                     .orElseThrow();
             
-            nextSession.setState(SessionState.IN_PROGRESS);
-            nextSession.setStartTime(Instant.now());
+            nextSession.setState(SessionState.LOCKED);
 
             // Perform stratified item sampling for the newly unlocked battery
             List<Long> sampledIds = samplingService.sampleItemsForBattery(nextSession.getBatteryType());
             nextSession.setSampledItemIds(sampledIds);
-            
-            String timerKey = "battery_session:" + nextSession.getId() + ":timer";
-            redisTemplate.opsForValue().set(timerKey, String.valueOf(nextSession.getStartTime().toEpochMilli()));
         } else {
             // All done
             attempt.setState(AttemptState.ALL_SUBMITTED);
@@ -288,8 +290,19 @@ public class AssessmentSessionService {
     /**
      * Resolves and returns the sanitized items in the EXACT stored order of sampledItemIds.
      */
+    @Transactional
     public List<Map<String, Object>> getBatteryItems(Long sessionId, String username) {
         BatterySession session = validateSessionAction(sessionId, username);
+        
+        if (session.getState() == SessionState.LOCKED) {
+            session.setState(SessionState.IN_PROGRESS);
+            session.setStartTime(Instant.now());
+            sessionRepo.save(session);
+            
+            String timerKey = "battery_session:" + session.getId() + ":timer";
+            redisTemplate.opsForValue().set(timerKey, String.valueOf(session.getStartTime().toEpochMilli()));
+        }
+
         List<Long> sampledIds = session.getSampledItemIds();
         if (sampledIds == null || sampledIds.isEmpty()) {
             return Collections.emptyList();
@@ -366,7 +379,7 @@ public class AssessmentSessionService {
 
         // Fetch options without scoring key / expert rank
         jdbcTemplate.query(
-                "SELECT id, scenario_id, option_key, statement_ar FROM sjt_options WHERE scenario_id IN (" + inSql + ") ORDER BY option_key ASC",
+                "SELECT id, scenario_id, option_key, action_text_ar FROM sjt_options WHERE scenario_id IN (" + inSql + ") ORDER BY option_key ASC",
                 rs -> {
                     Long scenarioId = rs.getLong("scenario_id");
                     if (itemMap.containsKey(scenarioId)) {
@@ -375,7 +388,7 @@ public class AssessmentSessionService {
                         Map<String, Object> opt = new HashMap<>();
                         opt.put("id", rs.getLong("id"));
                         opt.put("optionKey", rs.getString("option_key"));
-                        opt.put("statementAr", rs.getString("statement_ar"));
+                        opt.put("statementAr", rs.getString("action_text_ar"));
                         opts.add(opt);
                     }
                 },
@@ -410,7 +423,7 @@ public class AssessmentSessionService {
 
         // Fetch options without correct key
         jdbcTemplate.query(
-                "SELECT id, question_id, option_key, text_ar, image_url FROM gcat_options WHERE question_id IN (" + inSql + ") ORDER BY option_key ASC",
+                "SELECT id, question_id, option_key, option_text_ar, option_image_url FROM gcat_options WHERE question_id IN (" + inSql + ") ORDER BY option_key ASC",
                 rs -> {
                     Long questionId = rs.getLong("question_id");
                     if (itemMap.containsKey(questionId)) {
@@ -419,8 +432,8 @@ public class AssessmentSessionService {
                         Map<String, Object> opt = new HashMap<>();
                         opt.put("id", rs.getLong("id"));
                         opt.put("optionKey", rs.getString("option_key"));
-                        opt.put("textAr", rs.getString("text_ar"));
-                        opt.put("imageUrl", rs.getString("image_url"));
+                        opt.put("textAr", rs.getString("option_text_ar"));
+                        opt.put("imageUrl", rs.getString("option_image_url"));
                         opts.add(opt);
                     }
                 },

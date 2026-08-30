@@ -14,7 +14,8 @@ public interface AssessmentAttemptRepository extends JpaRepository<AssessmentAtt
     Optional<AssessmentAttempt> findByAttemptToken(String attemptToken);
 
     @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"candidate", "createdBy", "batterySessions"})
-    List<AssessmentAttempt> findByCandidateId(Long candidateId);
+    List<AssessmentAttempt> findByCandidateIdOrderByCreatedAtDesc(Long candidateId);
 
     boolean existsByCandidateIdAndStateNot(Long candidateId, AttemptState state);
+    boolean existsByCandidateIdAndStateIn(Long candidateId, List<AttemptState> states);
 }

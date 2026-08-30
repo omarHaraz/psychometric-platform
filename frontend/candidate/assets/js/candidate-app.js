@@ -1,3 +1,229 @@
+
+// Custom Modal System
+window.showCustomModal = function(options) {
+    const overlay = document.getElementById("customModalOverlay");
+    const card = document.getElementById("customModalCard");
+    const titleEl = document.getElementById("customModalTitle");
+    const messageEl = document.getElementById("customModalMessage");
+    const iconEl = document.getElementById("customModalIcon");
+    const iconContainer = document.getElementById("customModalIconContainer");
+    const actionsContainer = document.getElementById("customModalActions");
+    
+    if (!overlay) return;
+    
+    titleEl.textContent = options.title || "Information";
+    
+    // Support newlines in message
+    messageEl.innerHTML = (options.message || "").replace(/\n/g, '<br>');
+    
+    iconEl.textContent = options.icon || "info";
+    
+    // Reset colors
+    iconContainer.className = "w-14 h-14 rounded-full mx-auto flex items-center justify-center mb-4";
+    if (options.type === "danger") {
+        iconContainer.classList.add("bg-red-50", "text-red-600");
+    } else if (options.type === "success") {
+        iconContainer.classList.add("bg-emerald-50", "text-emerald-600");
+    } else if (options.type === "warning") {
+        iconContainer.classList.add("bg-amber-50", "text-amber-600");
+    } else {
+        iconContainer.classList.add("bg-[#00685f]/10", "text-[#00685f]");
+    }
+    
+    actionsContainer.innerHTML = "";
+    const isArabic = document.documentElement.getAttribute("dir") === "rtl";
+    
+    if (options.buttons && options.buttons.length > 0) {
+        options.buttons.forEach(btnOpts => {
+            const btn = document.createElement("button");
+            btn.className = `flex-1 py-2.5 rounded-xl font-bold text-sm transition-colors ${
+                btnOpts.style === "primary" ? "bg-[#00685f] text-white hover:bg-[#004e47]" :
+                btnOpts.style === "danger" ? "bg-red-600 text-white hover:bg-red-700" :
+                "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+            }`;
+            let t = btnOpts.text;
+            if (isArabic) {
+                if (t === "Cancel") t = "إلغاء";
+                if (t === "Confirm") t = "تأكيد";
+                if (t === "Submit") t = "إرسال";
+                if (t === "Log Out") t = "تسجيل الخروج";
+            }
+            btn.textContent = t;
+            btn.addEventListener("click", () => {
+                closeCustomModal();
+                if (btnOpts.onClick) btnOpts.onClick();
+            });
+            actionsContainer.appendChild(btn);
+        });
+    } else {
+        // Default OK button
+        const btn = document.createElement("button");
+        btn.className = "flex-1 py-2.5 rounded-xl font-bold text-sm bg-[#00685f] text-white hover:bg-[#004e47] transition-colors";
+        btn.textContent = isArabic ? "حسناً" : "OK";
+        btn.addEventListener("click", closeCustomModal);
+        actionsContainer.appendChild(btn);
+    }
+    
+    overlay.classList.remove("hidden");
+    // trigger reflow
+    void overlay.offsetWidth;
+    overlay.style.opacity = "1";
+    card.classList.remove("scale-95", "opacity-0");
+    card.classList.add("scale-100", "opacity-100");
+    
+    applyCurrentTranslation();
+}
+
+window.closeCustomModal = function() {
+    const overlay = document.getElementById("customModalOverlay");
+    const card = document.getElementById("customModalCard");
+    if (!overlay) return;
+    
+    overlay.style.opacity = "0";
+    card.classList.remove("scale-100", "opacity-100");
+    card.classList.add("scale-95", "opacity-0");
+    setTimeout(() => {
+        overlay.classList.add("hidden");
+    }, 200);
+}
+
+
+
+const i18nDict = {
+    "Dashboard": "لوحة القيادة",
+    "Reports": "التقارير",
+    "Settings": "الإعدادات",
+    "LOG OUT": "تسجيل الخروج",
+    "Update Profile": "تحديث الملف الشخصي",
+    "Technical Support": "الدعم الفني",
+    "Experiencing technical issues? Contact testing support for assistance.": "هل تواجه مشاكل فنية؟ اتصل بدعم الاختبار للحصول على المساعدة.",
+    "Contact Support": "اتصل بالدعم",
+    "Language / لغة": "Language / لغة",
+    "Switch to Arabic": "التبديل إلى العربية",
+    "Switch to English": "التبديل إلى الإنجليزية",
+    "No Active Assessment Assigned": "لم يتم تعيين تقييم نشط",
+    "You do not currently have any pending psychometric evaluations. Please contact your administrator to assign a test to your profile.": "ليس لديك حاليًا أي تقييمات نفسية معلقة. يرجى الاتصال بالمسؤول لتعيين اختبار لملفك الشخصي.",
+    "Executive Leadership Aptitude": "كفاءة القيادة التنفيذية",
+    "4 Parts": "4 أجزاء",
+    "Approx. 90 mins": "حوالي 90 دقيقة",
+    "Status: Pending": "الحالة: قيد الانتظار",
+    "Assessment Integrity Rule:": "قاعدة نزاهة التقييم:",
+    "This assessment must be completed in a single continuous sitting. Once started, you cannot pause the timer or return to previous sections. Ensure you have 90 minutes of uninterrupted time.": "يجب إكمال هذا التقييم في جلسة واحدة متواصلة. بمجرد البدء ، لا يمكنك إيقاف المؤقت مؤقتًا أو العودة إلى الأقسام السابقة. تأكد من أن لديك 90 دقيقة من الوقت دون انقطاع.",
+    "01 • Personality (PQ10)": "01 • الشخصية (PQ10)",
+    "140 items • 40 mins • Likert": "140 عنصر • 40 دقيقة • ليكرت",
+    "02 • SJT Ranking": "02 • ترتيب SJT",
+    "16 scenarios • 45 mins • Ranking": "16 سيناريو • 45 دقيقة • ترتيب",
+    "03 • Derailers & Drivers": "03 • المحفزات والمعوقات",
+    "60 items • 20 mins • Likert": "60 عنصر • 20 دقيقة • ليكرت",
+    "04 • Cognitive Abilities": "04 • القدرات المعرفية",
+    "24 patterns • 20 mins • MCQ": "24 نمط • 20 دقيقة • خيارات متعددة",
+    "READY": "جاهز",
+    "LOCKED": "مغلق",
+    "SUBMITTED": "مكتمل",
+    "Assessment History": "تاريخ التقييم",
+    "No past assessments found.": "لم يتم العثور على تقييمات سابقة.",
+    "Completed": "مكتمل",
+    "Started": "بدأ",
+    "at": "في",
+    "In Progress": "قيد التقدم",
+    "Download Report": "تحميل التقرير",
+    "Assessment Completed!": "اكتمل التقييم!",
+    "All 4 batteries have been successfully submitted and locked.": "تم تقديم وإغلاق جميع البطاريات الأربع بنجاح.",
+    "Results Available": "النتائج متاحة",
+    "Your psychometric responses and cognitive tests have been successfully calculated by the scoring engine.": "تم حساب استجاباتك النفسية والاختبارات المعرفية بنجاح.",
+    "Click here to get the result": "انقر هنا للحصول على النتيجة",
+    "Back to Portal Home": "العودة إلى الرئيسية",
+    "Downloading...": "جاري التحميل...",
+    "Progress Overview": "نظرة عامة على التقدم",
+    "Part 1 of 4": "الجزء 1 من 4",
+    "Part 2 of 4": "الجزء 2 من 4",
+    "Part 3 of 4": "الجزء 3 من 4",
+    "Part 4 of 4": "الجزء 4 من 4",
+    "Synchronizing Assessment Session...": "جاري مزامنة جلسة التقييم...",
+    "Time Cutoff Reached": "انتهى الوقت",
+    "Your allocated time for this battery has expired. Your answered items have been safely recorded.": "انتهى الوقت المخصص لهذه البطارية. تم تسجيل إجاباتك بأمان.",
+    "Auto-advancing to the next assessment section...": "يتم الانتقال تلقائيًا إلى قسم التقييم التالي...",
+    "Pre-Battery Instructions": "تعليمات قبل البدء",
+    "I Understand • Begin Battery": "أفهم ذلك • ابدأ البطارية",
+    "Battery Overview": "نظرة عامة على البطارية"
+};
+
+// Create reverse dictionary
+const reverseI18nDict = {};
+for (const [en, ar] of Object.entries(i18nDict)) {
+    reverseI18nDict[ar] = en;
+}
+
+function translateNode(node, toLang) {
+    if (node.nodeType === Node.TEXT_NODE) {
+        let text = node.textContent.trim();
+        if (text) {
+            // Find matches in the dictionary
+            if (toLang === "ar" && i18nDict[text]) {
+                node.textContent = node.textContent.replace(text, i18nDict[text]);
+            } else if (toLang === "en" && reverseI18nDict[text]) {
+                node.textContent = node.textContent.replace(text, reverseI18nDict[text]);
+            } else if (text.includes(" • ")) {
+                 // Try partial match for batteries
+                 let parts = text.split(" • ");
+                 let translatedParts = parts.map(p => {
+                     let pt = p.trim();
+                     if (toLang === "ar" && i18nDict[pt]) return i18nDict[pt];
+                     if (toLang === "en" && reverseI18nDict[pt]) return reverseI18nDict[pt];
+                     return pt;
+                 });
+                 if (translatedParts.join(" • ") !== text) {
+                     node.textContent = node.textContent.replace(text, translatedParts.join(" • "));
+                 }
+            } else if (text.includes(" at ")) {
+                let parts = text.split(" at ");
+                if (toLang === "ar") {
+                    let first = parts[0].trim();
+                    let tf = i18nDict[first.split(" ")[0]]; // Started/Completed
+                    if (tf) {
+                        node.textContent = tf + " " + first.substring(first.indexOf(" ")+1) + " في " + parts[1];
+                    }
+                }
+            } else if (text.includes(" في ")) {
+                let parts = text.split(" في ");
+                if (toLang === "en") {
+                    let first = parts[0].trim();
+                    let tf = reverseI18nDict[first.split(" ")[0]]; // بدأ/مكتمل
+                    if (tf) {
+                        node.textContent = tf + " " + first.substring(first.indexOf(" ")+1) + " at " + parts[1];
+                    }
+                }
+            }
+        }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName !== "SCRIPT" && node.tagName !== "STYLE") {
+            for (let child of node.childNodes) {
+                translateNode(child, toLang);
+            }
+        }
+    }
+}
+
+function applyTranslation(lang) {
+    translateNode(document.body, lang);
+    // Also update dynamic elements rendered by JS
+    if (lang === "ar") {
+        document.body.style.fontFamily = "Cairo, sans-serif";
+    } else {
+        document.body.style.fontFamily = "";
+    }
+}
+
+window.applyTranslation = applyTranslation;
+
+function applyCurrentTranslation() {
+    if (document.documentElement.getAttribute("dir") === "rtl") {
+        applyTranslation("ar");
+    }
+}
+
+
+
 import { API_BASE } from "../../../shared/config/api-config.js";
 
 // State
@@ -81,10 +307,11 @@ document.addEventListener("DOMContentLoaded", () => {
     checkAuth();
     initEventListeners();
     loadAssessmentState();
+    loadAssessmentHistory();
 });
 
 // Check Authentication
-function checkAuth() {
+async function checkAuth() {
     const userStr = localStorage.getItem("user");
     if (!userStr) {
         window.location.href = "../auth/login.html";
@@ -96,15 +323,34 @@ function checkAuth() {
             window.location.href = "../auth/login.html";
             return;
         }
+        
+        // Fetch fresh user data from server
+        try {
+            const res = await fetch(`${API_BASE}/api/auth/me`, {
+                headers: getAuthHeader()
+            });
+            if (res.ok) {
+                const freshUser = await res.json();
+                currentUser.name = freshUser.name;
+                currentUser.email = freshUser.email;
+                localStorage.setItem("user", JSON.stringify(currentUser));
+            }
+        } catch (e) {
+            console.error("Failed to fetch fresh user data", e);
+        }
 
         // Set user profile in header & sidebar
         const nameHeader = document.getElementById("userDisplayNameHeader");
         const emailHeader = document.getElementById("userDisplayEmailHeader");
+        const headerNameLeft = document.getElementById("headerCandidateNameLeft");
+        const headerNameRight = document.getElementById("headerCandidateNameRight");
         const sidebarName = document.getElementById("sidebarCandidateName");
         const sidebarEmail = document.getElementById("sidebarCandidateEmail");
         
         if (nameHeader) nameHeader.textContent = currentUser.name || "Candidate";
         if (emailHeader) emailHeader.textContent = currentUser.email || "";
+        if (headerNameLeft) headerNameLeft.textContent = currentUser.name || "Candidate";
+        if (headerNameRight) headerNameRight.textContent = currentUser.name || "Candidate";
         if (sidebarName) sidebarName.textContent = currentUser.name || "Candidate";
         if (sidebarEmail) sidebarEmail.textContent = currentUser.email || "";
     } catch (e) {
@@ -125,8 +371,22 @@ function initEventListeners() {
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("user");
-            window.location.href = "../auth/login.html";
+            const isArabic = document.documentElement.getAttribute("dir") === "rtl";
+            const titleStr = isArabic ? "تسجيل الخروج" : "Log Out";
+            const msgStr = isArabic ? "هل أنت متأكد أنك تريد تسجيل الخروج؟" : "Are you sure you want to logout?";
+            window.showCustomModal({
+                title: titleStr,
+                message: msgStr,
+                type: "warning",
+                icon: "logout",
+                buttons: [
+                    { text: "Cancel", style: "secondary" },
+                    { text: "Log Out", style: "danger", onClick: () => {
+                        localStorage.removeItem("user");
+                        window.location.href = "../auth/login.html";
+                    }}
+                ]
+            });
         });
     }
 
@@ -139,6 +399,7 @@ function initEventListeners() {
             if (currentDir === "ltr") {
                 htmlEl.setAttribute("dir", "rtl");
                 rtlToggle.textContent = "Switch to English";
+                applyTranslation("ar");
                 if (warningBlock) {
                     warningBlock.classList.remove("border-l-4", "border-l-[#131b2e]", "rounded-r");
                     warningBlock.classList.add("border-r-4", "border-r-[#131b2e]", "rounded-l");
@@ -146,6 +407,7 @@ function initEventListeners() {
             } else {
                 htmlEl.setAttribute("dir", "ltr");
                 rtlToggle.textContent = "Switch to Arabic";
+                applyTranslation("en");
                 if (warningBlock) {
                     warningBlock.classList.remove("border-r-4", "border-r-[#131b2e]", "rounded-l");
                     warningBlock.classList.add("border-l-4", "border-l-[#131b2e]", "rounded-r");
@@ -191,10 +453,23 @@ function initEventListeners() {
     const submitBtn = document.getElementById("submitBatteryBtn");
     if (submitBtn) {
         submitBtn.addEventListener("click", () => {
-            if (confirm("Are you sure you want to finalize and submit this battery? You cannot return to these questions.")) {
-                recordItemTime(currentItemIndex);
-                submitActiveBattery();
-            }
+            const isArabic = document.documentElement.getAttribute("dir") === "rtl";
+            const titleStr = isArabic ? "تأكيد الإرسال" : "Confirm Submission";
+            const msgStr = isArabic ? "هل أنت متأكد أنك تريد إنهاء وإرسال هذه البطارية؟ لا يمكنك العودة إلى هذه الأسئلة." : "Are you sure you want to finalize and submit this battery?\nYou cannot return to these questions.";
+            
+            window.showCustomModal({
+                title: titleStr,
+                message: msgStr,
+                type: "warning",
+                icon: "publish",
+                buttons: [
+                    { text: "Cancel", style: "secondary" },
+                    { text: "Submit", style: "primary", onClick: () => {
+                        recordItemTime(currentItemIndex);
+                        submitActiveBattery();
+                    }}
+                ]
+            });
         });
     }
 }
@@ -216,6 +491,40 @@ function showView(viewId) {
 
     const activeEl = document.getElementById(viewId);
     if (activeEl) activeEl.classList.remove("hidden");
+
+    // Toggle Sidebars
+    const dashboardSidebar = document.getElementById("dashboardSidebar");
+    const testSidebar = document.getElementById("testSidebar");
+    const historySection = document.getElementById("historySection");
+
+    const rightSpacer = document.getElementById("rightSpacer");
+    const mainContentArea = document.getElementById("mainContentArea");
+    if (viewId === "view-instructions" || viewId === "view-active-test") {
+        if (dashboardSidebar) dashboardSidebar.classList.add("hidden");
+        if (testSidebar) testSidebar.classList.remove("hidden");
+        if (historySection) historySection.classList.add("hidden");
+        if (rightSpacer) { rightSpacer.classList.add("hidden"); rightSpacer.style.display = ""; }
+        if (mainContentArea) { mainContentArea.classList.add("flex-grow"); mainContentArea.classList.remove("flex-1"); }
+    } else if (viewId === "view-complete" || viewId === "view-empty") {
+        if (testSidebar) testSidebar.classList.add("hidden");
+        if (dashboardSidebar) dashboardSidebar.classList.remove("hidden");
+        if (rightSpacer) { rightSpacer.classList.remove("hidden"); rightSpacer.style.display = "block"; }
+        // Make mainContentArea use flex-1 so all 3 columns share space equally
+        if (mainContentArea) { mainContentArea.classList.remove("flex-grow"); mainContentArea.classList.add("flex-1"); }
+        if (historySection) historySection.classList.remove("hidden");
+    } else {
+        if (testSidebar) testSidebar.classList.add("hidden");
+        if (dashboardSidebar) dashboardSidebar.classList.remove("hidden");
+        if (rightSpacer) rightSpacer.classList.add("hidden");
+        if (mainContentArea) { mainContentArea.classList.add("flex-grow"); mainContentArea.classList.remove("flex-1"); }
+        if (historySection) {
+            if (viewId === "view-pending-portal") {
+                historySection.classList.remove("hidden");
+            } else {
+                historySection.classList.add("hidden");
+            }
+        }
+    }
 }
 
 // Load Assessment State
@@ -289,6 +598,7 @@ function handleAttemptState(attempt) {
 function showPendingPortal(attempt) {
     showView("view-pending-portal");
     updateBatteryCardStates(attempt);
+    applyCurrentTranslation();
 }
 
 function updateBatteryCardStates(attempt) {
@@ -329,7 +639,9 @@ function openPreBatteryInstructions(batteryIndex) {
     document.getElementById("instTimeLimit").textContent = meta.timeLimit;
     document.getElementById("instFormatType").textContent = meta.format;
 
+    updateTestSidebar(currentAttempt);
     showView("view-instructions");
+    applyCurrentTranslation();
 }
 
 // Start / Unlock Battery
@@ -353,7 +665,7 @@ async function startActiveBatterySession() {
 
     } catch (err) {
         console.error("Error starting battery session:", err);
-        alert("Failed to start assessment battery. Please try again.");
+        window.showCustomModal({title: 'Error', message: 'Failed to start assessment battery. Please try again.', type: 'danger', icon: 'error'});
         showView("view-instructions");
     }
 }
@@ -388,12 +700,13 @@ async function fetchAndRenderBatteryItems(session) {
         startCountdownTimer();
         startHeartbeatSync();
 
+        updateTestSidebar(currentAttempt);
         showView("view-active-test");
         renderCurrentQuestion();
 
     } catch (err) {
         console.error("Error fetching items:", err);
-        alert("Failed to load test items.");
+        window.showCustomModal({title: 'Error', message: 'Failed to load test items.', type: 'danger', icon: 'error'});
         showView("view-pending-portal");
     }
 }
@@ -522,6 +835,7 @@ function renderCurrentQuestion() {
     } else if (batteryType === "GCAT") {
         renderGcatMcqQuestion(item, container);
     }
+    applyCurrentTranslation();
 }
 
 function recordItemTime(idx) {
@@ -800,6 +1114,134 @@ async function submitActiveBattery(isAutoTimeout = false) {
 
     } catch (err) {
         console.error("Error submitting battery session:", err);
-        alert("Failed to submit battery responses. Please check connection.");
+        window.showCustomModal({title: 'Submission Failed', message: 'Failed to submit battery responses. Please check connection.', type: 'danger', icon: 'cloud_off'});
     }
+}
+
+
+async function loadAssessmentHistory() {
+    try {
+        const res = await fetch(`${API_BASE}/api/attempts/me/history`, {
+            headers: getAuthHeader()
+        });
+        if (res.ok) {
+            const history = await res.json();
+            renderHistoryList(history);
+        }
+    } catch (e) {
+        console.error("Failed to load history", e);
+    }
+}
+
+function renderHistoryList(history) {
+    const container = document.getElementById("historyListContainer");
+    if (!container) return;
+    
+    if (!history || history.length === 0) {
+        container.innerHTML = `<p class="text-sm text-slate-500 italic p-4 text-center">No past assessments found.</p>`;
+        applyCurrentTranslation();
+        return;
+    }
+    
+    let html = "";
+    history.forEach(attempt => {
+        let isCompleted = (attempt.state === "SCORED" || attempt.state === "ALL_SUBMITTED");
+        let dateObj = attempt.submitTime ? new Date(attempt.submitTime) : new Date(attempt.createdAt);
+        let prefix = isCompleted ? "Completed" : "Started";
+        
+        const dateStr = dateObj.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+        const timeStr = dateObj.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+        
+        let badgeHtml = "";
+        if (isCompleted) {
+            badgeHtml = `
+                <button onclick="downloadReport(event, '${attempt.attemptToken}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-full text-[11px] font-bold flex items-center gap-1.5 transition-colors">
+                    <span class="material-symbols-outlined text-[14px]">download</span>
+                    <span>Download Report</span>
+                </button>
+            `;
+        } else {
+            badgeHtml = `
+                <span class="bg-amber-50 text-amber-600 border border-amber-200 px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">pending_actions</span>
+                    <span>In Progress</span>
+                </span>
+            `;
+        }
+        
+        html += `
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 bg-slate-50/70 hover:bg-slate-50 rounded-lg border border-slate-100 transition-colors">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-800">Executive Leadership Assessment</h3>
+                    <p class="text-[11px] text-slate-500 mt-0.5">${prefix} ${dateStr} at ${timeStr}</p>
+                </div>
+                ${badgeHtml}
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+    applyCurrentTranslation();
+}
+
+window.downloadReport = async function(event, token) {
+    const btn = event.currentTarget;
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = `<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span><span>Downloading...</span>`;
+    try {
+        const res = await fetch(`${API_BASE}/api/attempts/${token}/report`, {
+            headers: getAuthHeader()
+        });
+        if (res.ok) {
+            window.showCustomModal({title: 'Success', message: 'Your 5-Page Leadership Dossier report has been successfully downloaded.', type: 'success', icon: 'check_circle'});
+        } else {
+            window.showCustomModal({title: 'Generating', message: 'Report is still generating.\nPlease check back later.', icon: 'hourglass_empty'});
+        }
+    } catch (e) {
+        window.showCustomModal({title: 'Error', message: 'Failed to download report.', type: 'danger', icon: 'error'});
+    } finally {
+        btn.innerHTML = originalHtml;
+    }
+};
+
+
+function updateTestSidebar(attempt) {
+    const navList = document.getElementById("batteryNavList");
+    const progressText = document.getElementById("sidebarProgressText");
+    if (!navList || !progressText) return;
+
+    const titles = ["Personality (PQ10)", "SJT Ranking", "Derailers & Drivers", "Cognitive Abilities"];
+    const currentIndex = attempt.currentBatteryIndex || 0;
+
+    progressText.textContent = `Part ${currentIndex + 1} of 4`;
+
+    let html = "";
+    for (let i = 0; i < 4; i++) {
+        let icon = "radio_button_unchecked";
+        let colorClass = "text-slate-400 bg-slate-50";
+        let textClass = "text-slate-500";
+        let borderClass = "border-transparent bg-transparent";
+
+        if (i < currentIndex) {
+            icon = "check_circle";
+            colorClass = "text-emerald-600 bg-emerald-50";
+            textClass = "text-slate-700 font-semibold";
+        } else if (i === currentIndex) {
+            icon = "radio_button_checked";
+            colorClass = "text-primary bg-primary/10";
+            textClass = "text-primary font-bold";
+            borderClass = "border-primary/20 bg-primary/5";
+        }
+
+        html += `
+            <div class="flex items-center gap-3 p-2.5 rounded-lg border ${borderClass} transition-colors">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${colorClass}">
+                    <span class="material-symbols-outlined text-[18px]">${icon}</span>
+                </div>
+                <span class="text-sm ${textClass}">Part ${i + 1}: ${titles[i]}</span>
+            </div>
+        `;
+    }
+    navList.innerHTML = html;
+    applyCurrentTranslation();
 }

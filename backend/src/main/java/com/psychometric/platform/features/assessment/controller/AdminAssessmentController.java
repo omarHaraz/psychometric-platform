@@ -33,6 +33,6 @@ public class AdminAssessmentController {
 
     @GetMapping
     public ResponseEntity<List<AssessmentAttempt>> getCandidateAttempts(@RequestParam Long candidateId) {
-        return ResponseEntity.ok(attemptRepo.findByCandidateId(candidateId));
+        return ResponseEntity.ok(attemptRepo.findByCandidateIdOrderByCreatedAtDesc(candidateId));
     }
 }

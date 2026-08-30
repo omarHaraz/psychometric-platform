@@ -31,6 +31,11 @@ public class CandidateAssessmentController {
         return ResponseEntity.ok(attempt);
     }
 
+    @GetMapping("/me/history")
+    public ResponseEntity<List<AssessmentAttempt>> getHistory(@AuthenticationPrincipal String username) {
+        return ResponseEntity.ok(sessionService.getHistory(username));
+    }
+
     @GetMapping("/{token}")
     public ResponseEntity<AssessmentAttempt> getAttempt(@PathVariable String token,
                                                         @AuthenticationPrincipal String username) {

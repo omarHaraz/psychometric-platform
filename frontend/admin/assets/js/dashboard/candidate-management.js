@@ -66,8 +66,8 @@ async function loadCandidates() {
                 if (attRes.ok) {
                     const attempts = await attRes.json();
                     if (attempts && attempts.length > 0) {
-                        // Get the latest non-scored attempt or latest attempt
-                        candidateAttemptsMap[c.id] = attempts[attempts.length - 1];
+                        // Get the latest attempt (index 0 since we ordered by DESC)
+                        candidateAttemptsMap[c.id] = attempts[0];
                     }
                 }
             } catch (e) {
@@ -94,7 +94,8 @@ async function loadCandidates() {
                 assessmentHtml = `
                     <div class="d-flex flex-column align-items-center">
                         <span class="badge badge-sm ${stateBadgeColor} mb-1">${attempt.state}</span>
-                        <small class="text-xxs text-secondary">Battery ${attempt.currentBatteryIndex + 1}/4 (${currentBattery})</small>
+                        <small class="text-xxs text-secondary mb-1">Battery ${attempt.currentBatteryIndex + 1}/4 (${currentBattery})</small>
+                        ${attempt.state === 'ALL_SUBMITTED' ? `<button class="btn btn-xs bg-gradient-primary mt-1 mb-0 assign-attempt-btn" data-id="${candidate.id}">Re-assign Test</button>` : ''}
                     </div>
                 `;
             } else if (attempt && attempt.state === 'SCORED') {
