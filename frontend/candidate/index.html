@@ -192,92 +192,79 @@
             
         </div>
 
-        <!-- 2. VIEW: CANDIDATE DASHBOARD PORTAL VIEW (2-Column Layout) -->
+        <!-- 2. VIEW: CANDIDATE DASHBOARD PORTAL VIEW (Active Assessment) -->
         <div id="view-pending-portal" class="hidden w-full">
-            <div class="flex flex-col gap-6 w-full">
-                
-                <!-- Left Sidebar Column: Profile, Support & Language -->
-                
+            <section class="bg-white rounded-xl shadow-xs border-t-4 border-t-[#00685f] border-x border-b border-slate-200 p-6 space-y-5">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-on-surface">Executive Leadership Aptitude</h1>
+                        <div class="flex items-center gap-4 text-xs text-on-surface-variant mt-1">
+                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">format_list_bulleted</span> 4 Parts</span>
+                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> Approx. 90 mins</span>
+                        </div>
+                    </div>
+                    <span id="attemptStatusBadge" class="bg-emerald-50 text-primary border border-primary/20 px-2.5 py-1 rounded text-xs font-bold">
+                        Status: Pending
+                    </span>
+                </div>
 
-                <!-- Right Main Column: Active Assessment & Assessment History -->
-                <div class="w-full md:w-2/3 flex flex-col gap-6 order-1 md:order-2">
+                <!-- Warning / Integrity Block -->
+                <div id="warningBlock" class="bg-slate-50 border-l-4 border-l-[#131b2e] p-4 flex items-start gap-3 rounded-r text-xs text-on-surface-variant leading-relaxed">
+                    <span class="material-symbols-outlined text-[#131b2e] text-lg shrink-0 mt-0.5">lock</span>
+                    <p>
+                        <strong class="text-on-surface">Assessment Integrity Rule:</strong> This assessment must be completed in a single continuous sitting. Once started, you cannot pause the timer or return to previous sections. Ensure you have 90 minutes of uninterrupted time.
+                    </p>
+                </div>
+
+                <!-- 4 Battery Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     
-                    <!-- 1. Active Assessment Card -->
-                    <section class="bg-white rounded-xl shadow-xs border-t-4 border-t-[#00685f] border-x border-b border-slate-200 p-6 space-y-5">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                            <div>
-                                <h1 class="text-xl sm:text-2xl font-bold text-on-surface">Executive Leadership Aptitude</h1>
-                                <div class="flex items-center gap-4 text-xs text-on-surface-variant mt-1">
-                                    <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">format_list_bulleted</span> 4 Parts</span>
-                                    <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> Approx. 90 mins</span>
-                                </div>
-                            </div>
-                            <span id="attemptStatusBadge" class="bg-emerald-50 text-primary border border-primary/20 px-2.5 py-1 rounded text-xs font-bold">
-                                Status: Pending
-                            </span>
+                    <!-- Battery 0: PQ10 -->
+                    <div id="card-battery-0" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-primary">01 &bull; Personality (PQ10)</span>
+                            <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-primary border border-primary/20">READY</span>
                         </div>
+                        <p class="text-[11px] text-slate-500">140 items &bull; 40 mins &bull; Likert</p>
+                    </div>
 
-                        <!-- Warning / Integrity Block -->
-                        <div id="warningBlock" class="bg-slate-50 border-l-4 border-l-[#131b2e] p-4 flex items-start gap-3 rounded-r text-xs text-on-surface-variant leading-relaxed">
-                            <span class="material-symbols-outlined text-[#131b2e] text-lg shrink-0 mt-0.5">lock</span>
-                            <p>
-                                <strong class="text-on-surface">Assessment Integrity Rule:</strong> This assessment must be completed in a single continuous sitting. Once started, you cannot pause the timer or return to previous sections. Ensure you have 90 minutes of uninterrupted time.
-                            </p>
+                    <!-- Battery 1: SJT -->
+                    <div id="card-battery-1" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-700">02 &bull; SJT Ranking</span>
+                            <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
                         </div>
+                        <p class="text-[11px] text-slate-500">16 scenarios &bull; 45 mins &bull; Ranking</p>
+                    </div>
 
-                        <!-- 4 Battery Grid -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                            
-                            <!-- Battery 0: PQ10 -->
-                            <div id="card-battery-0" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-xs font-bold text-primary">01 &bull; Personality (PQ10)</span>
-                                    <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-primary border border-primary/20">READY</span>
-                                </div>
-                                <p class="text-[11px] text-slate-500">140 items &bull; 40 mins &bull; Likert</p>
-                            </div>
-
-                            <!-- Battery 1: SJT -->
-                            <div id="card-battery-1" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-xs font-bold text-slate-700">02 &bull; SJT Ranking</span>
-                                    <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
-                                </div>
-                                <p class="text-[11px] text-slate-500">16 scenarios &bull; 45 mins &bull; Ranking</p>
-                            </div>
-
-                            <!-- Battery 2: Derailers -->
-                            <div id="card-battery-2" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-xs font-bold text-slate-700">03 &bull; Derailers & Drivers</span>
-                                    <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
-                                </div>
-                                <p class="text-[11px] text-slate-500">60 items &bull; 20 mins &bull; Likert</p>
-                            </div>
-
-                            <!-- Battery 3: GCAT -->
-                            <div id="card-battery-3" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-xs font-bold text-slate-700">04 &bull; Cognitive (GCAT)</span>
-                                    <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
-                                </div>
-                                <p class="text-[11px] text-slate-500">42 questions &bull; 20 mins &bull; MCQ</p>
-                            </div>
-
+                    <!-- Battery 2: Derailers -->
+                    <div id="card-battery-2" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-700">03 &bull; Derailers & Drivers</span>
+                            <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
                         </div>
+                        <p class="text-[11px] text-slate-500">60 items &bull; 20 mins &bull; Likert</p>
+                    </div>
 
-                        <!-- Start Button -->
-                        <div class="pt-2">
-                            <button id="startAssessmentBtn" class="w-full sm:w-auto bg-[#00685f] hover:bg-[#005049] text-white font-bold text-xs px-6 py-3 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2">
-                                <span>Start Assessment</span>
-                                <span class="material-symbols-outlined text-base">arrow_forward</span>
-                            </button>
+                    <!-- Battery 3: GCAT -->
+                    <div id="card-battery-3" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-700">04 &bull; Cognitive (GCAT)</span>
+                            <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
                         </div>
-                    </section>
+                        <p class="text-[11px] text-slate-500">42 questions &bull; 20 mins &bull; MCQ</p>
+                    </div>
 
                 </div>
 
-            </div>
+                <!-- Start Button -->
+                <div class="pt-2">
+                    <button id="startAssessmentBtn" class="w-full sm:w-auto bg-[#00685f] hover:bg-[#005049] text-white font-bold text-xs px-6 py-3 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2">
+                        <span>Start Assessment</span>
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                    </button>
+                </div>
+            </section>
         </div>
 
         <!-- 3. VIEW: PRE-BATTERY INSTRUCTIONS -->
@@ -391,69 +378,238 @@
         </div>
 
         <!-- 5. VIEW: FINAL ASSESSMENT COMPLETE -->
-        <div id="view-complete" class="hidden w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center space-y-6">
-            <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
-                <span class="material-symbols-outlined text-3xl">verified</span>
-            </div>
-            
-            <div class="space-y-2">
-                <h2 class="text-2xl font-bold text-on-surface">Assessment Completed!</h2>
-                <p class="text-xs text-on-surface-variant">All 4 batteries have been successfully submitted and locked.</p>
-            </div>
-
-            <!-- Report Status Notice -->
-            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 text-left space-y-4">
-                <div class="flex items-center gap-2 font-bold text-emerald-900">
-                    <span class="material-symbols-outlined text-base">analytics</span>
-                    <span>Results Available</span>
+        <div id="view-complete" class="hidden w-full bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-xs">
+                    <span class="material-symbols-outlined text-3xl">verified</span>
                 </div>
-                <p class="text-xs text-emerald-800 leading-relaxed">
-                    Your psychometric responses and cognitive tests have been successfully calculated by the scoring engine.
-                </p>
-                
-                <button id="getResultsBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-lg">download</span>
-                    <span>Click here to get the result</span>
-                </button>
+                <h2 class="text-2xl font-bold text-on-surface">Assessment Completed!</h2>
+                <p class="text-xs text-on-surface-variant">All 4 batteries have been successfully evaluated and scored.</p>
             </div>
 
-            <div class="pt-2">
-                <button onclick="window.location.reload()" class="px-6 py-2.5 text-slate-500 hover:text-slate-800 font-semibold text-xs transition-colors">
+            <!-- Composite Score & Promotion Readiness Card -->
+            <div id="completedScoreHero" class="bg-slate-50/80 border border-slate-200 rounded-xl p-5 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-200/60">
+                    <div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Overall Composite Score</span>
+                        <div class="flex items-baseline gap-2 mt-0.5">
+                            <span id="completedCompositeVal" class="text-3xl font-extrabold text-primary">--%</span>
+                            <span id="completedPercentileBadge" class="text-xs font-semibold text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full">Percentile: --</span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Promotion Readiness</span>
+                        <span id="completedReadinessBadge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            <span class="material-symbols-outlined text-[15px]">stars</span>
+                            <span id="completedReadinessLabel">--</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 4 Battery Score Cards Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                    <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs space-y-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">01 • Personality</span>
+                        <div class="flex justify-between items-baseline">
+                            <strong id="completedPqScore" class="text-base font-bold text-slate-800">--%</strong>
+                            <span class="text-[10px] text-slate-400">PQ10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                            <div id="completedPqBar" class="bg-teal-600 h-full rounded-full" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs space-y-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">02 • Judgment</span>
+                        <div class="flex justify-between items-baseline">
+                            <strong id="completedSjtScore" class="text-base font-bold text-slate-800">--%</strong>
+                            <span class="text-[10px] text-slate-400">SJT</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                            <div id="completedSjtBar" class="bg-indigo-600 h-full rounded-full" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs space-y-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">03 • Derailers</span>
+                        <div class="flex justify-between items-baseline">
+                            <strong id="completedDerailerScore" class="text-base font-bold text-slate-800">--%</strong>
+                            <span class="text-[10px] text-slate-400">Drivers</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                            <div id="completedDerailerBar" class="bg-amber-600 h-full rounded-full" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs space-y-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">04 • Cognitive</span>
+                        <div class="flex justify-between items-baseline">
+                            <strong id="completedGcatScore" class="text-base font-bold text-slate-800">--%</strong>
+                            <span class="text-[10px] text-slate-400">GCAT</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                            <div id="completedGcatBar" class="bg-cyan-600 h-full rounded-full" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row items-center gap-3 pt-3">
+                    <button id="completedViewScoresBtn" class="w-full sm:flex-1 py-2.5 px-4 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 shadow-xs">
+                        <span class="material-symbols-outlined text-[17px]">analytics</span>
+                        <span>View Detailed Scores</span>
+                    </button>
+                    <button id="completedDownloadBtn" class="w-full sm:flex-1 py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 shadow-2xs">
+                        <span class="material-symbols-outlined text-[17px] text-primary">download</span>
+                        <span>Download Report</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-1">
+                <button onclick="window.location.reload()" class="px-6 py-2 text-slate-500 hover:text-slate-800 font-semibold text-xs transition-colors">
                     Back to Portal Home
                 </button>
             </div>
         </div>
 
-
-
-                    <!-- 2. Assessment History Card -->
-                    <section id="historySection" class="bg-white border border-slate-200 rounded-xl p-6 space-y-4 max-w-4xl mx-auto w-full">
-                        <h2 class="text-lg font-bold text-on-surface">Assessment History</h2>
-                        <div id="historyListContainer" class="flex flex-col gap-3 border-t border-slate-100 pt-4">
-                            
-                            <!-- Prior attempt items -->
-                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 bg-slate-50/70 rounded-lg border border-slate-100">
-                                <div>
-                                    <h3 class="text-xs font-bold text-slate-800">Executive Leadership Assessment</h3>
-                                    <p class="text-[11px] text-slate-500">Completed &bull; 4 Batteries Finished</p>
-                                </div>
-                                <span class="bg-secondary-container text-on-secondary-container px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[14px]">verified</span>
-                                    <span>Submitted to HR</span>
-                                </span>
-                            </div>
-
-                        </div>
-                    </section>
+        <!-- Assessment History Card (Under Central Card) -->
+        <section id="historySection" class="bg-white border border-slate-200 rounded-xl p-6 space-y-4 w-full shadow-xs">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                <div>
+                    <h2 class="text-base font-bold text-on-surface">Assessment History</h2>
+                    <span class="text-xs text-slate-400">Executive Evaluations</span>
+                </div>
+                <span class="material-symbols-outlined text-slate-400 text-lg">history</span>
+            </div>
+            <div id="historyListContainer" class="flex flex-col gap-3">
+                <!-- Dynamically populated by renderHistoryList() -->
+            </div>
+        </section>
     </div>
 
-        <!-- RIGHT SPACER (To center the main content area) -->
-        
-        <!-- RIGHT SPACER (To center the main content area) -->
-        <aside id="rightSpacer" class="md:w-1/4 shrink-0 hidden"></aside>
+        <!-- RIGHT COLUMN: General Exam Instructions -->
+        <aside id="instructionsSidebar" class="w-full md:w-80 lg:w-96 shrink-0 flex flex-col gap-4">
+            
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-4">
+                
+                <!-- Card Header -->
+                <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                    <div class="w-9 h-9 rounded-lg bg-teal-50 text-teal-700 border border-teal-200/60 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-xl">menu_book</span>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800">General Exam Instructions</h3>
+                        <p class="text-[11px] text-slate-500">Key guidelines for candidates</p>
+                    </div>
+                </div>
+
+                <!-- Guidelines List -->
+                <div class="space-y-3.5 text-xs text-slate-600">
+                    
+                    <!-- 1. Quiet Environment & Time -->
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-teal-700 text-base shrink-0 mt-0.5">timer</span>
+                        <div>
+                            <strong class="text-slate-800 font-bold block text-xs">Continuous Session</strong>
+                            <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">Allocate approx. 90 minutes of quiet, uninterrupted time. Timers run continuously once started.</p>
+                        </div>
+                    </div>
+
+                    <!-- 2. Honest & Spontaneous Responses -->
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-teal-700 text-base shrink-0 mt-0.5">psychology</span>
+                        <div>
+                            <strong class="text-slate-800 font-bold block text-xs">Spontaneous Responses</strong>
+                            <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">In personality & derailer batteries, choose the first response that naturally represents your behavior.</p>
+                        </div>
+                    </div>
+
+                    <!-- 3. Situational Judgment -->
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-teal-700 text-base shrink-0 mt-0.5">low_priority</span>
+                        <div>
+                            <strong class="text-slate-800 font-bold block text-xs">Strategic Judgment (SJT)</strong>
+                            <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">In SJT scenarios, evaluate each managerial action and rank options from most effective to least effective.</p>
+                        </div>
+                    </div>
+
+                    <!-- 4. Cognitive Pace -->
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-teal-700 text-base shrink-0 mt-0.5">speed</span>
+                        <div>
+                            <strong class="text-slate-800 font-bold block text-xs">Cognitive Abilities (GCAT)</strong>
+                            <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">Pace yourself (approx. 30–45s per item). Do not linger on a single item; answer every question.</p>
+                        </div>
+                    </div>
+
+                    <!-- 5. Stable Connection & Browser -->
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-teal-700 text-base shrink-0 mt-0.5">devices</span>
+                        <div>
+                            <strong class="text-slate-800 font-bold block text-xs">System & Stability</strong>
+                            <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">Use a stable internet connection on desktop Chrome or Edge. Avoid refreshing the page during tests.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 1-Minute Transition Tip Box -->
+                <div class="bg-teal-50/70 border border-teal-200/80 rounded-lg p-3 flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-teal-800 text-base shrink-0 mt-0.5">schedule</span>
+                    <p class="text-[11px] text-teal-900 leading-snug">
+                        <strong>Battery Transition:</strong> A 1-minute preparation window is provided between each battery before the next section starts.
+                    </p>
+                </div>
+
+            </div>
+
+        </aside>
     </main>
 
     <!-- OVERLAYS & TRANSITIONS -->
+
+    <!-- Detailed Score Report Modal -->
+    <div id="scoreReportModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh] my-auto">
+            
+            <!-- Modal Header -->
+            <div class="bg-slate-900 text-white p-5 sm:px-6 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-teal-300">
+                        <span class="material-symbols-outlined text-2xl">leaderboard</span>
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold">Executive Assessment Report</h3>
+                        <p id="modalCandidateInfo" class="text-xs text-slate-300">Detailed Psychometric & Cognitive Breakdown</p>
+                    </div>
+                </div>
+                <button id="closeScoreModalBtn" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors">
+                    <span class="material-symbols-outlined text-xl">close</span>
+                </button>
+            </div>
+
+            <!-- Modal Content (Scrollable) -->
+            <div class="p-5 sm:p-6 overflow-y-auto space-y-6 text-slate-800" id="scoreModalBody">
+                <!-- Content dynamically generated by renderScoreModalContent() -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-50 p-4 sm:px-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <span class="text-xs text-slate-500">Official Psychometric Evaluation Record</span>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button id="modalPrintBtn" class="flex-1 sm:flex-initial px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-2xs">
+                        <span class="material-symbols-outlined text-[16px]">print</span>
+                        <span>Print / Save PDF</span>
+                    </button>
+                    <button id="modalDownloadJsonBtn" class="flex-1 sm:flex-initial px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-xs">
+                        <span class="material-symbols-outlined text-[16px]">download</span>
+                        <span>Download JSON</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Generic Modal Overlay -->
     <div id="customModalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 transition-opacity duration-200" style="opacity: 0;">

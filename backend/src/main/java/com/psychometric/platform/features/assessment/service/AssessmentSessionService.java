@@ -7,10 +7,12 @@ import com.psychometric.platform.features.assessment.domain.enums.AttemptState;
 import com.psychometric.platform.features.assessment.domain.enums.BatteryType;
 import com.psychometric.platform.features.assessment.domain.enums.SessionState;
 import com.psychometric.platform.features.assessment.domain.model.AssessmentAttempt;
+import com.psychometric.platform.features.assessment.domain.model.AssessmentScore;
 import com.psychometric.platform.features.assessment.domain.model.BatterySession;
 import com.psychometric.platform.features.assessment.domain.model.CandidateResponse;
 import com.psychometric.platform.features.assessment.dto.HeartbeatRequest;
 import com.psychometric.platform.features.assessment.repository.AssessmentAttemptRepository;
+import com.psychometric.platform.features.assessment.repository.AssessmentScoreRepository;
 import com.psychometric.platform.features.assessment.repository.BatterySessionRepository;
 import com.psychometric.platform.features.assessment.repository.CandidateResponseRepository;
 import com.psychometric.platform.features.user.entity.User;
@@ -36,6 +38,8 @@ public class AssessmentSessionService {
     private final ItemSamplingService samplingService;
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    private final AssessmentScoringService scoringService;
+    private final AssessmentScoreRepository assessmentScoreRepo;
 
     public AssessmentSessionService(AssessmentAttemptRepository attemptRepo,
                                     BatterySessionRepository sessionRepo,
@@ -43,7 +47,9 @@ public class AssessmentSessionService {
                                     UserRepository userRepo,
                                     RedisTemplate<String, String> redisTemplate,
                                     ItemSamplingService samplingService,
-                                    JdbcTemplate jdbcTemplate) {
+                                    JdbcTemplate jdbcTemplate,
+                                    AssessmentScoringService scoringService,
+                                    AssessmentScoreRepository assessmentScoreRepo) {
         this.attemptRepo = attemptRepo;
         this.sessionRepo = sessionRepo;
         this.responseRepo = responseRepo;
@@ -51,6 +57,8 @@ public class AssessmentSessionService {
         this.redisTemplate = redisTemplate;
         this.samplingService = samplingService;
         this.jdbcTemplate = jdbcTemplate;
+        this.scoringService = scoringService;
+        this.assessmentScoreRepo = assessmentScoreRepo;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.findAndRegisterModules();
     }
@@ -216,10 +224,31 @@ public class AssessmentSessionService {
             // All done
             attempt.setState(AttemptState.ALL_SUBMITTED);
             attempt.setSubmitTime(Instant.now());
-            // TODO: Enqueue scoring job here
+            attempt = attemptRepo.save(attempt);
+
+            // Execute scoring pipeline
+            try {
+                scoringService.scoreAttempt(attempt);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return attempt;
         }
 
         return attemptRepo.save(attempt);
+    }
+
+    @Transactional(readOnly = true)
+    public AssessmentScore getAssessmentScoreByToken(String token, String username) {
+        AssessmentAttempt attempt = getAttemptByToken(token, username);
+        return assessmentScoreRepo.findByAttemptId(attempt.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Score report not generated yet"));
+    }
+
+    @Transactional(readOnly = true)
+    public AssessmentScore getAssessmentScoreForAdmin(String token) {
+        return assessmentScoreRepo.findByAttemptAttemptToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Score report not found for attempt"));
     }
 
     @Transactional

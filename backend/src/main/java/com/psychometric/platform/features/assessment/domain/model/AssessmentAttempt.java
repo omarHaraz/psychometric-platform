@@ -44,6 +44,10 @@ public class AssessmentAttempt {
     @OrderBy("sequenceOrder ASC")
     private List<BatterySession> batterySessions = new ArrayList<>();
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @OneToOne(mappedBy = "attempt", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private AssessmentScore score;
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -65,4 +69,6 @@ public class AssessmentAttempt {
     public void setSubmitTime(Instant submitTime) { this.submitTime = submitTime; }
     public List<BatterySession> getBatterySessions() { return batterySessions; }
     public void setBatterySessions(List<BatterySession> batterySessions) { this.batterySessions = batterySessions; }
+    public AssessmentScore getScore() { return score; }
+    public void setScore(AssessmentScore score) { this.score = score; }
 }

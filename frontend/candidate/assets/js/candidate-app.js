@@ -127,6 +127,7 @@ const i18nDict = {
     "at": "في",
     "In Progress": "قيد التقدم",
     "Download Report": "تحميل التقرير",
+    "Report": "التقرير",
     "Assessment Completed!": "اكتمل التقييم!",
     "All 4 batteries have been successfully submitted and locked.": "تم تقديم وإغلاق جميع البطاريات الأربع بنجاح.",
     "Results Available": "النتائج متاحة",
@@ -153,7 +154,60 @@ const i18nDict = {
     "Failed to load test items.": "فشل في تحميل عناصر الاختبار.",
     "Submission Failed": "فشل التسليم",
     "Failed to submit battery responses. Please check connection.": "فشل في تسليم إجابات البطارية. يرجى التحقق من الاتصال.",
-    "Failed to start assessment battery. Please try again.": "فشل في بدء بطارية التقييم. يرجى المحاولة مرة أخرى."
+    "Failed to start assessment battery. Please try again.": "فشل في بدء بطارية التقييم. يرجى المحاولة مرة أخرى.",
+    "Previous": "السابق",
+    "Next": "التالي",
+    "Submit Battery": "إرسال البطارية",
+    "Statement": "العبارة",
+    "Item": "عنصر",
+    "of": "من",
+    "Confirm Submission": "تأكيد الإرسال",
+    "Are you sure you want to finalize and submit this battery?\nYou cannot return to these questions.": "هل أنت متأكد أنك تريد إنهاء وإرسال هذه البطارية؟ لا يمكنك العودة إلى هذه الأسئلة.",
+    "Overall Composite Score": "الدرجة الكلية المركبة",
+    "Promotion Readiness": "جاهزية الترقية",
+    "View Detailed Scores": "عرض النتائج التفصيلية",
+    "View Scores": "عرض النتائج",
+    "01 • Personality": "01 • الشخصية",
+    "02 • Judgment": "02 • الحكم الموقفي",
+    "03 • Derailers": "03 • المعوقات",
+    "04 • Cognitive": "04 • القدرات المعرفية",
+    "Executive Assessment Report": "تقرير التقييم التنفيذي",
+    "Detailed Psychometric & Cognitive Breakdown": "تفصيل القياس النفسي والمعرفي الشامل",
+    "Print / Save PDF": "طباعة / حفظ PDF",
+    "Download JSON": "تحميل JSON",
+    "Official Psychometric Evaluation Record": "سجل التقييم النفسي الرسمي المعتمد",
+    "8 Competency Traits": "8 سمات كفاءة",
+    "6 Derailer Risk Categories": "6 فئات لمخاطر التعطيل",
+    "3 Cognitive Aptitude Subtests": "3 اختبارات فرعية معرفية",
+    "Trait Code": "رمز السمة",
+    "Dimension": "البُعد",
+    "Raw Points": "النقاط الخام",
+    "Percentage": "النسبة المئوية",
+    "Risk Category": "فئة الخطر",
+    "Subtest": "الاختبار الفرعي",
+    "Accuracy": "الدقة",
+    "Questions Correct": "الأسئلة الصحيحة",
+    "Percentile": "المئين",
+    "Score Breakdown": "تفصيل الدرجات",
+    "Close": "إغلاق",
+    "Submitted to HR": "تم الإرسال للموارد البشرية",
+    "Scored": "تم التقييم",
+    "Executive Leadership Assessment": "تقييم القيادة التنفيذية",
+    "All 4 batteries have been successfully evaluated and scored.": "تم تقييم واحتساب درجات جميع البطاريات الأربع بنجاح.",
+    "General Exam Instructions": "تعليمات وإرشادات الاختبار",
+    "Key guidelines for candidates": "إرشادات هامة للمرشحين",
+    "Continuous Session": "جلسة متواصلة واحدة",
+    "Allocate approx. 90 minutes of quiet, uninterrupted time. Timers run continuously once started.": "خصّص حوالي 90 دقيقة من الوقت الهادئ دون انقطاع. المؤقت يعمل بشكل مستمر بمجرد البدء.",
+    "Spontaneous Responses": "الإجابة العفوية والصادقة",
+    "In personality & derailer batteries, choose the first response that naturally represents your behavior.": "في بطاريات الشخصية والمخاطر، اختر الاستجابة التلقائية التي تمثلك في بيئة العمل اليومية.",
+    "Strategic Judgment (SJT)": "الحكم الموقفي الاستراتيجي",
+    "In SJT scenarios, evaluate each managerial action and rank options from most effective to least effective.": "في مواقف القيادة، قيّم كل إجراء إداري ورتب الخيارات من الأكثر إلى الأقل فعالية.",
+    "Cognitive Abilities (GCAT)": "القدرات المعرفية (GCAT)",
+    "Pace yourself (approx. 30–45s per item). Do not linger on a single item; answer every question.": "وزّع وقتك بدقة (حوالي 30-45 ثانية لكل سؤال). تجنب التردد الطويل وأجب عن جميع الأسئلة.",
+    "System & Stability": "استقرار النظام والاتصال",
+    "Use a stable internet connection on desktop Chrome or Edge. Avoid refreshing the page during tests.": "استخدم اتصال إنترنت مستقر ومتصفح Chrome أو Edge على الحاسوب وتجنب تحديث الصفحة.",
+    "Battery Transition:": "الانتقال بين البطاريات:",
+    "A 1-minute preparation window is provided between each battery before the next section starts.": "يُمنح فاصل زمني مدته دقيقة واحدة بين كل بطارية وأخرى للاستعداد الذهني والانتقال."
 };
 
 // Create reverse dictionary
@@ -501,37 +555,31 @@ function showView(viewId) {
     const activeEl = document.getElementById(viewId);
     if (activeEl) activeEl.classList.remove("hidden");
 
-    // Toggle Sidebars
+    // Toggle Sidebars & Sections
     const dashboardSidebar = document.getElementById("dashboardSidebar");
     const testSidebar = document.getElementById("testSidebar");
+    const instructionsSidebar = document.getElementById("instructionsSidebar");
     const historySection = document.getElementById("historySection");
-
-    const rightSpacer = document.getElementById("rightSpacer");
     const mainContentArea = document.getElementById("mainContentArea");
+
     if (viewId === "view-instructions" || viewId === "view-active-test") {
         if (dashboardSidebar) dashboardSidebar.classList.add("hidden");
+        if (instructionsSidebar) instructionsSidebar.classList.add("hidden");
         if (testSidebar) testSidebar.classList.remove("hidden");
         if (historySection) historySection.classList.add("hidden");
-        if (rightSpacer) { rightSpacer.classList.add("hidden"); rightSpacer.style.display = ""; }
-        if (mainContentArea) { mainContentArea.classList.add("flex-grow"); mainContentArea.classList.remove("flex-1"); }
-    } else if (viewId === "view-complete" || viewId === "view-empty") {
-        if (testSidebar) testSidebar.classList.add("hidden");
-        if (dashboardSidebar) dashboardSidebar.classList.remove("hidden");
-        if (rightSpacer) { rightSpacer.classList.remove("hidden"); rightSpacer.style.display = "block"; }
-        // Make mainContentArea use flex-1 so all 3 columns share space equally
-        if (mainContentArea) { mainContentArea.classList.remove("flex-grow"); mainContentArea.classList.add("flex-1"); }
-        if (historySection) historySection.classList.remove("hidden");
+        if (mainContentArea) {
+            mainContentArea.classList.add("flex-1");
+            mainContentArea.classList.remove("flex-grow");
+        }
     } else {
+        // Dashboard views (pending, complete, empty)
         if (testSidebar) testSidebar.classList.add("hidden");
         if (dashboardSidebar) dashboardSidebar.classList.remove("hidden");
-        if (rightSpacer) rightSpacer.classList.add("hidden");
-        if (mainContentArea) { mainContentArea.classList.add("flex-grow"); mainContentArea.classList.remove("flex-1"); }
-        if (historySection) {
-            if (viewId === "view-pending-portal") {
-                historySection.classList.remove("hidden");
-            } else {
-                historySection.classList.add("hidden");
-            }
+        if (instructionsSidebar) instructionsSidebar.classList.remove("hidden");
+        if (historySection) historySection.classList.remove("hidden");
+        if (mainContentArea) {
+            mainContentArea.classList.add("flex-1");
+            mainContentArea.classList.remove("flex-grow");
         }
     }
 }
@@ -580,7 +628,7 @@ async function loadAssessmentState() {
 // Handle Attempt State
 function handleAttemptState(attempt) {
     if (attempt.state === "ALL_SUBMITTED" || attempt.state === "SCORED") {
-        showView("view-complete");
+        showCompletedAssessmentView(attempt);
         return;
     }
 
@@ -946,15 +994,6 @@ function renderLikertQuestion(item, container) {
 
             container.querySelectorAll(".likert-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
-
-            // Auto-advance after brief selection feedback on mobile/desktop
-            setTimeout(() => {
-                if (currentItemIndex < activeItems.length - 1) {
-                    recordItemTime(currentItemIndex);
-                    currentItemIndex++;
-                    renderCurrentQuestion();
-                }
-            }, 300);
         });
     });
 }
@@ -1116,15 +1155,6 @@ function renderGcatMcqQuestion(item, container) {
             if (dot) dot.classList.replace("opacity-0", "opacity-100");
             const ring = selectedLabel.querySelector(".rounded-full.border-2");
             if (ring) { ring.classList.remove("border-slate-400"); ring.classList.add("border-primary"); }
-
-            // Auto-advance
-            setTimeout(() => {
-                if (currentItemIndex < activeItems.length - 1) {
-                    recordItemTime(currentItemIndex);
-                    currentItemIndex++;
-                    renderCurrentQuestion();
-                }
-            }, 300);
         });
     });
 }
@@ -1169,6 +1199,121 @@ async function submitActiveBattery(isAutoTimeout = false) {
 }
 
 
+async function showCompletedAssessmentView(attempt) {
+    showView("view-complete");
+    
+    try {
+        const token = attempt.attemptToken;
+        const res = await fetch(`${API_BASE}/api/attempts/${token}/score`, {
+            headers: getAuthHeader()
+        });
+        if (res.ok) {
+            const score = await res.json();
+            populateCompletedScoreHero(score, attempt);
+        }
+    } catch (e) {
+        console.error("Failed to load attempt score:", e);
+    }
+}
+
+function populateCompletedScoreHero(score, attempt) {
+    const compVal = document.getElementById("completedCompositeVal");
+    const percBadge = document.getElementById("completedPercentileBadge");
+    const readBadge = document.getElementById("completedReadinessBadge");
+    const readLabel = document.getElementById("completedReadinessLabel");
+    
+    const pqScore = document.getElementById("completedPqScore");
+    const pqBar = document.getElementById("completedPqBar");
+    const sjtScore = document.getElementById("completedSjtScore");
+    const sjtBar = document.getElementById("completedSjtBar");
+    const derailerScore = document.getElementById("completedDerailerScore");
+    const derailerBar = document.getElementById("completedDerailerBar");
+    const gcatScore = document.getElementById("completedGcatScore");
+    const gcatBar = document.getElementById("completedGcatBar");
+
+    if (compVal) compVal.textContent = `${score.compositeScore ?? 0}%`;
+    if (percBadge) percBadge.textContent = `Percentile: P${score.percentile ?? 1}`;
+    
+    const readiness = getReadinessInfo(score.readinessBand);
+    if (readLabel) {
+        const isAr = document.documentElement.getAttribute("dir") === "rtl";
+        readLabel.textContent = isAr ? `${readiness.labelAr} (${readiness.labelEn})` : `${readiness.labelEn} (${readiness.labelAr})`;
+    }
+    if (readBadge) {
+        readBadge.className = `inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border ${readiness.badgeClass}`;
+    }
+
+    if (pqScore) pqScore.textContent = `${score.personalityScorePct ?? 0}%`;
+    if (pqBar) pqBar.style.width = `${Math.min(100, Math.max(0, score.personalityScorePct ?? 0))}%`;
+
+    if (sjtScore) sjtScore.textContent = `${score.sjtScorePct ?? 0}%`;
+    if (sjtBar) sjtBar.style.width = `${Math.min(100, Math.max(0, score.sjtScorePct ?? 0))}%`;
+
+    if (derailerScore) derailerScore.textContent = `${score.derailersEffectiveScorePct ?? 0}%`;
+    if (derailerBar) derailerBar.style.width = `${Math.min(100, Math.max(0, score.derailersEffectiveScorePct ?? 0))}%`;
+
+    if (gcatScore) gcatScore.textContent = `${score.cognitiveScorePct ?? 0}%`;
+    if (gcatBar) gcatBar.style.width = `${Math.min(100, Math.max(0, score.cognitiveScorePct ?? 0))}%`;
+
+    const viewBtn = document.getElementById("completedViewScoresBtn");
+    if (viewBtn) {
+        viewBtn.onclick = () => window.viewScoreModal(attempt.attemptToken);
+    }
+
+    const downloadBtn = document.getElementById("completedDownloadBtn");
+    if (downloadBtn) {
+        downloadBtn.onclick = (e) => window.downloadReport(e, attempt.attemptToken);
+    }
+
+    applyCurrentTranslation();
+}
+
+function getReadinessInfo(band) {
+    switch (band) {
+        case "EXCELLENT":
+            return {
+                labelEn: "Excellent",
+                labelAr: "متميز",
+                badgeClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                descEn: "Candidate exhibits exceptional leadership aptitude across cognitive, behavioral, and judgment dimensions.",
+                descAr: "يُظهر المرشح كفاءة قيادية استثنائية عبر الأبعاد المعرفية والسلوكية والحكم الموقفي."
+            };
+        case "STRONG":
+            return {
+                labelEn: "Strong",
+                labelAr: "متقدم",
+                badgeClass: "bg-teal-100 text-teal-800 border-teal-300",
+                descEn: "Candidate displays strong executive readiness and robust analytical problem-solving skills.",
+                descAr: "يتمتع المرشح بجاهزية قيادية متقدمة ومهارات تحليلية قوية لحل المشكلات."
+            };
+        case "ACCEPTABLE":
+            return {
+                labelEn: "Acceptable",
+                labelAr: "مقبول",
+                badgeClass: "bg-indigo-100 text-indigo-800 border-indigo-300",
+                descEn: "Candidate meets the required benchmarks for leadership responsibilities with moderate development areas.",
+                descAr: "يستوفي المرشح المعايير المطلوبة للمسؤوليات القيادية مع وجود مجالات تطوير متوسطة."
+            };
+        case "FOUNDATIONAL_ADVANCED":
+            return {
+                labelEn: "Foundational Advanced",
+                labelAr: "تأسيسي متقدم",
+                badgeClass: "bg-amber-100 text-amber-800 border-amber-300",
+                descEn: "Candidate shows foundational leadership competencies with specific skill development recommended.",
+                descAr: "يُظهر المرشح كفاءات قيادية تأسيسية مع التوصية بتطوير مهارات محددة."
+            };
+        case "FOUNDATIONAL":
+        default:
+            return {
+                labelEn: "Foundational",
+                labelAr: "تأسيسي",
+                badgeClass: "bg-rose-100 text-rose-800 border-rose-300",
+                descEn: "Candidate is currently at a foundational stage. Targeted executive coaching is advised.",
+                descAr: "يمر المرشح حاليًا بمرحلة تأسيسية، ويُنصح ببرامج توجيه قيادي مستهدفة."
+            };
+    }
+}
+
 async function loadAssessmentHistory() {
     try {
         const res = await fetch(`${API_BASE}/api/attempts/me/history`, {
@@ -1202,30 +1347,44 @@ function renderHistoryList(history) {
         const dateStr = dateObj.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
         const timeStr = dateObj.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
         
-        let badgeHtml = "";
+        let actionHtml = "";
         if (isCompleted) {
-            badgeHtml = `
-                <button onclick="downloadReport(event, '${attempt.attemptToken}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-full text-[11px] font-bold flex items-center gap-1.5 transition-colors">
-                    <span class="material-symbols-outlined text-[14px]">download</span>
-                    <span>Download Report</span>
-                </button>
+            actionHtml = `
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="window.viewScoreModal('${attempt.attemptToken}')" class="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 py-1.5 px-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition-colors whitespace-nowrap">
+                        <span class="material-symbols-outlined text-[15px]">analytics</span>
+                        <span>View Scores</span>
+                    </button>
+                    <button onclick="window.downloadReport(event, '${attempt.attemptToken}')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 py-1.5 px-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition-colors shadow-2xs whitespace-nowrap">
+                        <span class="material-symbols-outlined text-[15px] text-primary">download</span>
+                        <span>Report</span>
+                    </button>
+                </div>
             `;
         } else {
-            badgeHtml = `
-                <span class="bg-amber-50 text-amber-600 border border-amber-200 px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[14px]">pending_actions</span>
-                    <span>In Progress</span>
-                </span>
+            actionHtml = `
+                <div class="flex items-center gap-2">
+                    <span class="bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">pending_actions</span>
+                        <span>In Progress</span>
+                    </span>
+                    <button onclick="window.location.search = '?token=${attempt.attemptToken}'" class="text-xs text-primary font-bold hover:underline">
+                        Resume &rarr;
+                    </button>
+                </div>
             `;
         }
         
         html += `
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-3 bg-slate-50/70 hover:bg-slate-50 rounded-lg border border-slate-100 transition-colors">
-                <div>
-                    <h3 class="text-sm font-bold text-slate-800">Executive Leadership Assessment</h3>
-                    <p class="text-[11px] text-slate-500 mt-0.5">${prefix} ${dateStr} at ${timeStr}</p>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-3.5 bg-slate-50/70 hover:bg-slate-50 rounded-xl border border-slate-200/90 transition-all">
+                <div class="space-y-0.5 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-xs sm:text-sm font-bold text-slate-800 truncate">Executive Leadership Assessment</h3>
+                        ${isCompleted ? `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0">Scored</span>` : ''}
+                    </div>
+                    <p class="text-[11px] text-slate-500">${prefix} ${dateStr} at ${timeStr}</p>
                 </div>
-                ${badgeHtml}
+                ${actionHtml}
             </div>
         `;
     });
@@ -1234,25 +1393,433 @@ function renderHistoryList(history) {
     applyCurrentTranslation();
 }
 
-window.downloadReport = async function(event, token) {
-    const btn = event.currentTarget;
-    const originalHtml = btn.innerHTML;
-    btn.innerHTML = `<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span><span>Downloading...</span>`;
+window.viewScoreModal = async function(token) {
+    const modal = document.getElementById("scoreReportModal");
+    const modalBody = document.getElementById("scoreModalBody");
+    const candidateInfo = document.getElementById("modalCandidateInfo");
+    if (!modal || !modalBody) return;
+
+    modalBody.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-16 text-center space-y-3">
+            <div class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-xs text-slate-500 font-medium">Loading assessment score breakdown...</p>
+        </div>
+    `;
+    modal.classList.remove("hidden");
+
     try {
-        const res = await fetch(`${API_BASE}/api/attempts/${token}/report`, {
+        const res = await fetch(`${API_BASE}/api/attempts/${token}/score`, {
+            headers: getAuthHeader()
+        });
+        if (!res.ok) {
+            throw new Error("Score not available");
+        }
+        const score = await res.json();
+        
+        if (candidateInfo) {
+            candidateInfo.textContent = `${score.candidateName || 'Candidate'} • Token: ${token.substring(0, 8)}...`;
+        }
+
+        renderScoreModalContent(score, token);
+
+        // Set up print and download handlers
+        const printBtn = document.getElementById("modalPrintBtn");
+        if (printBtn) {
+            printBtn.onclick = () => generatePrintableReportWindow(score, token);
+        }
+
+        const jsonBtn = document.getElementById("modalDownloadJsonBtn");
+        if (jsonBtn) {
+            jsonBtn.onclick = () => downloadScoreJson(score, token);
+        }
+
+    } catch (e) {
+        modalBody.innerHTML = `
+            <div class="p-8 text-center space-y-3">
+                <span class="material-symbols-outlined text-4xl text-rose-500">error</span>
+                <h4 class="text-base font-bold text-slate-800">Score Report Not Found</h4>
+                <p class="text-xs text-slate-500">The assessment is still being processed or scores have not been generated.</p>
+            </div>
+        `;
+    }
+
+    const closeBtn = document.getElementById("closeScoreModalBtn");
+    if (closeBtn) {
+        closeBtn.onclick = () => modal.classList.add("hidden");
+    }
+};
+
+function renderScoreModalContent(score, token) {
+    const modalBody = document.getElementById("scoreModalBody");
+    if (!modalBody) return;
+
+    const readiness = getReadinessInfo(score.readinessBand);
+    const isAr = document.documentElement.getAttribute("dir") === "rtl";
+
+    let html = `
+        <!-- Hero Summary -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-5 sm:p-6 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-700/80 pb-4">
+                <div>
+                    <span class="text-xs font-semibold text-teal-400 uppercase tracking-widest">Composite Assessment Score</span>
+                    <div class="flex items-baseline gap-3 mt-1">
+                        <span class="text-4xl font-black text-white">${score.compositeScore}%</span>
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                            Percentile: P${score.percentile}
+                        </span>
+                    </div>
+                </div>
+                <div class="sm:text-right">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Promotion Readiness</span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${readiness.badgeClass}">
+                        <span class="material-symbols-outlined text-[14px]">verified</span>
+                        <span>${isAr ? readiness.labelAr : readiness.labelEn}</span>
+                    </span>
+                </div>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed font-medium">
+                ${isAr ? readiness.descAr : readiness.descEn}
+            </p>
+        </div>
+
+        <!-- 4 Batteries Overview Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-[10px] font-bold text-slate-400 uppercase">Personality (PQ10)</span>
+                <div class="text-lg font-black text-slate-800 mt-0.5">${score.personalityScorePct}%</div>
+                <span class="text-[10px] text-slate-500">140 items (Weight 28%)</span>
+            </div>
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-[10px] font-bold text-slate-400 uppercase">Judgment (SJT)</span>
+                <div class="text-lg font-black text-slate-800 mt-0.5">${score.sjtScorePct}%</div>
+                <span class="text-[10px] text-slate-500">16 scenarios (Weight 22%)</span>
+            </div>
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-[10px] font-bold text-slate-400 uppercase">Derailers</span>
+                <div class="text-lg font-black text-slate-800 mt-0.5">${score.derailersEffectiveScorePct}%</div>
+                <span class="text-[10px] text-slate-500">60 items (Weight 20%)</span>
+            </div>
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-[10px] font-bold text-slate-400 uppercase">Cognitive (GCAT)</span>
+                <div class="text-lg font-black text-slate-800 mt-0.5">${score.cognitiveScorePct}%</div>
+                <span class="text-[10px] text-slate-500">42 items (Weight 30%)</span>
+            </div>
+        </div>
+
+        <!-- Section 1: PQ10 8 Competency Traits -->
+        <div class="space-y-3 pt-2">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+                <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+                    <span>8 Competency Traits (PQ10)</span>
+                </h4>
+                <span class="text-[11px] text-slate-500">18 items (Traits 1-4) &bull; 17 items (Traits 5-8)</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+    `;
+
+    (score.traitScores || []).forEach(ts => {
+        const order = ts.displayOrder || 1;
+        const maxPts = (order <= 4 ? 18 : 17) * 4;
+        html += `
+            <div class="p-3 bg-white rounded-lg border border-slate-200/90 shadow-2xs space-y-1.5">
+                <div class="flex justify-between items-start text-xs">
+                    <span class="font-bold text-slate-800">${ts.nameAr || ts.traitCode}</span>
+                    <span class="font-bold text-teal-700">${ts.scorePct}%</span>
+                </div>
+                <div class="flex justify-between items-center text-[10px] text-slate-400">
+                    <span class="font-mono text-[9px]">${ts.traitCode}</span>
+                    <span>Raw: ${ts.rawScore} / ${maxPts}</span>
+                </div>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-teal-600 h-full rounded-full" style="width: ${Math.min(100, Math.max(0, ts.scorePct))}%;"></div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `
+            </div>
+        </div>
+
+        <!-- Section 2: 6 Derailer Risk Categories -->
+        <div class="space-y-3 pt-2">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+                <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <span>6 Derailer Risk Categories</span>
+                </h4>
+                <span class="text-[11px] text-slate-500">10 items per category &bull; Max 40.0 pts</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+    `;
+
+    (score.derailerCategoryScores || []).forEach(ds => {
+        html += `
+            <div class="p-3 bg-white rounded-lg border border-slate-200/90 shadow-2xs space-y-1.5">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-slate-800">${ds.nameAr || ds.categoryCode || 'Category'}</span>
+                    <span class="font-bold text-amber-700">${ds.scorePct}%</span>
+                </div>
+                <div class="text-[10px] text-slate-400">Raw: ${ds.rawScore} / 40.0</div>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-amber-500 h-full rounded-full" style="width: ${Math.min(100, Math.max(0, ds.scorePct))}%;"></div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `
+            </div>
+        </div>
+
+        <!-- Section 3: 3 GCAT Cognitive Subtests -->
+        <div class="space-y-3 pt-2">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+                <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+                    <span>3 Cognitive Aptitude Subtests (GCAT)</span>
+                </h4>
+                <span class="text-[11px] text-slate-500">14 questions per subtest</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+    `;
+
+    (score.gcatSubtestScores || []).forEach(gs => {
+        html += `
+            <div class="p-3 bg-white rounded-lg border border-slate-200/90 shadow-2xs space-y-1.5">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-slate-800">${gs.subtest}</span>
+                    <span class="font-bold text-cyan-700">${gs.scorePct}%</span>
+                </div>
+                <div class="text-[10px] text-slate-400">Correct: ${gs.correctCount} / ${gs.totalCount}</div>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-cyan-600 h-full rounded-full" style="width: ${Math.min(100, Math.max(0, gs.scorePct))}%;"></div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    modalBody.innerHTML = html;
+    applyCurrentTranslation();
+}
+
+window.downloadReport = async function(event, token) {
+    const btn = event ? event.currentTarget : null;
+    const originalHtml = btn ? btn.innerHTML : "";
+    if (btn) {
+        btn.innerHTML = `<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span><span>Downloading...</span>`;
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/attempts/${token}/score`, {
             headers: getAuthHeader()
         });
         if (res.ok) {
-            window.showCustomModal({title: 'Success', message: 'Your 5-Page Leadership Dossier report has been successfully downloaded.', type: 'success', icon: 'check_circle'});
+            const score = await res.json();
+            generatePrintableReportWindow(score, token);
         } else {
-            window.showCustomModal({title: 'Generating', message: 'Report is still generating.\nPlease check back later.', icon: 'hourglass_empty'});
+            window.showCustomModal({title: 'Generating', message: 'Report is still generating. Please check back shortly.', icon: 'hourglass_empty'});
         }
     } catch (e) {
         window.showCustomModal({title: 'Error', message: 'Failed to download report.', type: 'danger', icon: 'error'});
     } finally {
-        btn.innerHTML = originalHtml;
+        if (btn) {
+            btn.innerHTML = originalHtml;
+        }
     }
 };
+
+function downloadScoreJson(score, token) {
+    const jsonStr = JSON.stringify(score, null, 2);
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Executive_Assessment_Report_${token.substring(0, 8)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function generatePrintableReportWindow(score, token) {
+    const readiness = getReadinessInfo(score.readinessBand);
+    const candidateName = score.candidateName || currentUser.name || "Candidate";
+    const dateStr = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+    let traitRows = (score.traitScores || []).map(t => {
+        const order = t.displayOrder || 1;
+        const maxPts = (order <= 4 ? 18 : 17) * 4;
+        return `<tr>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${t.nameAr || t.traitCode}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-family: monospace; font-size: 11px;">${t.traitCode}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">${t.rawScore} / ${maxPts}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #0f766e;">${t.scorePct}%</td>
+        </tr>`;
+    }).join("");
+
+    let derailerRows = (score.derailerCategoryScores || []).map(d => {
+        return `<tr>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${d.nameAr || d.categoryCode}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">${d.rawScore} / 40.0</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #b45309;">${d.scorePct}%</td>
+        </tr>`;
+    }).join("");
+
+    let gcatRows = (score.gcatSubtestScores || []).map(g => {
+        return `<tr>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${g.subtest}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">${g.correctCount} / ${g.totalCount}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #0891b2;">${g.scorePct}%</td>
+        </tr>`;
+    }).join("");
+
+    const reportHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Executive Assessment Report - ${candidateName}</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1e293b; margin: 0; padding: 30px; line-height: 1.5; background: #fff; }
+        .header { border-bottom: 2px solid #00685f; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .title { font-size: 22px; font-weight: bold; color: #00685f; }
+        .subtitle { font-size: 12px; color: #64748b; margin-top: 4px; }
+        .hero { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 25px; }
+        .score-val { font-size: 36px; font-weight: 800; color: #00685f; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: bold; }
+        .battery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 25px; }
+        .battery-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; text-align: center; }
+        .battery-score { font-size: 20px; font-weight: bold; color: #1e293b; margin-top: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; font-size: 12px; }
+        th { background: #f1f5f9; padding: 8px; text-align: left; font-weight: bold; color: #475569; border-bottom: 2px solid #cbd5e1; }
+        h3 { font-size: 15px; color: #0f172a; margin-top: 20px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+        @media print { body { padding: 0; } .no-print { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="margin-bottom: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button onclick="window.print()" style="background: #00685f; color: white; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer;">Print / Save as PDF</button>
+        <button onclick="window.close()" style="background: #e2e8f0; color: #334155; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer;">Close</button>
+    </div>
+
+    <div class="header">
+        <div>
+            <div class="title">Executive Leadership Assessment Dossier</div>
+            <div class="subtitle">Candidate: <strong>${candidateName}</strong> &bull; Evaluation Date: ${dateStr} &bull; Token: ${token}</div>
+        </div>
+        <div style="text-align: right; font-size: 11px; color: #64748b;">Psychometric Evaluation Platform</div>
+    </div>
+
+    <div class="hero">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b;">Overall Composite Score</div>
+                <div class="score-val">${score.compositeScore}% <span style="font-size: 13px; font-weight: normal; color: #64748b;">(Percentile: P${score.percentile})</span></div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b; margin-bottom: 4px;">Promotion Readiness</div>
+                <span class="badge" style="background: #dcfce7; color: #166534; border: 1px solid #86efac;">${readiness.labelEn} / ${readiness.labelAr}</span>
+            </div>
+        </div>
+        <div style="margin-top: 12px; font-size: 12px; color: #475569;">${readiness.descEn}</div>
+    </div>
+
+    <div class="battery-grid">
+        <div class="battery-card">
+            <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">01 &bull; Personality (PQ10)</div>
+            <div class="battery-score">${score.personalityScorePct}%</div>
+            <div style="font-size: 10px; color: #94a3b8;">140 Items (28%)</div>
+        </div>
+        <div class="battery-card">
+            <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">02 &bull; Judgment (SJT)</div>
+            <div class="battery-score">${score.sjtScorePct}%</div>
+            <div style="font-size: 10px; color: #94a3b8;">16 Scenarios (22%)</div>
+        </div>
+        <div class="battery-card">
+            <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">03 &bull; Derailers</div>
+            <div class="battery-score">${score.derailersEffectiveScorePct}%</div>
+            <div style="font-size: 10px; color: #94a3b8;">60 Items (20%)</div>
+        </div>
+        <div class="battery-card">
+            <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">04 &bull; Cognitive (GCAT)</div>
+            <div class="battery-score">${score.cognitiveScorePct}%</div>
+            <div style="font-size: 10px; color: #94a3b8;">42 Items (30%)</div>
+        </div>
+    </div>
+
+    <h3>1. Personality Dimensions (PQ10 8 Core Competency Traits)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Trait Name</th>
+                <th>Trait Code</th>
+                <th style="text-align: center;">Raw Points</th>
+                <th style="text-align: right;">Score %</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${traitRows}
+        </tbody>
+    </table>
+
+    <h3>2. Behavioral Risk Factors (6 Derailer Categories)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th style="text-align: center;">Raw Points (Max 40)</th>
+                <th style="text-align: right;">Score %</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${derailerRows}
+        </tbody>
+    </table>
+
+    <h3>3. Cognitive Aptitude Breakdown (GCAT Subtests)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Subtest Dimension</th>
+                <th style="text-align: center;">Questions Correct (Out of 14)</th>
+                <th style="text-align: right;">Accuracy %</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${gcatRows}
+        </tbody>
+    </table>
+
+    <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #e2e8f0; font-size: 10px; color: #94a3b8; text-align: center;">
+        Psychometric Evaluation System &bull; Confidential Executive Document &bull; Generated on ${dateStr}
+    </div>
+</body>
+</html>`;
+
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+        printWindow.document.write(reportHtml);
+        printWindow.document.close();
+    } else {
+        // Fallback: download as HTML file
+        const blob = new Blob([reportHtml], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Executive_Assessment_Report_${token.substring(0, 8)}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+}
 
 
 function updateTestSidebar(attempt) {

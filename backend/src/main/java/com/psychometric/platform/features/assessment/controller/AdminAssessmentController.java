@@ -35,4 +35,11 @@ public class AdminAssessmentController {
     public ResponseEntity<List<AssessmentAttempt>> getCandidateAttempts(@RequestParam Long candidateId) {
         return ResponseEntity.ok(attemptRepo.findByCandidateIdOrderByCreatedAtDesc(candidateId));
     }
+
+    @GetMapping("/{token}/score")
+    public ResponseEntity<com.psychometric.platform.features.assessment.dto.response.AssessmentScoreResponseDto> getAttemptScore(
+            @PathVariable String token) {
+        var score = sessionService.getAssessmentScoreForAdmin(token);
+        return ResponseEntity.ok(com.psychometric.platform.features.assessment.dto.response.AssessmentScoreResponseDto.fromEntity(score));
+    }
 }

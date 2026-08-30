@@ -28,35 +28,47 @@ public class ItemSamplingService {
     }
 
     /**
-     * Samples 140 personality items balanced equally across the 8 core competencies.
+     * Samples 140 personality items balanced across the 8 core competencies (18 for first 4, 17 for next 4).
      */
     public List<Long> samplePersonalityItems(int targetCount) {
-        Set<Long> selected = new LinkedHashSet<>();
-        // 8 competencies: IDs 1..8. Draw 18 from first 4, 17 from next 4 -> 140 total
-        for (int cId = 1; cId <= 8; cId++) {
+        Set<Long> sampledSet = new LinkedHashSet<>();
+        // Constrained competencies first to guarantee sufficient items per stratum:
+        // 2 (INITIATIVE: 25), 6 (SKILL_DEVELOPMENT: 28), 5 (STRATEGIC_THINKING: 37), 8 (PLANNING: 41),
+        // 3 (DECISION_MAKING: 54), 7 (ADAPTABILITY: 54), 1 (COMMUNICATION: 55), 4 (LEADERSHIP: 66)
+        int[] compOrder = {2, 6, 5, 8, 3, 7, 1, 4};
+
+        for (int cId : compOrder) {
             int quota = (cId <= 4) ? 18 : 17;
             List<Long> ids = jdbcTemplate.queryForList(
                     "SELECT DISTINCT pic.item_id FROM personality_item_competencies pic " +
                     "JOIN personality_items pi ON pic.item_id = pi.id " +
                     "WHERE pic.competency_id = ? AND pi.is_active = true " +
-                    "ORDER BY RAND() LIMIT ?",
-                    Long.class, cId, quota
+                    "ORDER BY RAND()",
+                    Long.class, cId
             );
-            selected.addAll(ids);
+
+            int added = 0;
+            for (Long id : ids) {
+                if (!sampledSet.contains(id)) {
+                    sampledSet.add(id);
+                    added++;
+                    if (added >= quota) break;
+                }
+            }
         }
 
-        if (selected.size() < targetCount) {
+        if (sampledSet.size() < targetCount) {
             List<Long> remainder = jdbcTemplate.queryForList(
                     "SELECT id FROM personality_items WHERE is_active = true ORDER BY RAND()",
                     Long.class
             );
             for (Long id : remainder) {
-                selected.add(id);
-                if (selected.size() >= targetCount) break;
+                sampledSet.add(id);
+                if (sampledSet.size() >= targetCount) break;
             }
         }
 
-        List<Long> result = new ArrayList<>(selected);
+        List<Long> result = new ArrayList<>(sampledSet);
         if (result.size() > targetCount) {
             result = result.subList(0, targetCount);
         }
@@ -65,10 +77,10 @@ public class ItemSamplingService {
     }
 
     /**
-     * Samples 60 derailer items balanced equally (10 each) across the 6 derailer types.
+     * Samples 60 derailer items balanced equally (10 each) across the 6 derailer categories.
      */
     public List<Long> sampleDerailerItems(int targetCount) {
-        Set<Long> selected = new LinkedHashSet<>();
+        List<Long> allSampled = new ArrayList<>();
         // 6 Derailer types (IDs 1..6)
         for (int tId = 1; tId <= 6; tId++) {
             List<Long> ids = jdbcTemplate.queryForList(
@@ -78,21 +90,24 @@ public class ItemSamplingService {
                     "ORDER BY RAND() LIMIT 10",
                     Long.class, tId
             );
-            selected.addAll(ids);
+            allSampled.addAll(ids);
         }
 
-        if (selected.size() < targetCount) {
+        if (allSampled.size() < targetCount) {
+            Set<Long> existing = new HashSet<>(allSampled);
             List<Long> remainder = jdbcTemplate.queryForList(
                     "SELECT id FROM derailer_items WHERE is_active = true ORDER BY RAND()",
                     Long.class
             );
             for (Long id : remainder) {
-                selected.add(id);
-                if (selected.size() >= targetCount) break;
+                if (existing.add(id)) {
+                    allSampled.add(id);
+                    if (allSampled.size() >= targetCount) break;
+                }
             }
         }
 
-        List<Long> result = new ArrayList<>(selected);
+        List<Long> result = new ArrayList<>(allSampled);
         if (result.size() > targetCount) {
             result = result.subList(0, targetCount);
         }
@@ -101,36 +116,23 @@ public class ItemSamplingService {
     }
 
     /**
-     * Samples 16 SJT scenarios balanced across the 5 domains (3 each + 1 remainder).
+     * Samples 16 SJT scenarios purely at random from the item bank.
      */
     public List<Long> sampleSjtItems(int targetCount) {
-        Set<Long> selected = new LinkedHashSet<>();
-        // 5 SJT domains (IDs 1..5)
-        for (int dId = 1; dId <= 5; dId++) {
-            List<Long> ids = jdbcTemplate.queryForList(
-                    "SELECT id FROM sjt_scenarios " +
-                    "WHERE domain_id = ? AND is_active = true " +
-                    "ORDER BY RAND() LIMIT 3",
-                    Long.class, dId
-            );
-            selected.addAll(ids);
-        }
+        List<Long> ids = jdbcTemplate.queryForList(
+                "SELECT id FROM sjt_scenarios WHERE is_active = true ORDER BY RAND() LIMIT ?",
+                Long.class, targetCount
+        );
 
-        if (selected.size() < targetCount) {
+        if (ids.size() < targetCount) {
             List<Long> remainder = jdbcTemplate.queryForList(
-                    "SELECT id FROM sjt_scenarios WHERE is_active = true ORDER BY RAND()",
-                    Long.class
+                    "SELECT id FROM sjt_scenarios ORDER BY RAND() LIMIT ?",
+                    Long.class, targetCount
             );
-            for (Long id : remainder) {
-                selected.add(id);
-                if (selected.size() >= targetCount) break;
-            }
+            ids = remainder;
         }
 
-        List<Long> result = new ArrayList<>(selected);
-        if (result.size() > targetCount) {
-            result = result.subList(0, targetCount);
-        }
+        List<Long> result = new ArrayList<>(ids);
         Collections.shuffle(result);
         return result;
     }
@@ -140,7 +142,7 @@ public class ItemSamplingService {
      * each with equal difficulty distribution (5 Easy, 5 Medium, 4 Hard).
      */
     public List<Long> sampleGcatItems(int targetCount) {
-        Set<Long> selected = new LinkedHashSet<>();
+        List<Long> allSampled = new ArrayList<>();
         String[] subtests = {"ABSTRACT", "NUMERICAL", "VERBAL"};
 
         for (String sub : subtests) {
@@ -152,7 +154,7 @@ public class ItemSamplingService {
                     "ORDER BY RAND() LIMIT 5",
                     Long.class, sub
             );
-            selected.addAll(easyIds);
+            allSampled.addAll(easyIds);
 
             // 5 Medium
             List<Long> medIds = jdbcTemplate.queryForList(
@@ -162,7 +164,7 @@ public class ItemSamplingService {
                     "ORDER BY RAND() LIMIT 5",
                     Long.class, sub
             );
-            selected.addAll(medIds);
+            allSampled.addAll(medIds);
 
             // 4 Hard
             List<Long> hardIds = jdbcTemplate.queryForList(
@@ -172,21 +174,24 @@ public class ItemSamplingService {
                     "ORDER BY RAND() LIMIT 4",
                     Long.class, sub
             );
-            selected.addAll(hardIds);
+            allSampled.addAll(hardIds);
         }
 
-        if (selected.size() < targetCount) {
+        if (allSampled.size() < targetCount) {
+            Set<Long> existing = new HashSet<>(allSampled);
             List<Long> remainder = jdbcTemplate.queryForList(
                     "SELECT id FROM gcat_questions WHERE is_active = true ORDER BY RAND()",
                     Long.class
             );
             for (Long id : remainder) {
-                selected.add(id);
-                if (selected.size() >= targetCount) break;
+                if (existing.add(id)) {
+                    allSampled.add(id);
+                    if (allSampled.size() >= targetCount) break;
+                }
             }
         }
 
-        List<Long> result = new ArrayList<>(selected);
+        List<Long> result = new ArrayList<>(allSampled);
         if (result.size() > targetCount) {
             result = result.subList(0, targetCount);
         }

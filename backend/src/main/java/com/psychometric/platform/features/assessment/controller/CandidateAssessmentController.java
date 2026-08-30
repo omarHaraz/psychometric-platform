@@ -1,7 +1,9 @@
 package com.psychometric.platform.features.assessment.controller;
 
 import com.psychometric.platform.features.assessment.domain.model.AssessmentAttempt;
+import com.psychometric.platform.features.assessment.domain.model.AssessmentScore;
 import com.psychometric.platform.features.assessment.dto.HeartbeatRequest;
+import com.psychometric.platform.features.assessment.dto.response.AssessmentScoreResponseDto;
 import com.psychometric.platform.features.assessment.service.AssessmentSessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -67,14 +69,20 @@ public class CandidateAssessmentController {
                                                            @AuthenticationPrincipal String username) {
         return ResponseEntity.ok(sessionService.submitSession(id, username));
     }
-    
+
+    @GetMapping("/{token}/score")
+    public ResponseEntity<AssessmentScoreResponseDto> getScore(
+            @PathVariable String token,
+            @AuthenticationPrincipal String username) {
+        AssessmentScore score = sessionService.getAssessmentScoreByToken(token, username);
+        return ResponseEntity.ok(AssessmentScoreResponseDto.fromEntity(score));
+    }
+
     @GetMapping("/{token}/report")
-    public ResponseEntity<?> getReport(@PathVariable String token,
-                                       @AuthenticationPrincipal String username) {
-        AssessmentAttempt attempt = sessionService.getAttemptByToken(token, username);
-        if (attempt.getState() != com.psychometric.platform.features.assessment.domain.enums.AttemptState.SCORED) {
-            return ResponseEntity.status(404).body("Report not ready");
-        }
-        return ResponseEntity.ok("Report Stub");
+    public ResponseEntity<AssessmentScoreResponseDto> getReport(
+            @PathVariable String token,
+            @AuthenticationPrincipal String username) {
+        AssessmentScore score = sessionService.getAssessmentScoreByToken(token, username);
+        return ResponseEntity.ok(AssessmentScoreResponseDto.fromEntity(score));
     }
 }
