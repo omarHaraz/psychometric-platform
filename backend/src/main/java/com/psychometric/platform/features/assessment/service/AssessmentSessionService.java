@@ -252,6 +252,10 @@ public class AssessmentSessionService {
     }
 
     private BatterySession validateSessionAction(Long sessionId, String username) {
+        return validateSessionAction(sessionId, username, false);
+    }
+
+    private BatterySession validateSessionAction(Long sessionId, String username, boolean allowLocked) {
         User authenticatedUser = getUserByEmail(username);
         BatterySession session = sessionRepo.findById(sessionId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Session not found"));
@@ -265,7 +269,7 @@ public class AssessmentSessionService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot interact with battery out of sequence");
         }
         
-        if (session.getState() != SessionState.IN_PROGRESS) {
+        if (session.getState() != SessionState.IN_PROGRESS && !(allowLocked && session.getState() == SessionState.LOCKED)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Session is not IN_PROGRESS");
         }
         
@@ -276,7 +280,7 @@ public class AssessmentSessionService {
         String timerKey = "battery_session:" + session.getId() + ":timer";
         String startTimeStr = redisTemplate.opsForValue().get(timerKey);
         if (startTimeStr == null) {
-            if (session.getStartTime() == null) { return 0; }
+            if (session.getStartTime() == null) { return session.getTimeLimitSeconds(); }
             startTimeStr = String.valueOf(session.getStartTime().toEpochMilli());
         }
         
@@ -292,7 +296,7 @@ public class AssessmentSessionService {
      */
     @Transactional
     public List<Map<String, Object>> getBatteryItems(Long sessionId, String username) {
-        BatterySession session = validateSessionAction(sessionId, username);
+        BatterySession session = validateSessionAction(sessionId, username, true);
         
         if (session.getState() == SessionState.LOCKED) {
             session.setState(SessionState.IN_PROGRESS);
@@ -305,7 +309,9 @@ public class AssessmentSessionService {
 
         List<Long> sampledIds = session.getSampledItemIds();
         if (sampledIds == null || sampledIds.isEmpty()) {
-            return Collections.emptyList();
+            sampledIds = samplingService.sampleItemsForBattery(session.getBatteryType());
+            session.setSampledItemIds(sampledIds);
+            sessionRepo.save(session);
         }
 
         return switch (session.getBatteryType()) {

@@ -145,7 +145,15 @@ const i18nDict = {
     "Auto-advancing to the next assessment section...": "يتم الانتقال تلقائيًا إلى قسم التقييم التالي...",
     "Pre-Battery Instructions": "تعليمات قبل البدء",
     "I Understand • Begin Battery": "أفهم ذلك • ابدأ البطارية",
-    "Battery Overview": "نظرة عامة على البطارية"
+    "Battery Overview": "نظرة عامة على البطارية",
+    "Previous Part Submitted Successfully": "تم تسليم الجزء السابق بنجاح",
+    "Taking a brief break. You can start the next part immediately, or it will begin automatically in": "استراحة قصيرة. يمكنك بدء الجزء التالي فوراً، أو سيبدأ تلقائياً خلال",
+    "s...": " ثانية...",
+    "Error": "خطأ",
+    "Failed to load test items.": "فشل في تحميل عناصر الاختبار.",
+    "Submission Failed": "فشل التسليم",
+    "Failed to submit battery responses. Please check connection.": "فشل في تسليم إجابات البطارية. يرجى التحقق من الاتصال.",
+    "Failed to start assessment battery. Please try again.": "فشل في بدء بطارية التقييم. يرجى المحاولة مرة أخرى."
 };
 
 // Create reverse dictionary
@@ -236,6 +244,7 @@ let responsesMap = {};
 let itemStartTimes = {};
 let countdownTimerInterval = null;
 let heartbeatInterval = null;
+let intermissionTimerInterval = null;
 let remainingSeconds = 0;
 
 // Battery definitions metadata
@@ -629,7 +638,12 @@ function updateBatteryCardStates(attempt) {
 }
 
 // Pre-Battery Instructions Screen
-function openPreBatteryInstructions(batteryIndex) {
+function openPreBatteryInstructions(batteryIndex, isIntermission = false) {
+    if (intermissionTimerInterval) {
+        clearInterval(intermissionTimerInterval);
+        intermissionTimerInterval = null;
+    }
+
     const meta = BATTERY_METADATA[batteryIndex] || BATTERY_METADATA[0];
 
     document.getElementById("instPartNumber").textContent = meta.part;
@@ -639,6 +653,35 @@ function openPreBatteryInstructions(batteryIndex) {
     document.getElementById("instTimeLimit").textContent = meta.timeLimit;
     document.getElementById("instFormatType").textContent = meta.format;
 
+    const intermissionBlock = document.getElementById("instIntermissionBlock");
+    const intermissionSecs = document.getElementById("instIntermissionSecs");
+    const intermissionBar = document.getElementById("instIntermissionBar");
+
+    if (isIntermission && intermissionBlock) {
+        intermissionBlock.classList.remove("hidden");
+        let remaining = 60;
+        if (intermissionSecs) intermissionSecs.textContent = remaining;
+        if (intermissionBar) {
+            intermissionBar.style.width = "100%";
+            intermissionBar.style.transition = "width 1s linear";
+        }
+
+        intermissionTimerInterval = setInterval(() => {
+            remaining--;
+            if (intermissionSecs) intermissionSecs.textContent = remaining;
+            if (intermissionBar) intermissionBar.style.width = `${(remaining / 60) * 100}%`;
+
+            if (remaining <= 0) {
+                clearInterval(intermissionTimerInterval);
+                intermissionTimerInterval = null;
+                // Auto-advance by force into the next battery!
+                startActiveBatterySession();
+            }
+        }, 1000);
+    } else if (intermissionBlock) {
+        intermissionBlock.classList.add("hidden");
+    }
+
     updateTestSidebar(currentAttempt);
     showView("view-instructions");
     applyCurrentTranslation();
@@ -646,6 +689,13 @@ function openPreBatteryInstructions(batteryIndex) {
 
 // Start / Unlock Battery
 async function startActiveBatterySession() {
+    if (intermissionTimerInterval) {
+        clearInterval(intermissionTimerInterval);
+        intermissionTimerInterval = null;
+    }
+    const intermissionBlock = document.getElementById("instIntermissionBlock");
+    if (intermissionBlock) intermissionBlock.classList.add("hidden");
+
     showView("view-loading");
 
     try {
@@ -1108,7 +1158,7 @@ async function submitActiveBattery(isAutoTimeout = false) {
             if (updatedAttempt.state === "ALL_SUBMITTED" || updatedAttempt.state === "SCORED") {
                 showView("view-complete");
             } else {
-                openPreBatteryInstructions(updatedAttempt.currentBatteryIndex);
+                openPreBatteryInstructions(updatedAttempt.currentBatteryIndex, true);
             }
         }, 2000);
 
