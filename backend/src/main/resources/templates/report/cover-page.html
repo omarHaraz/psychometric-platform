@@ -31,7 +31,7 @@
             text-align: center;
         }
 
-        /* Outer Page Container */
+        /* Page Container */
         .page-container {
             position: relative;
             width: 210mm;
@@ -42,50 +42,28 @@
             margin: 0 auto;
         }
 
-        /* Decorative Background Elements */
+        /* Top Modern Geometric Accents */
         .top-accent-bar {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 10px;
-            background: #00685f;
+            height: 8px;
+            background: #1e3a4c;
             z-index: 5;
         }
 
-        .gold-accent-stripe {
+        .copper-accent-stripe {
             position: absolute;
-            top: 10px;
+            top: 8px;
             left: 0;
             right: 0;
             height: 4px;
-            background: #c5a059;
+            background: #7a4b3a;
             z-index: 5;
         }
 
-        .geometric-accent-left {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 140px;
-            height: 140px;
-            background: linear-gradient(135deg, rgba(0, 104, 95, 0.08) 0%, rgba(197, 160, 89, 0.03) 100%);
-            border-bottom-right-radius: 100%;
-            z-index: 1;
-        }
-
-        .geometric-accent-right {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 180px;
-            height: 180px;
-            background: linear-gradient(315deg, rgba(0, 104, 95, 0.07) 0%, rgba(197, 160, 89, 0.04) 100%);
-            border-top-left-radius: 100%;
-            z-index: 1;
-        }
-
-        /* Flexbox Centering Layout (Vertical & Horizontal) */
+        /* Flexbox Centering Layout */
         .flex-center-container {
             display: flex;
             flex-direction: column;
@@ -95,7 +73,7 @@
             width: 100%;
             height: 100%;
             min-height: 297mm;
-            padding: 35mm 20mm 35mm 20mm;
+            padding: 35mm 22mm 40mm 22mm;
             position: relative;
             z-index: 2;
         }
@@ -105,30 +83,37 @@
             font-family: 'Inter', 'Arial', sans-serif;
             font-size: 14px;
             font-weight: 700;
-            letter-spacing: 5px;
+            letter-spacing: 4px;
             text-transform: uppercase;
             color: #475569;
-            margin: 0 0 16px 0;
+            margin: 0 0 14px 0;
             direction: ltr;
             text-align: center;
         }
 
+        .header-symbol {
+            margin: 0 auto 20px auto;
+            color: #1e3a4c;
+            font-size: 24px;
+            line-height: 1;
+        }
+
         .divider-small {
-            width: 50px;
+            width: 48px;
             height: 3px;
-            background: #c5a059;
-            margin: 0 auto 28px auto;
+            background: #7a4b3a;
+            margin: 0 auto 30px auto;
             border: none;
             border-radius: 2px;
         }
 
         /* 2. Report Title & Subtitle */
         .report-title-ar {
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 800;
-            color: #00685f;
+            color: #1e3a4c;
             line-height: 1.35;
-            margin: 0 0 10px 0;
+            margin: 0 0 8px 0;
             direction: rtl;
             text-align: center;
         }
@@ -136,8 +121,8 @@
         .report-subtitle-ar {
             font-size: 22px;
             font-weight: 600;
-            color: #c5a059;
-            margin: 0 0 35px 0;
+            color: #7a4b3a;
+            margin: 0 0 38px 0;
             direction: rtl;
             text-align: center;
             letter-spacing: 1px;
@@ -145,14 +130,14 @@
 
         /* 3. Candidate & Result Information Box */
         .meta-card {
-            width: 380px;
+            width: 400px;
             max-width: 90%;
-            margin: 0 auto 30px auto;
+            margin: 0 auto 36px auto;
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-top: 3px solid #00685f;
-            border-radius: 8px;
-            padding: 18px 22px;
+            border-top: 3px solid #1e3a4c;
+            border-radius: 6px;
+            padding: 20px 24px;
             text-align: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
         }
@@ -183,7 +168,7 @@
             font-family: 'Inter', 'Arial', sans-serif;
             font-size: 16px;
             font-weight: 700;
-            color: #00685f;
+            color: #1e3a4c;
             margin-top: 10px;
             margin-bottom: 0;
             padding-top: 8px;
@@ -193,56 +178,10 @@
 
         .meta-line.result-score span {
             font-size: 20px;
-            color: #00685f;
+            color: #1e3a4c;
         }
 
-        /* 4. Company Name Section */
-        .company-block {
-            margin: 0 auto 20px auto;
-            text-align: center;
-        }
-
-        .company-name-ar {
-            font-size: 16px;
-            font-weight: 700;
-            color: #0f172a;
-            line-height: 1.4;
-            direction: rtl;
-            margin: 0;
-            text-align: center;
-        }
-
-        .company-sub-ar {
-            font-size: 13px;
-            font-weight: 600;
-            color: #64748b;
-            direction: rtl;
-            margin: 2px 0 8px 0;
-            text-align: center;
-        }
-
-        .company-name-en {
-            font-family: 'Inter', 'Arial', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            color: #0f172a;
-            direction: ltr;
-            margin: 0;
-            letter-spacing: 0.5px;
-            text-align: center;
-        }
-
-        .company-sub-en {
-            font-family: 'Inter', 'Arial', sans-serif;
-            font-size: 11px;
-            font-weight: 500;
-            color: #64748b;
-            direction: ltr;
-            margin: 2px 0 0 0;
-            text-align: center;
-        }
-
-        /* 5. Logo */
+        /* 4. Logo Container */
         .logo-container {
             margin: 10px auto 0 auto;
             text-align: center;
@@ -259,54 +198,62 @@
             margin: 0 auto;
         }
 
-        /* 6. Footer */
-        .page-footer {
-            position: absolute;
-            bottom: 12mm;
-            left: 0;
-            right: 0;
-            width: 100%;
-            text-align: center;
-            padding: 0 20mm;
-            box-sizing: border-box;
-            z-index: 10;
-        }
-
-        .footer-divider {
-            width: 80%;
-            height: 1px;
-            background: #e2e8f0;
-            margin: 0 auto 10px auto;
-            border: none;
-        }
-
-        .footer-text {
-            font-size: 11px;
-            color: #64748b;
-            line-height: 1.4;
-            text-align: center;
-            direction: ltr;
-        }
-
-        .footer-text .cid {
-            font-family: 'Inter', 'Arial', sans-serif;
-            font-weight: 600;
-            color: #334155;
-        }
-
-        .footer-text .ar-title {
-            direction: rtl;
-            display: inline-block;
-        }
-
-        .footer-bottom-accent {
+        /* 5. Modern Multi-Segment Footer Banner (Matching Page 2 Design) */
+        .bottom-banner-wrapper {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 6px;
-            background: #00685f;
+            width: 100%;
+            height: 38px;
+            background: #7a4b3a;
             z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20mm;
+            box-sizing: border-box;
+        }
+
+        .banner-left-shape {
+            position: absolute;
+            bottom: 0;
+            left: 20mm;
+            width: 90px;
+            height: 38px;
+            background: #1e3a4c;
+            transform: skew(-25deg);
+            z-index: 11;
+        }
+
+        .banner-text-right {
+            position: relative;
+            z-index: 12;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'Inter', 'Arial', sans-serif;
+            margin-left: auto;
+            direction: ltr;
+        }
+
+        .banner-subtext {
+            position: absolute;
+            bottom: 42px;
+            right: 20mm;
+            font-size: 10px;
+            color: #64748b;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+        }
+
+        .page-footer-label {
+            position: absolute;
+            bottom: 42px;
+            left: 20mm;
+            font-size: 11px;
+            color: #64748b;
+            direction: rtl;
         }
     </style>
 </head>
@@ -314,15 +261,14 @@
     <div class="page-container">
         <!-- Top Accents -->
         <div class="top-accent-bar"></div>
-        <div class="gold-accent-stripe"></div>
-        <div class="geometric-accent-left"></div>
-        <div class="geometric-accent-right"></div>
+        <div class="copper-accent-stripe"></div>
 
         <!-- Flexbox Centered Content -->
         <div class="flex-center-container">
             
             <!-- 1. Header -->
             <div class="header-country" dir="ltr">UNITED ARAB EMIRATES</div>
+            <div class="header-symbol">❖</div>
             <hr class="divider-small" />
 
             <!-- 2. Report Title & Subtitle (Arabic RTL) -->
@@ -342,34 +288,27 @@
                 </div>
             </div>
 
-            <!-- 4. Company Name (Arabic RTL & English LTR) -->
-            <div class="company-block">
-                <div class="company-name-ar" dir="rtl">معهد الخبراء العرب</div>
-                <div class="company-sub-ar" dir="rtl">للتدريب والاستشارات</div>
-                <div class="company-name-en" dir="ltr">Arab Experts Institute</div>
-                <div class="company-sub-en" dir="ltr">For Training &amp; Consultation</div>
-            </div>
-
-            <!-- 5. Logo (Base64 data URI / Dynamic Thymeleaf URL / Fallback SVG) -->
+            <!-- 4. Logo (Base64 data URI / Dynamic Thymeleaf URL / Fallback SVG) -->
             <div class="logo-container">
                 <img class="company-logo" 
-                     th:src="${companyLogoBase64 != null ? companyLogoBase64 : (logoUrl != null ? logoUrl : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 240 70\'><rect width=\'240\' height=\'70\' rx=\'8\' fill=\'%23f1f5f9\'/><path d=\'M35 18 L50 48 L20 48 Z\' fill=\'%2300685f\'/><circle cx=\'35\' cy=\'38\' r=\'6\' fill=\'%23c5a059\'/><text x=\'62\' y=\'34\' font-family=\'Arial\' font-size=\'14\' font-weight=\'bold\' fill=\'%2300685f\'>ARAB EXPERTS</text><text x=\'62\' y=\'50\' font-family=\'Arial\' font-size=\'10\' font-weight=\'600\' fill=\'%2364748b\'>INSTITUTE</text></svg>')}" 
-                     alt="Arab Experts Institute Logo" />
+                     th:src="${companyLogoBase64 != null ? companyLogoBase64 : (logoUrl != null ? logoUrl : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 200 60\'><circle cx=\'30\' cy=\'30\' r=\'18\' fill=\'%231e3a4c\'/><path d=\'M30 18 L38 38 L22 38 Z\' fill=\'%237a4b3a\'/><text x=\'58\' y=\'32\' font-family=\'Arial\' font-size=\'13\' font-weight=\'bold\' fill=\'%231e3a4c\'>EXECUTIVE</text><text x=\'58\' y=\'45\' font-family=\'Arial\' font-size=\'10\' font-weight=\'600\' fill=\'%237a4b3a\'>ASSESSMENT</text></svg>')}" 
+                     alt="Executive Logo" />
             </div>
 
         </div>
 
-        <!-- 6. Bottom Positioned Footer -->
-        <div class="page-footer">
-            <hr class="footer-divider" />
-            <div class="footer-text">
-                <span class="cid" th:text="${candidateId}">CAN-98234</span>
-                <span> &nbsp;|&nbsp; </span>
-                <span class="ar-title" dir="rtl">تقرير الكفاءات للقادة تطوير</span>
-            </div>
+        <!-- 5. Footer -->
+        <div class="page-footer-label" dir="rtl">
+            <span th:text="${candidateId}">CAN-98234</span> | تقرير الكفاءات للقادة تطوير
         </div>
-        
-        <div class="footer-bottom-accent"></div>
+        <div class="banner-subtext">
+            &copy; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
+        </div>
+
+        <div class="bottom-banner-wrapper">
+            <div class="banner-left-shape"></div>
+            <div class="banner-text-right">Executive Leadership Evaluation</div>
+        </div>
     </div>
 </body>
 </html>

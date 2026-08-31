@@ -10,10 +10,7 @@
            ========================================================================== */
         @page {
             size: A4 portrait;
-            margin: 14mm 16mm 18mm 16mm;
-            @bottom-center {
-                content: element(footer);
-            }
+            margin: 12mm 15mm 22mm 15mm;
         }
 
         * {
@@ -30,203 +27,282 @@
             color: #1e293b;
             direction: rtl;
             text-align: right;
-            font-size: 11.5px;
+            font-size: 11px;
             line-height: 1.6;
         }
 
-        /* Running Header / Page Header */
-        .page-header {
-            border-bottom: 2px solid #00685f;
-            padding-bottom: 6px;
-            margin-bottom: 16px;
-            display: table;
-            width: 100%;
+        /* 1. Page Main Header */
+        .main-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
         }
 
-        .header-title-cell {
-            display: table-cell;
-            vertical-align: middle;
-            text-align: right;
-            font-weight: 700;
-            font-size: 13px;
-            color: #00685f;
+        .main-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .header-meta-cell {
-            display: table-cell;
-            vertical-align: middle;
-            text-align: left;
-            font-size: 10px;
-            color: #64748b;
-            font-family: 'Inter', 'Arial', sans-serif;
-            direction: ltr;
-        }
-
-        /* Section Headings */
-        h2.section-main-title {
-            font-size: 18px;
+        .main-title {
+            font-size: 26px;
             font-weight: 800;
-            color: #00685f;
-            margin: 0 0 4px 0;
-            padding-bottom: 4px;
+            color: #1e3a4c;
+            margin: 0;
+            line-height: 1.2;
         }
 
-        h3.section-sub-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #c5a059;
-            margin: 0 0 8px 0;
+        .geom-symbol {
+            display: inline-block;
+            color: #1e3a4c;
+            font-size: 22px;
+            line-height: 1;
+            margin-right: 6px;
         }
 
-        h3.section-header {
-            font-size: 14px;
-            font-weight: 700;
-            color: #00685f;
-            margin: 14px 0 6px 0;
-            border-right: 3px solid #c5a059;
-            padding-right: 8px;
+        /* Section Headings with Circular Icon */
+        .section-header-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            margin-bottom: 4px;
         }
 
-        h4.table-sub-header {
-            font-size: 12px;
-            font-weight: 600;
-            color: #475569;
-            margin: 0 0 8px 0;
-        }
-
-        p.text-block {
+        .icon-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1.5px solid #1e3a4c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 11px;
+            color: #1e3a4c;
+            font-weight: bold;
+            flex-shrink: 0;
+            text-align: center;
+            line-height: 19px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e3a4c;
+            margin: 0;
+        }
+
+        .section-divider {
+            border: none;
+            height: 1.5px;
+            background-color: #1e3a4c;
+            margin: 3px 0 8px 0;
+        }
+
+        p.text-content {
+            font-size: 10.5px;
             color: #334155;
             text-align: justify;
             margin: 0 0 10px 0;
             line-height: 1.65;
         }
 
-        /* Scale Graphic / Legend */
-        .scale-card {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 10px 14px;
-            margin: 8px 0 14px 0;
+        /* Section 2: Two-Column Layout (Text + 5-Point Scale) */
+        .two-col-layout {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .col-text {
+            flex: 1.3;
+        }
+
+        .col-scale {
+            flex: 1;
+            border-top: 1px solid #94a3b8;
+            padding-top: 4px;
             text-align: center;
         }
 
-        .scale-grid {
-            display: table;
-            width: 100%;
-            border-collapse: collapse;
+        .scale-column-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e3a4c;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .scale-numbers-grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 5px;
+            margin-top: 8px;
+        }
+
+        .scale-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .scale-label-rot {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-size: 9.5px;
+            color: #475569;
+            font-weight: 600;
+            height: 65px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scale-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 22px;
+            text-align: center;
+        }
+
+        /* Section 3: Competency Match (Text + 3 Pill Indicators) */
+        .competency-match-layout {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .col-competency-text {
+            flex: 1.2;
+        }
+
+        .col-competency-indicators {
+            flex: 1.4;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .indicators-header {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e3a4c;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .indicators-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .indicator-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .indicator-title {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #1e3a4c;
             margin-bottom: 4px;
         }
 
-        .scale-cell {
-            display: table-cell;
-            width: 20%;
-            text-align: center;
-            vertical-align: middle;
-            padding: 4px 2px;
+        .indicator-desc {
+            font-size: 9px;
+            color: #475569;
+            line-height: 1.35;
+            min-height: 38px;
+            margin-bottom: 8px;
         }
 
-        .scale-badge {
-            display: inline-block;
-            width: 26px;
-            height: 26px;
-            line-height: 26px;
-            border-radius: 50%;
-            font-size: 11px;
-            font-weight: bold;
-            color: #ffffff;
-            text-align: center;
+        .candidate-tag {
+            font-size: 9px;
+            font-weight: 700;
+            color: #7a4b3a;
             margin-bottom: 2px;
         }
 
-        .badge-dev { background-color: #e11d48; }
-        .badge-mid { background-color: #f59e0b; }
-        .badge-str { background-color: #00685f; }
-
-        .scale-text-labels {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #0f172a;
-            text-align: center;
-            margin-top: 4px;
-            direction: rtl;
+        .color-pill {
+            width: 28px;
+            height: 24px;
+            border-radius: 6px;
+            display: inline-block;
         }
 
-        .scale-text-labels span {
-            color: #64748b;
-            font-weight: normal;
-            margin: 0 6px;
+        .pill-green { background-color: #388e3c; }
+        .pill-yellow { background-color: #fbc02d; }
+        .pill-red { background-color: #d32f2f; }
+
+        /* Section 4: Impression Management Table */
+        .impression-table-wrap {
+            margin-top: 6px;
+            margin-bottom: 16px;
         }
 
-        /* Tables Common */
-        table.report-table {
+        table.impression-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 8px 0 16px 0;
-            font-size: 10.5px;
-            background-color: #ffffff;
-        }
-
-        table.report-table th, 
-        table.report-table td {
-            border: 1px solid #cbd5e1;
-            padding: 8px 10px;
+            font-size: 10px;
             text-align: right;
-            vertical-align: middle;
         }
 
-        table.report-table th {
-            background-color: #00685f;
-            color: #ffffff;
-            font-weight: 700;
+        table.impression-table th {
             font-size: 11px;
-            letter-spacing: 0.2px;
+            font-weight: 700;
+            color: #7a4b3a;
+            padding: 8px 6px;
+            border-bottom: 1.5px solid #cbd5e1;
         }
 
-        /* Table 1: Competency Match Styles */
-        .table-competency th:nth-child(1) { width: 40%; }
-        .table-competency th:nth-child(2) { width: 20%; background-color: #00796b; }
-        .table-competency th:nth-child(3) { width: 20%; background-color: #0f766e; }
-        .table-competency th:nth-child(4) { width: 20%; background-color: #115e59; }
-
-        .table-competency td {
-            font-size: 10.5px;
-            line-height: 1.5;
+        table.impression-table td {
+            padding: 10px 6px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
             color: #334155;
         }
 
-        .table-competency td:first-child {
-            background-color: #f8fafc;
-            font-weight: 500;
-        }
+        table.impression-table th:nth-child(1) { width: 25%; }
+        table.impression-table th:nth-child(2) { width: 15%; text-align: center; }
+        table.impression-table th:nth-child(3) { width: 15%; text-align: center; }
+        table.impression-table th:nth-child(4) { width: 45%; }
 
-        /* Table 2: Impression Management Styles */
-        .table-impression th:nth-child(1) { width: 26%; }
-        .table-impression th:nth-child(2) { width: 20%; text-align: center; }
-        .table-impression th:nth-child(3) { width: 18%; text-align: center; }
-        .table-impression th:nth-child(4) { width: 36%; }
-
-        .table-impression td {
-            font-size: 10.5px;
-        }
-
-        .table-impression td:first-child {
+        table.impression-table td:nth-child(1) {
             font-weight: 700;
-            color: #0f172a;
+            color: #1e3a4c;
         }
 
-        /* Visual Bar Cell in Table 2 */
-        .score-bar-cell {
+        .score-cell-container {
             position: relative;
             text-align: center !important;
-            padding: 0 !important;
-            height: 32px;
-            overflow: hidden;
+            height: 26px;
+            line-height: 26px;
             background-color: #f8fafc;
+            border-radius: 4px;
+            overflow: hidden;
         }
 
-        .score-bar-fill {
+        .score-fill-bar {
             position: absolute;
             top: 0;
             bottom: 0;
@@ -236,140 +312,218 @@
             z-index: 1;
         }
 
-        .score-bar-text {
+        .score-number {
             position: relative;
             z-index: 2;
             font-weight: 700;
-            font-size: 12px;
             color: #0f172a;
-            line-height: 32px;
-            display: inline-block;
-            width: 100%;
-            text-align: center;
         }
 
-        .risk-badge-cell {
+        .risk-text-center {
             text-align: center !important;
-            font-weight: 700;
+            font-weight: 600;
+            color: #475569;
         }
 
-        /* Page Footer */
-        .page-footer {
-            margin-top: 20px;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 6px;
-            display: table;
+        /* 5. Bottom Positioned Angled Banner (Matching Reference Design) */
+        .bottom-banner-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
             width: 100%;
-            font-size: 9.5px;
-            color: #64748b;
+            padding: 0 15mm 8mm 15mm;
+            box-sizing: border-box;
         }
 
-        .footer-left {
-            display: table-cell;
-            text-align: left;
+        .bottom-banner-graphics {
+            display: flex;
+            align-items: center;
+            height: 32px;
+            width: 100%;
+            position: relative;
+        }
+
+        .banner-logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+
+        .banner-logo-img {
+            max-height: 28px;
+            max-width: 90px;
+            object-fit: contain;
+        }
+
+        .banner-logo-text {
+            font-size: 8px;
+            font-weight: 700;
+            color: #475569;
+            line-height: 1.1;
+            font-family: 'Inter', 'Arial', sans-serif;
+            text-transform: uppercase;
             direction: ltr;
         }
 
-        .footer-right {
-            display: table-cell;
-            text-align: right;
-            direction: rtl;
+        .banner-angled-dark {
+            width: 90px;
+            height: 26px;
+            background: #1e3a4c;
+            transform: skew(-25deg);
+            margin-left: -10px;
+            z-index: 2;
+        }
+
+        .banner-brown-bar {
+            flex-grow: 1;
+            height: 26px;
+            background: #7a4b3a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10.5px;
+            font-weight: 600;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+            padding: 0 12px;
+            z-index: 1;
+            margin-left: -8px;
+        }
+
+        .banner-copyright {
+            font-size: 8.5px;
+            color: #64748b;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+            text-align: center;
+            margin-top: 4px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Page Running Header -->
-    <div class="page-header">
-        <div class="header-title-cell">
-            تقرير الكفاءات للقادة — دليل التفسير وإدارة الانطباعات
-        </div>
-        <div class="header-meta-cell">
-            Candidate ID: <span th:text="${candidateId}">CAN-98234</span>
+    <!-- 1. Page Header -->
+    <div class="main-header-row">
+        <div class="main-title-wrap">
+            <h1 class="main-title">المقدمة</h1>
+            <span class="geom-symbol">❖</span>
         </div>
     </div>
 
-    <!-- Section 1: Introduction -->
-    <div class="section-container">
-        <h2 class="section-main-title">المقدمة</h2>
-        <h3 class="section-sub-title">التقييم</h3>
-        <p class="text-block">
-            يلخص هذا التقرير النتائج باستخدام إطار الكفاءات ويستند في استخلاص النتائج إلى أدلة من تقييم الشخصية والقدرات العامة.
-        </p>
+    <!-- Section 1: Introduction / Evaluation -->
+    <div class="section-header-wrap">
+        <div class="icon-circle">🔍</div>
+        <h3 class="section-title">التقييم</h3>
     </div>
+    <hr class="section-divider" />
+    <p class="text-content">
+        يلخص هذا التقرير النتائج باستخدام إطار الكفاءات ويستند في استخلاص النتائج إلى أدلة من تقييم الشخصية والقدرات العامة.
+    </p>
 
     <!-- Section 2: Personal Potential Indicator -->
-    <div class="section-container">
-        <h3 class="section-header">مؤشر الإمكانيات الشخصية</h3>
-        <p class="text-block">
-            تعتمد إمكانيات المرشح على تحليل السمات الشخصية وقدراته العامة ويتم وصف إمكانياته من خلال استخدام مقياس مكون من 5 نقاط والذي يعرض في الجداول البيانية باستخدام رمز بداخله شخص كدليل إرشادي، تشير الدرجات من 1 إلى 2 إلى جوانب تطوير محتملة حيث لا تتطابق المهارات السلوكية مع تحليل شخصية المرشح أو قدراته، بينما تشير الدرجة 3 إلى تطابق جزئي، وتشير الدرجات من 4 إلى 5 إلى جوانب قوة محتملة حيث تتطابق المهارات السلوكية مع تحليل شخصية المرشح أو قدراته.
-        </p>
+    <div class="section-header-wrap">
+        <div class="icon-circle">👤</div>
+        <h3 class="section-title">مؤشر الإمكانيات الشخصية</h3>
+    </div>
+    <hr class="section-divider" />
 
-        <!-- 5-Point Visual Scale Card -->
-        <div class="scale-card">
-            <div class="scale-grid">
-                <div class="scale-cell">
-                    <div class="scale-badge badge-dev">1</div>
+    <div class="two-col-layout">
+        <div class="col-text">
+            <p class="text-content">
+                تعتمد إمكانيات المرشح على تحليل السمات الشخصية وقدراته العامة ويتم وصف إمكانياته من خلال استخدام مقياس مكون من 5 نقاط والذي يعرض في الجداول البيانية باستخدام رمز بداخله شخص كدليل إرشادي، تشير الدرجات من 1 إلى 2 إلى جوانب تطوير محتملة حيث لا تتطابق المهارات السلوكية مع تحليل شخصية المرشح أو قدراته، بينما تشير الدرجة 3 إلى تطابق جزئي، وتشير الدرجات من 4 إلى 5 إلى جوانب قوة محتملة حيث تتطابق المهارات السلوكية مع تحليل شخصية المرشح أو قدراته.
+            </p>
+        </div>
+
+        <div class="col-scale">
+            <div class="scale-column-title">النطاقات</div>
+            <div class="scale-numbers-grid">
+                <div class="scale-item">
+                    <div class="scale-label-rot">عالي</div>
+                    <div class="scale-circle">5</div>
                 </div>
-                <div class="scale-cell">
-                    <div class="scale-badge badge-dev">2</div>
+                <div class="scale-item">
+                    <div class="scale-label-rot">متوسط-عالي</div>
+                    <div class="scale-circle">4</div>
                 </div>
-                <div class="scale-cell">
-                    <div class="scale-badge badge-mid">3</div>
+                <div class="scale-item">
+                    <div class="scale-label-rot">متوسط</div>
+                    <div class="scale-circle">3</div>
                 </div>
-                <div class="scale-cell">
-                    <div class="scale-badge badge-str">4</div>
+                <div class="scale-item">
+                    <div class="scale-label-rot">منخفض-متوسط</div>
+                    <div class="scale-circle">2</div>
                 </div>
-                <div class="scale-cell">
-                    <div class="scale-badge badge-str">5</div>
+                <div class="scale-item">
+                    <div class="scale-label-rot">منخفض</div>
+                    <div class="scale-circle">1</div>
                 </div>
-            </div>
-            <div class="scale-text-labels">
-                منخفض <span>|</span> منخفض <span>|</span> متوسط <span>|</span> متوسط <span>|</span> عالي
             </div>
         </div>
     </div>
 
-    <!-- Section 3: Competency Match (Table 1) -->
-    <div class="section-container">
-        <h3 class="section-header">النطاقات</h3>
-        <h4 class="table-sub-header">تطابق الكفاءات السلوكية مع تحليل شخصية المرشح وقدراته العامة</h4>
+    <!-- Section 3: Competency Match with Behavioral Traits -->
+    <div class="section-header-wrap">
+        <div class="icon-circle">☍</div>
+        <h3 class="section-title">تطابق الكفاءات السلوكية مع تحليل شخصية المرشح وقدراته العامة</h3>
+    </div>
+    <hr class="section-divider" />
 
-        <table class="report-table table-competency">
-            <thead>
-                <tr>
-                    <th>النطاقات</th>
-                    <th>عامل حياد</th>
-                    <th>عامل قوة</th>
-                    <th>عامل تطوير</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        تتم مقارنة قدرات المرشحين وشخصياتهم بمتطلبات الكفاءات السلوكية تستخدم أوصاف المستويات المذكورة في الشكل المقابل لمعرفة مدى تطابق نتائج <span th:text="${candidateId}">CAN-98234</span> مع الكفاءات السلوكية.
-                    </td>
-                    <td>تتطابق متطلبات الكفاءة جزئيا مع شخصية أو قدرات المرشح</td>
-                    <td>تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</td>
-                    <td>لا تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="competency-match-layout">
+        <div class="col-competency-text">
+            <p class="text-content">
+                تتم مقارنة قدرات المرشحين وشخصياتهم بمتطلبات الكفاءات السلوكية. نستخدم أوصاف المستويات المذكورة في الشكل المقابل لمعرفة مدى تطابق نتائج <span th:text="${candidateId}">CAN-98234</span> مع الكفاءات السلوكية.
+            </p>
+        </div>
+
+        <div class="col-competency-indicators">
+            <div class="indicators-header">النطاقات</div>
+            <div class="indicators-grid">
+                <!-- عامل قوة -->
+                <div class="indicator-card">
+                    <div class="indicator-title">عامل قوة</div>
+                    <div class="indicator-desc">تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
+                    <div class="color-pill pill-green"></div>
+                </div>
+
+                <!-- عامل حياد -->
+                <div class="indicator-card">
+                    <div class="indicator-title">عامل حياد</div>
+                    <div class="indicator-desc">تتطابق متطلبات الكفاءة جزئيا مع شخصية أو قدرات المرشح</div>
+                    <div class="candidate-tag">المرشح</div>
+                    <div class="color-pill pill-yellow"></div>
+                </div>
+
+                <!-- عامل تطوير -->
+                <div class="indicator-card">
+                    <div class="indicator-title">عامل تطوير</div>
+                    <div class="indicator-desc">لا تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
+                    <div class="color-pill pill-red"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Section 4: Impression Management (Table 2) -->
-    <div class="section-container">
-        <h3 class="section-header">إدارة الانطباعات</h3>
-        <p class="text-block">
-            في بعض السياقات، قد يحاول المجيبون على الاختبارات تشويه نتائجهم. وتستكشف المقاييس التالية خطر التشويه في هذه النتائج.
-        </p>
+    <!-- Section 4: Impression Management Table -->
+    <div class="section-header-wrap">
+        <div class="icon-circle">⚙</div>
+        <h3 class="section-title">إدارة الانطباعات</h3>
+    </div>
+    <hr class="section-divider" />
+    <p class="text-content">
+        في بعض السياقات، قد يحاول المجيبون على الاختبارات تشويه نتائجهم. وتستكشف المقاييس التالية خطر التشويه في هذه النتائج.
+    </p>
 
-        <table class="report-table table-impression">
+    <div class="impression-table-wrap">
+        <table class="impression-table">
             <thead>
                 <tr>
                     <th>المقياس</th>
-                    <th>الدرجة</th>
-                    <th>الخطر</th>
+                    <th style="text-align: center;">الدرجة</th>
+                    <th style="text-align: center;">الخطر</th>
                     <th>التفسير</th>
                 </tr>
             </thead>
@@ -377,46 +531,60 @@
                 <!-- Row 1: Social Desirability -->
                 <tr>
                     <td>مؤشر التظاهر الاجتماعي</td>
-                    <td class="score-bar-cell">
-                        <div class="score-bar-fill" 
-                             th:style="'width: ' + (${socialScore != null ? socialScore * 10 : 30}) + '%;'"></div>
-                        <span class="score-bar-text" th:text="${socialScore}">3</span>
+                    <td>
+                        <div class="score-cell-container">
+                            <div class="score-fill-bar" 
+                                 th:style="'width: ' + (${socialScore != null ? socialScore * 10 : 50}) + '%;'"></div>
+                            <span class="score-number" th:text="${socialScore}">5</span>
+                        </div>
                     </td>
-                    <td class="risk-badge-cell">
-                        <span th:text="${socialRisk}">منخفض</span>
+                    <td class="risk-text-center">
+                        <span th:text="${socialRisk}">متوسط</span>
                     </td>
                     <td>
-                        <span th:text="${socialInterpretation}">استجابات صريحة وتلقائية تشير إلى صدق التقرير الذاتي.</span>
+                        <span th:text="${socialInterpretation}">من المرجح أنه أجاب بصدق من دون إظهار صورة إيجابية بشدة. ما من إجراءات أخرى يلزم اتخاذها.</span>
                     </td>
                 </tr>
 
                 <!-- Row 2: Central Tendency -->
                 <tr>
                     <td>مؤشر وسطية الإجابة</td>
-                    <td class="score-bar-cell">
-                        <div class="score-bar-fill" 
-                             th:style="'width: ' + (${centralScore != null ? centralScore * 10 : 40}) + '%;'"></div>
-                        <span class="score-bar-text" th:text="${centralScore}">4</span>
+                    <td>
+                        <div class="score-cell-container">
+                            <div class="score-fill-bar" 
+                                 th:style="'width: ' + (${centralScore != null ? centralScore * 10 : 20}) + '%;'"></div>
+                            <span class="score-number" th:text="${centralScore}">2</span>
+                        </div>
                     </td>
-                    <td class="risk-badge-cell">
-                        <span th:text="${centralRisk}">طبيعي</span>
+                    <td class="risk-text-center">
+                        <span th:text="${centralRisk}">منخفض</span>
                     </td>
                     <td>
-                        <span th:text="${centralInterpretation}">معدل الإجابات المحايدة يقع ضمن النطاق الطبيعي المقبول.</span>
+                        <span th:text="${centralInterpretation}">من المرجح أنه أجاب بصراحة بدون رغبة في إخفاء شخصيته الحقيقية. ما من إجراءات أخرى يلزم اتخاذها.</span>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Page Footer -->
-    <div class="page-footer">
-        <div class="footer-right">
-            <span>تقرير الكفاءات للقادة — تطوير</span> &nbsp;|&nbsp; 
-            <span th:text="${candidateId}">CAN-98234</span>
+    <!-- 5. Modern Bottom Footer Banner (Matching Reference Design) -->
+    <div class="bottom-banner-container">
+        <div class="bottom-banner-graphics">
+            <div class="banner-logo-section">
+                <img class="banner-logo-img" 
+                     th:src="${companyLogoBase64 != null ? companyLogoBase64 : (logoUrl != null ? logoUrl : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 120 40\'><circle cx=\'20\' cy=\'20\' r=\'12\' fill=\'%231e3a4c\'/><circle cx=\'20\' cy=\'20\' r=\'5\' fill=\'%237a4b3a\'/></svg>')}" 
+                     alt="Logo" />
+                <div class="banner-logo-text">
+                    Executive Assessment<br />Evaluation System
+                </div>
+            </div>
+            <div class="banner-angled-dark"></div>
+            <div class="banner-brown-bar">
+                Executive Leadership Platform
+            </div>
         </div>
-        <div class="footer-left">
-            Page 2
+        <div class="banner-copyright">
+            &copy; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
         </div>
     </div>
 
