@@ -120,6 +120,7 @@ async function loadCandidates() {
                         <small class="text-xxs text-secondary mb-1">Battery ${attempt.currentBatteryIndex + 1}/4 (${currentBattery})</small>
                         ${attempt.state === 'ALL_SUBMITTED' ? `<button class="btn btn-xs bg-gradient-primary mt-1 mb-0 assign-attempt-btn" data-id="${candidate.id}">Re-assign Test</button>` : ''}
                     </div>
+                `;
             } else if (attempt && attempt.state === 'SCORED') {
                 assessmentHtml = `
                     <div class="text-center">
