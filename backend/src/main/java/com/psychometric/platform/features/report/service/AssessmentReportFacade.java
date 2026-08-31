@@ -57,13 +57,13 @@ public class AssessmentReportFacade {
         AssessmentScore score = scoreRepository.findByAttemptAttemptToken(attemptToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Assessment score not found for attempt token: " + attemptToken));
 
-        // 1. Cache Check: Return existing PDF URL if already generated
-        if (score.getReportPdfUrl() != null && !score.getReportPdfUrl().isBlank()) {
+        // 1. Cache Check: Return existing PDF URL if already generated and valid (.pdf extension)
+        if (score.getReportPdfUrl() != null && !score.getReportPdfUrl().isBlank() && score.getReportPdfUrl().toLowerCase().endsWith(".pdf")) {
             log.info("Cache hit: Returning existing report PDF URL for attempt {}: {}", attemptToken, score.getReportPdfUrl());
             return score.getReportPdfUrl();
         }
 
-        log.info("Cache miss: Generating new AI-driven leadership report PDF for attempt: {}", attemptToken);
+        log.info("Cache miss or regenerating valid .pdf URL: Generating AI-driven leadership report PDF for attempt: {}", attemptToken);
 
         // 2. Fetch and Convert Raw Scoring Data
         AssessmentScoreResponseDto rawScoreDto = AssessmentScoreResponseDto.fromEntity(score);
@@ -75,7 +75,7 @@ public class AssessmentReportFacade {
         byte[] pdfBytes = pdfGeneratorService.generatePdfReport(reportContextDto);
 
         // 5. Upload to Cloudinary CDN
-        String fileName = "leadership_report_" + attemptToken;
+        String fileName = "leadership_report_" + attemptToken + ".pdf";
         String cloudinaryUrl = cloudinaryService.uploadPdf(pdfBytes, fileName, "psychometric/reports");
 
         // 6. Cache the generated URL in the database

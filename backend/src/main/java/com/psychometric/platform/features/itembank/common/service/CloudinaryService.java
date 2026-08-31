@@ -66,6 +66,9 @@ public class CloudinaryService {
 
         String targetFolder = (folder != null && !folder.isBlank()) ? folder.trim() : "psychometric/reports";
         String publicId = (fileName != null && !fileName.isBlank()) ? fileName.trim() : ("report_" + System.currentTimeMillis());
+        if (!publicId.toLowerCase().endsWith(".pdf")) {
+            publicId = publicId + ".pdf";
+        }
 
         try {
             Map<?, ?> uploadResult = cloudinary.uploader().upload(

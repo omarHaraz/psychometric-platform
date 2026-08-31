@@ -1832,7 +1832,25 @@ window.downloadReport = async function(event, token) {
         if (res.ok) {
             const data = await res.json();
             if (data.reportUrl) {
-                // Open / download the full 15-page PDF report from Cloudinary
+                try {
+                    const pdfBlobRes = await fetch(data.reportUrl);
+                    if (pdfBlobRes.ok) {
+                        const blob = await pdfBlobRes.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = blobUrl;
+                        a.download = `Leadership_Assessment_Report_${token.substring(0, 8)}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(blobUrl);
+                        return;
+                    }
+                } catch (fetchErr) {
+                    console.warn("Blob fetch failed, falling back to direct link", fetchErr);
+                }
+
+                // Fallback to direct anchor navigation
                 const a = document.createElement("a");
                 a.href = data.reportUrl;
                 a.target = "_blank";
