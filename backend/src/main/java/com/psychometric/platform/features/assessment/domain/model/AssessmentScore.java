@@ -44,6 +44,12 @@ public class AssessmentScore {
     @Column(name = "readiness_band", nullable = false, length = 50)
     private ReadinessBand readinessBand;
 
+    @Column(name = "social_desirability_risk_pct")
+    private Double socialDesirabilityRiskPct = 0.0;
+
+    @Column(name = "elevated_impression_management")
+    private Boolean elevatedImpressionManagement = false;
+
     @Column(name = "scored_at", nullable = false)
     private Instant scoredAt;
 
@@ -164,5 +170,21 @@ public class AssessmentScore {
 
     public void setGcatSubtestScores(Set<GcatSubtestScore> gcatSubtestScores) {
         this.gcatSubtestScores = gcatSubtestScores;
+    }
+
+    public Double getSocialDesirabilityRiskPct() {
+        return socialDesirabilityRiskPct;
+    }
+
+    public void setSocialDesirabilityRiskPct(Double socialDesirabilityRiskPct) {
+        this.socialDesirabilityRiskPct = socialDesirabilityRiskPct;
+    }
+
+    public Boolean getElevatedImpressionManagement() {
+        return elevatedImpressionManagement;
+    }
+
+    public void setElevatedImpressionManagement(Boolean elevatedImpressionManagement) {
+        this.elevatedImpressionManagement = elevatedImpressionManagement;
     }
 }

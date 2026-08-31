@@ -24,19 +24,87 @@ public class TraitAndCategoryDataSeeder implements CommandLineRunner {
     private final CompetencyTraitRepository traitRepo;
     private final DerailerCategoryRepository categoryRepo;
     private final ObjectMapper objectMapper;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     public TraitAndCategoryDataSeeder(CompetencyTraitRepository traitRepo,
                                       DerailerCategoryRepository categoryRepo,
-                                      ObjectMapper objectMapper) {
+                                      ObjectMapper objectMapper,
+                                      org.springframework.jdbc.core.JdbcTemplate jdbcTemplate) {
         this.traitRepo = traitRepo;
         this.categoryRepo = categoryRepo;
         this.objectMapper = objectMapper;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public void run(String... args) {
         seedCompetencyTraits();
         seedDerailerCategories();
+        seedSocialDesirabilityData();
+    }
+
+    private void seedSocialDesirabilityData() {
+        try {
+            List<Long> compIds = jdbcTemplate.queryForList("SELECT id FROM competencies WHERE code = 'SOCIAL_DESIRABILITY'", Long.class);
+            Long sdCompId;
+            if (compIds.isEmpty()) {
+                jdbcTemplate.update(
+                    "INSERT INTO competencies (code, name_ar, definition_ar, display_order) VALUES (?, ?, ?, ?)",
+                    "SOCIAL_DESIRABILITY",
+                    "التظاهر الاجتماعي",
+                    "مقياس الصدق والتحقق من النزاهة والانطباع الاجتماعي",
+                    9
+                );
+                sdCompId = jdbcTemplate.queryForObject("SELECT id FROM competencies WHERE code = 'SOCIAL_DESIRABILITY'", Long.class);
+                log.info("Created SOCIAL_DESIRABILITY competency with ID: {}", sdCompId);
+            } else {
+                sdCompId = compIds.get(0);
+            }
+
+            List<String> sdStatements = List.of(
+                "لم أكذب في حياتي إطلاقاً، حتى في أصغر الأمور.",
+                "أفي بكل وعد أقطعه دون أي استثناء مهما تغيرت الظروف.",
+                "لم أشعر بالغيرة تجاه أي شخص طوال حياتي.",
+                "أستمع لكل من يتحدث إلي بصبر تام دون أن يتشتت ذهني ولو للحظة.",
+                "لم يسبق أن أجّلت مهمة كان يجب علي إنجازها فوراً.",
+                "أعترف بخطئي فور وقوعه دائماً، مهما كانت العواقب على سمعتي.",
+                "لم أتحدث عن أحد في غيابه بشكل سلبي على الإطلاق.",
+                "أعامل جميع من حولي بالتساوي التام دون أي استثناء أو تفضيل.",
+                "لم أشك يوماً في صحة قرار اتخذته بعد اتخاذه.",
+                "لا تخطر ببالي أفكار سلبية تجاه الآخرين مهما أساءوا إلي.",
+                "لم يحدث أن نسبت لنفسي فضلاً يعود لشخص آخر، ولو بشكل غير مقصود.",
+                "أحافظ على هدوئي التام في كل المواقف دون استثناء واحد."
+            );
+
+            int seeded = 0;
+            for (String stmt : sdStatements) {
+                List<Long> itemIds = jdbcTemplate.queryForList("SELECT id FROM personality_items WHERE statement_ar = ?", Long.class, stmt);
+                Long itemId;
+                if (itemIds.isEmpty()) {
+                    jdbcTemplate.update(
+                        "INSERT INTO personality_items (statement_ar, ideal_target, exam_mode, is_active, exposure_count, created_at, justification_ar) " +
+                        "VALUES (?, 1, 'BOTH', 1, 0, NOW(), 'مقياس التظاهر الاجتماعي والصدق')",
+                        stmt
+                    );
+                    itemId = jdbcTemplate.queryForObject("SELECT id FROM personality_items WHERE statement_ar = ? ORDER BY id DESC LIMIT 1", Long.class, stmt);
+                    seeded++;
+                } else {
+                    itemId = itemIds.get(0);
+                }
+
+                Integer count = jdbcTemplate.queryForObject(
+                    "SELECT count(*) FROM personality_item_competencies WHERE item_id = ? AND competency_id = ?",
+                    Integer.class, itemId, sdCompId
+                );
+                if (count == null || count == 0) {
+                    jdbcTemplate.update("INSERT INTO personality_item_competencies (item_id, competency_id) VALUES (?, ?)", itemId, sdCompId);
+                }
+            }
+
+            log.info("Social desirability items verification complete ({} newly seeded, total 12 ensured).", seeded);
+        } catch (Exception e) {
+            log.error("Failed to seed social desirability items: {}", e.getMessage(), e);
+        }
     }
 
     private void seedCompetencyTraits() {

@@ -28,7 +28,10 @@ public class ItemSamplingService {
     }
 
     /**
-     * Samples 140 personality items balanced across the 8 core competencies (18 for first 4, 17 for next 4).
+     * Samples 140 personality items:
+     * - 136 items balanced evenly across the 8 core competencies (17 items each, 17 x 8 = 136)
+     * - 4 items sampled from the Social Desirability validity category (4 items)
+     * Total = 140 items, shuffled.
      */
     public List<Long> samplePersonalityItems(int targetCount) {
         Set<Long> sampledSet = new LinkedHashSet<>();
@@ -37,8 +40,9 @@ public class ItemSamplingService {
         // 3 (DECISION_MAKING: 54), 7 (ADAPTABILITY: 54), 1 (COMMUNICATION: 55), 4 (LEADERSHIP: 66)
         int[] compOrder = {2, 6, 5, 8, 3, 7, 1, 4};
 
+        // 1. Sample 17 items per competency trait (17 * 8 = 136 items)
         for (int cId : compOrder) {
-            int quota = (cId <= 4) ? 18 : 17;
+            int quota = 17;
             List<Long> ids = jdbcTemplate.queryForList(
                     "SELECT DISTINCT pic.item_id FROM personality_item_competencies pic " +
                     "JOIN personality_items pi ON pic.item_id = pi.id " +
@@ -57,6 +61,20 @@ public class ItemSamplingService {
             }
         }
 
+        // 2. Sample 4 items from the Social Desirability (validity) stratum
+        List<Long> sdIds = jdbcTemplate.queryForList(
+                "SELECT DISTINCT pic.item_id FROM personality_item_competencies pic " +
+                "JOIN personality_items pi ON pic.item_id = pi.id " +
+                "JOIN competencies c ON pic.competency_id = c.id " +
+                "WHERE c.code = 'SOCIAL_DESIRABILITY' AND pi.is_active = true " +
+                "ORDER BY RAND() LIMIT 4",
+                Long.class
+        );
+        for (Long id : sdIds) {
+            sampledSet.add(id);
+        }
+
+        // 3. Fallback fill if needed
         if (sampledSet.size() < targetCount) {
             List<Long> remainder = jdbcTemplate.queryForList(
                     "SELECT id FROM personality_items WHERE is_active = true ORDER BY RAND()",

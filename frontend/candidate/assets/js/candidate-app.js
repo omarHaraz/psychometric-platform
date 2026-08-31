@@ -158,6 +158,12 @@ const i18nDict = {
     "Previous": "السابق",
     "Next": "التالي",
     "Submit Battery": "إرسال البطارية",
+    "Profile Validity & Social Desirability": "صلاحية الملف والتظاهر الاجتماعي",
+    "Elevated Impression Management": "ميل مرتفع للتظاهر الاجتماعي",
+    "Normal Self-Report Profile": "استجابة طبيعية وموثوقة",
+    "Interpret self-report responses with caution (High Social Desirability Risk)": "يُنصح بتفسير نتائج التقرير الذاتي بحذر (مؤشر تظاهر اجتماعي مرتفع)",
+    "Honest and spontaneous self-report responses recorded": "استجابات صادقة وتلقائية مسجلة",
+    "17 items per trait (Max 68.0 pts)": "17 عنصراً لكل سمة (الحد الأقصى 68 نقطة)",
     "Statement": "العبارة",
     "Item": "عنصر",
     "of": "من",
@@ -1506,6 +1512,26 @@ function renderScoreModalContent(score, token) {
             </div>
         </div>
 
+        <!-- Validity & Social Desirability Index -->
+        <div class="p-3.5 rounded-xl border ${score.elevatedImpressionManagement ? 'bg-amber-50/90 border-amber-300' : 'bg-emerald-50/90 border-emerald-300'} flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${score.elevatedImpressionManagement ? 'bg-amber-200 text-amber-800' : 'bg-emerald-200 text-emerald-800'}">
+                    <span class="material-symbols-outlined text-[20px]">${score.elevatedImpressionManagement ? 'warning' : 'verified_user'}</span>
+                </div>
+                <div>
+                    <div class="text-xs font-bold ${score.elevatedImpressionManagement ? 'text-amber-950' : 'text-emerald-950'}">
+                        <span>${isAr ? (score.elevatedImpressionManagement ? 'ميل مرتفع للتظاهر الاجتماعي' : 'استجابة طبيعية وموثوقة') : (score.elevatedImpressionManagement ? 'Elevated Impression Management' : 'Normal Self-Report Profile')}</span>
+                    </div>
+                    <div class="text-[11px] ${score.elevatedImpressionManagement ? 'text-amber-800' : 'text-emerald-800'}">
+                        <span>${isAr ? (score.elevatedImpressionManagement ? 'مؤشر التظاهر الاجتماعي: ' + (score.socialDesirabilityRiskPct || 0) + '% (يُنصح بتفسير نتائج التقرير الذاتي بحذر)' : 'مؤشر التظاهر الاجتماعي: ' + (score.socialDesirabilityRiskPct || 0) + '% (استجابات واقعية وتلقائية)') : (score.elevatedImpressionManagement ? 'Social Desirability Risk: ' + (score.socialDesirabilityRiskPct || 0) + '% (Interpret self-report with caution)' : 'Social Desirability Risk: ' + (score.socialDesirabilityRiskPct || 0) + '% (Honest & Spontaneous Responses)')}</span>
+                    </div>
+                </div>
+            </div>
+            <span class="px-2.5 py-1 text-xs font-bold rounded-full ${score.elevatedImpressionManagement ? 'bg-amber-200 text-amber-900 border border-amber-300' : 'bg-emerald-200 text-emerald-900 border border-emerald-300'}">
+                ${score.socialDesirabilityRiskPct || 0}% ${isAr ? 'مخاطرة' : 'Risk'}
+            </span>
+        </div>
+
         <!-- Section 1: PQ10 8 Competency Traits -->
         <div class="space-y-3 pt-2">
             <div class="flex justify-between items-center pb-2 border-b border-slate-200">
@@ -1513,14 +1539,13 @@ function renderScoreModalContent(score, token) {
                     <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
                     <span>8 Competency Traits (PQ10)</span>
                 </h4>
-                <span class="text-[11px] text-slate-500">18 items (Traits 1-4) &bull; 17 items (Traits 5-8)</span>
+                <span class="text-[11px] text-slate-500">17 items per trait (Max 68.0 pts)</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
     `;
 
     (score.traitScores || []).forEach(ts => {
-        const order = ts.displayOrder || 1;
-        const maxPts = (order <= 4 ? 18 : 17) * 4;
+        const maxPts = 68.0; // 17 items * 4 pts max
         html += `
             <div class="p-3 bg-white rounded-lg border border-slate-200/90 shadow-2xs space-y-1.5">
                 <div class="flex justify-between items-start text-xs">
@@ -1654,8 +1679,7 @@ function generatePrintableReportWindow(score, token) {
     const dateStr = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
     let traitRows = (score.traitScores || []).map(t => {
-        const order = t.displayOrder || 1;
-        const maxPts = (order <= 4 ? 18 : 17) * 4;
+        const maxPts = 68.0; // 17 items * 4 pts max
         return `<tr>
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${t.nameAr || t.traitCode}</td>
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-family: monospace; font-size: 11px;">${t.traitCode}</td>
@@ -1679,6 +1703,24 @@ function generatePrintableReportWindow(score, token) {
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #0891b2;">${g.scorePct}%</td>
         </tr>`;
     }).join("");
+
+    const sdRisk = score.socialDesirabilityRiskPct || 0;
+    const isElevated = !!score.elevatedImpressionManagement;
+    const validityBanner = `
+        <div style="background: ${isElevated ? '#fef3c7' : '#ecfdf5'}; border: 1px solid ${isElevated ? '#fcd34d' : '#a7f3d0'}; border-radius: 8px; padding: 12px 16px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 13px; font-weight: bold; color: ${isElevated ? '#92400e' : '#065f46'};">
+                    ${isElevated ? '⚠️ Profile Validity Notice: Elevated Impression Management Detected' : '✅ Profile Validity: Valid & Spontaneous Self-Report'}
+                </div>
+                <div style="font-size: 11px; color: ${isElevated ? '#b45309' : '#047857'}; margin-top: 2px;">
+                    ${isElevated ? 'Social Desirability Risk: ' + sdRisk + '% (Candidate endorsed exaggerated virtues — interpret personality self-report with caution)' : 'Social Desirability Risk: ' + sdRisk + '% (Candidate provided honest and candid responses)'}
+                </div>
+            </div>
+            <div style="font-size: 13px; font-weight: bold; padding: 4px 12px; border-radius: 9999px; background: ${isElevated ? '#fde68a' : '#d1fae5'}; color: ${isElevated ? '#78350f' : '#064e3b'};">
+                ${sdRisk}% Risk
+            </div>
+        </div>
+    `;
 
     const reportHtml = `
 <!DOCTYPE html>
@@ -1730,6 +1772,8 @@ function generatePrintableReportWindow(score, token) {
         </div>
         <div style="margin-top: 12px; font-size: 12px; color: #475569;">${readiness.descEn}</div>
     </div>
+
+    ${validityBanner}
 
     <div class="battery-grid">
         <div class="battery-card">

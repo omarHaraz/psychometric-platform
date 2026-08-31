@@ -104,6 +104,8 @@ public class AssessmentScoringService {
         score.setCompositeScore(round2(composite));
         score.setPercentile(percentile);
         score.setReadinessBand(band);
+        score.setSocialDesirabilityRiskPct(round2(pq10Result.sdRiskPct));
+        score.setElevatedImpressionManagement(pq10Result.elevatedImpressionManagement);
         score.setScoredAt(Instant.now());
 
         // Attach Trait Scores
@@ -139,10 +141,12 @@ public class AssessmentScoringService {
     }
 
     // =========================================================================
-    // 1. PQ10 Scoring (Distance = |A_i - T_i|, Points = 4 - Distance)
+    // 1. PQ10 Scoring (Distance = |A_i - T_i|, Points = 4 - Distance) & Social Desirability
     // =========================================================================
     public static class Pq10ScoreResult {
         public double overallPct;
+        public double sdRiskPct;
+        public boolean elevatedImpressionManagement;
         public List<TraitScore> traitScores = new ArrayList<>();
     }
 
@@ -161,6 +165,14 @@ public class AssessmentScoringService {
         }
 
         List<CompetencyTrait> allTraits = traitRepo.findAllByOrderByDisplayOrderAsc();
+
+        // Identify social desirability item IDs
+        Set<Long> sdItemIds = new HashSet<>(jdbcTemplate.queryForList(
+                "SELECT DISTINCT pic.item_id FROM personality_item_competencies pic " +
+                "JOIN competencies c ON pic.competency_id = c.id " +
+                "WHERE c.code = 'SOCIAL_DESIRABILITY'",
+                Long.class
+        ));
 
         // Query all items and their target answers and all their mapped competencies
         Map<Long, Integer> targetMap = new HashMap<>();
@@ -184,14 +196,25 @@ public class AssessmentScoringService {
             sampledIds = new ArrayList<>(answerMap.keySet());
         }
 
-        // Partition the 140 sampled items into the 8 traits using bipartite matching
-        Map<Long, List<Long>> traitAssigned = partitionItemsByTrait(sampledIds, itemToTraitsMap, allTraits);
+        // Separate 136 competency items and 4 social desirability items
+        List<Long> competencySampledIds = new ArrayList<>();
+        List<Long> sdSampledIds = new ArrayList<>();
+        for (Long id : sampledIds) {
+            if (sdItemIds.contains(id)) {
+                sdSampledIds.add(id);
+            } else {
+                competencySampledIds.add(id);
+            }
+        }
+
+        // Partition the 136 competency items into the 8 traits (17 items each) using bipartite matching
+        Map<Long, List<Long>> traitAssigned = partitionItemsByTrait(competencySampledIds, itemToTraitsMap, allTraits);
 
         double totalPoints = 0.0;
 
         for (CompetencyTrait trait : allTraits) {
             List<Long> traitItemIds = traitAssigned.getOrDefault(trait.getId(), Collections.emptyList());
-            int n = trait.getDisplayOrder() <= 4 ? 18 : 17;
+            int n = 17; // Exactly 17 items for each of the 8 competency traits
 
             double raw = 0.0;
             for (Long itemId : traitItemIds) {
@@ -204,13 +227,26 @@ public class AssessmentScoringService {
 
             totalPoints += raw;
 
-            double maxPossiblePoints = n * 4.0;
+            double maxPossiblePoints = n * 4.0; // 68.0
             double pct = (maxPossiblePoints > 0) ? (raw / maxPossiblePoints) * 100.0 : 0.0;
 
             result.traitScores.add(new TraitScore(null, trait, round2(raw), round2(pct)));
         }
 
-        result.overallPct = (totalPoints / 560.0) * 100.0;
+        // overallPct across 136 competency items (max 544.0 points)
+        result.overallPct = (totalPoints / 544.0) * 100.0;
+
+        // Score Social Desirability validity category: SDRiskPct = (Σ(A_i - 1) / (4 * 4)) * 100
+        double sdSum = 0.0;
+        int sdCount = sdSampledIds.isEmpty() ? 4 : sdSampledIds.size();
+        for (Long itemId : sdSampledIds) {
+            int answer = answerMap.getOrDefault(itemId, 1);
+            sdSum += (answer - 1);
+        }
+        double sdRiskPct = (sdSum / (sdCount * 4.0)) * 100.0;
+        result.sdRiskPct = Math.min(100.0, Math.max(0.0, sdRiskPct));
+        result.elevatedImpressionManagement = (result.sdRiskPct >= 60.0);
+
         return result;
     }
 
@@ -219,7 +255,7 @@ public class AssessmentScoringService {
                                                         List<CompetencyTrait> allTraits) {
         Map<Long, Integer> traitQuotas = new HashMap<>();
         for (CompetencyTrait t : allTraits) {
-            traitQuotas.put(t.getId(), t.getDisplayOrder() <= 4 ? 18 : 17);
+            traitQuotas.put(t.getId(), 17); // Exactly 17 items for each trait
         }
 
         Map<Long, List<Long>> traitAssigned = new HashMap<>();

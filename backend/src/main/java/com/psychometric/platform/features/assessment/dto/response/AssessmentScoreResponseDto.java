@@ -25,6 +25,8 @@ public class AssessmentScoreResponseDto {
     private ReadinessBand readinessBand;
     private String readinessBandLabelEn;
     private String readinessBandLabelAr;
+    private Double socialDesirabilityRiskPct;
+    private Boolean elevatedImpressionManagement;
     private Instant scoredAt;
 
     private List<TraitScoreDto> traitScores = new ArrayList<>();
@@ -136,6 +138,8 @@ public class AssessmentScoreResponseDto {
             dto.setReadinessBandLabelEn(score.getReadinessBand().getLabelEn());
             dto.setReadinessBandLabelAr(score.getReadinessBand().getLabelAr());
         }
+        dto.setSocialDesirabilityRiskPct(score.getSocialDesirabilityRiskPct());
+        dto.setElevatedImpressionManagement(score.getElevatedImpressionManagement());
         dto.setScoredAt(score.getScoredAt());
 
         if (score.getTraitScores() != null) {
@@ -193,6 +197,10 @@ public class AssessmentScoreResponseDto {
     public void setReadinessBandLabelEn(String readinessBandLabelEn) { this.readinessBandLabelEn = readinessBandLabelEn; }
     public String getReadinessBandLabelAr() { return readinessBandLabelAr; }
     public void setReadinessBandLabelAr(String readinessBandLabelAr) { this.readinessBandLabelAr = readinessBandLabelAr; }
+    public Double getSocialDesirabilityRiskPct() { return socialDesirabilityRiskPct; }
+    public void setSocialDesirabilityRiskPct(Double socialDesirabilityRiskPct) { this.socialDesirabilityRiskPct = socialDesirabilityRiskPct; }
+    public Boolean getElevatedImpressionManagement() { return elevatedImpressionManagement; }
+    public void setElevatedImpressionManagement(Boolean elevatedImpressionManagement) { this.elevatedImpressionManagement = elevatedImpressionManagement; }
     public Instant getScoredAt() { return scoredAt; }
     public void setScoredAt(Instant scoredAt) { this.scoredAt = scoredAt; }
     public List<TraitScoreDto> getTraitScores() { return traitScores; }

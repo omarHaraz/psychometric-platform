@@ -174,7 +174,7 @@ class AssessmentScoringServiceTest {
     }
 
     @Test
-    @DisplayName("Verify PQ10 per-trait mathematical invariants (rawScore <= n*4 and exact percentage)")
+    @DisplayName("Verify PQ10 per-trait mathematical invariants (17 items each, max 68 pts, max 544 pts overall)")
     void testPq10PerTraitBreakdownMathematicalInvariants() {
         // Setup 8 traits
         List<CompetencyTrait> allTraits = new ArrayList<>();
@@ -189,17 +189,16 @@ class AssessmentScoringServiceTest {
         }
         when(traitRepo.findAllByOrderByDisplayOrderAsc()).thenReturn(allTraits);
 
-        // Setup 140 sampled items, each mapped to 2 competencies (like the real item bank)
+        // Setup 136 competency items (17 items each for 8 traits) + 4 social desirability items = 140 total
         List<Long> sampledIds = new ArrayList<>();
         List<CandidateResponse> responses = new ArrayList<>();
         Map<Long, Integer> targetMap = new HashMap<>();
 
-        // Generate 140 items (18 each for traits 1-4, 17 each for traits 5-8)
         long itemIdCounter = 1L;
         List<Object[]> dbRows = new ArrayList<>();
 
         for (int traitId = 1; traitId <= 8; traitId++) {
-            int quota = traitId <= 4 ? 18 : 17;
+            int quota = 17;
             for (int k = 0; k < quota; k++) {
                 long itemId = itemIdCounter++;
                 sampledIds.add(itemId);
@@ -218,6 +217,22 @@ class AssessmentScoringServiceTest {
             }
         }
 
+        // Add 4 Social Desirability items (items 137..140)
+        List<Long> sdItemIds = List.of(137L, 138L, 139L, 140L);
+        when(jdbcTemplate.queryForList(contains("SOCIAL_DESIRABILITY"), eq(Long.class)))
+                .thenReturn(sdItemIds);
+
+        for (Long sdId : sdItemIds) {
+            sampledIds.add(sdId);
+            dbRows.add(new Object[]{sdId, 1, 9L}); // 9L is SOCIAL_DESIRABILITY competency
+
+            // Candidate answered 1 (truthful/no impression management -> distance=0 from target 1)
+            CandidateResponse cr = new CandidateResponse();
+            cr.setItemId(sdId);
+            cr.setSelectedLikert(1); // (1 - 1) = 0
+            responses.add(cr);
+        }
+
         assertEquals(140, sampledIds.size());
 
         // Mock JDBC query
@@ -231,7 +246,7 @@ class AssessmentScoringServiceTest {
                 handler.processRow(rs);
             }
             return null;
-        }).when(jdbcTemplate).query(anyString(), any(RowCallbackHandler.class));
+        }).when(jdbcTemplate).query(contains("FROM personality_items"), any(RowCallbackHandler.class));
 
         BatterySession pq10Session = new BatterySession();
         pq10Session.setBatteryType(BatteryType.PQ10);
@@ -255,10 +270,10 @@ class AssessmentScoringServiceTest {
 
         for (TraitScore ts : traitScores) {
             CompetencyTrait trait = ts.getTrait();
-            int n = trait.getDisplayOrder() <= 4 ? 18 : 17;
-            double maxPoints = n * 4.0;
+            int n = 17;
+            double maxPoints = n * 4.0; // 68.0
 
-            // Invariant 1: rawScore <= maxPoints (72 for traits 1-4, 68 for traits 5-8)
+            // Invariant 1: rawScore <= maxPoints (68.0 for all 8 traits)
             assertTrue(ts.getRawScore() <= maxPoints,
                     String.format("Trait %s raw score %.2f exceeds max ceiling %.2f (n=%d)",
                             trait.getCode(), ts.getRawScore(), maxPoints, n));
@@ -269,17 +284,64 @@ class AssessmentScoringServiceTest {
                     String.format("Trait %s score percentage %.2f does not match expected %.2f (raw=%.2f, max=%.2f)",
                             trait.getCode(), ts.getScorePct(), expectedPct, ts.getRawScore(), maxPoints));
 
-            // In our test vector: each item has answer=4, target=5 -> 3 points each
+            // In our test vector: each item has answer=4, target=5 -> 3 points each (17 * 3 = 51)
             assertEquals(n * 3.0, ts.getRawScore(), 0.01);
             assertEquals(75.0, ts.getScorePct(), 0.01);
 
             sumRawScores += ts.getRawScore();
         }
 
-        // Invariant 3: Total sum of raw points across all 8 traits == 140 * 3 = 420
-        assertEquals(140 * 3.0, sumRawScores, 0.01);
+        // Invariant 3: Total sum of raw points across all 8 traits == 136 * 3 = 408
+        assertEquals(136 * 3.0, sumRawScores, 0.01);
 
-        // Invariant 4: Overall PQ10% == 420 / 560 * 100 == 75.0%
+        // Invariant 4: Overall PQ10% == 408 / 544 * 100 == 75.0%
         assertEquals(75.0, score.getPersonalityScorePct(), 0.01);
+
+        // Invariant 5: Social Desirability == 0.0% (all answered 1 -> (1-1)*4 = 0/16 = 0%), not elevated
+        assertEquals(0.0, score.getSocialDesirabilityRiskPct(), 0.01);
+        assertFalse(score.getElevatedImpressionManagement());
+    }
+
+    @Test
+    @DisplayName("Verify Social Desirability scoring formula and elevated impression management flag")
+    void testSocialDesirabilityScoringAndThresholds() {
+        List<CompetencyTrait> allTraits = new ArrayList<>();
+        CompetencyTrait t1 = new CompetencyTrait("COMMUNICATION_AND_INFLUENCE", "التواصل", "تعريف", 1);
+        t1.setId(1L);
+        allTraits.add(t1);
+        when(traitRepo.findAllByOrderByDisplayOrderAsc()).thenReturn(allTraits);
+
+        List<Long> sdItemIds = List.of(101L, 102L, 103L, 104L);
+        when(jdbcTemplate.queryForList(contains("SOCIAL_DESIRABILITY"), eq(Long.class)))
+                .thenReturn(sdItemIds);
+
+        // Candidate strongly endorsed exaggerated virtue (Answers: 5, 5, 4, 4) -> Endorsements: 4, 4, 3, 3 -> sum=14
+        // SDRiskPct = 14 / (4 * 4) * 100 = 14 / 16 * 100 = 87.5% -> Elevated (>= 60%)
+        List<CandidateResponse> responses = new ArrayList<>();
+        int[] answers = {5, 5, 4, 4};
+        for (int idx = 0; idx < sdItemIds.size(); idx++) {
+            CandidateResponse cr = new CandidateResponse();
+            cr.setItemId(sdItemIds.get(idx));
+            cr.setSelectedLikert(answers[idx]);
+            responses.add(cr);
+        }
+
+        BatterySession pq10Session = new BatterySession();
+        pq10Session.setBatteryType(BatteryType.PQ10);
+        pq10Session.setSampledItemIds(sdItemIds);
+        pq10Session.setResponses(responses);
+
+        AssessmentAttempt attempt = new AssessmentAttempt();
+        attempt.setId(100L);
+        attempt.setBatterySessions(List.of(pq10Session));
+
+        when(assessmentScoreRepo.findByAttemptId(100L)).thenReturn(Optional.empty());
+        when(assessmentScoreRepo.save(any(AssessmentScore.class))).thenAnswer(i -> i.getArgument(0));
+
+        AssessmentScore score = scoringService.scoreAttempt(attempt);
+
+        assertNotNull(score);
+        assertEquals(87.5, score.getSocialDesirabilityRiskPct(), 0.01);
+        assertTrue(score.getElevatedImpressionManagement());
     }
 }
