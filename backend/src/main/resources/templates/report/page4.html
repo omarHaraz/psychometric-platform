@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Page 4 - ملخّص النتائج</title>
+    <style>
+        /* ==========================================================================
+           PDF & Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
+           ========================================================================== */
+        @page {
+            size: A4 portrait;
+            margin: 12mm 15mm 22mm 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Tahoma', 'Arial', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+            direction: rtl;
+            text-align: right;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* 1. Page Main Header */
+        .main-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #1e3a4c;
+        }
+
+        .main-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .main-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e3a4c;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .geom-symbol {
+            display: inline-block;
+            color: #7a4b3a;
+            font-size: 20px;
+            line-height: 1;
+            margin-right: 6px;
+        }
+
+        .page-subtitle {
+            font-size: 11px;
+            color: #475569;
+            margin: 6px 0 16px 0;
+            line-height: 1.5;
+        }
+
+        /* 2. Top Legend Scale Bar (Positioned above the visual slider column) */
+        .scale-legend-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 8px;
+        }
+
+        .scale-legend-box {
+            width: 38%;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .legend-labels-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            padding: 0 4px;
+        }
+
+        .label-low { color: #0284c7; width: 30%; text-align: right; }
+        .label-mid { color: #f59e0b; width: 40%; text-align: center; }
+        .label-high { color: #dc2626; width: 30%; text-align: left; }
+
+        .legend-ticks-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2px;
+            direction: rtl;
+        }
+
+        .tick-num {
+            font-size: 9px;
+            font-weight: 600;
+            color: #64748b;
+            font-family: 'Inter', 'Arial', sans-serif;
+            width: 10%;
+            text-align: center;
+        }
+
+        /* 3. Results Table */
+        table.results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 4px;
+            margin-bottom: 20px;
+            font-size: 10.5px;
+            background-color: #ffffff;
+        }
+
+        table.results-table th {
+            background-color: #7a4b3a;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 11.5px;
+            padding: 9px 12px;
+            text-align: right;
+            border: none;
+            letter-spacing: 0.2px;
+        }
+
+        table.results-table th:first-child {
+            width: 18%;
+            border-top-right-radius: 4px;
+        }
+
+        table.results-table th:nth-child(2) {
+            width: 44%;
+        }
+
+        table.results-table th:last-child {
+            width: 38%;
+            text-align: center;
+            border-top-left-radius: 4px;
+        }
+
+        table.results-table td {
+            padding: 13px 12px;
+            vertical-align: middle;
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+            line-height: 1.55;
+            color: #334155;
+        }
+
+        table.results-table tr:last-child td {
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+
+        .trait-name-cell {
+            font-weight: 700;
+            color: #1e3a4c;
+            font-size: 12px;
+        }
+
+        .interpretation-cell {
+            font-size: 10.5px;
+            color: #334155;
+            text-align: justify;
+        }
+
+        /* Visual Slider Track & Dynamic Marker */
+        .slider-cell {
+            padding: 13px 10px !important;
+            vertical-align: middle;
+        }
+
+        .slider-track-wrap {
+            position: relative;
+            width: 100%;
+            height: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .slider-dashed-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 0;
+            border-top: 1.5px dashed #cbd5e1;
+            z-index: 1;
+        }
+
+        .slider-score-circle {
+            position: absolute;
+            top: 50%;
+            width: 22px;
+            height: 22px;
+            margin-top: -11px;
+            margin-right: -11px;
+            border-radius: 50%;
+            background-color: #1e3a4c;
+            color: #ffffff;
+            font-size: 10.5px;
+            font-weight: 700;
+            font-family: 'Inter', 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 22px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+            z-index: 2;
+        }
+
+        /* 4. Modern Bottom Footer Banner (Matching Pages 1, 2, 3) */
+        .bottom-banner-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            padding: 0 15mm 8mm 15mm;
+            box-sizing: border-box;
+        }
+
+        .bottom-banner-graphics {
+            display: flex;
+            align-items: center;
+            height: 32px;
+            width: 100%;
+            position: relative;
+        }
+
+        .banner-logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+
+        .banner-logo-img {
+            max-height: 28px;
+            max-width: 90px;
+            object-fit: contain;
+        }
+
+        .banner-logo-text {
+            font-size: 8px;
+            font-weight: 700;
+            color: #475569;
+            line-height: 1.1;
+            font-family: 'Inter', 'Arial', sans-serif;
+            text-transform: uppercase;
+            direction: ltr;
+        }
+
+        .banner-angled-dark {
+            width: 90px;
+            height: 26px;
+            background: #1e3a4c;
+            transform: skew(-25deg);
+            margin-left: -10px;
+            z-index: 2;
+        }
+
+        .banner-brown-bar {
+            flex-grow: 1;
+            height: 26px;
+            background: #7a4b3a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10.5px;
+            font-weight: 600;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+            padding: 0 12px;
+            z-index: 1;
+            margin-left: -8px;
+        }
+
+        .banner-copyright {
+            font-size: 8.5px;
+            color: #64748b;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+            text-align: center;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Page Header -->
+    <div class="main-header-row">
+        <div class="main-title-wrap">
+            <h1 class="main-title">ملخّص النتائج</h1>
+            <span class="geom-symbol">❖</span>
+        </div>
+    </div>
+
+    <!-- Subtitle -->
+    <p class="page-subtitle">
+        فيما يلي ملخّص لنتائج المرشح. ويُعرض في الأجزاء التالية من هذا التقرير ما تعنيه هذه النتائج في بيئة العمل بشكل أكثر تفصيلا.
+    </p>
+
+    <!-- 2. Scale Legend (Positioned above the visual slider column) -->
+    <div class="scale-legend-container">
+        <div class="scale-legend-box">
+            <div class="legend-labels-row">
+                <span class="label-low">منخفض</span>
+                <span class="label-mid">متوسط</span>
+                <span class="label-high">مرتفع</span>
+            </div>
+            <div class="legend-ticks-row">
+                <span class="tick-num">1</span>
+                <span class="tick-num">2</span>
+                <span class="tick-num">3</span>
+                <span class="tick-num">4</span>
+                <span class="tick-num">5</span>
+                <span class="tick-num">6</span>
+                <span class="tick-num">7</span>
+                <span class="tick-num">8</span>
+                <span class="tick-num">9</span>
+                <span class="tick-num">10</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Results Table with Visual Score Sliders -->
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th>السمة</th>
+                <th>التفسير</th>
+                <th>الدرجة</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Row 1: التحفظ -->
+            <tr>
+                <td class="trait-name-cell">التحفظ</td>
+                <td class="interpretation-cell">
+                    <span th:text="${reservedText}">تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة التحفظ.</span>
+                </td>
+                <td class="slider-cell">
+                    <div class="slider-track-wrap">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-score-circle" 
+                             th:style="'right: ' + (((${reservedScore != null ? reservedScore : 6}) - 1) * 11.11) + '%;'">
+                            <span th:text="${reservedScore}">6</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 2: الانفعالية -->
+            <tr>
+                <td class="trait-name-cell">الانفعالية</td>
+                <td class="interpretation-cell">
+                    <span th:text="${emotionalityText}">تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة الانفعالية.</span>
+                </td>
+                <td class="slider-cell">
+                    <div class="slider-track-wrap">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-score-circle" 
+                             th:style="'right: ' + (((${emotionalityScore != null ? emotionalityScore : 5}) - 1) * 11.11) + '%;'">
+                            <span th:text="${emotionalityScore}">5</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 3: العدائية -->
+            <tr>
+                <td class="trait-name-cell">العدائية</td>
+                <td class="interpretation-cell">
+                    <span th:text="${hostilityText}">تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة العدائية.</span>
+                </td>
+                <td class="slider-cell">
+                    <div class="slider-track-wrap">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-score-circle" 
+                             th:style="'right: ' + (((${hostilityScore != null ? hostilityScore : 6}) - 1) * 11.11) + '%;'">
+                            <span th:text="${hostilityScore}">6</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 4: الاندفاعية -->
+            <tr>
+                <td class="trait-name-cell">الاندفاعية</td>
+                <td class="interpretation-cell">
+                    <span th:text="${impulsivityText}">تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة الاندفاعية.</span>
+                </td>
+                <td class="slider-cell">
+                    <div class="slider-track-wrap">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-score-circle" 
+                             th:style="'right: ' + (((${impulsivityScore != null ? impulsivityScore : 6}) - 1) * 11.11) + '%;'">
+                            <span th:text="${impulsivityScore}">6</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 5: الصرامة -->
+            <tr>
+                <td class="trait-name-cell">الصرامة</td>
+                <td class="interpretation-cell">
+                    <span th:text="${rigidityText}">متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة الصرامة.</span>
+                </td>
+                <td class="slider-cell">
+                    <div class="slider-track-wrap">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-score-circle" 
+                             th:style="'right: ' + (((${rigidityScore != null ? rigidityScore : 6}) - 1) * 11.11) + '%;'">
+                            <span th:text="${rigidityScore}">6</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 6: اللامألوفية -->
+            <tr>
+                <td class="trait-name-cell">اللامألوفية</td>
+                <td class="interpretation-cell">
+                    <span th:text="${unconventionalityText}">تشير هذه النتيجة إلى متوسط إلى مرتفع احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة اللامألوفية.</span>
+                </td>
+                <td class="slider-cell">
+                    <div class="slider-track-wrap">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-score-circle" 
+                             th:style="'right: ' + (((${unconventionalityScore != null ? unconventionalityScore : 7}) - 1) * 11.11) + '%;'">
+                            <span th:text="${unconventionalityScore}">7</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 4. Modern Bottom Footer Banner -->
+    <div class="bottom-banner-container">
+        <div class="bottom-banner-graphics">
+            <div class="banner-logo-section">
+                <img class="banner-logo-img" 
+                     th:src="${companyLogoBase64 != null ? companyLogoBase64 : (logoUrl != null ? logoUrl : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 120 40\'><circle cx=\'20\' cy=\'20\' r=\'12\' fill=\'%231e3a4c\'/><circle cx=\'20\' cy=\'20\' r=\'5\' fill=\'%237a4b3a\'/></svg>')}" 
+                     alt="Logo" />
+                <div class="banner-logo-text">
+                    Executive Assessment<br />Evaluation System
+                </div>
+            </div>
+            <div class="banner-angled-dark"></div>
+            <div class="banner-brown-bar">
+                Executive Leadership Platform
+            </div>
+        </div>
+        <div class="banner-copyright">
+            &copy; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
+        </div>
+    </div>
+
+</body>
+</html>
