@@ -27,6 +27,8 @@ public class AssessmentScoreResponseDto {
     private String readinessBandLabelAr;
     private Double socialDesirabilityRiskPct;
     private Boolean elevatedImpressionManagement;
+    private Double centralTendencyRatePct;
+    private Boolean elevatedCentralTendency;
     private Instant scoredAt;
 
     private List<TraitScoreDto> traitScores = new ArrayList<>();
@@ -140,6 +142,8 @@ public class AssessmentScoreResponseDto {
         }
         dto.setSocialDesirabilityRiskPct(score.getSocialDesirabilityRiskPct());
         dto.setElevatedImpressionManagement(score.getElevatedImpressionManagement());
+        dto.setCentralTendencyRatePct(score.getCentralTendencyRatePct());
+        dto.setElevatedCentralTendency(score.getElevatedCentralTendency());
         dto.setScoredAt(score.getScoredAt());
 
         if (score.getTraitScores() != null) {
@@ -201,6 +205,10 @@ public class AssessmentScoreResponseDto {
     public void setSocialDesirabilityRiskPct(Double socialDesirabilityRiskPct) { this.socialDesirabilityRiskPct = socialDesirabilityRiskPct; }
     public Boolean getElevatedImpressionManagement() { return elevatedImpressionManagement; }
     public void setElevatedImpressionManagement(Boolean elevatedImpressionManagement) { this.elevatedImpressionManagement = elevatedImpressionManagement; }
+    public Double getCentralTendencyRatePct() { return centralTendencyRatePct; }
+    public void setCentralTendencyRatePct(Double centralTendencyRatePct) { this.centralTendencyRatePct = centralTendencyRatePct; }
+    public Boolean getElevatedCentralTendency() { return elevatedCentralTendency; }
+    public void setElevatedCentralTendency(Boolean elevatedCentralTendency) { this.elevatedCentralTendency = elevatedCentralTendency; }
     public Instant getScoredAt() { return scoredAt; }
     public void setScoredAt(Instant scoredAt) { this.scoredAt = scoredAt; }
     public List<TraitScoreDto> getTraitScores() { return traitScores; }

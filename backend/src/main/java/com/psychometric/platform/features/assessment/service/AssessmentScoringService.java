@@ -8,6 +8,7 @@ import com.psychometric.platform.features.assessment.repository.*;
 import com.psychometric.platform.features.itembank.gcat.entity.GcatSubtestCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,9 @@ public class AssessmentScoringService {
     private final DerailerCategoryRepository categoryRepo;
     private final AssessmentAttemptRepository attemptRepo;
 
+    @Value("${psychometric.scoring.validity.central-tendency-cutoff-pct:45.0}")
+    private double centralTendencyCutoffPct = 45.0;
+
     public AssessmentScoringService(JdbcTemplate jdbcTemplate,
                                     AssessmentScoreRepository assessmentScoreRepo,
                                     CompetencyTraitRepository traitRepo,
@@ -37,6 +41,10 @@ public class AssessmentScoringService {
         this.traitRepo = traitRepo;
         this.categoryRepo = categoryRepo;
         this.attemptRepo = attemptRepo;
+    }
+
+    public void setCentralTendencyCutoffPct(double centralTendencyCutoffPct) {
+        this.centralTendencyCutoffPct = centralTendencyCutoffPct;
     }
 
     /**
@@ -80,7 +88,38 @@ public class AssessmentScoringService {
                 .orElse(null);
         GcatScoreResult gcatResult = scoreGcat(gcatSession);
 
-        // 5. Composite Score & Percentile Calculation
+        // 5. Compute Central Tendency Index (مؤشر الوسطية) across 196 substantive items (136 PQ10 non-SD + 60 Derailers)
+        int midpointCount = 0;
+        int totalSubstantiveItems = 0;
+
+        if (pq10Session != null && pq10Session.getResponses() != null) {
+            for (CandidateResponse cr : pq10Session.getResponses()) {
+                if (cr.getItemId() != null && cr.getSelectedLikert() != null && !pq10Result.sdItemIds.contains(cr.getItemId())) {
+                    totalSubstantiveItems++;
+                    if (cr.getSelectedLikert() == 3) {
+                        midpointCount++;
+                    }
+                }
+            }
+        }
+
+        if (derailerSession != null && derailerSession.getResponses() != null) {
+            for (CandidateResponse cr : derailerSession.getResponses()) {
+                if (cr.getItemId() != null && cr.getSelectedLikert() != null) {
+                    totalSubstantiveItems++;
+                    if (cr.getSelectedLikert() == 3) {
+                        midpointCount++;
+                    }
+                }
+            }
+        }
+
+        double centralTendencyPct = (totalSubstantiveItems > 0)
+                ? ((double) midpointCount / totalSubstantiveItems) * 100.0
+                : 0.0;
+        boolean elevatedCentralTendency = (centralTendencyPct >= centralTendencyCutoffPct);
+
+        // 6. Composite Score & Percentile Calculation
         // Composite = 0.28*PQ10% + 0.22*SJT% + 0.20*Derailers% + 0.30*GCAT%
         double composite = (0.28 * pq10Result.overallPct)
                          + (0.22 * sjtScorePct)
@@ -106,6 +145,8 @@ public class AssessmentScoringService {
         score.setReadinessBand(band);
         score.setSocialDesirabilityRiskPct(round2(pq10Result.sdRiskPct));
         score.setElevatedImpressionManagement(pq10Result.elevatedImpressionManagement);
+        score.setCentralTendencyRatePct(round2(centralTendencyPct));
+        score.setElevatedCentralTendency(elevatedCentralTendency);
         score.setScoredAt(Instant.now());
 
         // Attach Trait Scores
@@ -147,6 +188,7 @@ public class AssessmentScoringService {
         public double overallPct;
         public double sdRiskPct;
         public boolean elevatedImpressionManagement;
+        public Set<Long> sdItemIds = new HashSet<>();
         public List<TraitScore> traitScores = new ArrayList<>();
     }
 
@@ -173,6 +215,7 @@ public class AssessmentScoringService {
                 "WHERE c.code = 'SOCIAL_DESIRABILITY'",
                 Long.class
         ));
+        result.sdItemIds = sdItemIds;
 
         // Query all items and their target answers and all their mapped competencies
         Map<Long, Integer> targetMap = new HashMap<>();

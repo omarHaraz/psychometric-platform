@@ -1512,24 +1512,57 @@ function renderScoreModalContent(score, token) {
             </div>
         </div>
 
-        <!-- Validity & Social Desirability Index -->
-        <div class="p-3.5 rounded-xl border ${score.elevatedImpressionManagement ? 'bg-amber-50/90 border-amber-300' : 'bg-emerald-50/90 border-emerald-300'} flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${score.elevatedImpressionManagement ? 'bg-amber-200 text-amber-800' : 'bg-emerald-200 text-emerald-800'}">
-                    <span class="material-symbols-outlined text-[20px]">${score.elevatedImpressionManagement ? 'warning' : 'verified_user'}</span>
+        <!-- Validity & Response Style Panel -->
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/80 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-200/80">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-teal-600">verified_user</span>
+                    <span class="text-xs font-bold text-slate-800">${isAr ? 'مؤشرات صدق الاستجابة ونمط الإجابة' : 'Response Validity & Response Style'}</span>
                 </div>
-                <div>
-                    <div class="text-xs font-bold ${score.elevatedImpressionManagement ? 'text-amber-950' : 'text-emerald-950'}">
-                        <span>${isAr ? (score.elevatedImpressionManagement ? 'ميل مرتفع للتظاهر الاجتماعي' : 'استجابة طبيعية وموثوقة') : (score.elevatedImpressionManagement ? 'Elevated Impression Management' : 'Normal Self-Report Profile')}</span>
+                <span class="text-[10px] text-slate-500">${isAr ? 'فحص جودة وموثوقية الإجابات' : 'Data Integrity & Validity Checks'}</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- 1. Social Desirability -->
+                <div class="p-3 rounded-lg border ${score.elevatedImpressionManagement ? 'bg-amber-50/90 border-amber-300' : 'bg-emerald-50/90 border-emerald-300'} flex items-start justify-between">
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-7 h-7 rounded-md flex items-center justify-center shrink-0 mt-0.5 ${score.elevatedImpressionManagement ? 'bg-amber-200 text-amber-800' : 'bg-emerald-200 text-emerald-800'}">
+                            <span class="material-symbols-outlined text-[17px]">${score.elevatedImpressionManagement ? 'warning' : 'thumb_up'}</span>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold ${score.elevatedImpressionManagement ? 'text-amber-950' : 'text-emerald-950'}">
+                                ${isAr ? (score.elevatedImpressionManagement ? 'ميل للتظاهر الاجتماعي' : 'نزاهة وتلقائية عالية') : (score.elevatedImpressionManagement ? 'Elevated Impression Mgmt' : 'Candid / Honest Profile')}
+                            </div>
+                            <div class="text-[11px] ${score.elevatedImpressionManagement ? 'text-amber-800' : 'text-emerald-800'} mt-0.5">
+                                ${isAr ? (score.elevatedImpressionManagement ? 'مؤشر التظاهر: ' + (score.socialDesirabilityRiskPct || 0) + '% (حذر بالتفسير)' : 'مؤشر التظاهر: ' + (score.socialDesirabilityRiskPct || 0) + '% (استجابات واقعية)') : (score.elevatedImpressionManagement ? 'SD Risk: ' + (score.socialDesirabilityRiskPct || 0) + '% (Caution)' : 'SD Risk: ' + (score.socialDesirabilityRiskPct || 0) + '% (Normal)')}
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-[11px] ${score.elevatedImpressionManagement ? 'text-amber-800' : 'text-emerald-800'}">
-                        <span>${isAr ? (score.elevatedImpressionManagement ? 'مؤشر التظاهر الاجتماعي: ' + (score.socialDesirabilityRiskPct || 0) + '% (يُنصح بتفسير نتائج التقرير الذاتي بحذر)' : 'مؤشر التظاهر الاجتماعي: ' + (score.socialDesirabilityRiskPct || 0) + '% (استجابات واقعية وتلقائية)') : (score.elevatedImpressionManagement ? 'Social Desirability Risk: ' + (score.socialDesirabilityRiskPct || 0) + '% (Interpret self-report with caution)' : 'Social Desirability Risk: ' + (score.socialDesirabilityRiskPct || 0) + '% (Honest & Spontaneous Responses)')}</span>
+                    <span class="px-2 py-0.5 text-[11px] font-bold rounded-md shrink-0 ${score.elevatedImpressionManagement ? 'bg-amber-200 text-amber-900 border border-amber-300' : 'bg-emerald-200 text-emerald-900 border border-emerald-300'}">
+                        ${score.socialDesirabilityRiskPct || 0}%
+                    </span>
+                </div>
+
+                <!-- 2. Central Tendency Index -->
+                <div class="p-3 rounded-lg border ${score.elevatedCentralTendency ? 'bg-amber-50/90 border-amber-300' : 'bg-emerald-50/90 border-emerald-300'} flex items-start justify-between">
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-7 h-7 rounded-md flex items-center justify-center shrink-0 mt-0.5 ${score.elevatedCentralTendency ? 'bg-amber-200 text-amber-800' : 'bg-emerald-200 text-emerald-800'}">
+                            <span class="material-symbols-outlined text-[17px]">${score.elevatedCentralTendency ? 'flaky' : 'balance'}</span>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold ${score.elevatedCentralTendency ? 'text-amber-950' : 'text-emerald-950'}">
+                                ${isAr ? (score.elevatedCentralTendency ? 'نزعة مرتفعة للوسطية' : 'تنوع واستجابة متوازنة') : (score.elevatedCentralTendency ? 'Elevated Midpoint Bias' : 'Balanced Differentiation')}
+                            </div>
+                            <div class="text-[11px] ${score.elevatedCentralTendency ? 'text-amber-800' : 'text-emerald-800'} mt-0.5">
+                                ${isAr ? (score.elevatedCentralTendency ? 'مؤشر الوسطية: ' + (score.centralTendencyRatePct || 0) + '% (تردد بالإجابات)' : 'مؤشر الوسطية: ' + (score.centralTendencyRatePct || 0) + '% (تمايز واضح)') : (score.elevatedCentralTendency ? 'Midpoint: ' + (score.centralTendencyRatePct || 0) + '% (High Neutral)' : 'Midpoint: ' + (score.centralTendencyRatePct || 0) + '% (Balanced)')}
+                            </div>
+                        </div>
                     </div>
+                    <span class="px-2 py-0.5 text-[11px] font-bold rounded-md shrink-0 ${score.elevatedCentralTendency ? 'bg-amber-200 text-amber-900 border border-amber-300' : 'bg-emerald-200 text-emerald-900 border border-emerald-300'}">
+                        ${score.centralTendencyRatePct || 0}%
+                    </span>
                 </div>
             </div>
-            <span class="px-2.5 py-1 text-xs font-bold rounded-full ${score.elevatedImpressionManagement ? 'bg-amber-200 text-amber-900 border border-amber-300' : 'bg-emerald-200 text-emerald-900 border border-emerald-300'}">
-                ${score.socialDesirabilityRiskPct || 0}% ${isAr ? 'مخاطرة' : 'Risk'}
-            </span>
         </div>
 
         <!-- Section 1: PQ10 8 Competency Traits -->
@@ -1705,19 +1738,51 @@ function generatePrintableReportWindow(score, token) {
     }).join("");
 
     const sdRisk = score.socialDesirabilityRiskPct || 0;
-    const isElevated = !!score.elevatedImpressionManagement;
+    const isSdElevated = !!score.elevatedImpressionManagement;
+    const ctRate = score.centralTendencyRatePct || 0;
+    const isCtElevated = !!score.elevatedCentralTendency;
+    const hasAnyValidityWarning = isSdElevated || isCtElevated;
+
     const validityBanner = `
-        <div style="background: ${isElevated ? '#fef3c7' : '#ecfdf5'}; border: 1px solid ${isElevated ? '#fcd34d' : '#a7f3d0'}; border-radius: 8px; padding: 12px 16px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <div style="font-size: 13px; font-weight: bold; color: ${isElevated ? '#92400e' : '#065f46'};">
-                    ${isElevated ? '⚠️ Profile Validity Notice: Elevated Impression Management Detected' : '✅ Profile Validity: Valid & Spontaneous Self-Report'}
+        <div style="background: ${hasAnyValidityWarning ? '#fffbeb' : '#f0fdf4'}; border: 1px solid ${hasAnyValidityWarning ? '#fde68a' : '#bbf7d0'}; border-radius: 10px; padding: 14px 18px; margin-bottom: 25px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid ${hasAnyValidityWarning ? '#fef3c7' : '#dcfce7'}; padding-bottom: 8px;">
+                <div style="font-size: 13px; font-weight: bold; color: ${hasAnyValidityWarning ? '#92400e' : '#166534'};">
+                    ${hasAnyValidityWarning ? '⚠️ Response Validity & Quality Indicators (Attention Required)' : '✅ Response Validity & Quality Indicators (High Reliability Profile)'}
                 </div>
-                <div style="font-size: 11px; color: ${isElevated ? '#b45309' : '#047857'}; margin-top: 2px;">
-                    ${isElevated ? 'Social Desirability Risk: ' + sdRisk + '% (Candidate endorsed exaggerated virtues — interpret personality self-report with caution)' : 'Social Desirability Risk: ' + sdRisk + '% (Candidate provided honest and candid responses)'}
+                <div style="font-size: 11px; color: #64748b;">
+                    Substantive Items: 196 | Validity Scales: 2
                 </div>
             </div>
-            <div style="font-size: 13px; font-weight: bold; padding: 4px 12px; border-radius: 9999px; background: ${isElevated ? '#fde68a' : '#d1fae5'}; color: ${isElevated ? '#78350f' : '#064e3b'};">
-                ${sdRisk}% Risk
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <!-- Social Desirability Box -->
+                <div style="background: #fff; border: 1px solid ${isSdElevated ? '#fcd34d' : '#e2e8f0'}; border-radius: 6px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 12px; font-weight: bold; color: ${isSdElevated ? '#92400e' : '#1e293b'};">
+                            ${isSdElevated ? 'Social Desirability: Elevated' : 'Social Desirability: Normal'}
+                        </div>
+                        <div style="font-size: 10px; color: ${isSdElevated ? '#b45309' : '#64748b'}; margin-top: 2px;">
+                            ${isSdElevated ? 'Endorsed unrealistic virtues — interpret self-report with caution.' : 'Candid and realistic self-description.'}
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; font-weight: bold; padding: 3px 10px; border-radius: 9999px; background: ${isSdElevated ? '#fef3c7' : '#ecfdf5'}; color: ${isSdElevated ? '#92400e' : '#166534'}; border: 1px solid ${isSdElevated ? '#fde68a' : '#bbf7d0'};">
+                        ${sdRisk}%
+                    </div>
+                </div>
+
+                <!-- Central Tendency Box -->
+                <div style="background: #fff; border: 1px solid ${isCtElevated ? '#fcd34d' : '#e2e8f0'}; border-radius: 6px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 12px; font-weight: bold; color: ${isCtElevated ? '#92400e' : '#1e293b'};">
+                            ${isCtElevated ? 'Central Tendency: Elevated' : 'Central Tendency: Balanced'}
+                        </div>
+                        <div style="font-size: 10px; color: ${isCtElevated ? '#b45309' : '#64748b'}; margin-top: 2px;">
+                            ${isCtElevated ? 'High rate of midpoint answers across substantive items.' : 'Well-differentiated response distribution.'}
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; font-weight: bold; padding: 3px 10px; border-radius: 9999px; background: ${isCtElevated ? '#fef3c7' : '#ecfdf5'}; color: ${isCtElevated ? '#92400e' : '#166534'}; border: 1px solid ${isCtElevated ? '#fde68a' : '#bbf7d0'};">
+                        ${ctRate}%
+                    </div>
+                </div>
             </div>
         </div>
     `;

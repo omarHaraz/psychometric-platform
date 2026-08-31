@@ -50,6 +50,12 @@ public class AssessmentScore {
     @Column(name = "elevated_impression_management")
     private Boolean elevatedImpressionManagement = false;
 
+    @Column(name = "central_tendency_rate_pct")
+    private Double centralTendencyRatePct = 0.0;
+
+    @Column(name = "elevated_central_tendency")
+    private Boolean elevatedCentralTendency = false;
+
     @Column(name = "scored_at", nullable = false)
     private Instant scoredAt;
 
@@ -186,5 +192,21 @@ public class AssessmentScore {
 
     public void setElevatedImpressionManagement(Boolean elevatedImpressionManagement) {
         this.elevatedImpressionManagement = elevatedImpressionManagement;
+    }
+
+    public Double getCentralTendencyRatePct() {
+        return centralTendencyRatePct;
+    }
+
+    public void setCentralTendencyRatePct(Double centralTendencyRatePct) {
+        this.centralTendencyRatePct = centralTendencyRatePct;
+    }
+
+    public Boolean getElevatedCentralTendency() {
+        return elevatedImpressionManagement != null && elevatedCentralTendency != null ? elevatedCentralTendency : false;
+    }
+
+    public void setElevatedCentralTendency(Boolean elevatedCentralTendency) {
+        this.elevatedCentralTendency = elevatedCentralTendency;
     }
 }

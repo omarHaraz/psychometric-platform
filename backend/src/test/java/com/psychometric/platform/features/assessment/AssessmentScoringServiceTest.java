@@ -344,4 +344,78 @@ class AssessmentScoringServiceTest {
         assertEquals(87.5, score.getSocialDesirabilityRiskPct(), 0.01);
         assertTrue(score.getElevatedImpressionManagement());
     }
+
+    @Test
+    @DisplayName("Verify Central Tendency Index (مؤشر الوسطية) normal and elevated cutoff thresholds")
+    void testCentralTendencyScoringAndThresholds() {
+        List<CompetencyTrait> allTraits = new ArrayList<>();
+        CompetencyTrait t1 = new CompetencyTrait("COMMUNICATION_AND_INFLUENCE", "التواصل", "تعريف", 1);
+        t1.setId(1L);
+        allTraits.add(t1);
+        when(traitRepo.findAllByOrderByDisplayOrderAsc()).thenReturn(allTraits);
+
+        List<Long> sdItemIds = List.of(999L);
+        when(jdbcTemplate.queryForList(contains("SOCIAL_DESIRABILITY"), eq(Long.class)))
+                .thenReturn(sdItemIds);
+
+        // Substantive PQ10 responses (10 items: 5 answered '3' [neutral], 5 answered '5')
+        // plus 1 SD item answered '3' which MUST be excluded from substantive midpoint count
+        List<CandidateResponse> pq10Responses = new ArrayList<>();
+        List<Long> pq10SampledIds = new ArrayList<>();
+        for (long i = 1; i <= 10; i++) {
+            pq10SampledIds.add(i);
+            CandidateResponse cr = new CandidateResponse();
+            cr.setItemId(i);
+            cr.setSelectedLikert(i <= 5 ? 3 : 5);
+            pq10Responses.add(cr);
+        }
+        // SD item
+        pq10SampledIds.add(999L);
+        CandidateResponse sdResp = new CandidateResponse();
+        sdResp.setItemId(999L);
+        sdResp.setSelectedLikert(3);
+        pq10Responses.add(sdResp);
+
+        BatterySession pq10Session = new BatterySession();
+        pq10Session.setBatteryType(BatteryType.PQ10);
+        pq10Session.setSampledItemIds(pq10SampledIds);
+        pq10Session.setResponses(pq10Responses);
+
+        // Substantive Derailers responses (10 items: 5 answered '3', 5 answered '1')
+        List<CandidateResponse> derailerResponses = new ArrayList<>();
+        List<Long> derailerSampledIds = new ArrayList<>();
+        for (long i = 101; i <= 110; i++) {
+            derailerSampledIds.add(i);
+            CandidateResponse cr = new CandidateResponse();
+            cr.setItemId(i);
+            cr.setSelectedLikert(i <= 105 ? 3 : 1);
+            derailerResponses.add(cr);
+        }
+
+        BatterySession derailerSession = new BatterySession();
+        derailerSession.setBatteryType(BatteryType.DERAILERS);
+        derailerSession.setSampledItemIds(derailerSampledIds);
+        derailerSession.setResponses(derailerResponses);
+
+        AssessmentAttempt attempt = new AssessmentAttempt();
+        attempt.setId(101L);
+        attempt.setBatterySessions(List.of(pq10Session, derailerSession));
+
+        when(assessmentScoreRepo.findByAttemptId(101L)).thenReturn(Optional.empty());
+        when(assessmentScoreRepo.save(any(AssessmentScore.class))).thenAnswer(i -> i.getArgument(0));
+
+        // Total substantive items = 10 (PQ10) + 10 (Derailers) = 20 (999L is SD and excluded).
+        // Total '3' answers among substantive items = 5 + 5 = 10.
+        // Central Tendency Index = (10 / 20) * 100 = 50.0% -> Elevated (>= 45% default cutoff)
+        AssessmentScore score = scoringService.scoreAttempt(attempt);
+
+        assertNotNull(score);
+        assertEquals(50.0, score.getCentralTendencyRatePct(), 0.01);
+        assertTrue(score.getElevatedCentralTendency());
+
+        // Test with higher threshold (e.g. 55%) -> not elevated
+        scoringService.setCentralTendencyCutoffPct(55.0);
+        AssessmentScore scoreHighCutoff = scoringService.scoreAttempt(attempt);
+        assertFalse(scoreHighCutoff.getElevatedCentralTendency());
+    }
 }
