@@ -68,6 +68,9 @@ public class AssessmentScore {
     @Column(name = "scored_at", nullable = false)
     private Instant scoredAt;
 
+    @Column(name = "report_pdf_url", length = 1024)
+    private String reportPdfUrl;
+
     @OneToMany(mappedBy = "assessmentScore", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("score-traits")
     private Set<TraitScore> traitScores = new HashSet<>();
@@ -241,5 +244,13 @@ public class AssessmentScore {
 
     public void setCappedPenaltyPct(Double cappedPenaltyPct) {
         this.cappedPenaltyPct = cappedPenaltyPct;
+    }
+
+    public String getReportPdfUrl() {
+        return reportPdfUrl;
+    }
+
+    public void setReportPdfUrl(String reportPdfUrl) {
+        this.reportPdfUrl = reportPdfUrl;
     }
 }

@@ -59,6 +59,34 @@ public class CloudinaryService {
         }
     }
 
+    public String uploadPdf(byte[] pdfBytes, String fileName, String folder) {
+        if (pdfBytes == null || pdfBytes.length == 0) {
+            throw new BadRequestException("PDF bytes cannot be empty");
+        }
+
+        String targetFolder = (folder != null && !folder.isBlank()) ? folder.trim() : "psychometric/reports";
+        String publicId = (fileName != null && !fileName.isBlank()) ? fileName.trim() : ("report_" + System.currentTimeMillis());
+
+        try {
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(
+                    pdfBytes,
+                    ObjectUtils.asMap(
+                            "folder", targetFolder,
+                            "public_id", publicId,
+                            "resource_type", "raw"
+                    )
+            );
+
+            String secureUrl = (String) uploadResult.get("secure_url");
+            log.info("Successfully uploaded PDF report to Cloudinary: publicId={}, url={}", publicId, secureUrl);
+            return secureUrl;
+
+        } catch (IOException e) {
+            log.error("Failed to upload PDF report to Cloudinary", e);
+            throw new RuntimeException("Failed to upload PDF report to Cloudinary: " + e.getMessage(), e);
+        }
+    }
+
     public void deleteImage(String publicId) {
         if (publicId == null || publicId.isBlank()) {
             return;

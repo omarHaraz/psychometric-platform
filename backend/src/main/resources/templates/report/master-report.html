@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>تقرير الكفاءات للقادة - التقرير الشامل</title>
+    
+    <!-- Arabic Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ==========================================================================
+           Master Print & PDF Multi-page Configuration (openhtmltopdf & Flying Saucer)
+           ========================================================================== */
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Arial', sans-serif;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .pdf-page-container {
+            width: 210mm;
+            min-height: 297mm;
+            max-height: 297mm;
+            height: 297mm;
+            position: relative;
+            page-break-inside: avoid;
+            page-break-after: always;
+            overflow: hidden;
+            background-color: #ffffff;
+            margin: 0 auto;
+        }
+
+        .pdf-page-container:last-child {
+            page-break-after: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Page 1: Cover Page -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/cover-page :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 2: Introduction & Impression Management -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page2 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 3: Framework & Methodology -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page3 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 4: Results Summary – Personality Traits 1–10 -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page4 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 5: Results Summary – Competencies & General Abilities -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page5 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 6: Section Divider / Transition -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page6 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 7: Communication & Influence -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page7 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 8: Initiative -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page8 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 9: Decision Making & Responsibility -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page9 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 10: Inspiring Leadership -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page10 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 11: Strategic Thinking -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page11 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 12: Skill Development -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page12 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 13: Adaptability -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page13 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 14: Systematic Analysis & Planning -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page14 :: .page-container}"></th:block>
+    </div>
+
+    <!-- Page 15: Development Plan – GROW Model -->
+    <div class="pdf-page-container">
+        <th:block th:insert="~{report/page15 :: .page-container}"></th:block>
+    </div>
+
+</body>
+</html>
