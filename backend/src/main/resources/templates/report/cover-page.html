@@ -6,7 +6,7 @@
     <title>Cover Page - تقرير الكفاءات للقادة</title>
     <style>
         /* ==========================================================================
-           PDF & Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
+           PDF &amp; Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
            ========================================================================== */
         @page {
             size: A4 portrait;
@@ -107,7 +107,7 @@
             border-radius: 2px;
         }
 
-        /* 2. Report Title & Subtitle */
+        /* 2. Report Title &amp; Subtitle */
         .report-title-ar {
             font-size: 34px;
             font-weight: 800;
@@ -128,7 +128,7 @@
             letter-spacing: 1px;
         }
 
-        /* 3. Candidate & Result Information Box */
+        /* 3. Candidate &amp; Result Information Box */
         .meta-card {
             width: 400px;
             max-width: 90%;
@@ -271,11 +271,11 @@
             <div class="header-symbol">❖</div>
             <hr class="divider-small" />
 
-            <!-- 2. Report Title & Subtitle (Arabic RTL) -->
+            <!-- 2. Report Title &amp; Subtitle (Arabic RTL) -->
             <h1 class="report-title-ar" dir="rtl">تقرير الكفاءات للقادة</h1>
             <div class="report-subtitle-ar" dir="rtl">تطوير</div>
 
-            <!-- 3. Candidate Info & Result Box (English LTR with variables) -->
+            <!-- 3. Candidate Info &amp; Result Box (English LTR with variables) -->
             <div class="meta-card">
                 <div class="meta-line candidate-id" dir="ltr">
                     candidateID <span th:text="${candidateId}">CAN-98234</span>
@@ -291,7 +291,7 @@
             <!-- 4. Logo (Base64 data URI / Dynamic Thymeleaf URL / Fallback SVG) -->
             <div class="logo-container">
                 <img class="company-logo" 
-                     th:src="${companyLogoBase64 != null ? companyLogoBase64 : (logoUrl != null ? logoUrl : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 200 60\'><circle cx=\'30\' cy=\'30\' r=\'18\' fill=\'%231e3a4c\'/><path d=\'M30 18 L38 38 L22 38 Z\' fill=\'%237a4b3a\'/><text x=\'58\' y=\'32\' font-family=\'Arial\' font-size=\'13\' font-weight=\'bold\' fill=\'%231e3a4c\'>EXECUTIVE</text><text x=\'58\' y=\'45\' font-family=\'Arial\' font-size=\'10\' font-weight=\'600\' fill=\'%237a4b3a\'>ASSESSMENT</text></svg>')}" 
+                     th:src="${companyLogoBase64 != null ? companyLogoBase64 : (logoUrl != null ? logoUrl : '')}" 
                      alt="Executive Logo" />
             </div>
 
@@ -302,7 +302,7 @@
             <span th:text="${candidateId}">CAN-98234</span> | تقرير الكفاءات للقادة تطوير
         </div>
         <div class="banner-subtext">
-            &copy; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
+            &#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
         </div>
 
         <div class="bottom-banner-wrapper">

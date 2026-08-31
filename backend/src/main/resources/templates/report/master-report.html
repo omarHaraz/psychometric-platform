@@ -8,11 +8,21 @@
     <!-- Arabic Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&amp;family=Cairo:wght@300;400;600;700;800;900&amp;display=swap" rel="stylesheet" />
+
+    <!-- Aggregated Page Styles -->
+    <th:block th:insert="~{report/cover-page :: style}"></th:block>
+    <th:block th:insert="~{report/page2 :: style}"></th:block>
+    <th:block th:insert="~{report/page3 :: style}"></th:block>
+    <th:block th:insert="~{report/page4 :: style}"></th:block>
+    <th:block th:insert="~{report/page5 :: style}"></th:block>
+    <th:block th:insert="~{report/page6 :: style}"></th:block>
+    <th:block th:insert="~{report/page7 :: style}"></th:block>
+    <th:block th:insert="~{report/page15 :: style}"></th:block>
 
     <style>
         /* ==========================================================================
-           Master Print & PDF Multi-page Configuration (openhtmltopdf & Flying Saucer)
+           Master Print &amp; PDF Multi-page Configuration (openhtmltopdf &amp; Flying Saucer)
            ========================================================================== */
         @page {
             size: A4 portrait;
@@ -34,7 +44,7 @@
             text-align: right;
         }
 
-        .pdf-page-container {
+        .pdf-page-wrapper {
             width: 210mm;
             min-height: 297mm;
             max-height: 297mm;
@@ -47,7 +57,7 @@
             margin: 0 auto;
         }
 
-        .pdf-page-container:last-child {
+        .pdf-page-wrapper:last-child {
             page-break-after: auto;
         }
     </style>
@@ -55,79 +65,49 @@
 <body>
 
     <!-- Page 1: Cover Page -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/cover-page :: .page-container}"></th:block>
-    </div>
+    <div class="pdf-page-wrapper" th:insert="~{report/cover-page :: body}"></div>
 
-    <!-- Page 2: Introduction & Impression Management -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page2 :: .page-container}"></th:block>
-    </div>
+    <!-- Page 2: Introduction &amp; Impression Management -->
+    <div class="pdf-page-wrapper" th:insert="~{report/page2 :: body}"></div>
 
-    <!-- Page 3: Framework & Methodology -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page3 :: .page-container}"></th:block>
-    </div>
+    <!-- Page 3: Framework &amp; Methodology -->
+    <div class="pdf-page-wrapper" th:insert="~{report/page3 :: body}"></div>
 
     <!-- Page 4: Results Summary – Personality Traits 1–10 -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page4 :: .page-container}"></th:block>
-    </div>
+    <div class="pdf-page-wrapper" th:insert="~{report/page4 :: body}"></div>
 
-    <!-- Page 5: Results Summary – Competencies & General Abilities -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page5 :: .page-container}"></th:block>
-    </div>
+    <!-- Page 5: Results Summary – Competencies &amp; General Abilities -->
+    <div class="pdf-page-wrapper" th:insert="~{report/page5 :: body}"></div>
 
     <!-- Page 6: Section Divider / Transition -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page6 :: .page-container}"></th:block>
-    </div>
+    <div class="pdf-page-wrapper" th:insert="~{report/page6 :: body}"></div>
 
-    <!-- Page 7: Communication & Influence -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page7 :: .page-container}"></th:block>
-    </div>
+    <!-- Page 7: Communication &amp; Influence -->
+    <div class="pdf-page-wrapper" th:insert="~{report/page7 :: body}"></div>
 
     <!-- Page 8: Initiative -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page8 :: .page-container}"></th:block>
-    </div>
+    <div class="pdf-page-wrapper" th:insert="~{report/page8 :: body}"></div>
 
-    <!-- Page 9: Decision Making & Responsibility -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page9 :: .page-container}"></th:block>
-    </div>
+    <!-- Page 9: Decision Making &amp; Responsibility -->
+    <div class="pdf-page-wrapper" th:insert="~{report/page9 :: body}"></div>
 
     <!-- Page 10: Inspiring Leadership -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page10 :: .page-container}"></th:block>
-    </div>
+    <div class="pdf-page-wrapper" th:insert="~{report/page10 :: body}"></div>
 
     <!-- Page 11: Strategic Thinking -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page11 :: .page-container}"></th:block>
-    </div>
+    <div class="pdf-page-wrapper" th:insert="~{report/page11 :: body}"></div>
 
     <!-- Page 12: Skill Development -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page12 :: .page-container}"></th:block>
-    </div>
+    <div class="pdf-page-wrapper" th:insert="~{report/page12 :: body}"></div>
 
     <!-- Page 13: Adaptability -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page13 :: .page-container}"></th:block>
-    </div>
+    <div class="pdf-page-wrapper" th:insert="~{report/page13 :: body}"></div>
 
-    <!-- Page 14: Systematic Analysis & Planning -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page14 :: .page-container}"></th:block>
-    </div>
+    <!-- Page 14: Systematic Analysis &amp; Planning -->
+    <div class="pdf-page-wrapper" th:insert="~{report/page14 :: body}"></div>
 
     <!-- Page 15: Development Plan – GROW Model -->
-    <div class="pdf-page-container">
-        <th:block th:insert="~{report/page15 :: .page-container}"></th:block>
-    </div>
+    <div class="pdf-page-wrapper" th:insert="~{report/page15 :: body}"></div>
 
 </body>
 </html>

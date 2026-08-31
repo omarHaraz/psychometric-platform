@@ -25,7 +25,7 @@ public class ReportContextDto implements Serializable {
     private String candidateName;
     private String reportDate = LocalDate.now().toString();
     private String evaluationPurpose = "تقرير الكفاءات للقادة: تطوير";
-    private String companyLogoBase64;
+    private String companyLogoBase64 = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40'><circle cx='20' cy='20' r='12' fill='%231e3a4c'/><circle cx='20' cy='20' r='5' fill='%237a4b3a'/></svg>";
     private String logoUrl;
 
     // =========================================================================
