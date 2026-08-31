@@ -1816,9 +1816,18 @@ window.downloadReport = async function(event, token) {
     
     try {
         // 1. Request full AI-driven leadership report PDF URL from backend
-        const res = await fetch(`${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/download`, {
+        let downloadEndpoint = `${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/download`;
+        let res = await fetch(downloadEndpoint, {
             headers: getAuthHeader()
         });
+
+        // If not found, fallback to /api/reports/{token}/download
+        if (!res.ok && res.status === 404) {
+            downloadEndpoint = `${API_BASE}/api/reports/${encodeURIComponent(token)}/download`;
+            res = await fetch(downloadEndpoint, {
+                headers: getAuthHeader()
+            });
+        }
 
         if (res.ok) {
             const data = await res.json();
@@ -1836,9 +1845,17 @@ window.downloadReport = async function(event, token) {
         }
 
         // 2. Fallback: Stream PDF directly if Cloudinary CDN URL was not returned
-        const streamRes = await fetch(`${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/pdf`, {
+        let streamEndpoint = `${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/pdf`;
+        let streamRes = await fetch(streamEndpoint, {
             headers: getAuthHeader()
         });
+
+        if (!streamRes.ok && streamRes.status === 404) {
+            streamEndpoint = `${API_BASE}/api/reports/${encodeURIComponent(token)}/pdf`;
+            streamRes = await fetch(streamEndpoint, {
+                headers: getAuthHeader()
+            });
+        }
 
         if (streamRes.ok) {
             const blob = await streamRes.blob();
@@ -1853,20 +1870,17 @@ window.downloadReport = async function(event, token) {
             return;
         }
 
-        // 3. Fallback to scoring data popup if report is still processing
-        const scoreRes = await fetch(`${API_BASE}/api/attempts/${token}/score`, {
-            headers: getAuthHeader()
-        });
-        if (scoreRes.ok) {
-            const score = await scoreRes.json();
-            generatePrintableReportWindow(score, token);
-        } else {
-            window.showCustomModal({title: 'Generating', message: 'Report is still generating. Please check back shortly.', icon: 'hourglass_empty'});
-        }
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || 'Report generation in progress or server busy. Please retry in a few seconds.');
 
     } catch (e) {
         console.error("Error downloading report:", e);
-        window.showCustomModal({title: 'Error', message: 'Failed to download report. Please try again.', type: 'danger', icon: 'error'});
+        window.showCustomModal({
+            title: 'Report Download',
+            message: e.message || 'Failed to download report. Please try again.',
+            type: 'danger',
+            icon: 'error'
+        });
     } finally {
         if (btn) {
             btn.disabled = false;
