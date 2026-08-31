@@ -37,6 +37,15 @@ public class AssessmentScore {
     @Column(name = "composite_score", nullable = false)
     private Double compositeScore = 0.0;
 
+    @Column(name = "raw_composite_score")
+    private Double rawCompositeScore = 0.0;
+
+    @Column(name = "validity_penalty_pct")
+    private Double validityPenaltyPct = 0.0;
+
+    @Column(name = "capped_penalty_pct")
+    private Double cappedPenaltyPct = 0.0;
+
     @Column(name = "percentile", nullable = false)
     private Integer percentile = 0;
 
@@ -208,5 +217,29 @@ public class AssessmentScore {
 
     public void setElevatedCentralTendency(Boolean elevatedCentralTendency) {
         this.elevatedCentralTendency = elevatedCentralTendency;
+    }
+
+    public Double getRawCompositeScore() {
+        return rawCompositeScore != null ? rawCompositeScore : compositeScore;
+    }
+
+    public void setRawCompositeScore(Double rawCompositeScore) {
+        this.rawCompositeScore = rawCompositeScore;
+    }
+
+    public Double getValidityPenaltyPct() {
+        return validityPenaltyPct != null ? validityPenaltyPct : 0.0;
+    }
+
+    public void setValidityPenaltyPct(Double validityPenaltyPct) {
+        this.validityPenaltyPct = validityPenaltyPct;
+    }
+
+    public Double getCappedPenaltyPct() {
+        return cappedPenaltyPct != null ? cappedPenaltyPct : 0.0;
+    }
+
+    public void setCappedPenaltyPct(Double cappedPenaltyPct) {
+        this.cappedPenaltyPct = cappedPenaltyPct;
     }
 }

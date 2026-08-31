@@ -31,6 +31,21 @@ public class AssessmentScoringService {
     @Value("${psychometric.scoring.validity.central-tendency-cutoff-pct:45.0}")
     private double centralTendencyCutoffPct = 45.0;
 
+    @Value("${psychometric.scoring.validity.sd-penalty-threshold-pct:60.0}")
+    private double sdPenaltyThresholdPct = 60.0;
+
+    @Value("${psychometric.scoring.validity.sd-penalty-rate:0.15}")
+    private double sdPenaltyRate = 0.15;
+
+    @Value("${psychometric.scoring.validity.ct-penalty-threshold-pct:45.0}")
+    private double ctPenaltyThresholdPct = 45.0;
+
+    @Value("${psychometric.scoring.validity.ct-penalty-rate:0.15}")
+    private double ctPenaltyRate = 0.15;
+
+    @Value("${psychometric.scoring.validity.max-penalty-cap-pct:15.0}")
+    private double maxPenaltyCapPct = 15.0;
+
     public AssessmentScoringService(JdbcTemplate jdbcTemplate,
                                     AssessmentScoreRepository assessmentScoreRepo,
                                     CompetencyTraitRepository traitRepo,
@@ -45,6 +60,26 @@ public class AssessmentScoringService {
 
     public void setCentralTendencyCutoffPct(double centralTendencyCutoffPct) {
         this.centralTendencyCutoffPct = centralTendencyCutoffPct;
+    }
+
+    public void setSdPenaltyThresholdPct(double sdPenaltyThresholdPct) {
+        this.sdPenaltyThresholdPct = sdPenaltyThresholdPct;
+    }
+
+    public void setSdPenaltyRate(double sdPenaltyRate) {
+        this.sdPenaltyRate = sdPenaltyRate;
+    }
+
+    public void setCtPenaltyThresholdPct(double ctPenaltyThresholdPct) {
+        this.ctPenaltyThresholdPct = ctPenaltyThresholdPct;
+    }
+
+    public void setCtPenaltyRate(double ctPenaltyRate) {
+        this.ctPenaltyRate = ctPenaltyRate;
+    }
+
+    public void setMaxPenaltyCapPct(double maxPenaltyCapPct) {
+        this.maxPenaltyCapPct = maxPenaltyCapPct;
     }
 
     /**
@@ -119,18 +154,31 @@ public class AssessmentScoringService {
                 : 0.0;
         boolean elevatedCentralTendency = (centralTendencyPct >= centralTendencyCutoffPct);
 
-        // 6. Composite Score & Percentile Calculation
-        // Composite = 0.28*PQ10% + 0.22*SJT% + 0.20*Derailers% + 0.30*GCAT%
-        double composite = (0.28 * pq10Result.overallPct)
-                         + (0.22 * sjtScorePct)
-                         + (0.20 * derailerResult.overallPct)
-                         + (0.30 * gcatResult.overallPct);
+        // 6. Raw Composite Score Calculation
+        // Raw Composite = 0.28*PQ10% + 0.22*SJT% + 0.20*Derailers% + 0.30*GCAT%
+        double rawComposite = (0.28 * pq10Result.overallPct)
+                            + (0.22 * sjtScorePct)
+                            + (0.20 * derailerResult.overallPct)
+                            + (0.30 * gcatResult.overallPct);
 
-        // Percentile = round[ 100 / (1 + exp(-(Composite - 75.0) / 6.0)) ]
-        int percentile = calculateLogisticPercentile(composite);
+        // 7. Validity Penalty Calculation
+        // ValidityPenaltyPct = max(0, SDRiskPct - 60) * 0.15 + max(0, CentralTendencyRatePct - 45) * 0.15
+        double sdExcess = Math.max(0.0, pq10Result.sdRiskPct - sdPenaltyThresholdPct);
+        double ctExcess = Math.max(0.0, centralTendencyPct - ctPenaltyThresholdPct);
+        double validityPenalty = (sdExcess * sdPenaltyRate) + (ctExcess * ctPenaltyRate);
+
+        // Hard Cap: CappedPenalty = min(ValidityPenaltyPct, 15)
+        double cappedPenalty = Math.min(validityPenalty, maxPenaltyCapPct);
+
+        // Adjusted Composite = max(0.0, RawComposite - CappedPenalty)
+        double adjustedComposite = Math.max(0.0, rawComposite - cappedPenalty);
+
+        // Percentile & Readiness Band based on Adjusted Composite
+        // Percentile = round[ 100 / (1 + exp(-(AdjustedComposite - 75.0) / 6.0)) ]
+        int percentile = calculateLogisticPercentile(adjustedComposite);
 
         // Promotion Readiness Band
-        ReadinessBand band = ReadinessBand.fromCompositeScore(composite);
+        ReadinessBand band = ReadinessBand.fromCompositeScore(adjustedComposite);
 
         // Persist AssessmentScore
         AssessmentScore score = assessmentScoreRepo.findByAttemptId(attempt.getId())
@@ -140,7 +188,10 @@ public class AssessmentScoringService {
         score.setSjtScorePct(round2(sjtScorePct));
         score.setDerailersEffectiveScorePct(round2(derailerResult.overallPct));
         score.setCognitiveScorePct(round2(gcatResult.overallPct));
-        score.setCompositeScore(round2(composite));
+        score.setRawCompositeScore(round2(rawComposite));
+        score.setValidityPenaltyPct(round2(validityPenalty));
+        score.setCappedPenaltyPct(round2(cappedPenalty));
+        score.setCompositeScore(round2(adjustedComposite));
         score.setPercentile(percentile);
         score.setReadinessBand(band);
         score.setSocialDesirabilityRiskPct(round2(pq10Result.sdRiskPct));

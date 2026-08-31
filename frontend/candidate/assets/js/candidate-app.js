@@ -1240,6 +1240,21 @@ function populateCompletedScoreHero(score, attempt) {
     if (compVal) compVal.textContent = `${score.compositeScore ?? 0}%`;
     if (percBadge) percBadge.textContent = `Percentile: P${score.percentile ?? 1}`;
     
+    const penaltyNotice = document.getElementById("completedPenaltyNotice");
+    const penaltyText = document.getElementById("completedPenaltyText");
+    const isArLang = document.documentElement.getAttribute("dir") === "rtl";
+
+    if (score.cappedPenaltyPct && score.cappedPenaltyPct > 0) {
+        if (penaltyNotice) penaltyNotice.classList.remove("hidden");
+        if (penaltyText) {
+            penaltyText.textContent = isArLang
+                ? `تم تطبيق خصم صدق الاستجابة: -${score.cappedPenaltyPct}% (الدرجة الأولية: ${score.rawCompositeScore}%)`
+                : `Validity Deduction: -${score.cappedPenaltyPct}% (Raw Composite: ${score.rawCompositeScore}%)`;
+        }
+    } else if (penaltyNotice) {
+        penaltyNotice.classList.add("hidden");
+    }
+    
     const readiness = getReadinessInfo(score.readinessBand);
     if (readLabel) {
         const isAr = document.documentElement.getAttribute("dir") === "rtl";
@@ -1262,7 +1277,6 @@ function populateCompletedScoreHero(score, attempt) {
     if (gcatBar) gcatBar.style.width = `${Math.min(100, Math.max(0, score.cognitiveScorePct ?? 0))}%`;
 
     // Response Validity Indicators (مقياس التظاهر الاجتماعي ومؤشر الوسطية)
-    const isArLang = document.documentElement.getAttribute("dir") === "rtl";
     const sdScoreEl = document.getElementById("completedSdScore");
     const sdLabelEl = document.getElementById("completedSdLabel");
     const sdBadgeEl = document.getElementById("completedSdBadge");
@@ -1538,6 +1552,13 @@ function renderScoreModalContent(score, token) {
                             Percentile: P${score.percentile}
                         </span>
                     </div>
+                    ${score.cappedPenaltyPct && score.cappedPenaltyPct > 0 ? `
+                        <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                            <span class="text-slate-300">Raw Composite: <strong class="text-white">${score.rawCompositeScore}%</strong></span>
+                            <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold">Validity Deduction: -${score.cappedPenaltyPct}%</span>
+                            <span class="text-teal-300">Final Adjusted: <strong class="text-white">${score.compositeScore}%</strong></span>
+                        </div>
+                    ` : ''}
                 </div>
                 <div class="sm:text-right">
                     <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Promotion Readiness</span>
@@ -1928,6 +1949,11 @@ function generatePrintableReportWindow(score, token) {
             <div>
                 <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b;">Overall Composite Score</div>
                 <div class="score-val">${score.compositeScore}% <span style="font-size: 13px; font-weight: normal; color: #64748b;">(Percentile: P${score.percentile})</span></div>
+                ${score.cappedPenaltyPct && score.cappedPenaltyPct > 0 ? `
+                    <div style="margin-top: 5px; font-size: 11px; color: #b45309; font-weight: bold;">
+                        ⚠️ Validity Adjustment: -${score.cappedPenaltyPct}% (Raw Composite: ${score.rawCompositeScore}% &bull; Final: ${score.compositeScore}%)
+                    </div>
+                ` : ''}
             </div>
             <div style="text-align: right;">
                 <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b; margin-bottom: 4px;">Promotion Readiness</div>

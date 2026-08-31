@@ -435,6 +435,12 @@ async function openAdminScoreModal(token, candidateName) {
                         <span class="text-xs text-white-50 text-uppercase">Composite Aptitude Score</span>
                         <h2 class="text-white mb-0 font-weight-bolder">${score.compositeScore}%</h2>
                         <small class="text-xs text-white-50">Percentile: P${score.percentile} &bull; Band: ${score.readinessBandLabelAr || score.readinessBand}</small>
+                        ${score.cappedPenaltyPct && score.cappedPenaltyPct > 0 ? `
+                            <div class="mt-2 text-xxs text-warning">
+                                <i class="material-symbols-rounded text-xs align-middle">warning</i>
+                                <strong>Validity Deduction:</strong> -${score.cappedPenaltyPct}% (Raw: ${score.rawCompositeScore}% &bull; Final: ${score.compositeScore}%)
+                            </div>
+                        ` : ''}
                     </div>
                     <div class="text-end">
                         <span class="badge bg-success">${score.readinessBand}</span>

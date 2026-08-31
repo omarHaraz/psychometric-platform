@@ -21,6 +21,9 @@ public class AssessmentScoreResponseDto {
     private Double cognitiveScorePct;
 
     private Double compositeScore;
+    private Double rawCompositeScore;
+    private Double validityPenaltyPct;
+    private Double cappedPenaltyPct;
     private Integer percentile;
     private ReadinessBand readinessBand;
     private String readinessBandLabelEn;
@@ -134,6 +137,9 @@ public class AssessmentScoreResponseDto {
         dto.setDerailersEffectiveScorePct(score.getDerailersEffectiveScorePct());
         dto.setCognitiveScorePct(score.getCognitiveScorePct());
         dto.setCompositeScore(score.getCompositeScore());
+        dto.setRawCompositeScore(score.getRawCompositeScore());
+        dto.setValidityPenaltyPct(score.getValidityPenaltyPct());
+        dto.setCappedPenaltyPct(score.getCappedPenaltyPct());
         dto.setPercentile(score.getPercentile());
         dto.setReadinessBand(score.getReadinessBand());
         if (score.getReadinessBand() != null) {
@@ -193,6 +199,12 @@ public class AssessmentScoreResponseDto {
     public void setCognitiveScorePct(Double cognitiveScorePct) { this.cognitiveScorePct = cognitiveScorePct; }
     public Double getCompositeScore() { return compositeScore; }
     public void setCompositeScore(Double compositeScore) { this.compositeScore = compositeScore; }
+    public Double getRawCompositeScore() { return rawCompositeScore != null ? rawCompositeScore : compositeScore; }
+    public void setRawCompositeScore(Double rawCompositeScore) { this.rawCompositeScore = rawCompositeScore; }
+    public Double getValidityPenaltyPct() { return validityPenaltyPct != null ? validityPenaltyPct : 0.0; }
+    public void setValidityPenaltyPct(Double validityPenaltyPct) { this.validityPenaltyPct = validityPenaltyPct; }
+    public Double getCappedPenaltyPct() { return cappedPenaltyPct != null ? cappedPenaltyPct : 0.0; }
+    public void setCappedPenaltyPct(Double cappedPenaltyPct) { this.cappedPenaltyPct = cappedPenaltyPct; }
     public Integer getPercentile() { return percentile; }
     public void setPercentile(Integer percentile) { this.percentile = percentile; }
     public ReadinessBand getReadinessBand() { return readinessBand; }

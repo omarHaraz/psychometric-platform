@@ -418,4 +418,103 @@ class AssessmentScoringServiceTest {
         AssessmentScore scoreHighCutoff = scoringService.scoreAttempt(attempt);
         assertFalse(scoreHighCutoff.getElevatedCentralTendency());
     }
+
+    @Test
+    @DisplayName("Verify Validity Penalty calculation, excess deduction, hard cap, and composite adjustment")
+    void testValidityPenaltyAndAdjustedComposite() {
+        List<CompetencyTrait> allTraits = new ArrayList<>();
+        String[] codes = {
+            "COMMUNICATION_AND_INFLUENCE", "INITIATIVE", "DECISION_MAKING_AND_RESPONSIBILITY", "INSPIRING_LEADERSHIP",
+            "STRATEGIC_THINKING", "SKILL_DEVELOPMENT", "ADAPTABILITY", "SYSTEMATIC_ANALYSIS_AND_PLANNING"
+        };
+        for (int i = 1; i <= 8; i++) {
+            CompetencyTrait t = new CompetencyTrait(codes[i - 1], "Trait " + i, "Def " + i, i);
+            t.setId((long) i);
+            allTraits.add(t);
+        }
+        when(traitRepo.findAllByOrderByDisplayOrderAsc()).thenReturn(allTraits);
+
+        List<Long> sampledIds = new ArrayList<>();
+        List<CandidateResponse> responses = new ArrayList<>();
+        List<Object[]> dbRows = new ArrayList<>();
+
+        long itemIdCounter = 1L;
+        for (int traitId = 1; traitId <= 8; traitId++) {
+            for (int k = 0; k < 17; k++) {
+                long itemId = itemIdCounter++;
+                sampledIds.add(itemId);
+                dbRows.add(new Object[]{itemId, 3, (long) traitId});
+
+                // Candidate answered 3 (Neutral/Midpoint -> 136/136 = 100% CT rate, and rawScore = 68.0 = 100% trait score)
+                CandidateResponse cr = new CandidateResponse();
+                cr.setItemId(itemId);
+                cr.setSelectedLikert(3);
+                responses.add(cr);
+            }
+        }
+
+        List<Long> sdItemIds = List.of(201L, 202L, 203L, 204L);
+        when(jdbcTemplate.queryForList(contains("SOCIAL_DESIRABILITY"), eq(Long.class)))
+                .thenReturn(sdItemIds);
+
+        for (Long sdId : sdItemIds) {
+            sampledIds.add(sdId);
+            dbRows.add(new Object[]{sdId, 1, 9L});
+            CandidateResponse cr = new CandidateResponse();
+            cr.setItemId(sdId);
+            cr.setSelectedLikert(5); // 100% SD risk
+            responses.add(cr);
+        }
+
+        doAnswer(invocation -> {
+            RowCallbackHandler handler = invocation.getArgument(1);
+            for (Object[] row : dbRows) {
+                var rs = mock(java.sql.ResultSet.class);
+                when(rs.getLong("id")).thenReturn((Long) row[0]);
+                when(rs.getInt("ideal_target")).thenReturn((Integer) row[1]);
+                when(rs.getLong("competency_id")).thenReturn((Long) row[2]);
+                handler.processRow(rs);
+            }
+            return null;
+        }).when(jdbcTemplate).query(contains("FROM personality_items"), any(RowCallbackHandler.class));
+
+        BatterySession pq10Session = new BatterySession();
+        pq10Session.setBatteryType(BatteryType.PQ10);
+        pq10Session.setSampledItemIds(sampledIds);
+        pq10Session.setResponses(responses);
+
+        AssessmentAttempt attempt = new AssessmentAttempt();
+        attempt.setId(102L);
+        attempt.setBatterySessions(List.of(pq10Session));
+
+        when(assessmentScoreRepo.findByAttemptId(102L)).thenReturn(Optional.empty());
+        when(assessmentScoreRepo.save(any(AssessmentScore.class))).thenAnswer(i -> i.getArgument(0));
+
+        // SD excess: max(0, 100 - 60) = 40 -> 40 * 0.15 = 6.0
+        // CT excess: max(0, 100 - 45) = 55 -> 55 * 0.15 = 8.25
+        // ValidityPenalty = 6.0 + 8.25 = 14.25
+        // CappedPenalty = min(14.25, 15.0) = 14.25
+        // RawComposite = 0.28 * 100.0 = 28.0%
+        // AdjustedComposite = 28.0 - 14.25 = 13.75%
+        AssessmentScore score = scoringService.scoreAttempt(attempt);
+
+        assertNotNull(score);
+        assertEquals(100.0, score.getSocialDesirabilityRiskPct(), 0.01);
+        assertEquals(100.0, score.getCentralTendencyRatePct(), 0.01);
+        assertEquals(14.25, score.getValidityPenaltyPct(), 0.01);
+        assertEquals(14.25, score.getCappedPenaltyPct(), 0.01);
+        assertEquals(28.0, score.getRawCompositeScore(), 0.01);
+        assertEquals(13.75, score.getCompositeScore(), 0.01);
+
+        // Test Hard Cap (e.g. set cap to 5.0)
+        scoringService.setMaxPenaltyCapPct(5.0);
+        AssessmentScore cappedScore = scoringService.scoreAttempt(attempt);
+        assertEquals(14.25, cappedScore.getValidityPenaltyPct(), 0.01);
+        assertEquals(5.0, cappedScore.getCappedPenaltyPct(), 0.01);
+        assertEquals(23.0, cappedScore.getCompositeScore(), 0.01);
+    }
+
+    private double round(double val, int places) {
+        return java.math.BigDecimal.valueOf(val).setScale(places, java.math.RoundingMode.HALF_UP).doubleValue();
+    }
 }
