@@ -1,5 +1,20 @@
 import { API_BASE } from "../../../../shared/config/api-config.js";
-const AdminUI = window.AdminUI;
+
+// Resilient AdminUI reference with built-in fallbacks
+const AdminUI = window.AdminUI || {
+    clearFormErrors: (form) => {
+        if (!form) return;
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+    },
+    showToast: (msg, type = 'info') => {
+        console.log(`[Toast ${type}]:`, msg);
+    },
+    showConfirm: async (opts) => {
+        const msg = typeof opts === 'string' ? opts : (opts && opts.message) ? opts.message : 'Are you sure?';
+        return confirm(msg);
+    }
+};
 
 const API_BASE_URL = `${API_BASE}/api/admin/management`;
 
@@ -17,14 +32,34 @@ const authHeader = {
 let activeAdminsList = [];
 let bootstrapModalInstance = null;
 
+function getModalInstance() {
+    if (!bootstrapModalInstance) {
+        const modalEl = document.getElementById('adminModal');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+            bootstrapModalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        }
+    }
+    return bootstrapModalInstance;
+}
+
 // Initialize layout elements
-document.addEventListener('DOMContentLoaded', () => {
+function initAdminManagement() {
     loadAdmins();
-    bootstrapModalInstance = new bootstrap.Modal(document.getElementById('adminModal'));
+    getModalInstance();
     
     // Attach form submit interceptor
-    document.getElementById('adminForm').addEventListener('submit', saveAdminForm);
-});
+    const form = document.getElementById('adminForm');
+    if (form) {
+        form.removeEventListener('submit', saveAdminForm);
+        form.addEventListener('submit', saveAdminForm);
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAdminManagement);
+} else {
+    initAdminManagement();
+}
 
 // 1. Fetch and Display Administrators
 async function loadAdmins() {
@@ -94,8 +129,10 @@ async function loadAdmins() {
 // 2. Open Modal for Create Flow
 function openCreateModal() {
     const form = document.getElementById('adminForm');
-    form.reset();
-    AdminUI.clearFormErrors(form);
+    if (form) {
+        form.reset();
+        AdminUI.clearFormErrors(form);
+    }
     document.getElementById('adminId').value = '';
     document.getElementById('adminModalLabel').innerText = 'Add New Administrator';
     
@@ -105,7 +142,10 @@ function openCreateModal() {
     
     document.querySelectorAll('.input-group').forEach(el => el.classList.remove('is-filled', 'is-focused'));
     
-    bootstrapModalInstance.show();
+    const instance = getModalInstance();
+    if (instance) {
+        instance.show();
+    }
 }
 
 // 3. Open Modal for Edit/Update Flow
@@ -114,7 +154,9 @@ function openEditModal(id) {
     if (!admin) return;
 
     const form = document.getElementById('adminForm');
-    AdminUI.clearFormErrors(form);
+    if (form) {
+        AdminUI.clearFormErrors(form);
+    }
 
     document.getElementById('adminId').value = admin.id;
     document.getElementById('adminName').value = admin.name;
@@ -129,7 +171,10 @@ function openEditModal(id) {
 
     document.querySelectorAll('.input-group').forEach(el => el.classList.add('is-filled'));
 
-    bootstrapModalInstance.show();
+    const instance = getModalInstance();
+    if (instance) {
+        instance.show();
+    }
 }
 
 // 4. Combined Submit Handler

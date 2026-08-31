@@ -372,12 +372,18 @@ const BATTERY_METADATA = [
 ];
 
 // Initialize Application
-document.addEventListener("DOMContentLoaded", () => {
+function initCandidateApp() {
     checkAuth();
     initEventListeners();
     loadAssessmentState();
     loadAssessmentHistory();
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCandidateApp);
+} else {
+    initCandidateApp();
+}
 
 // Check Authentication
 async function checkAuth() {
@@ -487,14 +493,15 @@ function initEventListeners() {
 
     const startAssessmentBtn = document.getElementById("startAssessmentBtn");
     if (startAssessmentBtn) {
-        startAssessmentBtn.addEventListener("click", () => {
-            openPreBatteryInstructions(currentAttempt.currentBatteryIndex || 0);
-        });
+        startAssessmentBtn.onclick = () => {
+            const bIdx = (currentAttempt && typeof currentAttempt.currentBatteryIndex === 'number') ? currentAttempt.currentBatteryIndex : 0;
+            openPreBatteryInstructions(bIdx);
+        };
     }
 
     const beginBatteryBtn = document.getElementById("beginBatteryBtn");
     if (beginBatteryBtn) {
-        beginBatteryBtn.addEventListener("click", startActiveBatterySession);
+        beginBatteryBtn.onclick = startActiveBatterySession;
     }
 
     const prevBtn = document.getElementById("prevQuestionBtn");
@@ -2096,3 +2103,11 @@ function updateTestSidebar(attempt) {
     navList.innerHTML = html;
     applyCurrentTranslation();
 }
+
+Object.assign(window, {
+    openPreBatteryInstructions,
+    startActiveBatterySession,
+    renderCurrentQuestion,
+    loadAssessmentState,
+    loadAssessmentHistory
+});

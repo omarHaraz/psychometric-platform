@@ -1,5 +1,14 @@
 import { API_BASE } from "../../../../shared/config/api-config.js";
-const AdminUI = window.AdminUI;
+
+const AdminUI = window.AdminUI || {
+    clearFormErrors: (form) => {
+        if (!form) return;
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+    },
+    showToast: (msg, type = 'info') => console.log(`[Toast ${type}]:`, msg),
+    showConfirm: async (opts) => confirm(typeof opts === 'string' ? opts : (opts && opts.message) ? opts.message : 'Are you sure?')
+};
 
 const API_BASE_URL = `${API_BASE}/api/candidate/management`;
 
@@ -17,25 +26,39 @@ const authHeader = {
 let activeCandidatesList = [];
 let bootstrapModalInstance = null;
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    loadCandidates();
-
-    const modalEl = document.getElementById('candidateModal');
-    if (modalEl && typeof bootstrap !== 'undefined') {
-        bootstrapModalInstance = new bootstrap.Modal(modalEl);
+function getCandidateModalInstance() {
+    if (!bootstrapModalInstance) {
+        const modalEl = document.getElementById('candidateModal');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+            bootstrapModalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        }
     }
+    return bootstrapModalInstance;
+}
+
+// Initialize
+function initCandidateManagement() {
+    loadCandidates();
+    getCandidateModalInstance();
 
     const formEl = document.getElementById('candidateForm');
     if (formEl) {
+        formEl.removeEventListener('submit', saveCandidateForm);
         formEl.addEventListener('submit', saveCandidateForm);
     }
 
     const addBtn = document.getElementById('addCandidateBtn');
     if (addBtn) {
+        addBtn.removeEventListener('click', openCreateModal);
         addBtn.addEventListener('click', openCreateModal);
     }
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCandidateManagement);
+} else {
+    initCandidateManagement();
+}
 
 // Load Candidates
 async function loadCandidates() {
@@ -250,18 +273,26 @@ function attachActionListeners() {
 }
 
 function openCreateModal() {
-    document.getElementById('candidateId').value = '';
-    document.getElementById('candidateName').value = '';
-    document.getElementById('candidateEmail').value = '';
+    const idEl = document.getElementById('candidateId');
+    if (idEl) idEl.value = '';
+    const nameEl = document.getElementById('candidateName');
+    if (nameEl) nameEl.value = '';
+    const emailEl = document.getElementById('candidateEmail');
+    if (emailEl) emailEl.value = '';
     const passInput = document.getElementById('candidatePassword');
-    passInput.value = '';
-    passInput.required = true;
-    passInput.setAttribute('minlength', '6');
-    document.getElementById('passwordHelp').classList.add('d-none');
-    document.getElementById('candidateModalLabel').textContent = 'Add Candidate';
+    if (passInput) {
+        passInput.value = '';
+        passInput.required = true;
+        passInput.setAttribute('minlength', '6');
+    }
+    const helpEl = document.getElementById('passwordHelp');
+    if (helpEl) helpEl.classList.add('d-none');
+    const labelEl = document.getElementById('candidateModalLabel');
+    if (labelEl) labelEl.textContent = 'Add Candidate';
 
-    if (bootstrapModalInstance) {
-        bootstrapModalInstance.show();
+    const instance = getCandidateModalInstance();
+    if (instance) {
+        instance.show();
     }
 }
 
@@ -269,18 +300,26 @@ function openEditModal(id) {
     const candidate = activeCandidatesList.find(c => String(c.id) === String(id));
     if (!candidate) return;
 
-    document.getElementById('candidateId').value = candidate.id;
-    document.getElementById('candidateName').value = candidate.name;
-    document.getElementById('candidateEmail').value = candidate.email;
+    const idEl = document.getElementById('candidateId');
+    if (idEl) idEl.value = candidate.id;
+    const nameEl = document.getElementById('candidateName');
+    if (nameEl) nameEl.value = candidate.name;
+    const emailEl = document.getElementById('candidateEmail');
+    if (emailEl) emailEl.value = candidate.email;
     const passInput = document.getElementById('candidatePassword');
-    passInput.value = '';
-    passInput.required = false;
-    passInput.removeAttribute('minlength');
-    document.getElementById('passwordHelp').classList.remove('d-none');
-    document.getElementById('candidateModalLabel').textContent = 'Edit Candidate';
+    if (passInput) {
+        passInput.value = '';
+        passInput.required = false;
+        passInput.removeAttribute('minlength');
+    }
+    const helpEl = document.getElementById('passwordHelp');
+    if (helpEl) helpEl.classList.remove('d-none');
+    const labelEl = document.getElementById('candidateModalLabel');
+    if (labelEl) labelEl.textContent = 'Edit Candidate';
 
-    if (bootstrapModalInstance) {
-        bootstrapModalInstance.show();
+    const instance = getCandidateModalInstance();
+    if (instance) {
+        instance.show();
     }
 }
 
@@ -556,4 +595,11 @@ async function openAdminScoreModal(token, candidateName) {
         alert(err.message || 'Error loading score details.');
     }
 }
+
+Object.assign(window, {
+    openCreateModal,
+    openEditModal,
+    openAdminScoreModal,
+    loadCandidates
+});
 

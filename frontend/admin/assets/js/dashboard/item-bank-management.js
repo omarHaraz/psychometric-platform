@@ -38,7 +38,7 @@ let gcatModal = null;
 let sjtModal = null;
 
 // Initialize on DOM Ready
-document.addEventListener("DOMContentLoaded", async () => {
+async function initItemBank() {
     const user = getUser();
     if (!user || !user.token) {
         window.location.href = "../../auth/login.html";
@@ -49,7 +49,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupEventListeners();
     await loadTaxonomies();
     await loadDimensionData(currentDimension);
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initItemBank);
+} else {
+    initItemBank();
+}
 
 function initModals() {
     if (typeof bootstrap !== "undefined") {

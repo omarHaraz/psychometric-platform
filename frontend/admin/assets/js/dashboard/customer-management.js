@@ -1,5 +1,14 @@
-import { API_BASE } from "../../../../assets/js/api-config.js";
-const AdminUI = window.AdminUI;
+import { API_BASE } from "../../../../shared/config/api-config.js";
+
+const AdminUI = window.AdminUI || {
+    clearFormErrors: (form) => {
+        if (!form) return;
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+    },
+    showToast: (msg, type = 'info') => console.log(`[Toast ${type}]:`, msg),
+    showConfirm: async (opts) => confirm(typeof opts === 'string' ? opts : (opts && opts.message) ? opts.message : 'Are you sure?')
+};
 
 const API_BASE_URL = `${API_BASE}/api/customer/management`;
 
@@ -17,13 +26,33 @@ const authHeader = {
 let activeCustomersList = [];
 let bootstrapModalInstance = null;
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    loadCustomers();
-    bootstrapModalInstance = new bootstrap.Modal(document.getElementById('customerModal'));
+function getCustomerModalInstance() {
+    if (!bootstrapModalInstance) {
+        const modalEl = document.getElementById('customerModal');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+            bootstrapModalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        }
+    }
+    return bootstrapModalInstance;
+}
 
-    document.getElementById('customerForm').addEventListener('submit', saveCustomerForm);
-});
+// Initialize
+function initCustomerManagement() {
+    loadCustomers();
+    getCustomerModalInstance();
+
+    const form = document.getElementById('customerForm');
+    if (form) {
+        form.removeEventListener('submit', saveCustomerForm);
+        form.addEventListener('submit', saveCustomerForm);
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCustomerManagement);
+} else {
+    initCustomerManagement();
+}
 
 // Load Customers
 async function loadCustomers() {
@@ -122,11 +151,10 @@ function openEditModal(id) {
 
     document.getElementById('customerModalLabel').innerText = 'Edit Customer';
 
-    document.querySelectorAll('.input-group').forEach(el => {
-        el.classList.add('is-filled');
-    });
-
-    bootstrapModalInstance.show();
+    const instance = getCustomerModalInstance();
+    if (instance) {
+        instance.show();
+    }
 }
 
 // Save Customer
@@ -154,9 +182,8 @@ async function saveCustomerForm(e) {
 
         if (response.ok) {
 
-            AdminUI.showToast("Customer updated successfully.", "success");
-
-            bootstrapModalInstance.hide();
+            const instance = getCustomerModalInstance();
+            if (instance) instance.hide();
 
             loadCustomers();
 
