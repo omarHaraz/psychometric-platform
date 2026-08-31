@@ -110,13 +110,37 @@ const i18nDict = {
     "Assessment Integrity Rule:": "قاعدة نزاهة التقييم:",
     "This assessment must be completed in a single continuous sitting. Once started, you cannot pause the timer or return to previous sections. Ensure you have 90 minutes of uninterrupted time.": "يجب إكمال هذا التقييم في جلسة واحدة متواصلة. بمجرد البدء ، لا يمكنك إيقاف المؤقت مؤقتًا أو العودة إلى الأقسام السابقة. تأكد من أن لديك 90 دقيقة من الوقت دون انقطاع.",
     "01 • Personality (PQ10)": "01 • الشخصية (PQ10)",
+    "01 &bull; Personality (PQ10)": "01 • الشخصية (PQ10)",
     "140 items • 40 mins • Likert": "140 عنصر • 40 دقيقة • ليكرت",
-    "02 • SJT Ranking": "02 • ترتيب SJT",
+    "02 • SJT Ranking": "02 • حكم المواقف (SJT)",
+    "02 &bull; SJT Ranking": "02 • حكم المواقف (SJT)",
     "16 scenarios • 45 mins • Ranking": "16 سيناريو • 45 دقيقة • ترتيب",
-    "03 • Derailers & Drivers": "03 • المحفزات والمعوقات",
+    "03 • Derailers & Drivers": "03 • محاذير السلوك والدوافع",
+    "03 &bull; Derailers & Drivers": "03 • محاذير السلوك والدوافع",
     "60 items • 20 mins • Likert": "60 عنصر • 20 دقيقة • ليكرت",
     "04 • Cognitive Abilities": "04 • القدرات المعرفية",
+    "04 • Cognitive (GCAT)": "04 • القدرات المعرفية (GCAT)",
+    "04 &bull; Cognitive (GCAT)": "04 • القدرات المعرفية (GCAT)",
     "24 patterns • 20 mins • MCQ": "24 نمط • 20 دقيقة • خيارات متعددة",
+    "42 questions • 20 mins • MCQ": "42 سؤال • 20 دقيقة • خيارات متعددة",
+    "Personality (PQ10)": "الشخصية (PQ10)",
+    "Personality Assessment": "تقييم الشخصية",
+    "Personality Evaluation (PQ10)": "تقييم الشخصية (PQ10)",
+    "Situational Judgment (SJT)": "حكم المواقف (SJT)",
+    "SJT Ranking": "حكم المواقف (SJT)",
+    "Situational Judgment Assessment": "تقييم حكم المواقف",
+    "Derailers & Drivers": "محاذير السلوك والدوافع",
+    "Derailers Assessment": "تقييم محاذير السلوك",
+    "Cognitive Abilities": "القدرات المعرفية",
+    "Cognitive (GCAT)": "القدرات المعرفية (GCAT)",
+    "Cognitive Abilities (GCAT)": "القدرات المعرفية (GCAT)",
+    "Cognitive Aptitude Assessment": "تقييم القدرات المعرفية",
+    "Part 1: Personality (PQ10)": "الجزء 1: الشخصية (PQ10)",
+    "Part 2: SJT Ranking": "الجزء 2: حكم المواقف (SJT)",
+    "Part 2: Situational Judgment (SJT)": "الجزء 2: حكم المواقف (SJT)",
+    "Part 3: Derailers & Drivers": "الجزء 3: محاذير السلوك والدوافع",
+    "Part 4: Cognitive Abilities": "الجزء 4: القدرات المعرفية",
+    "Part 4: Cognitive (GCAT)": "الجزء 4: القدرات المعرفية (GCAT)",
     "READY": "جاهز",
     "LOCKED": "مغلق",
     "SUBMITTED": "مكتمل",
@@ -311,7 +335,7 @@ let remainingSeconds = 0;
 const BATTERY_METADATA = [
     {
         name: "Personality (PQ10)",
-        nameAr: "تقييم الشخصية القيادية",
+        nameAr: "الشخصية (PQ10)",
         part: "Part 1 of 4",
         badge: "PQ10",
         itemsCount: 140,
@@ -326,7 +350,7 @@ const BATTERY_METADATA = [
     },
     {
         name: "Situational Judgment (SJT)",
-        nameAr: "الحكم على المواقف والقرارات القيادية",
+        nameAr: "حكم المواقف (SJT)",
         part: "Part 2 of 4",
         badge: "SJT",
         itemsCount: 16,
@@ -341,7 +365,7 @@ const BATTERY_METADATA = [
     },
     {
         name: "Derailers & Drivers",
-        nameAr: "السلوكيات المعطلة ومؤشر الخطر",
+        nameAr: "محاذير السلوك والدوافع",
         part: "Part 3 of 4",
         badge: "DERAILERS",
         itemsCount: 60,
@@ -355,8 +379,8 @@ const BATTERY_METADATA = [
         ]
     },
     {
-        name: "Cognitive Aptitude (GCAT)",
-        nameAr: "القدرات الإدراكية والتفكير التحليلي",
+        name: "Cognitive Abilities (GCAT)",
+        nameAr: "القدرات المعرفية (GCAT)",
         part: "Part 4 of 4",
         badge: "GCAT",
         itemsCount: 42,
@@ -487,6 +511,9 @@ function initEventListeners() {
                     warningBlock.classList.remove("border-r-4", "border-r-[#131b2e]", "rounded-l");
                     warningBlock.classList.add("border-l-4", "border-l-[#131b2e]", "rounded-r");
                 }
+            }
+            if (currentAttempt) {
+                updateTestSidebar(currentAttempt);
             }
         });
     }
@@ -2068,10 +2095,17 @@ function updateTestSidebar(attempt) {
     const progressText = document.getElementById("sidebarProgressText");
     if (!navList || !progressText) return;
 
-    const titles = ["Personality (PQ10)", "SJT Ranking", "Derailers & Drivers", "Cognitive Abilities"];
-    const currentIndex = attempt.currentBatteryIndex || 0;
+    const isArabic = document.documentElement.getAttribute("dir") === "rtl";
+    const currentIndex = (attempt && typeof attempt.currentBatteryIndex === 'number') ? attempt.currentBatteryIndex : 0;
 
-    progressText.textContent = `Part ${currentIndex + 1} of 4`;
+    progressText.textContent = isArabic ? `الجزء ${currentIndex + 1} من 4` : `Part ${currentIndex + 1} of 4`;
+
+    const batteryTitles = [
+        { en: "Part 1: Personality (PQ10)", ar: "الجزء 1: الشخصية (PQ10)" },
+        { en: "Part 2: SJT Ranking", ar: "الجزء 2: حكم المواقف (SJT)" },
+        { en: "Part 3: Derailers & Drivers", ar: "الجزء 3: محاذير السلوك والدوافع" },
+        { en: "Part 4: Cognitive Abilities", ar: "الجزء 4: القدرات المعرفية" }
+    ];
 
     let html = "";
     for (let i = 0; i < 4; i++) {
@@ -2091,17 +2125,18 @@ function updateTestSidebar(attempt) {
             borderClass = "border-primary/20 bg-primary/5";
         }
 
+        const titleText = isArabic ? batteryTitles[i].ar : batteryTitles[i].en;
+
         html += `
             <div class="flex items-center gap-3 p-2.5 rounded-lg border ${borderClass} transition-colors">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${colorClass}">
                     <span class="material-symbols-outlined text-[18px]">${icon}</span>
                 </div>
-                <span class="text-sm ${textClass}">Part ${i + 1}: ${titles[i]}</span>
+                <span class="text-sm ${textClass}">${titleText}</span>
             </div>
         `;
     }
     navList.innerHTML = html;
-    applyCurrentTranslation();
 }
 
 Object.assign(window, {
