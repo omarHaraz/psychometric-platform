@@ -362,8 +362,9 @@ async function saveCandidateForm(e) {
             throw new Error(errData.message || (id ? 'Failed to update candidate' : 'Failed to create candidate'));
         }
 
-        if (bootstrapModalInstance) {
-            bootstrapModalInstance.hide();
+        const instance = getCandidateModalInstance();
+        if (instance) {
+            instance.hide();
         }
         await loadCandidates();
 
