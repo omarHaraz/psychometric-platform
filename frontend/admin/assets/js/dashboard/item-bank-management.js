@@ -244,9 +244,14 @@ function populateTaxonomyDropdowns() {
                 e.target.style.opacity = "1";
             });
             
-            // Click to move (for accessibility / ease of use)
+            // Click to move (for accessibility / ease of use) - Single selection rule
             el.addEventListener("click", () => {
                 if (el.parentElement === availBox) {
+                    // Return any previously selected competency back to available
+                    Array.from(selBox.children).forEach(existing => {
+                        availBox.appendChild(existing);
+                        updateCompPillStyle(existing, false);
+                    });
                     selBox.appendChild(el);
                     updateCompPillStyle(el, true);
                 } else {
@@ -272,6 +277,15 @@ function populateTaxonomyDropdowns() {
                 const id = e.dataTransfer.getData("text/plain");
                 const el = document.querySelector(`.p-comp-drag[data-id="${id}"]`);
                 if (el) {
+                    if (box === selBox) {
+                        // Return any previously selected competency back to available
+                        Array.from(selBox.children).forEach(existing => {
+                            if (existing !== el) {
+                                availBox.appendChild(existing);
+                                updateCompPillStyle(existing, false);
+                            }
+                        });
+                    }
                     box.appendChild(el);
                     updateCompPillStyle(el, box === selBox);
                 }
@@ -809,16 +823,23 @@ function openEditModal(id) {
         const availBox = document.getElementById("availableCompetencies");
         const selBox = document.getElementById("selectedCompetencies");
         const allPills = document.querySelectorAll(".p-comp-drag");
+        
+        // Reset all pills to available
         allPills.forEach(pill => {
-            const id = Number(pill.dataset.id);
-            if ((item.competencyIds || []).includes(id)) {
-                selBox.appendChild(pill);
-                updateCompPillStyle(pill, true);
-            } else {
-                availBox.appendChild(pill);
-                updateCompPillStyle(pill, false);
-            }
+            availBox.appendChild(pill);
+            updateCompPillStyle(pill, false);
         });
+
+        // Select strictly one competency (the first one if legacy data had multiple)
+        const primaryCompId = (item.competencyIds && item.competencyIds.length > 0) ? Number(item.competencyIds[0]) : null;
+        if (primaryCompId) {
+            const selectedPill = document.querySelector(`.p-comp-drag[data-id="${primaryCompId}"]`);
+            if (selectedPill) {
+                selBox.appendChild(selectedPill);
+                updateCompPillStyle(selectedPill, true);
+            }
+        }
+
         document.getElementById("pIdealTarget").value = item.idealTarget;
         document.getElementById("pExamMode").value = item.examMode || "FULL";
         document.getElementById("personalityModalTitle").innerText = `Edit Personality Item #${item.id}`;
@@ -1090,14 +1111,15 @@ async function handlePersonalitySubmit(e) {
     const selectedCompetencyIds = Array.from(selectedPills).map(pill => Number(pill.dataset.id));
     
     if (selectedCompetencyIds.length === 0) {
-        alert("Please select at least one competency.");
+        alert("Please select one competency for this question (drag or click a competency).");
         return;
     }
 
+    // Strictly assign exactly one competency
     const body = {
         statementAr: document.getElementById("pStatementAr").value,
         justificationAr: document.getElementById("pJustificationAr").value,
-        competencyIds: selectedCompetencyIds,
+        competencyIds: [selectedCompetencyIds[0]],
         idealTarget: Number(document.getElementById("pIdealTarget").value),
         examMode: document.getElementById("pExamMode").value
     };

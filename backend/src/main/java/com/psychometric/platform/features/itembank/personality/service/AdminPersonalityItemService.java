@@ -34,6 +34,9 @@ public class AdminPersonalityItemService {
         if (competencies.isEmpty()) {
             throw new BadRequestException("No valid competencies found for provided IDs");
         }
+        if (competencies.size() > 1) {
+            competencies = List.of(competencies.get(0));
+        }
 
         PersonalityItem item = new PersonalityItem(
                 request.getStatementAr(),
@@ -66,6 +69,9 @@ public class AdminPersonalityItemService {
         List<Competency> competencies = competencyRepository.findAllById(request.getCompetencyIds());
         if (competencies.isEmpty()) {
             throw new BadRequestException("No valid competencies found for provided IDs");
+        }
+        if (competencies.size() > 1) {
+            competencies = List.of(competencies.get(0));
         }
 
         item.setStatementAr(request.getStatementAr());
