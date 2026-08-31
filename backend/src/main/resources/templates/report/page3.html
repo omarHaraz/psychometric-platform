@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Page 3 - ما الذي يقيسه استبيان حدود</title>
+    <style>
+        /* ==========================================================================
+           PDF & Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
+           ========================================================================== */
+        @page {
+            size: A4 portrait;
+            margin: 12mm 15mm 22mm 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Tahoma', 'Arial', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+            direction: rtl;
+            text-align: right;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* 1. Page Main Header */
+        .main-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #1e3a4c;
+        }
+
+        .main-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .main-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1e3a4c;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .geom-symbol {
+            display: inline-block;
+            color: #7a4b3a;
+            font-size: 18px;
+            line-height: 1;
+            margin-right: 6px;
+        }
+
+        /* 2. Reference Table */
+        table.derailer-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 16px;
+            font-size: 10.5px;
+            background-color: #ffffff;
+        }
+
+        table.derailer-table th {
+            background-color: #7a4b3a;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 11.5px;
+            padding: 10px 14px;
+            text-align: right;
+            border: none;
+            letter-spacing: 0.3px;
+        }
+
+        table.derailer-table th:first-child {
+            width: 36%;
+            border-top-right-radius: 4px;
+        }
+
+        table.derailer-table th:last-child {
+            width: 64%;
+            border-top-left-radius: 4px;
+        }
+
+        table.derailer-table td {
+            padding: 11px 14px;
+            vertical-align: top;
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+            line-height: 1.65;
+            color: #334155;
+        }
+
+        table.derailer-table tr:last-child td {
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+
+        /* Trait Definition Column */
+        .trait-title {
+            color: #7a4b3a;
+            font-size: 12px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .trait-desc {
+            color: #475569;
+            font-size: 10.5px;
+            line-height: 1.5;
+        }
+
+        /* Behaviors Bulleted List */
+        .behavior-list {
+            list-style-type: disc;
+            margin: 0;
+            padding-right: 18px;
+            padding-left: 0;
+        }
+
+        .behavior-list li {
+            margin-bottom: 5px;
+            color: #334155;
+            font-size: 10.5px;
+            line-height: 1.55;
+        }
+
+        .behavior-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 3. Modern Bottom Footer Banner (Matching Pages 1 & 2) */
+        .bottom-banner-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            padding: 0 15mm 8mm 15mm;
+            box-sizing: border-box;
+        }
+
+        .bottom-banner-graphics {
+            display: flex;
+            align-items: center;
+            height: 32px;
+            width: 100%;
+            position: relative;
+        }
+
+        .banner-logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+
+        .banner-logo-img {
+            max-height: 28px;
+            max-width: 90px;
+            object-fit: contain;
+        }
+
+        .banner-logo-text {
+            font-size: 8px;
+            font-weight: 700;
+            color: #475569;
+            line-height: 1.1;
+            font-family: 'Inter', 'Arial', sans-serif;
+            text-transform: uppercase;
+            direction: ltr;
+        }
+
+        .banner-angled-dark {
+            width: 90px;
+            height: 26px;
+            background: #1e3a4c;
+            transform: skew(-25deg);
+            margin-left: -10px;
+            z-index: 2;
+        }
+
+        .banner-brown-bar {
+            flex-grow: 1;
+            height: 26px;
+            background: #7a4b3a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10.5px;
+            font-weight: 600;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+            padding: 0 12px;
+            z-index: 1;
+            margin-left: -8px;
+        }
+
+        .banner-copyright {
+            font-size: 8.5px;
+            color: #64748b;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+            text-align: center;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Page Header -->
+    <div class="main-header-row">
+        <div class="main-title-wrap">
+            <h1 class="main-title">ما الذي يقيسه استبيان حدود</h1>
+            <span class="geom-symbol">❖</span>
+        </div>
+    </div>
+
+    <!-- 2. Framework Reference Table -->
+    <table class="derailer-table">
+        <thead>
+            <tr>
+                <th>السمة</th>
+                <th>السلوكيات المُعطلة</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Row 1: التحفظ -->
+            <tr>
+                <td>
+                    <strong class="trait-title">التحفظ</strong>
+                    <div class="trait-desc">ميل إلى الانسحاب والعزلة عن الآخرين.</div>
+                </td>
+                <td>
+                    <ul class="behavior-list">
+                        <li>تجنّب الآخرين والحفاظ على مسافة في العلاقات.</li>
+                        <li>الظهور بمظهر غير ودود أو غير مهتم بالآخرين أو ببناء العلاقات.</li>
+                        <li>الظهور بمزاج مكتئب أو حزين.</li>
+                    </ul>
+                </td>
+            </tr>
+
+            <!-- Row 2: الانفعالية -->
+            <tr>
+                <td>
+                    <strong class="trait-title">الانفعالية</strong>
+                    <div class="trait-desc">ميل إلى التركيز على العيوب وإظهار المشاعر السلبية.</div>
+                </td>
+                <td>
+                    <ul class="behavior-list">
+                        <li>امتلاك نظرة سلبية وانخفاض تقدير الذات.</li>
+                        <li>التقلب المزاجي أو القلق.</li>
+                        <li>الظهور بمظهر المتشكك أو المتحفظ تجاه الآخرين.</li>
+                    </ul>
+                </td>
+            </tr>
+
+            <!-- Row 3: العدائية -->
+            <tr>
+                <td>
+                    <strong class="trait-title">العدائية</strong>
+                    <div class="trait-desc">ميل إلى العدوانية في التعامل مع الآخرين واعتماد أسلوب مباشر وصدامي في التواصل.</div>
+                </td>
+                <td>
+                    <ul class="behavior-list">
+                        <li>إظهار العداء والعدوانية تجاه الآخرين.</li>
+                        <li>السعي لتحقيق الأهداف بأي ثمن والتعامل مع الآخرين بدافع هذا السعي.</li>
+                        <li>التركيز المفرط على الذات وقلة الاهتمام بآراء ومشاعر الآخرين.</li>
+                    </ul>
+                </td>
+            </tr>
+
+            <!-- Row 4: الاندفاعية -->
+            <tr>
+                <td>
+                    <strong class="trait-title">الاندفاعية</strong>
+                    <div class="trait-desc">ميل إلى الاندفاع والمخاطرة دون تفكير كافٍ.</div>
+                </td>
+                <td>
+                    <ul class="behavior-list">
+                        <li>قلة التركيز والانتباه لفترات طويلة.</li>
+                        <li>التهاون في الالتزامات وعدم متابعة المهام حتى النهاية.</li>
+                        <li>التصرّف بطيش واتخاذ قرارات متسرّعة وغير مدروسة.</li>
+                    </ul>
+                </td>
+            </tr>
+
+            <!-- Row 5: الصرامة -->
+            <tr>
+                <td>
+                    <strong class="trait-title">الصرامة</strong>
+                    <div class="trait-desc">ميل إلى الصرامة وعدم المرونة وعدم التسامح مع ما يُعتبر تقصيرًا في الالتزامات.</div>
+                </td>
+                <td>
+                    <ul class="behavior-list">
+                        <li>التعامل بصرامة وجمود في المواقف.</li>
+                        <li>وضع أهداف غير واقعية لأنفسهم وللآخرين.</li>
+                        <li>عدم التسامح مع الأخطاء واعتبار أي تقصير فشلًا.</li>
+                    </ul>
+                </td>
+            </tr>
+
+            <!-- Row 6: اللامألوفية -->
+            <tr>
+                <td>
+                    <strong class="trait-title">اللامألوفية</strong>
+                    <div class="trait-desc">ميل إلى إظهار سلوكيات غير مألوفة وتجاهل الأعراف الاجتماعية والتعبير عن أفكار أو معتقدات غير تقليدية.</div>
+                </td>
+                <td>
+                    <ul class="behavior-list">
+                        <li>امتلاك أساليب تفكير غير اعتيادية ومعتقدات غير مألوفة.</li>
+                        <li>الظهور بمظهر غريب أو مختلف في نظر الآخرين.</li>
+                        <li>العجز عن تفسير كيفية أو أسباب أفعالهم.</li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 3. Modern Bottom Footer Banner -->
+    <div class="bottom-banner-container">
+        <div class="bottom-banner-graphics">
+            <div class="banner-logo-section">
+                <img class="banner-logo-img" 
+                     th:src="${companyLogoBase64 != null ? companyLogoBase64 : (logoUrl != null ? logoUrl : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 120 40\'><circle cx=\'20\' cy=\'20\' r=\'12\' fill=\'%231e3a4c\'/><circle cx=\'20\' cy=\'20\' r=\'5\' fill=\'%237a4b3a\'/></svg>')}" 
+                     alt="Logo" />
+                <div class="banner-logo-text">
+                    Executive Assessment<br />Evaluation System
+                </div>
+            </div>
+            <div class="banner-angled-dark"></div>
+            <div class="banner-brown-bar">
+                Executive Leadership Platform
+            </div>
+        </div>
+        <div class="banner-copyright">
+            &copy; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
+        </div>
+    </div>
+
+</body>
+</html>
