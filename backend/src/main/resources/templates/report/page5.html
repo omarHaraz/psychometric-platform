@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Page 5 - ملخص النتائج: الكفاءات والقدرات العامة</title>
+    <style>
+        /* ==========================================================================
+           PDF & Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
+           ========================================================================== */
+        @page {
+            size: A4 portrait;
+            margin: 10mm 15mm 20mm 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Tahoma', 'Arial', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+            direction: rtl;
+            text-align: right;
+            font-size: 10.5px;
+            line-height: 1.5;
+        }
+
+        /* 1. Page Main Header */
+        .main-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+            padding-bottom: 2px;
+            border-bottom: 2px solid #1e3a4c;
+        }
+
+        .main-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .main-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1e3a4c;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .geom-symbol {
+            display: inline-block;
+            color: #7a4b3a;
+            font-size: 18px;
+            line-height: 1;
+            margin-right: 6px;
+        }
+
+        /* Subtitle & Legend Row */
+        .subtitle-legend-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 4px 0 10px 0;
+        }
+
+        .page-subtitle {
+            font-size: 10.5px;
+            color: #475569;
+            margin: 0;
+        }
+
+        .legend-indicator-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #1e3a4c;
+        }
+
+        .person-circle-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #1e3a4c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .person-circle-icon svg {
+            width: 10px;
+            height: 10px;
+        }
+
+        /* 2. Competencies & Abilities Table */
+        table.competency-table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin-top: 4px;
+            margin-bottom: 14px;
+            font-size: 10px;
+            background-color: #ffffff;
+        }
+
+        table.competency-table th {
+            background-color: #7a4b3a;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 7px 12px;
+            text-align: right;
+            vertical-align: middle;
+            border: none;
+            box-sizing: border-box;
+        }
+
+        table.competency-table th.th-name {
+            width: 58%;
+            border-top-right-radius: 4px;
+        }
+
+        table.competency-table th.th-scale {
+            width: 42%;
+            padding: 6px 12px;
+            border-top-left-radius: 4px;
+        }
+
+        table.competency-table td {
+            padding: 5.5px 12px;
+            vertical-align: middle;
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+            box-sizing: border-box;
+        }
+
+        table.competency-table tr:last-child td {
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+
+        /* Trait Name & Dynamic Color Square */
+        .trait-cell-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-square {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
+        .trait-title-text {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Section Separator Header Row (e.g. القدرات العامة) */
+        tr.section-header-row td {
+            background-color: #f1f5f9;
+            padding: 6px 12px;
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+
+        tr.section-header-row .trait-title-text {
+            font-weight: 800;
+            color: #1e3a4c;
+            font-size: 11px;
+        }
+
+        /* Header Scale Layout (Level 1 to 5) */
+        .scale-th-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .scale-th-title {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #ffffff;
+            white-space: nowrap;
+            margin-left: 6px;
+        }
+
+        .scale-th-track-box {
+            flex-grow: 1;
+            padding: 0 11px; /* Exact 11px padding anchors tick positions */
+            box-sizing: border-box;
+        }
+
+        .scale-th-ticks {
+            display: flex;
+            justify-content: space-between;
+            direction: rtl;
+            width: 100%;
+            position: relative;
+        }
+
+        .tick-label-5 {
+            width: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: visible;
+            font-size: 10px;
+            font-weight: 700;
+            color: #ffffff;
+            font-family: 'Inter', 'Arial', sans-serif;
+        }
+
+        /* Row Slider Track Layout */
+        .slider-td-box {
+            position: relative;
+            width: 100%;
+            height: 20px;
+            box-sizing: border-box;
+            padding: 0 11px; /* Identical 11px padding ensures 100% vertical alignment */
+        }
+
+        .slider-td-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slider-line-track {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 0;
+            border-top: 1.5px solid #94a3b8;
+            z-index: 1;
+        }
+
+        .slider-person-marker {
+            position: absolute;
+            top: 50%;
+            width: 20px;
+            height: 20px;
+            margin-top: -10px;
+            margin-right: -10px;
+            border-radius: 50%;
+            background-color: #1e3a4c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+            z-index: 2;
+        }
+
+        .person-svg-icon {
+            width: 11px;
+            height: 11px;
+        }
+
+        /* 3. Modern Bottom Footer Banner */
+        .bottom-banner-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            padding: 0 15mm 6mm 15mm;
+            box-sizing: border-box;
+        }
+
+        .bottom-banner-graphics {
+            display: flex;
+            align-items: center;
+            height: 30px;
+            width: 100%;
+            position: relative;
+        }
+
+        .banner-logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+
+        .banner-logo-img {
+            max-height: 26px;
+            max-width: 85px;
+            object-fit: contain;
+        }
+
+        .banner-logo-text {
+            font-size: 7.5px;
+            font-weight: 700;
+            color: #475569;
+            line-height: 1.1;
+            font-family: 'Inter', 'Arial', sans-serif;
+            text-transform: uppercase;
+            direction: ltr;
+        }
+
+        .banner-angled-dark {
+            width: 85px;
+            height: 24px;
+            background: #1e3a4c;
+            transform: skew(-25deg);
+            margin-left: -10px;
+            z-index: 2;
+        }
+
+        .banner-brown-bar {
+            flex-grow: 1;
+            height: 24px;
+            background: #7a4b3a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+            padding: 0 12px;
+            z-index: 1;
+            margin-left: -8px;
+        }
+
+        .banner-copyright {
+            font-size: 8px;
+            color: #64748b;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+            text-align: center;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Page Header -->
+    <div class="main-header-row">
+        <div class="main-title-wrap">
+            <h1 class="main-title">ملخص النتائج</h1>
+            <span class="geom-symbol">❖</span>
+        </div>
+    </div>
+
+    <!-- Subtitle & Top Legend -->
+    <div class="subtitle-legend-row">
+        <p class="page-subtitle">
+            يعرض البيان التالي نتائج المرشح
+        </p>
+        <div class="legend-indicator-box">
+            <span>مؤشر الإمكانيات الشخصية</span>
+            <div class="person-circle-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Competencies & General Abilities Table -->
+    <table class="competency-table">
+        <thead>
+            <tr>
+                <th class="th-name">القدرات أو الكفاءات السلوكية</th>
+                <th class="th-scale">
+                    <div class="scale-th-container">
+                        <span class="scale-th-title">المستوى</span>
+                        <div class="scale-th-track-box">
+                            <div class="scale-th-ticks">
+                                <span class="tick-label-5">1</span>
+                                <span class="tick-label-5">2</span>
+                                <span class="tick-label-5">3</span>
+                                <span class="tick-label-5">4</span>
+                                <span class="tick-label-5">5</span>
+                            </div>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <!-- Section 1: Behavioral Competencies -->
+
+            <!-- Row 1: النتيجة الإجمالية -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${overallColor != null ? overallColor : '#388e3c'}) + ';'"></span>
+                        <span class="trait-title-text" style="font-weight: 700;">النتيجة الإجمالية</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${overallScore != null ? overallScore : 4}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 2: التواصل والتأثير الفعال -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${commColor != null ? commColor : '#388e3c'}) + ';'"></span>
+                        <span class="trait-title-text">التواصل والتأثير الفعال</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${commScore != null ? commScore : 4}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 3: المبادرة -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${initiativeColor != null ? initiativeColor : '#fbc02d'}) + ';'"></span>
+                        <span class="trait-title-text">المبادرة</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${initiativeScore != null ? initiativeScore : 3}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 4: اتخاذ القرار وتحمل المسؤولية -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${decisionColor != null ? decisionColor : '#388e3c'}) + ';'"></span>
+                        <span class="trait-title-text">اتخاذ القرار وتحمل المسؤولية</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${decisionScore != null ? decisionScore : 4}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 5: القيادة الملهمة -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${leadershipColor != null ? leadershipColor : '#388e3c'}) + ';'"></span>
+                        <span class="trait-title-text">القيادة الملهمة</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${leadershipScore != null ? leadershipScore : 5}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 6: التفكير الاستراتيجي -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${strategicColor != null ? strategicColor : '#fbc02d'}) + ';'"></span>
+                        <span class="trait-title-text">التفكير الاستراتيجي</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${strategicScore != null ? strategicScore : 3}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 7: تطوير المهارات -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${skillsColor != null ? skillsColor : '#388e3c'}) + ';'"></span>
+                        <span class="trait-title-text">تطوير المهارات</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${skillsScore != null ? skillsScore : 4}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 8: القدرة على التكيف -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${adaptabilityColor != null ? adaptabilityColor : '#388e3c'}) + ';'"></span>
+                        <span class="trait-title-text">القدرة على التكيف</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${adaptabilityScore != null ? adaptabilityScore : 4}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 9: التحليل والتخطيط المنهجي -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${analysisColor != null ? analysisColor : '#d32f2f'}) + ';'"></span>
+                        <span class="trait-title-text">التحليل والتخطيط المنهجي</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${analysisScore != null ? analysisScore : 2}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Section 2: General Abilities (Header Row) -->
+            <!-- Row 10: القدرات العامة -->
+            <tr class="section-header-row">
+                <td colspan="2">
+                    <div class="trait-cell-wrap">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${generalAbilitiesColor != null ? generalAbilitiesColor : '#1e3a4c'}) + ';'"></span>
+                        <span class="trait-title-text">القدرات العامة</span>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 11: الاستدلال التجريدي -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap" style="padding-right: 12px;">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${abstractColor != null ? abstractColor : '#388e3c'}) + ';'"></span>
+                        <span class="trait-title-text">الاستدلال التجريدي</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${abstractScore != null ? abstractScore : 4}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 12: الاستدلال الرقمي -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap" style="padding-right: 12px;">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${numericalColor != null ? numericalColor : '#fbc02d'}) + ';'"></span>
+                        <span class="trait-title-text">الاستدلال الرقمي</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${numericalScore != null ? numericalScore : 3}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Row 13: الاستدلال اللفظي -->
+            <tr>
+                <td>
+                    <div class="trait-cell-wrap" style="padding-right: 12px;">
+                        <span class="color-square" 
+                              th:style="'background-color: ' + (${verbalColor != null ? verbalColor : '#388e3c'}) + ';'"></span>
+                        <span class="trait-title-text">الاستدلال اللفظي</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="slider-td-box">
+                        <div class="slider-td-inner">
+                            <div class="slider-line-track"></div>
+                            <div class="slider-person-marker" 
+                                 th:style="'right: ' + (((${verbalScore != null ? verbalScore : 4}) - 1) * 25.0) + '%;'">
+                                <svg class="person-svg-icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <!-- 3. Modern Bottom Footer Banner -->
+    <div class="bottom-banner-container">
+        <div class="bottom-banner-graphics">
+            <div class="banner-logo-section">
+                <img class="banner-logo-img" 
+                     th:src="${companyLogoBase64 != null ? companyLogoBase64 : (logoUrl != null ? logoUrl : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 120 40\'><circle cx=\'20\' cy=\'20\' r=\'12\' fill=\'%231e3a4c\'/><circle cx=\'20\' cy=\'20\' r=\'5\' fill=\'%237a4b3a\'/></svg>')}" 
+                     alt="Logo" />
+                <div class="banner-logo-text">
+                    Executive Assessment<br />Evaluation System
+                </div>
+            </div>
+            <div class="banner-angled-dark"></div>
+            <div class="banner-brown-bar">
+                Executive Leadership Platform
+            </div>
+        </div>
+        <div class="banner-copyright">
+            &copy; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
+        </div>
+    </div>
+
+</body>
+</html>
