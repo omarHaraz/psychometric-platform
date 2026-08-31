@@ -1261,6 +1261,70 @@ function populateCompletedScoreHero(score, attempt) {
     if (gcatScore) gcatScore.textContent = `${score.cognitiveScorePct ?? 0}%`;
     if (gcatBar) gcatBar.style.width = `${Math.min(100, Math.max(0, score.cognitiveScorePct ?? 0))}%`;
 
+    // Response Validity Indicators (مقياس التظاهر الاجتماعي ومؤشر الوسطية)
+    const isArLang = document.documentElement.getAttribute("dir") === "rtl";
+    const sdScoreEl = document.getElementById("completedSdScore");
+    const sdLabelEl = document.getElementById("completedSdLabel");
+    const sdBadgeEl = document.getElementById("completedSdBadge");
+    const sdCardEl = document.getElementById("completedSdCard");
+    const sdIconBgEl = document.getElementById("completedSdIconBg");
+
+    const isSdElevated = !!score.elevatedImpressionManagement;
+    const sdPct = score.socialDesirabilityRiskPct ?? 0;
+
+    if (sdScoreEl) sdScoreEl.textContent = `${sdPct}%`;
+    if (sdLabelEl) {
+        sdLabelEl.textContent = isArLang
+            ? (isSdElevated ? 'ميل مرتفع للتظاهر الاجتماعي (حذر بالتفسير)' : 'استجابة واقعية وصادقة وتلقائية')
+            : (isSdElevated ? 'Elevated Impression Management' : 'Candid / Honest Profile');
+    }
+    if (sdBadgeEl) {
+        sdBadgeEl.className = isSdElevated
+            ? 'inline-block px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-900 border border-amber-300'
+            : 'inline-block px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300';
+    }
+    if (sdCardEl) {
+        sdCardEl.className = isSdElevated
+            ? 'bg-amber-50/70 p-3.5 rounded-lg border border-amber-300 shadow-2xs flex items-center justify-between'
+            : 'bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between';
+    }
+    if (sdIconBgEl) {
+        sdIconBgEl.className = isSdElevated
+            ? 'w-8 h-8 rounded-lg bg-amber-200 text-amber-800 flex items-center justify-center shrink-0'
+            : 'w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0';
+    }
+
+    const ctScoreEl = document.getElementById("completedCtScore");
+    const ctLabelEl = document.getElementById("completedCtLabel");
+    const ctBadgeEl = document.getElementById("completedCtBadge");
+    const ctCardEl = document.getElementById("completedCtCard");
+    const ctIconBgEl = document.getElementById("completedCtIconBg");
+
+    const isCtElevated = !!score.elevatedCentralTendency;
+    const ctPct = score.centralTendencyRatePct ?? 0;
+
+    if (ctScoreEl) ctScoreEl.textContent = `${ctPct}%`;
+    if (ctLabelEl) {
+        ctLabelEl.textContent = isArLang
+            ? (isCtElevated ? 'نزعة مرتفعة نحو الخيار المحايد' : 'تنوع واستجابة متوازنة عبر المقياس')
+            : (isCtElevated ? 'Elevated Midpoint Tendency' : 'Balanced Differentiation');
+    }
+    if (ctBadgeEl) {
+        ctBadgeEl.className = isCtElevated
+            ? 'inline-block px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-900 border border-amber-300'
+            : 'inline-block px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300';
+    }
+    if (ctCardEl) {
+        ctCardEl.className = isCtElevated
+            ? 'bg-amber-50/70 p-3.5 rounded-lg border border-amber-300 shadow-2xs flex items-center justify-between'
+            : 'bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between';
+    }
+    if (ctIconBgEl) {
+        ctIconBgEl.className = isCtElevated
+            ? 'w-8 h-8 rounded-lg bg-amber-200 text-amber-800 flex items-center justify-center shrink-0'
+            : 'w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0';
+    }
+
     const viewBtn = document.getElementById("completedViewScoresBtn");
     if (viewBtn) {
         viewBtn.onclick = () => window.viewScoreModal(attempt.attemptToken);
@@ -1596,6 +1660,26 @@ function renderScoreModalContent(score, token) {
         `;
     });
 
+    // 9th Card in Grid: Social Desirability (مقياس التظاهر الاجتماعي / التظاهر الاجتماعي)
+    html += `
+            <div class="p-3 ${score.elevatedImpressionManagement ? 'bg-amber-50/90 border-amber-300' : 'bg-slate-50 border-slate-200'} rounded-lg border shadow-2xs space-y-1.5 col-span-1 sm:col-span-2">
+                <div class="flex justify-between items-start text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold ${score.elevatedImpressionManagement ? 'text-amber-950' : 'text-slate-800'}">التظاهر الاجتماعي (مقياس التظاهر الاجتماعي)</span>
+                        <span class="px-1.5 py-0.5 text-[9px] font-bold rounded ${score.elevatedImpressionManagement ? 'bg-amber-200 text-amber-900' : 'bg-slate-200 text-slate-700'}">مقياس الصدق • 4 أسئلة</span>
+                    </div>
+                    <span class="font-bold ${score.elevatedImpressionManagement ? 'text-amber-800' : 'text-emerald-700'}">${score.socialDesirabilityRiskPct || 0}% ${isAr ? 'مخاطرة' : 'Risk'}</span>
+                </div>
+                <div class="flex justify-between items-center text-[10px] text-slate-500">
+                    <span class="font-mono text-[9px]">SOCIAL_DESIRABILITY</span>
+                    <span>${isAr ? (score.elevatedImpressionManagement ? 'ميل مرتفع لإظهار صورة مثالية مبالغ فيها (حذر بالتفسير)' : 'استجابات واقعية وتلقائية تعكس الصدق والصراحة') : (score.elevatedImpressionManagement ? 'Elevated Impression Management (Interpret with caution)' : 'Candid and honest responses')}</span>
+                </div>
+                <div class="w-full bg-slate-200/80 h-1.5 rounded-full overflow-hidden">
+                    <div class="${score.elevatedImpressionManagement ? 'bg-amber-500' : 'bg-emerald-500'} h-full rounded-full" style="width: ${Math.min(100, Math.max(0, score.socialDesirabilityRiskPct || 0))}%;"></div>
+                </div>
+            </div>
+    `;
+
     html += `
             </div>
         </div>
@@ -1720,6 +1804,21 @@ function generatePrintableReportWindow(score, token) {
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #0f766e;">${t.scorePct}%</td>
         </tr>`;
     }).join("");
+
+    const isSdElevatedRow = !!score.elevatedImpressionManagement;
+    const sdRiskVal = score.socialDesirabilityRiskPct || 0;
+    traitRows += `
+        <tr style="background: ${isSdElevatedRow ? '#fef3c7' : '#f8fafc'}; font-style: italic;">
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: ${isSdElevatedRow ? '#92400e' : '#0f766e'};">
+                مقياس التظاهر الاجتماعي (التظاهر الاجتماعي)
+            </td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-family: monospace; font-size: 11px;">SOCIAL_DESIRABILITY</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">4 items (مقياس صدق)</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: ${isSdElevatedRow ? '#b45309' : '#059669'};">
+                ${sdRiskVal}% ${isSdElevatedRow ? '(مرتفع)' : '(طبيعي)'}
+            </td>
+        </tr>
+    `;
 
     let derailerRows = (score.derailerCategoryScores || []).map(d => {
         return `<tr>

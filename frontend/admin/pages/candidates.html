@@ -229,6 +229,25 @@
 
   </div>
 
+  <!-- Score Breakdown Modal -->
+  <div class="modal fade" id="adminScoreModal" tabindex="-1" aria-labelledby="adminScoreModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-gradient-dark text-white">
+          <h5 class="modal-title text-white" id="adminScoreModalLabel">Candidate Assessment Report</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4" id="adminScoreModalBody">
+          <!-- Populated dynamically via candidate-management.js -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn bg-gradient-primary" id="adminPrintReportBtn">Print / PDF Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Core JS -->
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>

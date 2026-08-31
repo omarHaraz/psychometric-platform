@@ -97,12 +97,16 @@ async function loadCandidates() {
                         <small class="text-xxs text-secondary mb-1">Battery ${attempt.currentBatteryIndex + 1}/4 (${currentBattery})</small>
                         ${attempt.state === 'ALL_SUBMITTED' ? `<button class="btn btn-xs bg-gradient-primary mt-1 mb-0 assign-attempt-btn" data-id="${candidate.id}">Re-assign Test</button>` : ''}
                     </div>
-                `;
             } else if (attempt && attempt.state === 'SCORED') {
                 assessmentHtml = `
                     <div class="text-center">
-                        <span class="badge badge-sm bg-gradient-dark">SCORED</span>
-                        <br><button class="btn btn-xs bg-gradient-primary mt-1 assign-attempt-btn" data-id="${candidate.id}">Re-assign</button>
+                        <span class="badge badge-sm bg-gradient-dark mb-1">SCORED</span>
+                        <div class="d-flex justify-content-center gap-1">
+                            <button class="btn btn-xs bg-gradient-info view-score-btn mb-0" data-token="${attempt.attemptToken}" data-name="${candidate.name}">
+                                <i class="material-symbols-rounded text-xs">analytics</i> Score
+                            </button>
+                            <button class="btn btn-xs bg-gradient-primary assign-attempt-btn mb-0" data-id="${candidate.id}">Re-assign</button>
+                        </div>
                     </div>
                 `;
             } else {
@@ -205,6 +209,14 @@ function attachActionListeners() {
                     alert('Error deleting candidate permanently.');
                 }
             }
+        });
+    });
+
+    document.querySelectorAll('.view-score-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const token = e.currentTarget.dataset.token;
+            const name = e.currentTarget.dataset.name;
+            await openAdminScoreModal(token, name);
         });
     });
 
@@ -342,3 +354,200 @@ async function toggleCandidateStatus(id, method) {
         alert(err.message || 'Action failed');
     }
 }
+
+async function openAdminScoreModal(token, candidateName) {
+    try {
+        const modalEl = document.getElementById('adminScoreModal');
+        const modalBody = document.getElementById('adminScoreModalBody');
+        const printBtn = document.getElementById('adminPrintReportBtn');
+
+        if (!modalEl || !modalBody) return;
+
+        modalBody.innerHTML = '<div class="text-center p-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-sm text-secondary">Loading score report...</p></div>';
+        
+        const modalInstance = new bootstrap.Modal(modalEl);
+        modalInstance.show();
+
+        const res = await fetch(`${API_BASE}/api/admin/attempts/${token}/score`, {
+            headers: authHeader
+        });
+
+        if (!res.ok) {
+            throw new Error('Failed to load assessment score details.');
+        }
+
+        const score = await res.json();
+        const isSdElevated = !!score.elevatedImpressionManagement;
+        const sdRisk = score.socialDesirabilityRiskPct || 0;
+        const isCtElevated = !!score.elevatedCentralTendency;
+        const ctRate = score.centralTendencyRatePct || 0;
+
+        let traitsHtml = (score.traitScores || []).map(t => `
+            <div class="col-md-6 mb-2">
+                <div class="p-2 border rounded bg-white">
+                    <div class="d-flex justify-content-between text-xs font-weight-bold">
+                        <span>${t.nameAr || t.traitCode}</span>
+                        <span class="text-teal text-gradient">${t.scorePct}%</span>
+                    </div>
+                    <small class="text-xxs text-secondary">Raw: ${t.rawScore} / 68.0</small>
+                    <div class="progress progress-xs mt-1">
+                        <div class="progress-bar bg-gradient-info" style="width: ${Math.min(100, Math.max(0, t.scorePct))}%;"></div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        let derailersHtml = (score.derailerCategoryScores || []).map(d => `
+            <div class="col-md-4 mb-2">
+                <div class="p-2 border rounded bg-white">
+                    <div class="d-flex justify-content-between text-xs font-weight-bold">
+                        <span>${d.nameAr || d.categoryCode}</span>
+                        <span class="text-warning">${d.scorePct}%</span>
+                    </div>
+                    <small class="text-xxs text-secondary">Raw: ${d.rawScore} / 40.0</small>
+                    <div class="progress progress-xs mt-1">
+                        <div class="progress-bar bg-gradient-warning" style="width: ${Math.min(100, Math.max(0, d.scorePct))}%;"></div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        let gcatHtml = (score.gcatSubtestScores || []).map(g => `
+            <div class="col-md-4 mb-2">
+                <div class="p-2 border rounded bg-white text-center">
+                    <div class="text-xs font-weight-bold mb-1">${g.subtest}</div>
+                    <h6 class="mb-0 text-info">${g.scorePct}%</h6>
+                    <small class="text-xxs text-secondary">${g.correctCount} / 14 correct</small>
+                </div>
+            </div>
+        `).join('');
+
+        modalBody.innerHTML = `
+            <div class="text-center mb-4">
+                <h5 class="mb-1">${candidateName || score.candidateName || 'Candidate'}</h5>
+                <p class="text-xs text-secondary mb-0">Token: <code>${token}</code> &bull; Scored At: ${new Date(score.scoredAt).toLocaleString()}</p>
+            </div>
+
+            <!-- Composite Card -->
+            <div class="card bg-gradient-dark text-white p-3 mb-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-xs text-white-50 text-uppercase">Composite Aptitude Score</span>
+                        <h2 class="text-white mb-0 font-weight-bolder">${score.compositeScore}%</h2>
+                        <small class="text-xs text-white-50">Percentile: P${score.percentile} &bull; Band: ${score.readinessBandLabelAr || score.readinessBand}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-success">${score.readinessBand}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Response Validity Panel -->
+            <div class="card p-3 mb-4 border border-light shadow-2xs">
+                <h6 class="text-xs font-weight-bold text-dark mb-2">
+                    <i class="material-symbols-rounded text-sm align-middle me-1">verified_user</i>
+                    مؤشرات صدق وجودة الاستجابة (Response Validity)
+                </h6>
+                <div class="row g-2">
+                    <!-- Social Desirability -->
+                    <div class="col-md-6">
+                        <div class="p-2 border rounded ${isSdElevated ? 'bg-amber-light border-warning' : 'bg-light'} d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-xs font-weight-bold ${isSdElevated ? 'text-warning' : 'text-dark'}">
+                                    مقياس التظاهر الاجتماعي
+                                </div>
+                                <small class="text-xxs text-secondary">${isSdElevated ? 'ميل مرتفع لإظهار صورة مثالية' : 'استجابات واقعية وتلقائية'}</small>
+                            </div>
+                            <span class="badge ${isSdElevated ? 'bg-gradient-warning' : 'bg-gradient-success'}">${sdRisk}%</span>
+                        </div>
+                    </div>
+                    <!-- Central Tendency -->
+                    <div class="col-md-6">
+                        <div class="p-2 border rounded ${isCtElevated ? 'bg-amber-light border-warning' : 'bg-light'} d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-xs font-weight-bold ${isCtElevated ? 'text-warning' : 'text-dark'}">
+                                    مؤشر الوسطية (Central Tendency)
+                                </div>
+                                <small class="text-xxs text-secondary">${isCtElevated ? 'نزعة مرتفعة نحو الحياد' : 'استجابات متوازنة ومتمايزة'}</small>
+                            </div>
+                            <span class="badge ${isCtElevated ? 'bg-gradient-warning' : 'bg-gradient-success'}">${ctRate}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Battery Overall Summary -->
+            <h6 class="text-xs font-weight-bold text-dark mb-2">Battery Scores Overview</h6>
+            <div class="row g-2 mb-4">
+                <div class="col-3 text-center p-2 border rounded">
+                    <small class="text-xxs text-muted d-block">01 • Personality</small>
+                    <strong class="text-sm">${score.personalityScorePct}%</strong>
+                </div>
+                <div class="col-3 text-center p-2 border rounded">
+                    <small class="text-xxs text-muted d-block">02 • Judgment (SJT)</small>
+                    <strong class="text-sm">${score.sjtScorePct}%</strong>
+                </div>
+                <div class="col-3 text-center p-2 border rounded">
+                    <small class="text-xxs text-muted d-block">03 • Derailers</small>
+                    <strong class="text-sm">${score.derailersEffectiveScorePct}%</strong>
+                </div>
+                <div class="col-3 text-center p-2 border rounded">
+                    <small class="text-xxs text-muted d-block">04 • GCAT</small>
+                    <strong class="text-sm">${score.cognitiveScorePct}%</strong>
+                </div>
+            </div>
+
+            <!-- PQ10 Competencies -->
+            <h6 class="text-xs font-weight-bold text-dark mb-2">PQ10 Leadership Competencies (8 Traits + Social Desirability)</h6>
+            <div class="row g-2 mb-3">
+                ${traitsHtml}
+                <!-- 9th card: Social Desirability -->
+                <div class="col-12">
+                    <div class="p-2 border rounded ${isSdElevated ? 'bg-amber-light border-warning' : 'bg-light'}">
+                        <div class="d-flex justify-content-between text-xs font-weight-bold">
+                            <span>التظاهر الاجتماعي (مقياس التظاهر الاجتماعي)</span>
+                            <span class="${isSdElevated ? 'text-warning' : 'text-success'}">${sdRisk}% مخاطرة</span>
+                        </div>
+                        <small class="text-xxs text-secondary">SOCIAL_DESIRABILITY &bull; 4 items validity scale</small>
+                        <div class="progress progress-xs mt-1">
+                            <div class="progress-bar ${isSdElevated ? 'bg-gradient-warning' : 'bg-gradient-success'}" style="width: ${Math.min(100, Math.max(0, sdRisk))}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Derailers -->
+            <h6 class="text-xs font-weight-bold text-dark mb-2">Derailer Risk Categories (6 Drivers)</h6>
+            <div class="row g-2 mb-3">
+                ${derailersHtml}
+            </div>
+
+            <!-- GCAT -->
+            <h6 class="text-xs font-weight-bold text-dark mb-2">GCAT Cognitive Subtests</h6>
+            <div class="row g-2">
+                ${gcatHtml}
+            </div>
+        `;
+
+        if (printBtn) {
+            printBtn.onclick = () => {
+                const printWin = window.open('', '_blank');
+                printWin.document.write(`
+                    <html>
+                    <head><title>Candidate Assessment Score - ${candidateName}</title></head>
+                    <body style="font-family: sans-serif; padding: 20px;">
+                        ${modalBody.innerHTML}
+                    </body>
+                    </html>
+                `);
+                printWin.document.close();
+                printWin.print();
+            };
+        }
+
+    } catch (err) {
+        console.error('Failed to open score modal:', err);
+        alert(err.message || 'Error loading score details.');
+    }
+}
+
