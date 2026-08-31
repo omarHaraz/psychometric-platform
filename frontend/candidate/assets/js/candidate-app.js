@@ -1810,23 +1810,66 @@ window.downloadReport = async function(event, token) {
     const btn = event ? event.currentTarget : null;
     const originalHtml = btn ? btn.innerHTML : "";
     if (btn) {
-        btn.innerHTML = `<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span><span>Downloading...</span>`;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span><span>Preparing Report...</span>`;
     }
     
     try {
-        const res = await fetch(`${API_BASE}/api/attempts/${token}/score`, {
+        // 1. Request full AI-driven leadership report PDF URL from backend
+        const res = await fetch(`${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/download`, {
             headers: getAuthHeader()
         });
+
         if (res.ok) {
-            const score = await res.json();
+            const data = await res.json();
+            if (data.reportUrl) {
+                // Open / download the full 15-page PDF report from Cloudinary
+                const a = document.createElement("a");
+                a.href = data.reportUrl;
+                a.target = "_blank";
+                a.download = `Leadership_Assessment_Report_${token.substring(0, 8)}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                return;
+            }
+        }
+
+        // 2. Fallback: Stream PDF directly if Cloudinary CDN URL was not returned
+        const streamRes = await fetch(`${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/pdf`, {
+            headers: getAuthHeader()
+        });
+
+        if (streamRes.ok) {
+            const blob = await streamRes.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = blobUrl;
+            a.download = `Leadership_Assessment_Report_${token.substring(0, 8)}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+            return;
+        }
+
+        // 3. Fallback to scoring data popup if report is still processing
+        const scoreRes = await fetch(`${API_BASE}/api/attempts/${token}/score`, {
+            headers: getAuthHeader()
+        });
+        if (scoreRes.ok) {
+            const score = await scoreRes.json();
             generatePrintableReportWindow(score, token);
         } else {
             window.showCustomModal({title: 'Generating', message: 'Report is still generating. Please check back shortly.', icon: 'hourglass_empty'});
         }
+
     } catch (e) {
-        window.showCustomModal({title: 'Error', message: 'Failed to download report.', type: 'danger', icon: 'error'});
+        console.error("Error downloading report:", e);
+        window.showCustomModal({title: 'Error', message: 'Failed to download report. Please try again.', type: 'danger', icon: 'error'});
     } finally {
         if (btn) {
+            btn.disabled = false;
             btn.innerHTML = originalHtml;
         }
     }
