@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title th:text="${competencyTitle != null ? competencyTitle : 'القيادة الملهمة'} + ' - تقرير الكفاءات للقادة'">القيادة الملهمة - تقرير الكفاءات للقادة</title>
+    <style>
+        /* ==========================================================================
+           PDF & Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
+           ========================================================================== */
+        @page {
+            size: A4 portrait;
+            margin: 8mm 15mm 20mm 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Tahoma', 'Arial', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+            direction: rtl;
+            text-align: right;
+            font-size: 10.5px;
+            line-height: 1.5;
+        }
+
+        /* 1. Top Running Banner & Framing Header */
+        .top-running-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 12px;
+            padding-bottom: 4px;
+        }
+
+        .banner-left-wrap {
+            display: flex;
+            align-items: center;
+        }
+
+        .page-num-polygon-badge {
+            background-color: #1a4331;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 800;
+            font-family: 'Inter', 'Arial', sans-serif;
+            padding: 3px 18px 3px 12px;
+            clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 22px;
+            line-height: 22px;
+        }
+
+        .running-report-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #334155;
+            direction: rtl;
+            margin-right: auto;
+            padding-right: 4px;
+        }
+
+        .candidate-id-span {
+            font-family: 'Inter', 'Arial', sans-serif;
+            font-weight: 700;
+            color: #1e3a4c;
+        }
+
+        .top-accent-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #8a5a44;
+            z-index: 1;
+        }
+
+        /* 2. Competency Header Section */
+        .competency-header-block {
+            margin-top: 10px;
+            margin-bottom: 12px;
+        }
+
+        .competency-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 0 0 4px 0;
+            line-height: 1.2;
+        }
+
+        .competency-desc {
+            font-size: 10.5px;
+            color: #334155;
+            margin: 0;
+            line-height: 1.55;
+            text-align: justify;
+        }
+
+        /* 3. Visual Score Scale Bar */
+        .scale-bar-container {
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+
+        .table-header-bar {
+            background-color: #8a5a44;
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            box-sizing: border-box;
+        }
+
+        .th-title-right {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #ffffff;
+            width: 55%;
+        }
+
+        .th-scale-left {
+            width: 45%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+
+        .th-level-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffffff;
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+
+        .scale-bubbles-track {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            direction: rtl;
+            flex-grow: 1;
+            padding: 0 10px;
+            position: relative;
+        }
+
+        .scale-dot {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 8px;
+        }
+
+        .scale-bubble {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #8a5a44;
+            font-size: 10.5px;
+            font-weight: 800;
+            font-family: 'Inter', 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 18px;
+            text-align: center;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Score Data Row */
+        .score-data-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 26px;
+            margin-bottom: 8px;
+        }
+
+        .score-trait-col {
+            width: 55%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .trait-pill-icon {
+            width: 14px;
+            height: 19px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
+        .score-trait-name {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .score-slider-col {
+            width: 45%;
+            position: relative;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            padding: 0 20px;
+        }
+
+        .slider-track-line {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            right: 20px;
+            height: 0;
+            border-top: 1.5px solid #e2e8f0;
+            z-index: 1;
+        }
+
+        .slider-active-marker-wrap {
+            position: absolute;
+            top: 50%;
+            width: 32px;
+            height: 18px;
+            margin-top: -9px;
+            margin-right: -16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .marker-bar {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3.5px;
+            margin-top: -1.75px;
+            background-color: #1e3a4c;
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        .marker-circle {
+            position: relative;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #1e3a4c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .marker-circle svg {
+            width: 9px;
+            height: 9px;
+        }
+
+        /* 4. Detailed Match Section */
+        .match-subheader {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 12px 0 8px 0;
+            line-height: 1.4;
+        }
+
+        /* 4-Column Detailed Table */
+        table.detail-table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin-top: 4px;
+            margin-bottom: 16px;
+            font-size: 9.5px;
+            background-color: #ffffff;
+        }
+
+        table.detail-table th {
+            background-color: #1a4331;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 10.5px;
+            padding: 7px 10px;
+            text-align: right;
+            border: none;
+            box-sizing: border-box;
+        }
+
+        table.detail-table th.col-level {
+            width: 8%;
+            text-align: center;
+            border-top-right-radius: 4px;
+        }
+
+        table.detail-table th.col-req {
+            width: 29%;
+        }
+
+        table.detail-table th.col-result {
+            width: 31%;
+        }
+
+        table.detail-table th.col-rec {
+            width: 32%;
+            border-top-left-radius: 4px;
+        }
+
+        table.detail-table td {
+            padding: 10px 10px;
+            vertical-align: top;
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+            line-height: 1.55;
+            color: #334155;
+            box-sizing: border-box;
+            text-align: justify;
+        }
+
+        table.detail-table tr:last-child td {
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+
+        td.td-level-cell {
+            text-align: center;
+            vertical-align: middle;
+            padding: 8px 4px !important;
+        }
+
+        /* Dynamic Indicator Status Pill */
+        .level-status-pill {
+            width: 18px;
+            height: 28px;
+            border-radius: 5px;
+            display: inline-block;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 5. Modern Bottom Footer Banner */
+        .bottom-banner-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            padding: 0 15mm 6mm 15mm;
+            box-sizing: border-box;
+        }
+
+        .bottom-banner-graphics {
+            display: flex;
+            align-items: center;
+            height: 30px;
+            width: 100%;
+            position: relative;
+        }
+
+        .banner-logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+
+        .banner-logo-img {
+            max-height: 26px;
+            max-width: 85px;
+            object-fit: contain;
+        }
+
+        .banner-logo-text {
+            font-size: 7.5px;
+            font-weight: 700;
+            color: #475569;
+            line-height: 1.1;
+            font-family: 'Inter', 'Arial', sans-serif;
+            text-transform: uppercase;
+            direction: ltr;
+        }
+
+        .banner-angled-dark {
+            width: 85px;
+            height: 24px;
+            background: #1e3a4c;
+            transform: skew(-25deg);
+            margin-left: -10px;
+            z-index: 2;
+        }
+
+        .banner-brown-bar {
+            flex-grow: 1;
+            height: 24px;
+            background: #7a4b3a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+            padding: 0 12px;
+            z-index: 1;
+            margin-left: -8px;
+        }
+
+        .banner-copyright {
+            font-size: 8px;
+            color: #64748b;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+            text-align: center;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Top Running Banner (Page Number Polygon Badge & Running Header) -->
+    <div class="top-running-banner">
+        <div class="running-report-title">
+            تقرير الكفاءات للقادة: تطوير | <span class="candidate-id-span" th:text="${candidateId != null ? candidateId : 'PCIV126371'}">PCIV126371</span>
+        </div>
+        <div class="banner-left-wrap">
+            <div class="page-num-polygon-badge">
+                <span th:text="${pageNum != null ? pageNum : 10}">10</span>
+            </div>
+        </div>
+        <div class="top-accent-line"></div>
+    </div>
+
+    <!-- 2. Competency Title & Description -->
+    <div class="competency-header-block">
+        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'القيادة الملهمة'}">القيادة الملهمة</h2>
+        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'قدرة القائد على تحفيز الآخرين بروح إيجابية ورؤية واضحة، وجعلهم يؤمنون بالأهداف ويعملون بحماس لتحقيقها من خلال القدوة والتأثير الإيجابي.'}">
+            قدرة القائد على تحفيز الآخرين بروح إيجابية ورؤية واضحة، وجعلهم يؤمنون بالأهداف ويعملون بحماس لتحقيقها من خلال القدوة والتأثير الإيجابي.
+        </p>
+    </div>
+
+    <!-- 3. Visual Score Scale Bar -->
+    <div class="scale-bar-container">
+        <!-- Scale Bar Header -->
+        <div class="table-header-bar">
+            <div class="th-title-right">
+                القدرات أو الكفاءات السلوكية
+            </div>
+            <div class="th-scale-left">
+                <span class="th-level-label">المستوى</span>
+                <div class="scale-bubbles-track">
+                    <span class="scale-dot">•</span>
+                    <span class="scale-bubble">1</span>
+                    <span class="scale-bubble">2</span>
+                    <span class="scale-bubble">3</span>
+                    <span class="scale-bubble">4</span>
+                    <span class="scale-bubble">5</span>
+                    <span class="scale-dot">•</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Score Data Row -->
+        <div class="score-data-row">
+            <div class="score-trait-col">
+                <span class="trait-pill-icon" 
+                      th:style="'background-color: ' + (${competencyColor != null ? competencyColor : '#d98a44'}) + ';'"></span>
+                <span class="score-trait-name" th:text="${competencyTitle != null ? competencyTitle : 'القيادة الملهمة'}">القيادة الملهمة</span>
+            </div>
+            <div class="score-slider-col">
+                <div class="slider-track-line"></div>
+                <div class="slider-active-marker-wrap" 
+                     th:style="'right: calc(20px + (' + ((${competencyScore != null ? competencyScore : 3}) - 1) + ' * ((100% - 40px) / 4)));'">
+                    <div class="marker-bar"></div>
+                    <div class="marker-circle">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                            <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Detailed Table Section -->
+    <div class="match-subheader">
+        تطابق الكفاءات السلوكية القيادية و المهارات مع تحليل سمات شخصية وقدرات <span class="candidate-id-span" th:text="${candidateId != null ? candidateId : 'PCIV126371'}">PCIV126371</span> العامة:
+    </div>
+
+    <!-- 4-Column Table -->
+    <table class="detail-table">
+        <thead>
+            <tr>
+                <th class="col-level">المستوى</th>
+                <th class="col-req">متطلبات الكفاءات</th>
+                <th class="col-result">نتيجة المرشح</th>
+                <th class="col-rec">توصيات التطوير</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Row 1: Indicator 1 (Orange) -->
+            <tr>
+                <td class="td-level-cell">
+                    <span class="level-status-pill" 
+                          th:style="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#d98a44'}) + ';'"></span>
+                </td>
+                <td>
+                    <span th:text="${req1 != null ? req1 : 'يبدي حماساً كبيراً لتحفيز الآخرين وإلهامهم نحو تحقيق الأهداف العسكرية.'}">
+                        يبدي حماساً كبيراً لتحفيز الآخرين وإلهامهم نحو تحقيق الأهداف العسكرية.
+                    </span>
+                </td>
+                <td>
+                    <span th:text="${result1 != null ? result1 : 'يتفاعل مع الأفراد بحماس متوازن يدعم القيادة الملهمة بفعالية. يظهر وضوحاً واستجابة في توجيه الوحدات نحو الأهداف الاستراتيجية.'}">
+                        يتفاعل مع الأفراد بحماس متوازن يدعم القيادة الملهمة بفعالية. يظهر وضوحاً واستجابة في توجيه الوحدات نحو الأهداف الاستراتيجية.
+                    </span>
+                </td>
+                <td>
+                    <span th:text="${rec1 != null ? rec1 : 'وفّر فرصاً لقيادة مبادرات تحفيزية بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة أنواع مختلفة من الأفراد والمواقف لتحسين الاستجابة. شجع طلب ملاحظات من الأفراد والزملاء لتطوير مهارات القيادة الملهمة.'}">
+                        وفّر فرصاً لقيادة مبادرات تحفيزية بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة أنواع مختلفة من الأفراد والمواقف لتحسين الاستجابة. شجع طلب ملاحظات من الأفراد والزملاء لتطوير مهارات القيادة الملهمة.
+                    </span>
+                </td>
+            </tr>
+
+            <!-- Row 2: Indicator 2 (Orange) -->
+            <tr>
+                <td class="td-level-cell">
+                    <span class="level-status-pill" 
+                          th:style="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d98a44'}) + ';'"></span>
+                </td>
+                <td>
+                    <span th:text="${req2 != null ? req2 : 'يعكس تفاؤلاً يشجع الآخرين ويعزز التزامهم بالأهداف العسكرية.'}">
+                        يعكس تفاؤلاً يشجع الآخرين ويعزز التزامهم بالأهداف العسكرية.
+                    </span>
+                </td>
+                <td>
+                    <span th:text="${result2 != null ? result2 : 'يحافظ على نظرة متوازنة تجمع بين الواقعية والإيجابية، مما يدعم القيادة الملهمة بفعالية. يظهر ثقة وتفاؤلاً معتدلاً في معظم المواقف العملياتية.'}">
+                        يحافظ على نظرة متوازنة تجمع بين الواقعية والإيجابية، مما يدعم القيادة الملهمة بفعالية. يظهر ثقة وتفاؤلاً معتدلاً في معظم المواقف العملياتية.
+                    </span>
+                </td>
+                <td>
+                    <span th:text="${rec2 != null ? rec2 : 'وفّر فرصاً لقيادة مبادرات تحفيزية بشكل مستقل لتعزيز الاتساق والقدرة على التكيف. اقترح مراقبة أنماط مختلفة من القيادة الملهمة لتحسين الاستجابة. شجع طلب تغذية راجعة من الزملاء والمرؤوسين لتطوير المهارات التحفيزية.'}">
+                        وفّر فرصاً لقيادة مبادرات تحفيزية بشكل مستقل لتعزيز الاتساق والقدرة على التكيف. اقترح مراقبة أنماط مختلفة من القيادة الملهمة لتحسين الاستجابة. شجع طلب تغذية راجعة من الزملاء والمرؤوسين لتطوير المهارات التحفيزية.
+                    </span>
+                </td>
+            </tr>
+
+            <!-- Row 3: Indicator 3 (Orange) -->
+            <tr>
+                <td class="td-level-cell">
+                    <span class="level-status-pill" 
+                          th:style="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#d98a44'}) + ';'"></span>
+                </td>
+                <td>
+                    <span th:text="${req3 != null ? req3 : 'يمتلك قدرة على التأثير في الآخرين لتحفيزهم نحو تحقيق الأهداف المشتركة.'}">
+                        يمتلك قدرة على التأثير في الآخرين لتحفيزهم نحو تحقيق الأهداف المشتركة.
+                    </span>
+                </td>
+                <td>
+                    <span th:text="${result3 != null ? result3 : 'يؤثر في الآخرين بفعالية متوازنة تدعم القيادة الملهمة بشكل مناسب. يظهر قدرة على توجيه الوحدات وتحفيزها في معظم المواقف العملياتية.'}">
+                        يؤثر في الآخرين بفعالية متوازنة تدعم القيادة الملهمة بشكل مناسب. يظهر قدرة على توجيه الوحدات وتحفيزها في معظم المواقف العملياتية.
+                    </span>
+                </td>
+                <td>
+                    <span th:text="${rec3 != null ? rec3 : 'وفّر فرصاً لقيادة مبادرات تتطلب تأثيراً أكبر لتعزيز الاتساق والقدرة على التكيف. شجع مراقبة أنماط قيادية متنوعة لتحسين الاستجابة. حفز طلب الملاحظات من الجنود والزملاء لتحسين مهارات التأثير والإلهام.'}">
+                        وفّر فرصاً لقيادة مبادرات تتطلب تأثيراً أكبر لتعزيز الاتساق والقدرة على التكيف. شجع مراقبة أنماط قيادية متنوعة لتحسين الاستجابة. حفز طلب الملاحظات من الجنود والزملاء لتحسين مهارات التأثير والإلهام.
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 5. Modern Bottom Footer Banner -->
+    <div class="bottom-banner-container">
+        <div class="bottom-banner-graphics">
+            <div class="banner-logo-section">
+                <img class="banner-logo-img" 
+                     th:src="${companyLogoBase64 != null ? companyLogoBase64 : (logoUrl != null ? logoUrl : 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 120 40\'><circle cx=\'20\' cy=\'20\' r=\'12\' fill=\'%231e3a4c\'/><circle cx=\'20\' cy=\'20\' r=\'5\' fill=\'%237a4b3a\'/></svg>')}" 
+                     alt="Logo" />
+                <div class="banner-logo-text">
+                    Executive Assessment<br />Evaluation System
+                </div>
+            </div>
+            <div class="banner-angled-dark"></div>
+            <div class="banner-brown-bar">
+                Executive Leadership Platform
+            </div>
+        </div>
+        <div class="banner-copyright">
+            &copy; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
+        </div>
+    </div>
+
+</body>
+</html>
