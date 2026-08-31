@@ -1815,54 +1815,7 @@ window.downloadReport = async function(event, token) {
     }
     
     try {
-        // 1. Request full AI-driven leadership report PDF URL from backend
-        let downloadEndpoint = `${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/download`;
-        let res = await fetch(downloadEndpoint, {
-            headers: getAuthHeader()
-        });
-
-        // If not found, fallback to /api/reports/{token}/download
-        if (!res.ok && res.status === 404) {
-            downloadEndpoint = `${API_BASE}/api/reports/${encodeURIComponent(token)}/download`;
-            res = await fetch(downloadEndpoint, {
-                headers: getAuthHeader()
-            });
-        }
-
-        if (res.ok) {
-            const data = await res.json();
-            if (data.reportUrl) {
-                try {
-                    const pdfBlobRes = await fetch(data.reportUrl);
-                    if (pdfBlobRes.ok) {
-                        const blob = await pdfBlobRes.blob();
-                        const blobUrl = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = blobUrl;
-                        a.download = `Leadership_Assessment_Report_${token.substring(0, 8)}.pdf`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(blobUrl);
-                        return;
-                    }
-                } catch (fetchErr) {
-                    console.warn("Blob fetch failed, falling back to direct link", fetchErr);
-                }
-
-                // Fallback to direct anchor navigation
-                const a = document.createElement("a");
-                a.href = data.reportUrl;
-                a.target = "_blank";
-                a.download = `Leadership_Assessment_Report_${token.substring(0, 8)}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                return;
-            }
-        }
-
-        // 2. Fallback: Stream PDF directly if Cloudinary CDN URL was not returned
+        // 1. Fetch full 15-page AI-driven PDF stream directly from backend
         let streamEndpoint = `${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/pdf`;
         let streamRes = await fetch(streamEndpoint, {
             headers: getAuthHeader()
@@ -1884,12 +1837,50 @@ window.downloadReport = async function(event, token) {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(blobUrl);
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
             return;
         }
 
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || 'Report generation in progress or server busy. Please retry in a few seconds.');
+        // 2. Fallback: Request report download URL from JSON endpoint
+        let downloadEndpoint = `${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/download`;
+        let res = await fetch(downloadEndpoint, {
+            headers: getAuthHeader()
+        });
+
+        if (!res.ok && res.status === 404) {
+            downloadEndpoint = `${API_BASE}/api/reports/${encodeURIComponent(token)}/download`;
+            res = await fetch(downloadEndpoint, {
+                headers: getAuthHeader()
+            });
+        }
+
+        if (res.ok) {
+            const data = await res.json();
+            if (data.reportUrl) {
+                try {
+                    const pdfBlobRes = await fetch(data.reportUrl);
+                    if (pdfBlobRes.ok) {
+                        const blob = await pdfBlobRes.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = blobUrl;
+                        a.download = `Leadership_Assessment_Report_${token.substring(0, 8)}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+                        return;
+                    }
+                } catch (fetchErr) {
+                    console.warn("Direct blob fetch failed, navigating to link", fetchErr);
+                }
+
+                window.open(data.reportUrl, "_blank");
+                return;
+            }
+        }
+
+        throw new Error('Report generation failed or server busy.');
 
     } catch (e) {
         console.error("Error downloading report:", e);
