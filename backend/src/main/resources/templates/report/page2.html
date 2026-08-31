@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Page 2 - تقرير الكفاءات للقادة</title>
+    <style>
+        /* ==========================================================================
+           PDF & Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
+           ========================================================================== */
+        @page {
+            size: A4 portrait;
+            margin: 14mm 16mm 18mm 16mm;
+            @bottom-center {
+                content: element(footer);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Tahoma', 'Arial', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+            direction: rtl;
+            text-align: right;
+            font-size: 11.5px;
+            line-height: 1.6;
+        }
+
+        /* Running Header / Page Header */
+        .page-header {
+            border-bottom: 2px solid #00685f;
+            padding-bottom: 6px;
+            margin-bottom: 16px;
+            display: table;
+            width: 100%;
+        }
+
+        .header-title-cell {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: right;
+            font-weight: 700;
+            font-size: 13px;
+            color: #00685f;
+        }
+
+        .header-meta-cell {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: left;
+            font-size: 10px;
+            color: #64748b;
+            font-family: 'Inter', 'Arial', sans-serif;
+            direction: ltr;
+        }
+
+        /* Section Headings */
+        h2.section-main-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #00685f;
+            margin: 0 0 4px 0;
+            padding-bottom: 4px;
+        }
+
+        h3.section-sub-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #c5a059;
+            margin: 0 0 8px 0;
+        }
+
+        h3.section-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: #00685f;
+            margin: 14px 0 6px 0;
+            border-right: 3px solid #c5a059;
+            padding-right: 8px;
+        }
+
+        h4.table-sub-header {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            margin: 0 0 8px 0;
+        }
+
+        p.text-block {
+            font-size: 11px;
+            color: #334155;
+            text-align: justify;
+            margin: 0 0 10px 0;
+            line-height: 1.65;
+        }
+
+        /* Scale Graphic / Legend */
+        .scale-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin: 8px 0 14px 0;
+            text-align: center;
+        }
+
+        .scale-grid {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 4px;
+        }
+
+        .scale-cell {
+            display: table-cell;
+            width: 20%;
+            text-align: center;
+            vertical-align: middle;
+            padding: 4px 2px;
+        }
+
+        .scale-badge {
+            display: inline-block;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: bold;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 2px;
+        }
+
+        .badge-dev { background-color: #e11d48; }
+        .badge-mid { background-color: #f59e0b; }
+        .badge-str { background-color: #00685f; }
+
+        .scale-text-labels {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #0f172a;
+            text-align: center;
+            margin-top: 4px;
+            direction: rtl;
+        }
+
+        .scale-text-labels span {
+            color: #64748b;
+            font-weight: normal;
+            margin: 0 6px;
+        }
+
+        /* Tables Common */
+        table.report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0 16px 0;
+            font-size: 10.5px;
+            background-color: #ffffff;
+        }
+
+        table.report-table th, 
+        table.report-table td {
+            border: 1px solid #cbd5e1;
+            padding: 8px 10px;
+            text-align: right;
+            vertical-align: middle;
+        }
+
+        table.report-table th {
+            background-color: #00685f;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.2px;
+        }
+
+        /* Table 1: Competency Match Styles */
+        .table-competency th:nth-child(1) { width: 40%; }
+        .table-competency th:nth-child(2) { width: 20%; background-color: #00796b; }
+        .table-competency th:nth-child(3) { width: 20%; background-color: #0f766e; }
+        .table-competency th:nth-child(4) { width: 20%; background-color: #115e59; }
+
+        .table-competency td {
+            font-size: 10.5px;
+            line-height: 1.5;
+            color: #334155;
+        }
+
+        .table-competency td:first-child {
+            background-color: #f8fafc;
+            font-weight: 500;
+        }
+
+        /* Table 2: Impression Management Styles */
+        .table-impression th:nth-child(1) { width: 26%; }
+        .table-impression th:nth-child(2) { width: 20%; text-align: center; }
+        .table-impression th:nth-child(3) { width: 18%; text-align: center; }
+        .table-impression th:nth-child(4) { width: 36%; }
+
+        .table-impression td {
+            font-size: 10.5px;
+        }
+
+        .table-impression td:first-child {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* Visual Bar Cell in Table 2 */
+        .score-bar-cell {
+            position: relative;
+            text-align: center !important;
+            padding: 0 !important;
+            height: 32px;
+            overflow: hidden;
+            background-color: #f8fafc;
+        }
+
+        .score-bar-fill {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            height: 100%;
+            background-color: #cbd5e1;
+            z-index: 1;
+        }
+
+        .score-bar-text {
+            position: relative;
+            z-index: 2;
+            font-weight: 700;
+            font-size: 12px;
+            color: #0f172a;
+            line-height: 32px;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .risk-badge-cell {
+            text-align: center !important;
+            font-weight: 700;
+        }
+
+        /* Page Footer */
+        .page-footer {
+            margin-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 6px;
+            display: table;
+            width: 100%;
+            font-size: 9.5px;
+            color: #64748b;
+        }
+
+        .footer-left {
+            display: table-cell;
+            text-align: left;
+            direction: ltr;
+        }
+
+        .footer-right {
+            display: table-cell;
+            text-align: right;
+            direction: rtl;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Page Running Header -->
+    <div class="page-header">
+        <div class="header-title-cell">
+            تقرير الكفاءات للقادة — دليل التفسير وإدارة الانطباعات
+        </div>
+        <div class="header-meta-cell">
+            Candidate ID: <span th:text="${candidateId}">CAN-98234</span>
+        </div>
+    </div>
+
+    <!-- Section 1: Introduction -->
+    <div class="section-container">
+        <h2 class="section-main-title">المقدمة</h2>
+        <h3 class="section-sub-title">التقييم</h3>
+        <p class="text-block">
+            يلخص هذا التقرير النتائج باستخدام إطار الكفاءات ويستند في استخلاص النتائج إلى أدلة من تقييم الشخصية والقدرات العامة.
+        </p>
+    </div>
+
+    <!-- Section 2: Personal Potential Indicator -->
+    <div class="section-container">
+        <h3 class="section-header">مؤشر الإمكانيات الشخصية</h3>
+        <p class="text-block">
+            تعتمد إمكانيات المرشح على تحليل السمات الشخصية وقدراته العامة ويتم وصف إمكانياته من خلال استخدام مقياس مكون من 5 نقاط والذي يعرض في الجداول البيانية باستخدام رمز بداخله شخص كدليل إرشادي، تشير الدرجات من 1 إلى 2 إلى جوانب تطوير محتملة حيث لا تتطابق المهارات السلوكية مع تحليل شخصية المرشح أو قدراته، بينما تشير الدرجة 3 إلى تطابق جزئي، وتشير الدرجات من 4 إلى 5 إلى جوانب قوة محتملة حيث تتطابق المهارات السلوكية مع تحليل شخصية المرشح أو قدراته.
+        </p>
+
+        <!-- 5-Point Visual Scale Card -->
+        <div class="scale-card">
+            <div class="scale-grid">
+                <div class="scale-cell">
+                    <div class="scale-badge badge-dev">1</div>
+                </div>
+                <div class="scale-cell">
+                    <div class="scale-badge badge-dev">2</div>
+                </div>
+                <div class="scale-cell">
+                    <div class="scale-badge badge-mid">3</div>
+                </div>
+                <div class="scale-cell">
+                    <div class="scale-badge badge-str">4</div>
+                </div>
+                <div class="scale-cell">
+                    <div class="scale-badge badge-str">5</div>
+                </div>
+            </div>
+            <div class="scale-text-labels">
+                منخفض <span>|</span> منخفض <span>|</span> متوسط <span>|</span> متوسط <span>|</span> عالي
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Competency Match (Table 1) -->
+    <div class="section-container">
+        <h3 class="section-header">النطاقات</h3>
+        <h4 class="table-sub-header">تطابق الكفاءات السلوكية مع تحليل شخصية المرشح وقدراته العامة</h4>
+
+        <table class="report-table table-competency">
+            <thead>
+                <tr>
+                    <th>النطاقات</th>
+                    <th>عامل حياد</th>
+                    <th>عامل قوة</th>
+                    <th>عامل تطوير</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        تتم مقارنة قدرات المرشحين وشخصياتهم بمتطلبات الكفاءات السلوكية تستخدم أوصاف المستويات المذكورة في الشكل المقابل لمعرفة مدى تطابق نتائج <span th:text="${candidateId}">CAN-98234</span> مع الكفاءات السلوكية.
+                    </td>
+                    <td>تتطابق متطلبات الكفاءة جزئيا مع شخصية أو قدرات المرشح</td>
+                    <td>تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</td>
+                    <td>لا تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 4: Impression Management (Table 2) -->
+    <div class="section-container">
+        <h3 class="section-header">إدارة الانطباعات</h3>
+        <p class="text-block">
+            في بعض السياقات، قد يحاول المجيبون على الاختبارات تشويه نتائجهم. وتستكشف المقاييس التالية خطر التشويه في هذه النتائج.
+        </p>
+
+        <table class="report-table table-impression">
+            <thead>
+                <tr>
+                    <th>المقياس</th>
+                    <th>الدرجة</th>
+                    <th>الخطر</th>
+                    <th>التفسير</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Row 1: Social Desirability -->
+                <tr>
+                    <td>مؤشر التظاهر الاجتماعي</td>
+                    <td class="score-bar-cell">
+                        <div class="score-bar-fill" 
+                             th:style="'width: ' + (${socialScore != null ? socialScore * 10 : 30}) + '%;'"></div>
+                        <span class="score-bar-text" th:text="${socialScore}">3</span>
+                    </td>
+                    <td class="risk-badge-cell">
+                        <span th:text="${socialRisk}">منخفض</span>
+                    </td>
+                    <td>
+                        <span th:text="${socialInterpretation}">استجابات صريحة وتلقائية تشير إلى صدق التقرير الذاتي.</span>
+                    </td>
+                </tr>
+
+                <!-- Row 2: Central Tendency -->
+                <tr>
+                    <td>مؤشر وسطية الإجابة</td>
+                    <td class="score-bar-cell">
+                        <div class="score-bar-fill" 
+                             th:style="'width: ' + (${centralScore != null ? centralScore * 10 : 40}) + '%;'"></div>
+                        <span class="score-bar-text" th:text="${centralScore}">4</span>
+                    </td>
+                    <td class="risk-badge-cell">
+                        <span th:text="${centralRisk}">طبيعي</span>
+                    </td>
+                    <td>
+                        <span th:text="${centralInterpretation}">معدل الإجابات المحايدة يقع ضمن النطاق الطبيعي المقبول.</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Page Footer -->
+    <div class="page-footer">
+        <div class="footer-right">
+            <span>تقرير الكفاءات للقادة — تطوير</span> &nbsp;|&nbsp; 
+            <span th:text="${candidateId}">CAN-98234</span>
+        </div>
+        <div class="footer-left">
+            Page 2
+        </div>
+    </div>
+
+</body>
+</html>
