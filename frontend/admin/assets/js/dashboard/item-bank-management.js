@@ -201,6 +201,23 @@ async function loadTaxonomies() {
     }
 }
 
+function updateCompPillStyle(el, isSelected) {
+    const isSD = el.dataset.isSd === "true";
+    if (isSelected) {
+        if (isSD) {
+            el.className = "btn btn-warning text-white btn-sm mb-0 p-comp-drag shadow-xs";
+        } else {
+            el.className = "btn btn-info text-white btn-sm mb-0 p-comp-drag shadow-xs";
+        }
+    } else {
+        if (isSD) {
+            el.className = "btn btn-outline-warning btn-sm mb-0 p-comp-drag";
+        } else {
+            el.className = "btn btn-outline-info btn-sm mb-0 p-comp-drag";
+        }
+    }
+}
+
 function populateTaxonomyDropdowns() {
     // Personality Competency Dropdown
     const availBox = document.getElementById("availableCompetencies");
@@ -210,7 +227,9 @@ function populateTaxonomyDropdowns() {
         selBox.innerHTML = "";
         taxonomies.competencies.forEach(c => {
             const el = document.createElement("div");
-            el.className = "btn btn-outline-info btn-sm mb-0 p-comp-drag";
+            const isSD = (c.code === "SOCIAL_DESIRABILITY" || (c.nameAr && c.nameAr.includes("التظاهر")));
+            el.dataset.isSd = isSD ? "true" : "false";
+            el.className = isSD ? "btn btn-outline-warning btn-sm mb-0 p-comp-drag" : "btn btn-outline-info btn-sm mb-0 p-comp-drag";
             el.draggable = true;
             el.dataset.id = c.id;
             el.innerText = c.nameAr;
@@ -227,8 +246,13 @@ function populateTaxonomyDropdowns() {
             
             // Click to move (for accessibility / ease of use)
             el.addEventListener("click", () => {
-                if (el.parentElement === availBox) selBox.appendChild(el);
-                else availBox.appendChild(el);
+                if (el.parentElement === availBox) {
+                    selBox.appendChild(el);
+                    updateCompPillStyle(el, true);
+                } else {
+                    availBox.appendChild(el);
+                    updateCompPillStyle(el, false);
+                }
             });
             
             availBox.appendChild(el);
@@ -247,7 +271,10 @@ function populateTaxonomyDropdowns() {
                 box.style.opacity = "1";
                 const id = e.dataTransfer.getData("text/plain");
                 const el = document.querySelector(`.p-comp-drag[data-id="${id}"]`);
-                if (el) box.appendChild(el);
+                if (el) {
+                    box.appendChild(el);
+                    updateCompPillStyle(el, box === selBox);
+                }
             });
         });
     }
@@ -597,8 +624,16 @@ function renderTable() {
         let col1 = "", col2 = "", col3 = "", col4 = "";
 
         if (currentDimension === "personality") {
-            const compNames = (item.competencyNamesAr && item.competencyNamesAr.length > 0) ? item.competencyNamesAr.join(" • ") : "N/A";
-            col1 = `<span class="text-xs font-weight-bold text-dark">${compNames}</span>`;
+            let compNamesHtml = "N/A";
+            if (item.competencyNamesAr && item.competencyNamesAr.length > 0) {
+                compNamesHtml = item.competencyNamesAr.map(name => {
+                    if (name.includes("التظاهر")) {
+                        return `<span class="badge badge-sm bg-gradient-warning text-white me-1">${name}</span>`;
+                    }
+                    return `<span class="badge badge-sm bg-gradient-info text-white me-1">${name}</span>`;
+                }).join(" ");
+            }
+            col1 = `<div class="d-flex flex-wrap gap-1">${compNamesHtml}</div>`;
             col2 = `<p class="text-xs arabic-text mb-0 truncate-2-lines">${item.statementAr}</p>`;
             col3 = `<span class="badge badge-sm bg-gradient-info">${item.idealTarget} / 5</span>`;
             col4 = "";
@@ -701,8 +736,7 @@ function openAddModal() {
         const availBox = document.getElementById("availableCompetencies");
         document.querySelectorAll(".p-comp-drag").forEach(pill => {
             availBox.appendChild(pill);
-            pill.classList.add("btn-outline-info");
-            pill.classList.remove("btn-info", "text-white");
+            updateCompPillStyle(pill, false);
         });
         document.getElementById("personalityModalTitle").innerText = "Add Personality Item (PQ10)";
         personalityModal?.show();
@@ -779,12 +813,10 @@ function openEditModal(id) {
             const id = Number(pill.dataset.id);
             if ((item.competencyIds || []).includes(id)) {
                 selBox.appendChild(pill);
-                pill.classList.remove("btn-outline-info");
-                pill.classList.add("btn-info", "text-white");
+                updateCompPillStyle(pill, true);
             } else {
                 availBox.appendChild(pill);
-                pill.classList.add("btn-outline-info");
-                pill.classList.remove("btn-info", "text-white");
+                updateCompPillStyle(pill, false);
             }
         });
         document.getElementById("pIdealTarget").value = item.idealTarget;
