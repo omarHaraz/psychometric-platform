@@ -390,70 +390,61 @@
 </head>
 <body>
     <div th:fragment="body">
-<!-- 1. Top Running Banner (Page Number Polygon Badge &amp; Running Header) -->
-    <div class="top-running-banner">
-        <div class="running-report-title">
-            تقرير الكفاءات للقادة: تطوير | <span class="candidate-id-span" th:text="${candidateId != null ? candidateId : 'PCIV126371'}">PCIV126371</span>
-        </div>
-        <div class="banner-left-wrap">
-            <div class="page-num-polygon-badge">
-                <span th:text="${pageNum != null ? pageNum : 12}">12</span>
-            </div>
-        </div>
-        <div class="top-accent-line"></div>
-    </div>
-
-    <!-- 2. Competency Title &amp; Description -->
-    <div class="competency-header-block">
+<div class="competency-header-block">
         <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'تطوير المهارات'}">تطوير المهارات</h2>
         <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'قدرة القائد على تعلم مهارات جديدة باستمرار وتطوير قدراته وقدرات فريقه لتحسين الأداء ومواكبة التغيرات في بيئة العمل.'}">
             قدرة القائد على تعلم مهارات جديدة باستمرار وتطوير قدراته وقدرات فريقه لتحسين الأداء ومواكبة التغيرات في بيئة العمل.
         </p>
     </div>
 
-    <!-- 3. Visual Score Scale Bar -->
-    <div class="scale-bar-container">
-        <!-- Scale Bar Header -->
-        <div class="table-header-bar">
-            <div class="th-title-right">
+    <!-- 3. Visual Score Scale Bar (Strict Table Layout) -->
+    <table style="width: 100%; border-collapse: collapse; border: none; margin-top: 12px; margin-bottom: 12px;">
+        <!-- Brown Header Row -->
+        <tr>
+            <!-- 1st in DOM (Left Side): Scale 1-5 -->
+            <td style="width: 45%; background-color: #8a5a44; padding: 6px 10px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; vertical-align: middle;">
+                <table style="width: 100%; border-collapse: collapse; text-align: center; color: white; font-weight: bold; font-size: 11.5px; border: none;">
+                    <tr>
+                        <td style="width: 20%; border: none; color: #ffffff;">5</td>
+                        <td style="width: 20%; border: none; color: #ffffff;">4</td>
+                        <td style="width: 20%; border: none; color: #ffffff;">3</td>
+                        <td style="width: 20%; border: none; color: #ffffff;">2</td>
+                        <td style="width: 20%; border: none; color: #ffffff;">1</td>
+                    </tr>
+                </table>
+            </td>
+            <!-- 2nd in DOM (Right Side): Title -->
+            <td style="width: 55%; background-color: #8a5a44; padding: 6px 16px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; text-align: right; color: white; font-weight: bold; font-size: 12px; vertical-align: middle;">
                 القدرات أو الكفاءات السلوكية
-            </div>
-            <div class="th-scale-left">
-                <span class="th-level-label">المستوى</span>
-                <div class="scale-bubbles-track">
-                    <span class="scale-dot">•</span>
-                    <span class="scale-bubble">1</span>
-                    <span class="scale-bubble">2</span>
-                    <span class="scale-bubble">3</span>
-                    <span class="scale-bubble">4</span>
-                    <span class="scale-bubble">5</span>
-                    <span class="scale-dot">•</span>
-                </div>
-            </div>
-        </div>
-
+            </td>
+        </tr>
+        <!-- Spacer -->
+        <tr><td colspan="2" style="height: 10px; border: none;"></td></tr>
         <!-- Score Data Row -->
-        <div class="score-data-row">
-            <div class="score-trait-col">
-                <span class="trait-pill-icon" 
-                      th:style="'background-color: ' + (${competencyColor != null ? competencyColor : '#d9776c'}) + ';'"></span>
-                <span class="score-trait-name" th:text="${competencyTitle != null ? competencyTitle : 'تطوير المهارات'}">تطوير المهارات</span>
-            </div>
-            <div class="score-slider-col">
-                <div class="slider-track-line"></div>
-                <div class="slider-active-marker-wrap" 
-                     th:style="'right: calc(20px + (' + ((${competencyScore != null ? competencyScore : 2}) - 1) + ' * ((100% - 40px) / 4)));'">
-                    <div class="marker-bar"></div>
-                    <div class="marker-circle">
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="12" cy="7" r="4" fill="#ffffff" />
-                            <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
-                        </svg>
+        <tr>
+            <!-- Left Side: Slider (Pure Thymeleaf Math) -->
+            <td style="width: 45%; vertical-align: middle; padding: 10px 11px; position: relative; border: none;">
+                <div style="position: relative; width: 100%; height: 16px;">
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${competencyScore != null ? competencyScore : 4}) - 1) * 25) + '%;'">
+                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
+                        <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
+                            <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            </td>
+            <!-- Right Side: Trait Name & Colored Pill -->
+            <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
+                <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                      th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#c87d46'}) + ';'"></span>
+                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'التواصل والتأثير الفعال'}">التواصل والتأثير الفعال</span>
+            </td>
+        </tr>
+    </table>
 
     <!-- 4. Detailed Table Section -->
     <div class="match-subheader">
@@ -464,79 +455,91 @@
     <table class="detail-table">
         <thead>
             <tr>
-                <th class="col-level">المستوى</th>
-                <th class="col-req">متطلبات الكفاءات</th>
+                <th class="col-rec" style="border-top-left-radius: 4px;">توصيات التطوير</th>
                 <th class="col-result">نتيجة المرشح</th>
-                <th class="col-rec">توصيات التطوير</th>
+                <th class="col-req">متطلبات الكفاءات</th>
+                <th class="col-level" style="border-top-right-radius: 4px; text-align: center;">المستوى</th>
             </tr>
         </thead>
         <tbody>
             <!-- Row 1: Indicator 1 (Orange) -->
             <tr>
-                <td class="td-level-cell">
-                    <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#d98a44'}) + ';'"></span>
-                </td>
-                <td>
-                    <span th:text="${req1 != null ? req1 : 'يطبق مبادئ التحسين المستمر لتطوير المهارات وتعزيز قدرات الفريق العسكري.'}">
-                        يطبق مبادئ التحسين المستمر لتطوير المهارات وتعزيز قدرات الفريق العسكري.
-                    </span>
-                </td>
-                <td>
-                    <span th:text="${result1 != null ? result1 : 'يحدد أهداف أداء واضحة ويتابع التقدم بانتظام، مما يدعم تطوير المهارات بشكل متوازن. يمتلك قدرة معقولة على تعديل المبادرات التدريبية حسب الحاجة.'}">
-                        يحدد أهداف أداء واضحة ويتابع التقدم بانتظام، مما يدعم تطوير المهارات بشكل متوازن. يمتلك قدرة معقولة على تعديل المبادرات التدريبية حسب الحاجة.
-                    </span>
-                </td>
+                <!-- 1st in DOM (Left): Recommendations -->
                 <td>
                     <span th:text="${rec1 != null ? rec1 : 'وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. رشّح مراقبة أنواع مختلفة من برامج التطوير لتحسين الاستجابة. شجّع طلب ملاحظات من الفريق والزملاء لتحسين مهارات إدارة التطوير.'}">
                         وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. رشّح مراقبة أنواع مختلفة من برامج التطوير لتحسين الاستجابة. شجّع طلب ملاحظات من الفريق والزملاء لتحسين مهارات إدارة التطوير.
                     </span>
                 </td>
+                <!-- 2nd in DOM: Result -->
+                <td>
+                    <span th:text="${result1 != null ? result1 : 'يحدد أهداف أداء واضحة ويتابع التقدم بانتظام، مما يدعم تطوير المهارات بشكل متوازن. يمتلك قدرة معقولة على تعديل المبادرات التدريبية حسب الحاجة.'}">
+                        يحدد أهداف أداء واضحة ويتابع التقدم بانتظام، مما يدعم تطوير المهارات بشكل متوازن. يمتلك قدرة معقولة على تعديل المبادرات التدريبية حسب الحاجة.
+                    </span>
+                </td>
+                <!-- 3rd in DOM: Requirements -->
+                <td>
+                    <span th:text="${req1 != null ? req1 : 'يطبق مبادئ التحسين المستمر لتطوير المهارات وتعزيز قدرات الفريق العسكري.'}">
+                        يطبق مبادئ التحسين المستمر لتطوير المهارات وتعزيز قدرات الفريق العسكري.
+                    </span>
+                </td>
+                <!-- 4th in DOM (Right): Level Pill -->
+                <td class="td-level-cell">
+                    <span class="level-status-pill" 
+                          th:style="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#d98a44'}) + ';'"></span>
+                </td>
             </tr>
 
             <!-- Row 2: Indicator 2 (Red/Pink) -->
             <tr>
-                <td class="td-level-cell">
-                    <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d9776c'}) + ';'"></span>
-                </td>
-                <td>
-                    <span th:text="${req2 != null ? req2 : 'يبدي فضولاً دائماً لتطوير المهارات والقدرات بهدف رفع الأداء العسكري.'}">
-                        يبدي فضولاً دائماً لتطوير المهارات والقدرات بهدف رفع الأداء العسكري.
-                    </span>
-                </td>
-                <td>
-                    <span th:text="${result2 != null ? result2 : 'يبدي اهتماماً محدوداً باستكشاف مهارات جديدة، مما يعيق تطوير المهارات القيادية والعسكرية. قد يكتفي بالأساليب التقليدية دون السعي للتحديث أو التطوير.'}">
-                        يبدي اهتماماً محدوداً باستكشاف مهارات جديدة، مما يعيق تطوير المهارات القيادية والعسكرية. قد يكتفي بالأساليب التقليدية دون السعي للتحديث أو التطوير.
-                    </span>
-                </td>
+                <!-- 1st in DOM (Left): Recommendations -->
                 <td>
                     <span th:text="${rec2 != null ? rec2 : 'شجّع المشاركة في دورات تدريبية عسكرية متقدمة لتعزيز الثقة في التعلم المستمر. قدّم الإرشاد من قادة ذوي خبرة في تطوير المهارات والابتكار. اقترح قراءات أو برامج قصيرة حول القيادة التكيفية والتطوير المهني. ساعد في تحديد أهداف واضحة ومدعومة لاستكشاف أساليب تدريبية جديدة.'}">
                         شجّع المشاركة في دورات تدريبية عسكرية متقدمة لتعزيز الثقة في التعلم المستمر. قدّم الإرشاد من قادة ذوي خبرة في تطوير المهارات والابتكار. اقترح قراءات أو برامج قصيرة حول القيادة التكيفية والتطوير المهني. ساعد في تحديد أهداف واضحة ومدعومة لاستكشاف أساليب تدريبية جديدة.
                     </span>
                 </td>
+                <!-- 2nd in DOM: Result -->
+                <td>
+                    <span th:text="${result2 != null ? result2 : 'يبدي اهتماماً محدوداً باستكشاف مهارات جديدة، مما يعيق تطوير المهارات القيادية والعسكرية. قد يكتفي بالأساليب التقليدية دون السعي للتحديث أو التطوير.'}">
+                        يبدي اهتماماً محدوداً باستكشاف مهارات جديدة، مما يعيق تطوير المهارات القيادية والعسكرية. قد يكتفي بالأساليب التقليدية دون السعي للتحديث أو التطوير.
+                    </span>
+                </td>
+                <!-- 3rd in DOM: Requirements -->
+                <td>
+                    <span th:text="${req2 != null ? req2 : 'يبدي فضولاً دائماً لتطوير المهارات والقدرات بهدف رفع الأداء العسكري.'}">
+                        يبدي فضولاً دائماً لتطوير المهارات والقدرات بهدف رفع الأداء العسكري.
+                    </span>
+                </td>
+                <!-- 4th in DOM (Right): Level Pill -->
+                <td class="td-level-cell">
+                    <span class="level-status-pill" 
+                          th:style="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d9776c'}) + ';'"></span>
+                </td>
             </tr>
 
             <!-- Row 3: Indicator 3 (Orange) -->
             <tr>
-                <td class="td-level-cell">
-                    <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#d98a44'}) + ';'"></span>
-                </td>
+                <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${req3 != null ? req3 : 'يتمتع بدافع قوي لتطوير المهارات والارتقاء بالقدرات القيادية والعسكرية بشكل مستمر.'}">
-                        يتمتع بدافع قوي لتطوير المهارات والارتقاء بالقدرات القيادية والعسكرية بشكل مستمر.
+                    <span th:text="${rec3 != null ? rec3 : 'وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. اقترح مراقبة أساليب تطوير متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الزملاء والمرؤوسين لتحسين مهارات إدارة التطوير.'}">
+                        وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. اقترح مراقبة أساليب تطوير متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الزملاء والمرؤوسين لتحسين مهارات إدارة التطوير.
                     </span>
                 </td>
+                <!-- 2nd in DOM: Result -->
                 <td>
                     <span th:text="${result3 != null ? result3 : 'يسعى بشكل متوازن لتطوير قدراته، مما يدعم تحسيناً مستمراً في تطوير المهارات. يظهر استعداداً معقولاً لتعلم مهارات جديدة وتطبيقها.'}">
                         يسعى بشكل متوازن لتطوير قدراته، مما يدعم تحسيناً مستمراً في تطوير المهارات. يظهر استعداداً معقولاً لتعلم مهارات جديدة وتطبيقها.
                     </span>
                 </td>
+                <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${rec3 != null ? rec3 : 'وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. اقترح مراقبة أساليب تطوير متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الزملاء والمرؤوسين لتحسين مهارات إدارة التطوير.'}">
-                        وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. اقترح مراقبة أساليب تطوير متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الزملاء والمرؤوسين لتحسين مهارات إدارة التطوير.
+                    <span th:text="${req3 != null ? req3 : 'يتمتع بدافع قوي لتطوير المهارات والارتقاء بالقدرات القيادية والعسكرية بشكل مستمر.'}">
+                        يتمتع بدافع قوي لتطوير المهارات والارتقاء بالقدرات القيادية والعسكرية بشكل مستمر.
                     </span>
+                </td>
+                <!-- 4th in DOM (Right): Level Pill -->
+                <td class="td-level-cell">
+                    <span class="level-status-pill" 
+                          th:style="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#d98a44'}) + ';'"></span>
                 </td>
             </tr>
         </tbody>
