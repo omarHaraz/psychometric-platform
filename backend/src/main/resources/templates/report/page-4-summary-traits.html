@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Page 4 - ملخّص النتائج</title>
-    <style>
+    <style th:fragment="style">
         /* ==========================================================================
            PDF &amp; Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
            ========================================================================== */
@@ -316,8 +316,8 @@
     </style>
 </head>
 <body>
-
-    <!-- 1. Page Header -->
+    <div th:fragment="body">
+<!-- 1. Page Header -->
     <div class="main-header-row">
         <div class="main-title-wrap">
             <h1 class="main-title">ملخّص النتائج</h1>
@@ -497,6 +497,6 @@
             &#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
         </div>
     </div>
-
+    </div>
 </body>
 </html>

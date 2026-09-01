@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Cover Page - تقرير الكفاءات للقادة</title>
-    <style>
+    <style th:fragment="style">
         /* ==========================================================================
            PDF &amp; Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
            ========================================================================== */
@@ -258,7 +258,8 @@
     </style>
 </head>
 <body>
-    <div class="page-container">
+    <div th:fragment="body">
+<div class="page-container">
         <!-- Top Accents -->
         <div class="top-accent-bar"></div>
         <div class="copper-accent-stripe"></div>
@@ -309,6 +310,7 @@
             <div class="banner-left-shape"></div>
             <div class="banner-text-right">Executive Leadership Evaluation</div>
         </div>
+    </div>
     </div>
 </body>
 </html>

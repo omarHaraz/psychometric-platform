@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title th:text="${competencyTitle != null ? competencyTitle : 'المبادرة'} + ' - تقرير الكفاءات للقادة'">المبادرة - تقرير الكفاءات للقادة</title>
-    <style>
+    <style th:fragment="style">
         /* ==========================================================================
            PDF &amp; Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
            ========================================================================== */
@@ -435,8 +435,8 @@
     </style>
 </head>
 <body>
-
-    <!-- 1. Top Running Banner (Page Number Polygon Badge &amp; Running Header) -->
+    <div th:fragment="body">
+<!-- 1. Top Running Banner (Page Number Polygon Badge &amp; Running Header) -->
     <div class="top-running-banner">
         <div class="running-report-title">
             تقرير الكفاءات للقادة: تطوير | <span class="candidate-id-span" th:text="${candidateId != null ? candidateId : 'PCIV126371'}">PCIV126371</span>
@@ -608,6 +608,6 @@
             &#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
         </div>
     </div>
-
+    </div>
 </body>
 </html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Page 5 - ملخص النتائج</title>
-    <style>
+    <style th:fragment="style">
         /* ==========================================================================
            PDF &amp; Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
            ========================================================================== */
@@ -400,8 +400,8 @@
     </style>
 </head>
 <body>
-
-    <!-- 1. Running Top Header -->
+    <div th:fragment="body">
+<!-- 1. Running Top Header -->
     <div class="running-header">
         <div class="running-header-text">
             تقرير الكفاءات للقادة: تطوير | <span th:text="${candidateId}">PCIV126371</span>
@@ -751,6 +751,6 @@
             &#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
         </div>
     </div>
-
+    </div>
 </body>
 </html>
