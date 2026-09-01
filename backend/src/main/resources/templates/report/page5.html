@@ -89,12 +89,23 @@
         </table>
 
         <!-- 2. Master Results Table (Reversed DOM: Left Slider 45% FIRST, Right Trait 55% SECOND) -->
-        <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 15px;">
+        <table style="width: 100%; table-layout: fixed; border-collapse: collapse; border: none; margin-bottom: 15px;">
+            <colgroup>
+                <col style="width: 45%;" />
+                <col style="width: 55%;" />
+            </colgroup>
             <!-- Header Row -->
             <tr>
                 <!-- 1st in DOM (Left Side): Scale 1-5 -->
                 <td style="width: 45%; background-color: #8a5a44; padding: 6px 10px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; vertical-align: middle;">
-                    <table style="width: 100%; border-collapse: collapse; text-align: center; color: #ffffff; font-weight: bold; font-size: 11.5px; border: none;">
+                    <table style="width: 100%; table-layout: fixed; border-collapse: collapse; text-align: center; color: #ffffff; font-weight: bold; font-size: 11.5px; border: none;">
+                        <colgroup>
+                            <col style="width: 20%;" />
+                            <col style="width: 20%;" />
+                            <col style="width: 20%;" />
+                            <col style="width: 20%;" />
+                            <col style="width: 20%;" />
+                        </colgroup>
                         <tr>
                             <!-- DOM Reversed for RTL Engine: 5 -> 4 -> 3 -> 2 -> 1 -->
                             <td style="width: 20%; border: none; color: #ffffff;">5</td>
@@ -116,9 +127,9 @@
 
             <!-- Row 1: التواصل والتأثير الفعال -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${commScore != null ? commScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
@@ -139,9 +150,9 @@
 
             <!-- Row 2: المبادرة -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${initiativeScore != null ? initiativeScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
@@ -162,9 +173,9 @@
 
             <!-- Row 3: اتخاذ القرار وتحمل المسؤولية -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${decisionScore != null ? decisionScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
@@ -185,9 +196,9 @@
 
             <!-- Row 4: القيادة الملهمة -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${leadershipScore != null ? leadershipScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
@@ -208,9 +219,9 @@
 
             <!-- Row 5: التفكير الاستراتيجي -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${strategicScore != null ? strategicScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
@@ -231,9 +242,9 @@
 
             <!-- Row 6: تطوير المهارات -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${skillsScore != null ? skillsScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
@@ -254,9 +265,9 @@
 
             <!-- Row 7: القدرة على التكيف -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${adaptabilityScore != null ? adaptabilityScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
@@ -277,9 +288,9 @@
 
             <!-- Row 8: التحليل والتخطيط المنهجي -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${analysisScore != null ? analysisScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
@@ -307,9 +318,9 @@
 
             <!-- Row 9: الاستدلال التجريدي -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${abstractScore != null ? abstractScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
@@ -330,9 +341,9 @@
 
             <!-- Row 10: الاستدلال الرقمي -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${numericalScore != null ? numericalScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
@@ -353,9 +364,9 @@
 
             <!-- Row 11: الاستدلال اللفظي -->
             <tr>
-                <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
+                <td style="width: 45%; vertical-align: middle; padding: 6px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                         <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${verbalScore != null ? verbalScore : 3}) - 1) * 20)) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
