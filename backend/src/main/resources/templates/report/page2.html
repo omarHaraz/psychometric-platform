@@ -42,16 +42,12 @@
 
         /* Section Headings with Bullet Icon */
         .icon-circle {
-            width: 20px;
-            height: 20px;
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
-            border: 1.5px solid #1e3a4c;
-            font-size: 10px;
-            color: #1e3a4c;
-            font-weight: bold;
-            text-align: center;
-            line-height: 18px;
+            background-color: #1e3a4c;
             display: inline-block;
+            vertical-align: middle;
         }
 
         .section-title {
@@ -84,9 +80,7 @@
             color: #475569;
             font-weight: 600;
             text-align: center;
-            margin-bottom: 4px;
-            height: 26px;
-            vertical-align: bottom;
+            line-height: 1.25;
             display: block;
         }
 
@@ -172,8 +166,8 @@
         <!-- Section 1: Evaluation Intro -->
         <table dir="rtl" style="width: 100%; border-collapse: collapse; border: none; margin-top: 4px; margin-bottom: 2px; direction: rtl;">
             <tr>
-                <td style="width: 26px; vertical-align: middle; border: none; padding: 0;">
-                    <div class="icon-circle">●</div>
+                <td style="width: 18px; vertical-align: middle; border: none; padding: 0;">
+                    <span class="icon-circle"></span>
                 </td>
                 <td style="vertical-align: middle; padding-right: 6px; border: none;">
                     <span class="section-title">التقييم</span>
@@ -188,8 +182,8 @@
         <!-- Section 2: Personal Potential Indicator (Master Table 2-Column + Nested 5-Point Scale Table) -->
         <table dir="rtl" style="width: 100%; border-collapse: collapse; border: none; margin-top: 8px; margin-bottom: 2px; direction: rtl;">
             <tr>
-                <td style="width: 26px; vertical-align: middle; border: none; padding: 0;">
-                    <div class="icon-circle">●</div>
+                <td style="width: 18px; vertical-align: middle; border: none; padding: 0;">
+                    <span class="icon-circle"></span>
                 </td>
                 <td style="vertical-align: middle; padding-right: 6px; border: none;">
                     <span class="section-title">مؤشر الإمكانيات الشخصية</span>
@@ -208,39 +202,52 @@
                 </td>
 
                 <!-- Left Column: 5-Point Scale Horizontal Table (48% width) -->
-                <td style="width: 48%; vertical-align: top; border-top: 1.5px solid #94a3b8; padding-top: 4px; text-align: center; direction: rtl; border-left: none; border-right: none; border-bottom: none;">
+                <td style="width: 48%; vertical-align: top; border-top: 1.5px solid #94a3b8; padding-top: 8px; text-align: center; direction: rtl; border-left: none; border-right: none; border-bottom: none;">
+                    
+                    <!-- Dedicated Header "النطاقات" distinctly positioned above numbers -->
+                    <div style="font-size: 11px; font-weight: 700; color: #1e3a4c; text-align: center; margin-bottom: 14px;">
+                        النطاقات
+                    </div>
+
                     <table dir="rtl" style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed; text-align: center; direction: rtl;">
-                        <!-- Dedicated Title Row for "النطاقات" -->
-                        <tr>
-                            <td colspan="5" style="text-align: center; font-size: 11px; font-weight: 700; color: #1e3a4c; padding-bottom: 6px; border: none;">
-                                النطاقات
-                            </td>
-                        </tr>
-                        <!-- 5 Scale Number Columns Row -->
+                        <!-- Scale labels row -->
                         <tr>
                             <!-- 5: عالي -->
                             <td style="width: 20%; text-align: center; vertical-align: bottom; padding: 0 1px; border: none;">
                                 <div class="scale-label">عالي</div>
-                                <div class="scale-circle">5</div>
                             </td>
                             <!-- 4: متوسط-عالي -->
                             <td style="width: 20%; text-align: center; vertical-align: bottom; padding: 0 1px; border: none;">
                                 <div class="scale-label">متوسط عالي</div>
-                                <div class="scale-circle">4</div>
                             </td>
                             <!-- 3: متوسط -->
                             <td style="width: 20%; text-align: center; vertical-align: bottom; padding: 0 1px; border: none;">
                                 <div class="scale-label">متوسط</div>
-                                <div class="scale-circle">3</div>
                             </td>
                             <!-- 2: منخفض-متوسط -->
                             <td style="width: 20%; text-align: center; vertical-align: bottom; padding: 0 1px; border: none;">
                                 <div class="scale-label">منخفض متوسط</div>
-                                <div class="scale-circle">2</div>
                             </td>
                             <!-- 1: منخفض -->
                             <td style="width: 20%; text-align: center; vertical-align: bottom; padding: 0 1px; border: none;">
                                 <div class="scale-label">منخفض</div>
+                            </td>
+                        </tr>
+                        <!-- Circles row -->
+                        <tr>
+                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 4px; border: none;">
+                                <div class="scale-circle">5</div>
+                            </td>
+                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 4px; border: none;">
+                                <div class="scale-circle">4</div>
+                            </td>
+                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 4px; border: none;">
+                                <div class="scale-circle">3</div>
+                            </td>
+                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 4px; border: none;">
+                                <div class="scale-circle">2</div>
+                            </td>
+                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 4px; border: none;">
                                 <div class="scale-circle">1</div>
                             </td>
                         </tr>
@@ -252,8 +259,8 @@
         <!-- Section 3: Competency Match (Master Table 2-Column + Nested 3 Color Indicator Boxes) -->
         <table dir="rtl" style="width: 100%; border-collapse: collapse; border: none; margin-top: 8px; margin-bottom: 2px; direction: rtl;">
             <tr>
-                <td style="width: 26px; vertical-align: middle; border: none; padding: 0;">
-                    <div class="icon-circle">●</div>
+                <td style="width: 18px; vertical-align: middle; border: none; padding: 0;">
+                    <span class="icon-circle"></span>
                 </td>
                 <td style="vertical-align: middle; padding-right: 6px; border: none;">
                     <span class="section-title">تطابق الكفاءات السلوكية مع تحليل شخصية المرشح وقدراته العامة</span>
@@ -272,32 +279,31 @@
                 </td>
 
                 <!-- Left Column: 3 Indicator Cards Table (48% width) -->
-                <td style="width: 48%; vertical-align: top; border-top: 1.5px solid #94a3b8; padding-top: 4px; text-align: center; direction: rtl; border-left: none; border-right: none; border-bottom: none;">
+                <td style="width: 48%; vertical-align: top; border-top: 1.5px solid #94a3b8; padding-top: 8px; text-align: center; direction: rtl; border-left: none; border-right: none; border-bottom: none;">
+                    
+                    <!-- Dedicated Header "النطاقات" distinctly positioned above cards -->
+                    <div style="font-size: 11px; font-weight: 700; color: #1e3a4c; text-align: center; margin-bottom: 12px;">
+                        النطاقات
+                    </div>
+
                     <table dir="rtl" style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed; text-align: center; direction: rtl;">
-                        <!-- Dedicated Title Row for "النطاقات" -->
-                        <tr>
-                            <td colspan="3" style="text-align: center; font-size: 11px; font-weight: 700; color: #1e3a4c; padding-bottom: 6px; border: none;">
-                                النطاقات
-                            </td>
-                        </tr>
-                        <!-- 3 Indicator Cards Row -->
                         <tr>
                             <!-- عامل قوة (Green) -->
-                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 2px; border: none;">
-                                <div style="font-size: 10.5px; font-weight: 700; color: #1e3a4c; margin-bottom: 3px;">عامل قوة</div>
-                                <div style="font-size: 8.5px; color: #475569; line-height: 1.3; min-height: 30px; margin-bottom: 5px;">تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
+                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 3px; border: none;">
+                                <div style="font-size: 10px; font-weight: 700; color: #1e3a4c; margin-bottom: 4px;">عامل قوة</div>
+                                <div style="font-size: 8.5px; color: #475569; line-height: 1.3; min-height: 32px; margin-bottom: 6px;">تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
                                 <div class="color-pill pill-green"></div>
                             </td>
                             <!-- عامل حياد (Yellow) -->
-                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 2px; border: none;">
-                                <div style="font-size: 10.5px; font-weight: 700; color: #1e3a4c; margin-bottom: 3px;">عامل حياد</div>
-                                <div style="font-size: 8.5px; color: #475569; line-height: 1.3; min-height: 30px; margin-bottom: 5px;">تتطابق متطلبات الكفاءة جزئياً مع شخصية أو قدرات المرشح</div>
+                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 3px; border: none;">
+                                <div style="font-size: 10px; font-weight: 700; color: #1e3a4c; margin-bottom: 4px;">عامل حياد</div>
+                                <div style="font-size: 8.5px; color: #475569; line-height: 1.3; min-height: 32px; margin-bottom: 6px;">تتطابق متطلبات الكفاءة جزئياً مع شخصية أو قدرات المرشح</div>
                                 <div class="color-pill pill-yellow"></div>
                             </td>
                             <!-- عامل تطوير (Red) -->
-                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 2px; border: none;">
-                                <div style="font-size: 10.5px; font-weight: 700; color: #1e3a4c; margin-bottom: 3px;">عامل تطوير</div>
-                                <div style="font-size: 8.5px; color: #475569; line-height: 1.3; min-height: 30px; margin-bottom: 5px;">لا تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
+                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 3px; border: none;">
+                                <div style="font-size: 10px; font-weight: 700; color: #1e3a4c; margin-bottom: 4px;">عامل تطوير</div>
+                                <div style="font-size: 8.5px; color: #475569; line-height: 1.3; min-height: 32px; margin-bottom: 6px;">لا تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
                                 <div class="color-pill pill-red"></div>
                             </td>
                         </tr>
@@ -309,8 +315,8 @@
         <!-- Section 4: Impression Management Table (Strict RTL Table Layout) -->
         <table dir="rtl" style="width: 100%; border-collapse: collapse; border: none; margin-top: 8px; margin-bottom: 2px; direction: rtl;">
             <tr>
-                <td style="width: 26px; vertical-align: middle; border: none; padding: 0;">
-                    <div class="icon-circle">●</div>
+                <td style="width: 18px; vertical-align: middle; border: none; padding: 0;">
+                    <span class="icon-circle"></span>
                 </td>
                 <td style="vertical-align: middle; padding-right: 6px; border: none;">
                     <span class="section-title">إدارة الانطباعات</span>
