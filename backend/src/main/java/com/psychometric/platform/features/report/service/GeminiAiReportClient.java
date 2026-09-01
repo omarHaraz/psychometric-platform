@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.Map;
 /**
  * GeminiAiReportClient
  *
- * Implements the {@link AiReportClient} interface to call Google Gemini API using Spring WebClient.
+ * Implements the {@link AiReportClient} interface to call Google Gemini API using Spring RestClient.
  * Passes the normalized psychometric scores and instructions, requesting strict minified JSON output.
  */
 @Component
@@ -29,23 +30,37 @@ public class GeminiAiReportClient implements AiReportClient {
 
     private static final Logger log = LoggerFactory.getLogger(GeminiAiReportClient.class);
 
-    private final WebClient webClient;
+    private final RestClient restClient;
     private final ObjectMapper objectMapper;
     private final String geminiApiUrl;
     private final String geminiApiKey;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public GeminiAiReportClient(
-            WebClient.Builder webClientBuilder,
             ObjectMapper objectMapper,
-            @Value("${gemini.api.url:https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent}") String geminiApiUrl,
+            @Value("${gemini.api.url:https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent}") String geminiApiUrl,
             @Value("${gemini.api.key:}") String geminiApiKey
     ) {
-        this.webClient = webClientBuilder
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(Duration.ofSeconds(15));
+        requestFactory.setReadTimeout(Duration.ofSeconds(45));
+
+        this.restClient = RestClient.builder()
+                .requestFactory(requestFactory)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
         this.objectMapper = objectMapper;
         this.geminiApiUrl = geminiApiUrl;
         this.geminiApiKey = geminiApiKey != null ? geminiApiKey.trim() : "";
+    }
+
+    public GeminiAiReportClient(
+            Object webClientBuilderIgnored,
+            ObjectMapper objectMapper,
+            String geminiApiUrl,
+            String geminiApiKey
+    ) {
+        this(objectMapper, geminiApiUrl, geminiApiKey);
     }
 
     @Override
@@ -74,13 +89,11 @@ public class GeminiAiReportClient implements AiReportClient {
 
             log.info("Sending request to Gemini AI for candidate narrative generation...");
 
-            String responseBody = webClient.post()
+            String responseBody = restClient.post()
                     .uri(url)
-                    .bodyValue(requestBody)
+                    .body(requestBody)
                     .retrieve()
-                    .bodyToMono(String.class)
-                    .timeout(Duration.ofSeconds(30))
-                    .block();
+                    .body(String.class);
 
             if (responseBody == null || responseBody.isBlank()) {
                 throw new IllegalStateException("Empty response received from Gemini API");
@@ -103,6 +116,55 @@ public class GeminiAiReportClient implements AiReportClient {
             log.error("Gemini AI generation failed ({}). Falling back to standard default psychometric narratives.", e.getMessage());
             return new LeadershipReportGeneratorService.DefaultMockAiClient().generateNarrativesJson(payload);
         }
+    }
+
+    /**
+     * Direct API call for testing and generic prompt generation.
+     */
+    public String callApi(String prompt) {
+        if (geminiApiKey == null || geminiApiKey.isBlank()) {
+            throw new IllegalStateException("Gemini API key is not configured (gemini.api.key is empty).");
+        }
+
+        Map<String, Object> requestBody = Map.of(
+                "contents", List.of(
+                        Map.of("parts", List.of(Map.of("text", prompt)))
+                ),
+                "generationConfig", Map.of(
+                        "temperature", 0.7
+                )
+        );
+
+        String url = geminiApiUrl.contains("key=")
+                ? geminiApiUrl
+                : (geminiApiUrl + (geminiApiUrl.contains("?") ? "&key=" : "?key=") + geminiApiKey);
+
+        log.info("Sending request to Gemini AI API: URL={}", geminiApiUrl);
+
+        String responseBody = restClient.post()
+                .uri(url)
+                .body(requestBody)
+                .retrieve()
+                .body(String.class);
+
+        if (responseBody == null || responseBody.isBlank()) {
+            throw new IllegalStateException("Empty response received from Gemini API");
+        }
+
+        try {
+            JsonNode root = objectMapper.readTree(responseBody);
+            JsonNode candidates = root.path("candidates");
+            if (candidates.isArray() && !candidates.isEmpty()) {
+                JsonNode parts = candidates.get(0).path("content").path("parts");
+                if (parts.isArray() && !parts.isEmpty()) {
+                    return parts.get(0).path("text").asText();
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to parse Gemini response JSON as standard format: {}", e.getMessage());
+        }
+
+        return responseBody;
     }
 
     private String buildPromptText(AiPromptPayload payload) {
