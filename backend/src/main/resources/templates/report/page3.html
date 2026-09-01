@@ -6,11 +6,11 @@
     <title>Page 3 - ما الذي يقيسه استبيان حدود</title>
     <style th:fragment="style">
         /* ==========================================================================
-           PDF &amp; Print Optimization (OpenHTMLtoPDF / Flying Saucer Compatible)
+           PDF and Print Optimization (OpenHTMLtoPDF / Flying Saucer Compatible)
            ========================================================================== */
         @page {
             size: A4 portrait;
-            margin: 12mm 15mm 22mm 15mm;
+            margin: 10mm 14mm 16mm 14mm;
         }
 
         * {
@@ -27,18 +27,27 @@
             color: #1e293b;
             direction: rtl;
             text-align: right;
-            font-size: 11px;
-            line-height: 1.6;
+            font-size: 8.5px;
+            line-height: 1.35;
         }
 
-        /* 2. Reference Table */
+        /* 1. Page Header */
+        .page-header-box {
+            width: 100%;
+            border-bottom: 2px solid #1e3a4c;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+            background: transparent;
+        }
+
+        /* 2. Derailer Reference Table */
         table.derailer-table {
             width: 100%;
             table-layout: fixed;
             border-collapse: collapse;
-            margin-top: 10px;
-            margin-bottom: 16px;
-            font-size: 10.5px;
+            margin-top: 0;
+            margin-bottom: 14px;
+            font-size: 8.5px;
             background-color: #ffffff;
         }
 
@@ -46,29 +55,29 @@
             background-color: #7a4b3a;
             color: #ffffff;
             font-weight: 700;
-            font-size: 11.5px;
-            padding: 9px 12px;
+            font-size: 9.5px;
+            padding: 4px 8px;
             text-align: right;
             border: none;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
         }
 
         table.derailer-table th.th-behaviors {
-            width: 65%;
+            width: 68%;
             border-top-left-radius: 4px;
         }
 
         table.derailer-table th.th-trait {
-            width: 35%;
+            width: 32%;
             border-top-right-radius: 4px;
         }
 
         table.derailer-table td {
-            padding: 10px 12px;
-            vertical-align: top;
+            padding: 3px 8px;
+            vertical-align: middle;
             border: none;
             border-bottom: 1px solid #e2e8f0;
-            line-height: 1.6;
+            line-height: 1.3;
             color: #334155;
         }
 
@@ -76,187 +85,307 @@
             border-bottom: 1.5px solid #cbd5e1;
         }
 
-        /* Trait Definition Column */
         .trait-title {
             color: #7a4b3a;
-            font-size: 12px;
+            font-size: 9px;
             font-weight: 700;
-            display: block;
-            margin-bottom: 2px;
+            display: inline-block;
+            margin-left: 4px;
         }
 
         .trait-desc {
             color: #475569;
-            font-size: 10px;
-            line-height: 1.45;
+            font-size: 8px;
+            display: inline;
         }
 
-        /* Behaviors Bulleted List */
-        .behavior-list {
-            list-style-type: disc;
-            margin: 0;
-            padding-right: 16px;
-            padding-left: 0;
-        }
-
-        .behavior-list li {
-            margin-bottom: 4px;
+        .behaviors-text {
             color: #334155;
-            font-size: 10px;
-            line-height: 1.45;
+            font-size: 8px;
+            line-height: 1.3;
         }
 
-        .behavior-list li:last-child {
-            margin-bottom: 0;
+        .behavior-dot {
+            color: #7a4b3a;
+            font-weight: bold;
+            margin: 0 2px 0 1px;
         }
 
-        /* 3. Modern Bottom Footer Banner */
+        /* 3. Competency Reference Table */
+        table.competency-table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin-top: 0;
+            margin-bottom: 14px;
+            font-size: 8.5px;
+            background-color: #ffffff;
+        }
+
+        table.competency-table tr.shaded-row {
+            background-color: #f1f5f9;
+        }
+
+        table.competency-table td.comp-desc-cell {
+            width: 72%;
+            padding: 3.5px 8px;
+            vertical-align: middle;
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 8px;
+            line-height: 1.3;
+            text-align: justify;
+        }
+
+        table.competency-table td.comp-name-cell {
+            width: 28%;
+            padding: 3.5px 8px;
+            vertical-align: middle;
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+            color: #1e3a4c;
+            font-size: 8.5px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        table.competency-table tr:last-child td {
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+
+        /* 4. Modern Bottom Footer Banner */
         .bottom-banner-container {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             width: 100%;
-            padding: 0 15mm 8mm 15mm;
+            padding: 0 14mm 6mm 14mm;
             box-sizing: border-box;
         }
 
         .banner-copyright {
-            font-size: 8.5px;
+            font-size: 8px;
             color: #64748b;
             font-family: 'Inter', 'Arial', sans-serif;
             direction: ltr;
             text-align: center;
-            margin-top: 5px;
+            margin-top: 3px;
         }
     </style>
 </head>
 <body>
     <div th:fragment="body">
         <!-- 1. Page Header (Bulletproof Layout) -->
-        <div style="width: 100%; border-bottom: 2px solid #1e3a4c; padding-bottom: 12px; margin-bottom: 16px; background: transparent;">
+        <div class="page-header-box">
             <table style="width: 100%; border-collapse: collapse; border: none; background: transparent;">
                 <tr>
                     <!-- Left: Page Number -->
                     <td style="text-align: left; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 12px; background: transparent; display: inline-block;">صفحة 3</span>
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px; background: transparent; display: inline-block;">صفحة 3</span>
                     </td>
                     <!-- Right: Main Title -->
                     <td style="text-align: right; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <h1 style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 24px; font-weight: 800; color: #1e3a4c; line-height: 1.2; background: transparent;">ما الذي يقيسه استبيان حدود</h1>
+                        <h1 style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 18px; font-weight: 800; color: #1e3a4c; line-height: 1.1; background: transparent;">ما الذي يقيسه استبيان حدود</h1>
                     </td>
                 </tr>
             </table>
         </div>
 
-        <!-- 2. Framework Reference Table (Reversed DOM: Left Behaviors 65% FIRST, Right Trait 35% SECOND) -->
+        <!-- 2. Framework Reference Table (Derailers) -->
         <table class="derailer-table">
             <thead>
                 <tr>
-                    <!-- 1st in HTML (Left): Behaviors Column (65%) -->
+                    <!-- 1st in HTML (Left): Behaviors Column (68%) -->
                     <th class="th-behaviors">السلوكيات المُعطلة</th>
-                    <!-- 2nd in HTML (Right): Trait Column (35%) -->
+                    <!-- 2nd in HTML (Right): Trait Column (32%) -->
                     <th class="th-trait">السمة</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Row 1: التحفظ -->
                 <tr>
-                    <td style="width: 65%;">
-                        <ul class="behavior-list">
-                            <li>تجنّب الآخرين والحفاظ على مسافة في العلاقات.</li>
-                            <li>الظهور بمظهر غير ودود أو غير مهتم بالآخرين أو ببناء العلاقات.</li>
-                            <li>الظهور بمزاج مكتئب أو حزين.</li>
-                        </ul>
+                    <td style="width: 68%;">
+                        <div class="behaviors-text">
+                            <span class="behavior-dot">•</span> تجنّب الآخرين والحفاظ على مسافة في العلاقات.
+                            <span class="behavior-dot">•</span> الظهور بمظهر غير ودود أو غير مهتم بالآخرين أو ببناء العلاقات.
+                            <span class="behavior-dot">•</span> الظهور بمزاج مكتئب أو حزين.
+                        </div>
                     </td>
-                    <td style="width: 35%;">
-                        <strong class="trait-title">التحفظ</strong>
-                        <div class="trait-desc">ميل إلى الانسحاب والعزلة عن الآخرين.</div>
+                    <td style="width: 32%;">
+                        <strong class="trait-title">التحفظ:</strong>
+                        <span class="trait-desc">ميل إلى الانسحاب والعزلة عن الآخرين.</span>
                     </td>
                 </tr>
 
                 <!-- Row 2: الانفعالية -->
                 <tr>
-                    <td style="width: 65%;">
-                        <ul class="behavior-list">
-                            <li>امتلاك نظرة سلبية وانخفاض تقدير الذات.</li>
-                            <li>التقلب المزاجي أو القلق.</li>
-                            <li>الظهور بمظهر المتشكك أو المتحفظ تجاه الآخرين.</li>
-                        </ul>
+                    <td style="width: 68%;">
+                        <div class="behaviors-text">
+                            <span class="behavior-dot">•</span> امتلاك نظرة سلبية وانخفاض تقدير الذات.
+                            <span class="behavior-dot">•</span> التقلب المزاجي أو القلق.
+                            <span class="behavior-dot">•</span> الظهور بمظهر المتشكك أو المتحفظ تجاه الآخرين.
+                        </div>
                     </td>
-                    <td style="width: 35%;">
-                        <strong class="trait-title">الانفعالية</strong>
-                        <div class="trait-desc">ميل إلى التركيز على العيوب وإظهار المشاعر السلبية.</div>
+                    <td style="width: 32%;">
+                        <strong class="trait-title">الانفعالية:</strong>
+                        <span class="trait-desc">ميل إلى التركيز على العيوب وإظهار المشاعر السلبية.</span>
                     </td>
                 </tr>
 
                 <!-- Row 3: العدائية -->
                 <tr>
-                    <td style="width: 65%;">
-                        <ul class="behavior-list">
-                            <li>إظهار العداء والعدوانية تجاه الآخرين.</li>
-                            <li>السعي لتحقيق الأهداف بأي ثمن والتعامل مع الآخرين بدافع هذا السعي.</li>
-                            <li>التركيز المفرط على الذات وقلة الاهتمام بآراء ومشاعر الآخرين.</li>
-                        </ul>
+                    <td style="width: 68%;">
+                        <div class="behaviors-text">
+                            <span class="behavior-dot">•</span> إظهار العداء والعدوانية تجاه الآخرين.
+                            <span class="behavior-dot">•</span> السعي لتحقيق الأهداف بأي ثمن والتعامل مع الآخرين بدافع هذا السعي.
+                            <span class="behavior-dot">•</span> التركيز المفرط على الذات وقلة الاهتمام بآراء ومشاعر الآخرين.
+                        </div>
                     </td>
-                    <td style="width: 35%;">
-                        <strong class="trait-title">العدائية</strong>
-                        <div class="trait-desc">ميل إلى العدوانية في التعامل مع الآخرين واعتماد أسلوب مباشر وصدامي في التواصل.</div>
+                    <td style="width: 32%;">
+                        <strong class="trait-title">العدائية:</strong>
+                        <span class="trait-desc">ميل إلى العدوانية في التعامل مع الآخرين واعتماد أسلوب مباشر وصدامي في التواصل.</span>
                     </td>
                 </tr>
 
                 <!-- Row 4: الاندفاعية -->
                 <tr>
-                    <td style="width: 65%;">
-                        <ul class="behavior-list">
-                            <li>قلة التركيز والانتباه لفترات طويلة.</li>
-                            <li>التهاون في الالتزامات وعدم متابعة المهام حتى النهاية.</li>
-                            <li>التصرّف بطيش واتخاذ قرارات متسرّعة وغير مدروسة.</li>
-                        </ul>
+                    <td style="width: 68%;">
+                        <div class="behaviors-text">
+                            <span class="behavior-dot">•</span> قلة التركيز والانتباه لفترات طويلة.
+                            <span class="behavior-dot">•</span> التهاون في الالتزامات وعدم متابعة المهام حتى النهاية.
+                            <span class="behavior-dot">•</span> التصرّف بطيش واتخاذ قرارات متسرّعة وغير مدروسة.
+                        </div>
                     </td>
-                    <td style="width: 35%;">
-                        <strong class="trait-title">الاندفاعية</strong>
-                        <div class="trait-desc">ميل إلى الاندفاع والمخاطرة دون تفكير كافٍ.</div>
+                    <td style="width: 32%;">
+                        <strong class="trait-title">الاندفاعية:</strong>
+                        <span class="trait-desc">ميل إلى الاندفاع والمخاطرة دون تفكير كافٍ.</span>
                     </td>
                 </tr>
 
                 <!-- Row 5: الصرامة -->
                 <tr>
-                    <td style="width: 65%;">
-                        <ul class="behavior-list">
-                            <li>التعامل بصرامة وجمود في المواقف.</li>
-                            <li>وضع أهداف غير واقعية لأنفسهم وللآخرين.</li>
-                            <li>عدم التسامح مع الأخطاء واعتبار أي تقصير فشلًا.</li>
-                        </ul>
+                    <td style="width: 68%;">
+                        <div class="behaviors-text">
+                            <span class="behavior-dot">•</span> التعامل بصرامة وجمود في المواقف.
+                            <span class="behavior-dot">•</span> وضع أهداف غير واقعية لأنفسهم وللآخرين.
+                            <span class="behavior-dot">•</span> عدم التسامح مع الأخطاء واعتبار أي تقصير فشلًا.
+                        </div>
                     </td>
-                    <td style="width: 35%;">
-                        <strong class="trait-title">الصرامة</strong>
-                        <div class="trait-desc">ميل إلى الصرامة وعدم المرونة وعدم التسامح مع ما يُعتبر تقصيرًا في الالتزامات.</div>
+                    <td style="width: 32%;">
+                        <strong class="trait-title">الصرامة:</strong>
+                        <span class="trait-desc">ميل إلى الصرامة وعدم المرونة وعدم التسامح مع ما يُعتبر تقصيرًا في الالتزامات.</span>
                     </td>
                 </tr>
 
                 <!-- Row 6: اللامألوفية -->
                 <tr>
-                    <td style="width: 65%;">
-                        <ul class="behavior-list">
-                            <li>امتلاك أساليب تفكير غير اعتيادية ومعتقدات غير مألوفة.</li>
-                            <li>الظهور بمظهر غريب أو مختلف في نظر الآخرين.</li>
-                            <li>العجز عن تفسير كيفية أو أسباب أفعالهم.</li>
-                        </ul>
+                    <td style="width: 68%;">
+                        <div class="behaviors-text">
+                            <span class="behavior-dot">•</span> امتلاك أساليب تفكير غير اعتيادية ومعتقدات غير مألوفة.
+                            <span class="behavior-dot">•</span> الظهور بمظهر غريب أو مختلف في نظر الآخرين.
+                            <span class="behavior-dot">•</span> العجز عن تفسير كيفية أو أسباب أفعالهم.
+                        </div>
                     </td>
-                    <td style="width: 35%;">
-                        <strong class="trait-title">اللامألوفية</strong>
-                        <div class="trait-desc">ميل إلى إظهار سلوكيات غير مألوفة وتجاهل الأعراف الاجتماعية والتعبير عن أفكار أو معتقدات غير تقليدية.</div>
+                    <td style="width: 32%;">
+                        <strong class="trait-title">اللامألوفية:</strong>
+                        <span class="trait-desc">ميل إلى إظهار سلوكيات غير مألوفة وتجاهل الأعراف الاجتماعية.</span>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <!-- 3. Modern Bottom Footer Banner -->
-        <div class="bottom-banner-container">
-            <table style="width: 100%; border-collapse: collapse; height: 26px; border: none;">
+        <!-- 3. Competency Reference Table (New Section from Specification) -->
+        <table class="competency-table">
+            <tbody>
+                <!-- Row 1: التواصل والتأثير الفعال -->
+                <tr class="shaded-row">
+                    <td class="comp-desc-cell">
+                        القدرة على نقل المعلومات بوضوح وفعالية مع ضمان فهم الرسائل المتبادلة عبر جميع المستويات وتعزيز التنسيق لتحقيق الأهداف العسكرية بكفاءة عالية.
+                    </td>
+                    <td class="comp-name-cell">
+                        التواصل والتأثير الفعال
+                    </td>
+                </tr>
+
+                <!-- Row 2: المبادرة -->
                 <tr>
-                    <td style="background-color: #7a4b3a; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
+                    <td class="comp-desc-cell">
+                        قدرة القائد على التحرك من تلقاء نفسه دون انتظار الأوامر، عبر اقتراح الأفكار واتخاذ الإجراءات المناسبة في الوقت المناسب لتحسين العمل وحل المشكلات وتحقيق الأهداف بسرعة وفعالية.
+                    </td>
+                    <td class="comp-name-cell">
+                        المبادرة
+                    </td>
+                </tr>
+
+                <!-- Row 3: اتخاذ القرار وتحمل المسؤولية -->
+                <tr class="shaded-row">
+                    <td class="comp-desc-cell">
+                        قدرة القائد على اختيار القرار الصحيح في الوقت المناسب اعتمادًا على المعلومات المتاحة، مع تحمل نتائج قراراته بكل التزام وشجاعة.
+                    </td>
+                    <td class="comp-name-cell">
+                        اتخاذ القرار وتحمل المسؤولية
+                    </td>
+                </tr>
+
+                <!-- Row 4: القيادة الملهمة -->
+                <tr>
+                    <td class="comp-desc-cell">
+                        قدرة القائد على تحفيز الآخرين بروح إيجابية ورؤية واضحة، وجعلهم يؤمنون بالأهداف ويعملون بحماس لتحقيقها من خلال القدوة والتأثير الإيجابي.
+                    </td>
+                    <td class="comp-name-cell">
+                        القيادة الملهمة
+                    </td>
+                </tr>
+
+                <!-- Row 5: التفكير الاستراتيجي -->
+                <tr class="shaded-row">
+                    <td class="comp-desc-cell">
+                        القدرة على تحليل المعطيات، واستشراف المستقبل، واتخاذ قرارات استراتيجية فعالة.
+                    </td>
+                    <td class="comp-name-cell">
+                        التفكير الاستراتيجي
+                    </td>
+                </tr>
+
+                <!-- Row 6: تطوير المهارات -->
+                <tr>
+                    <td class="comp-desc-cell">
+                        قدرة القائد على تعلم مهارات جديدة باستمرار وتطوير قدراته وقدرات فريقه لتحسين الأداء ومواكبة التغيرات في بيئة العمل.
+                    </td>
+                    <td class="comp-name-cell">
+                        تطوير المهارات
+                    </td>
+                </tr>
+
+                <!-- Row 7: القدرة على التكيف -->
+                <tr class="shaded-row">
+                    <td class="comp-desc-cell">
+                        القدرة على التكيف مع التغيرات المفاجئة وتعديل الخطط بمرونة لضمان استمرارية العمل وتحقيق الأهداف بكفاءة.
+                    </td>
+                    <td class="comp-name-cell">
+                        القدرة على التكيف
+                    </td>
+                </tr>
+
+                <!-- Row 8: التحليل والتخطيط المنهجي -->
+                <tr>
+                    <td class="comp-desc-cell">
+                        قدرة القائد على دراسة المواقف بعناية، وفهم المعلومات بشكل منطقي، ثم وضع خطط منظمة ومدروسة تساعد على تحقيق الأهداف بكفاءة وفعالية.
+                    </td>
+                    <td class="comp-name-cell">
+                        التحليل والتخطيط المنهجي
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 4. Modern Bottom Footer Banner -->
+        <div class="bottom-banner-container">
+            <table style="width: 100%; border-collapse: collapse; height: 24px; border: none;">
+                <tr>
+                    <td style="background-color: #7a4b3a; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
                         Executive Leadership Platform
                     </td>
                 </tr>
