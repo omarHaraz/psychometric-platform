@@ -55,6 +55,11 @@ public class PdfGeneratorService {
                 PdfRendererBuilder builder = new PdfRendererBuilder();
                 builder.useFastMode();
                 
+                // Explicitly register local TrueType Arabic fonts from classpath
+                builder.useFont(() -> getClass().getResourceAsStream("/fonts/Cairo-Regular.ttf"), "Cairo");
+                builder.useFont(() -> getClass().getResourceAsStream("/fonts/Amiri-Regular.ttf"), "Amiri");
+                builder.useFont(() -> getClass().getResourceAsStream("/fonts/Amiri-Bold.ttf"), "Amiri", 700, PdfRendererBuilder.FontStyle.NORMAL, true);
+
                 // Enable bidirectional text splitting, reordering and RTL shaping for Arabic
                 builder.useUnicodeBidiSplitter(new ICUBidiSplitter.ICUBidiSplitterFactory());
                 builder.useUnicodeBidiReorderer(new ICUBidiReorderer());
