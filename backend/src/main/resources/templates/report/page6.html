@@ -480,9 +480,9 @@
                 <th class="col-level" style="border-top-right-radius: 4px; text-align: center;">المستوى</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- Row 1: Green Status (عامل قوة) -->
-            <tr>
+                <tbody>
+            <!-- Row 1: Dynamic Indicator 1 -->
+            <tr th:if="${req1 != null and !#strings.isEmpty(req1)}">
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
                     <span th:text="${rec1}"></span>
@@ -497,12 +497,12 @@
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
-                    <span class="level-status-pill pill-green" th:style="${color1 != null ? 'background-color: ' + color1 + ' !important;' : ''}"></span>
+                    <span class="level-status-pill" th:style="'background-color: ' + (${color1 != null ? color1 : indicator1Color}) + ';'"></span>
                 </td>
             </tr>
 
-            <!-- Row 2: Red Status (عامل تطوير) -->
-            <tr>
+            <!-- Row 2: Dynamic Indicator 2 -->
+            <tr th:if="${req2 != null and !#strings.isEmpty(req2)}">
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
                     <span th:text="${rec2}"></span>
@@ -517,12 +517,12 @@
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
-                    <span class="level-status-pill pill-red" th:style="${color2 != null ? 'background-color: ' + color2 + ' !important;' : ''}"></span>
+                    <span class="level-status-pill" th:style="'background-color: ' + (${color2 != null ? color2 : indicator2Color}) + ';'"></span>
                 </td>
             </tr>
 
-            <!-- Row 3: Orange Status (عامل حياد) -->
-            <tr>
+            <!-- Row 3: Dynamic Indicator 3 -->
+            <tr th:if="${req3 != null and !#strings.isEmpty(req3)}">
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
                     <span th:text="${rec3}"></span>
@@ -537,7 +537,7 @@
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
-                    <span class="level-status-pill pill-orange" th:style="${color3 != null ? 'background-color: ' + color3 + ' !important;' : ''}"></span>
+                    <span class="level-status-pill" th:style="'background-color: ' + (${color3 != null ? color3 : indicator3Color}) + ';'"></span>
                 </td>
             </tr>
         </tbody>

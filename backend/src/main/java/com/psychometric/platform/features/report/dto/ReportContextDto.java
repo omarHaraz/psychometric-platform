@@ -427,17 +427,26 @@ public class ReportContextDto implements Serializable {
             if (competencyScore != null) map.put("competencyScore", competencyScore);
             if (competencyColor != null) map.put("competencyColor", competencyColor);
 
-            if (indicator1Color != null) map.put("indicator1Color", indicator1Color);
+            if (indicator1Color != null) {
+                map.put("indicator1Color", indicator1Color);
+                map.put("color1", indicator1Color);
+            }
             if (req1 != null) map.put("req1", req1);
             if (result1 != null) map.put("result1", result1);
             if (rec1 != null) map.put("rec1", rec1);
 
-            if (indicator2Color != null) map.put("indicator2Color", indicator2Color);
+            if (indicator2Color != null) {
+                map.put("indicator2Color", indicator2Color);
+                map.put("color2", indicator2Color);
+            }
             if (req2 != null) map.put("req2", req2);
             if (result2 != null) map.put("result2", result2);
             if (rec2 != null) map.put("rec2", rec2);
 
-            if (indicator3Color != null) map.put("indicator3Color", indicator3Color);
+            if (indicator3Color != null) {
+                map.put("indicator3Color", indicator3Color);
+                map.put("color3", indicator3Color);
+            }
             if (req3 != null) map.put("req3", req3);
             if (result3 != null) map.put("result3", result3);
             if (rec3 != null) map.put("rec3", rec3);
