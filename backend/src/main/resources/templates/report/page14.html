@@ -391,8 +391,8 @@
 <body>
     <div th:fragment="body">
 <div class="competency-header-block">
-        <h2 class="competency-title" th:text="${compPage14 != null ? compPage14.competencyTitle : (competencyTitle != null ? competencyTitle : 'التحليل والتخطيط المنهجي')}">التحليل والتخطيط المنهجي</h2>
-        <p class="competency-desc" th:text="${compPage14 != null ? compPage14.competencyDesc : (competencyDesc != null ? competencyDesc : 'القدرة على تفكيك المشكلات المعقدة والاعتماد على البيانات المنطقية لبناء خطط عمل دقيقة ومنهجية قابلة للتنفيذ.')}">
+        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'التحليل والتخطيط المنهجي'}">التحليل والتخطيط المنهجي</h2>
+        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'القدرة على تفكيك المشكلات المعقدة والاعتماد على البيانات المنطقية لبناء خطط عمل دقيقة ومنهجية قابلة للتنفيذ.'}">
             القدرة على تفكيك المشكلات المعقدة والاعتماد على البيانات المنطقية لبناء خطط عمل دقيقة ومنهجية قابلة للتنفيذ.
         </p>
     </div>
@@ -434,17 +434,17 @@
         <tr><td colspan="2" style="height: 10px; border: none;"></td></tr>
         <!-- Score Data Row -->
         <tr>
-            <!-- Left Side 45%: Slider (Pure Thymeleaf Math & Dynamic Color) -->
+            <!-- Left Side 45%: Slider (Direct Global Variable Binding) -->
             <td style="width: 45%; vertical-align: middle; padding: 10px 10px; position: relative; border: none;">
                 <div style="position: relative; width: 100%; height: 16px;">
                     <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
                     <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                    <!-- Marker with Continuous Double Centered Math -->
-                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${compPage14 != null and compPage14.competencyScore != null ? compPage14.competencyScore : (competencyScore != null ? competencyScore : (analysisScore != null ? analysisScore : 3.12))}) - 1) * 20)) + '%;'">
+                    <!-- Marker with Direct Math -->
+                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${analysisScore != null ? analysisScore : (competencyScore != null ? competencyScore : 3)}) - 1) * 20)) + '%;'">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
-                             th:styleappend="'background-color: ' + (${compPage14 != null and compPage14.competencyColor != null ? compPage14.competencyColor : (competencyColor != null ? competencyColor : (analysisColor != null ? analysisColor : '#d98a44'))}) + ';'"></div>
+                             th:styleappend="'background-color: ' + (${analysisColor != null ? analysisColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'"></div>
                         <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
-                             th:styleappend="'background-color: ' + (${compPage14 != null and compPage14.competencyColor != null ? compPage14.competencyColor : (competencyColor != null ? competencyColor : (analysisColor != null ? analysisColor : '#d98a44'))}) + ';'">
+                             th:styleappend="'background-color: ' + (${analysisColor != null ? analysisColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'">
                             <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                 <circle cx="12" cy="7" r="4" fill="#ffffff" />
                                 <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
@@ -456,8 +456,8 @@
             <!-- Right Side 55%: Trait Name & Colored Pill -->
             <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
                 <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
-                      th:styleappend="'background-color: ' + (${compPage14 != null and compPage14.competencyColor != null ? compPage14.competencyColor : (competencyColor != null ? competencyColor : (analysisColor != null ? analysisColor : '#d98a44'))}) + ';'"></span>
-                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${compPage14 != null ? compPage14.competencyTitle : (competencyTitle != null ? competencyTitle : 'التحليل والتخطيط المنهجي')}">التحليل والتخطيط المنهجي</span>
+                      th:styleappend="'background-color: ' + (${analysisColor != null ? analysisColor : (competencyColor != null ? competencyColor : '#c87d46')}) + ';'"></span>
+                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'التحليل والتخطيط المنهجي'}">التحليل والتخطيط المنهجي</span>
             </td>
         </tr>
     </table>
@@ -482,26 +482,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${compPage14 != null and compPage14.rec1 != null ? compPage14.rec1 : (rec1 != null ? rec1 : 'وفر فرصاً لإدارة مشاريع تخطيط عسكري معقدة بشكل مستقل لتعزيز الاتساق والمرونة. اقترح مراقبة أنواع مختلفة من المواقف العملياتية لتحسين الاستجابة. شجع طلب ملاحظات من القادة والزملاء لتطوير مهارات التحليل والتخطيط.')}">
+                    <span th:text="${rec1 != null ? rec1 : 'وفر فرصاً لإدارة مشاريع تخطيط عسكري معقدة بشكل مستقل لتعزيز الاتساق والمرونة. اقترح مراقبة أنواع مختلفة من المواقف العملياتية لتحسين الاستجابة. شجع طلب ملاحظات من القادة والزملاء لتطوير مهارات التحليل والتخطيط.'}">
                         وفر فرصاً لإدارة مشاريع تخطيط عسكري معقدة بشكل مستقل لتعزيز الاتساق والمرونة. اقترح مراقبة أنواع مختلفة من المواقف العملياتية لتحسين الاستجابة. شجع طلب ملاحظات من القادة والزملاء لتطوير مهارات التحليل والتخطيط.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${compPage14 != null and compPage14.result1 != null ? compPage14.result1 : (result1 != null ? result1 : 'يتعامل مع المواقف بدرجة متوازنة من التنظيم، مما يدعم التحليل والتخطيط المنهجي بشكل جيد. يظهر منهجية وتنظيماً معقولين في معالجة المعلومات.')}">
+                    <span th:text="${result1 != null ? result1 : 'يتعامل مع المواقف بدرجة متوازنة من التنظيم، مما يدعم التحليل والتخطيط المنهجي بشكل جيد. يظهر منهجية وتنظيماً معقولين في معالجة المعلومات.'}">
                         يتعامل مع المواقف بدرجة متوازنة من التنظيم، مما يدعم التحليل والتخطيط المنهجي بشكل جيد. يظهر منهجية وتنظيماً معقولين في معالجة المعلومات.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${compPage14 != null and compPage14.req1 != null ? compPage14.req1 : (req1 != null ? req1 : 'يميل إلى النظام والترتيب عند تحليل المواقف ووضع الخطط بشكل منهجي.')}">
+                    <span th:text="${req1 != null ? req1 : 'يميل إلى النظام والترتيب عند تحليل المواقف ووضع الخطط بشكل منهجي.'}">
                         يميل إلى النظام والترتيب عند تحليل المواقف ووضع الخطط بشكل منهجي.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage14 != null and compPage14.indicator1Color != null ? compPage14.indicator1Color : (indicator1Color != null ? indicator1Color : '#d98a44')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#d98a44'}) + ';'"></span>
                 </td>
             </tr>
 
@@ -509,26 +509,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${compPage14 != null and compPage14.rec2 != null ? compPage14.rec2 : (rec2 != null ? rec2 : 'وفّر فرصاً لقيادة مشاريع تخطيط تتطلب تحليلاً كمياً مستقلاً لتعزيز الاتساق. شجّع التعرض لأنواع مختلفة من البيانات العملياتية لتحسين القدرة على التكيف. رتّب جلسات تغذية راجعة منتظمة من الزملاء والقادة الأعلى لتطوير المهارات التحليلية.')}">
+                    <span th:text="${rec2 != null ? rec2 : 'وفّر فرصاً لقيادة مشاريع تخطيط تتطلب تحليلاً كمياً مستقلاً لتعزيز الاتساق. شجّع التعرض لأنواع مختلفة من البيانات العملياتية لتحسين القدرة على التكيف. رتّب جلسات تغذية راجعة منتظمة من الزملاء والقادة الأعلى لتطوير المهارات التحليلية.'}">
                         وفّر فرصاً لقيادة مشاريع تخطيط تتطلب تحليلاً كمياً مستقلاً لتعزيز الاتساق. شجّع التعرض لأنواع مختلفة من البيانات العملياتية لتحسين القدرة على التكيف. رتّب جلسات تغذية راجعة منتظمة من الزملاء والقادة الأعلى لتطوير المهارات التحليلية.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${compPage14 != null and compPage14.result2 != null ? compPage14.result2 : (result2 != null ? result2 : 'يتعامل بكفاءة معقولة مع البيانات الرقمية والتحليل الكمي، مما يدعم التخطيط المنهجي المتوازن. يستطيع التعرف على الأنماط الأساسية وتطبيق المنطق الرياضي في المواقف العملياتية المعتادة.')}">
+                    <span th:text="${result2 != null ? result2 : 'يتعامل بكفاءة معقولة مع البيانات الرقمية والتحليل الكمي، مما يدعم التخطيط المنهجي المتوازن. يستطيع التعرف على الأنماط الأساسية وتطبيق المنطق الرياضي في المواقف العملياتية المعتادة.'}">
                         يتعامل بكفاءة معقولة مع البيانات الرقمية والتحليل الكمي، مما يدعم التخطيط المنهجي المتوازن. يستطيع التعرف على الأنماط الأساسية وتطبيق المنطق الرياضي في المواقف العملياتية المعتادة.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${compPage14 != null and compPage14.req2 != null ? compPage14.req2 : (req2 != null ? req2 : 'يتمتع بقدرة قوية على التحليل الكمي لدعم التخطيط المنهجي بكفاءة.')}">
+                    <span th:text="${req2 != null ? req2 : 'يتمتع بقدرة قوية على التحليل الكمي لدعم التخطيط المنهجي بكفاءة.'}">
                         يتمتع بقدرة قوية على التحليل الكمي لدعم التخطيط المنهجي بكفاءة.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage14 != null and compPage14.indicator2Color != null ? compPage14.indicator2Color : (indicator2Color != null ? indicator2Color : '#d98a44')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d98a44'}) + ';'"></span>
                 </td>
             </tr>
 
@@ -536,26 +536,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${compPage14 != null and compPage14.rec3 != null ? compPage14.rec3 : (rec3 != null ? rec3 : 'ادعُ القائد لتقديم ورش عمل أو تدريب الآخرين على التحليل والتخطيط المنهجي. وفّر مهام متقدمة تتطلب الموازنة بين التحليل الشامل والاستجابة السريعة. شجّع التطوير المهني المتقدم في القيادة الاستراتيجية وإدارة العمليات المعقدة.')}">
+                    <span th:text="${rec3 != null ? rec3 : 'ادعُ القائد لتقديم ورش عمل أو تدريب الآخرين على التحليل والتخطيط المنهجي. وفّر مهام متقدمة تتطلب الموازنة بين التحليل الشامل والاستجابة السريعة. شجّع التطوير المهني المتقدم في القيادة الاستراتيجية وإدارة العمليات المعقدة.'}">
                         ادعُ القائد لتقديم ورش عمل أو تدريب الآخرين على التحليل والتخطيط المنهجي. وفّر مهام متقدمة تتطلب الموازنة بين التحليل الشامل والاستجابة السريعة. شجّع التطوير المهني المتقدم في القيادة الاستراتيجية وإدارة العمليات المعقدة.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${compPage14 != null and compPage14.result3 != null ? compPage14.result3 : (result3 != null ? result3 : 'يتميز بتركيز استثنائي في تحليل المواقف المعقدة وصياغة خطط عسكرية شاملة ومحكمة. يحافظ على انتباه مستمر حتى في أصعب البيئات العملياتية.')}">
+                    <span th:text="${result3 != null ? result3 : 'يتميز بتركيز استثنائي في تحليل المواقف المعقدة وصياغة خطط عسكرية شاملة ومحكمة. يحافظ على انتباه مستمر حتى في أصعب البيئات العملياتية.'}">
                         يتميز بتركيز استثنائي في تحليل المواقف المعقدة وصياغة خطط عسكرية شاملة ومحكمة. يحافظ على انتباه مستمر حتى في أصعب البيئات العملياتية.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${compPage14 != null and compPage14.req3 != null ? compPage14.req3 : (req3 != null ? req3 : 'يركز بشكل كبير على تحليل المواقف وتصميم خطط منهجية لتحقيق الأهداف العسكرية.')}">
+                    <span th:text="${req3 != null ? req3 : 'يركز بشكل كبير على تحليل المواقف وتصميم خطط منهجية لتحقيق الأهداف العسكرية.'}">
                         يركز بشكل كبير على تحليل المواقف وتصميم خطط منهجية لتحقيق الأهداف العسكرية.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage14 != null and compPage14.indicator3Color != null ? compPage14.indicator3Color : (indicator3Color != null ? indicator3Color : '#558b6e')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#558b6e'}) + ';'"></span>
                 </td>
             </tr>
         </tbody>

@@ -391,8 +391,8 @@
 <body>
     <div th:fragment="body">
 <div class="competency-header-block">
-        <h2 class="competency-title" th:text="${compPage10 != null ? compPage10.competencyTitle : (competencyTitle != null ? competencyTitle : 'القيادة الملهمة')}">القيادة الملهمة</h2>
-        <p class="competency-desc" th:text="${compPage10 != null ? compPage10.competencyDesc : (competencyDesc != null ? competencyDesc : 'قدرة القائد على تحفيز الفرق وإلهامهم لتحقيق أقصى إمكاناتهم وتوحيد الجهود نحو رؤية مشتركة وأهداف طموحة.')}">
+        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'القيادة الملهمة'}">القيادة الملهمة</h2>
+        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'قدرة القائد على تحفيز الفرق وإلهامهم لتحقيق أقصى إمكاناتهم وتوحيد الجهود نحو رؤية مشتركة وأهداف طموحة.'}">
             قدرة القائد على تحفيز الفرق وإلهامهم لتحقيق أقصى إمكاناتهم وتوحيد الجهود نحو رؤية مشتركة وأهداف طموحة.
         </p>
     </div>
@@ -434,17 +434,17 @@
         <tr><td colspan="2" style="height: 10px; border: none;"></td></tr>
         <!-- Score Data Row -->
         <tr>
-            <!-- Left Side 45%: Slider (Pure Thymeleaf Math & Dynamic Color) -->
+            <!-- Left Side 45%: Slider (Direct Global Variable Binding) -->
             <td style="width: 45%; vertical-align: middle; padding: 10px 10px; position: relative; border: none;">
                 <div style="position: relative; width: 100%; height: 16px;">
                     <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
                     <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                    <!-- Marker with Continuous Double Centered Math -->
-                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${compPage10 != null and compPage10.competencyScore != null ? compPage10.competencyScore : (competencyScore != null ? competencyScore : (leadershipScore != null ? leadershipScore : 3.29))}) - 1) * 20)) + '%;'">
+                    <!-- Marker with Direct Math -->
+                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${leadershipScore != null ? leadershipScore : (competencyScore != null ? competencyScore : 3)}) - 1) * 20)) + '%;'">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
-                             th:styleappend="'background-color: ' + (${compPage10 != null and compPage10.competencyColor != null ? compPage10.competencyColor : (competencyColor != null ? competencyColor : (leadershipColor != null ? leadershipColor : '#d98a44'))}) + ';'"></div>
+                             th:styleappend="'background-color: ' + (${leadershipColor != null ? leadershipColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'"></div>
                         <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
-                             th:styleappend="'background-color: ' + (${compPage10 != null and compPage10.competencyColor != null ? compPage10.competencyColor : (competencyColor != null ? competencyColor : (leadershipColor != null ? leadershipColor : '#d98a44'))}) + ';'">
+                             th:styleappend="'background-color: ' + (${leadershipColor != null ? leadershipColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'">
                             <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                 <circle cx="12" cy="7" r="4" fill="#ffffff" />
                                 <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
@@ -456,8 +456,8 @@
             <!-- Right Side 55%: Trait Name & Colored Pill -->
             <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
                 <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
-                      th:styleappend="'background-color: ' + (${compPage10 != null and compPage10.competencyColor != null ? compPage10.competencyColor : (competencyColor != null ? competencyColor : (leadershipColor != null ? leadershipColor : '#d98a44'))}) + ';'"></span>
-                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${compPage10 != null ? compPage10.competencyTitle : (competencyTitle != null ? competencyTitle : 'القيادة الملهمة')}">القيادة الملهمة</span>
+                      th:styleappend="'background-color: ' + (${leadershipColor != null ? leadershipColor : (competencyColor != null ? competencyColor : '#c87d46')}) + ';'"></span>
+                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'القيادة الملهمة'}">القيادة الملهمة</span>
             </td>
         </tr>
     </table>
@@ -482,26 +482,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${compPage10 != null and compPage10.rec1 != null ? compPage10.rec1 : (rec1 != null ? rec1 : 'وفّر فرصاً لقيادة مبادرات تحفيزية بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة أنواع مختلفة من الأفراد والمواقف لتحسين الاستجابة. شجع طلب ملاحظات من الأفراد والزملاء لتطوير مهارات القيادة الملهمة.')}">
+                    <span th:text="${rec1 != null ? rec1 : 'وفّر فرصاً لقيادة مبادرات تحفيزية بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة أنواع مختلفة من الأفراد والمواقف لتحسين الاستجابة. شجع طلب ملاحظات من الأفراد والزملاء لتطوير مهارات القيادة الملهمة.'}">
                         وفّر فرصاً لقيادة مبادرات تحفيزية بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة أنواع مختلفة من الأفراد والمواقف لتحسين الاستجابة. شجع طلب ملاحظات من الأفراد والزملاء لتطوير مهارات القيادة الملهمة.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${compPage10 != null and compPage10.result1 != null ? compPage10.result1 : (result1 != null ? result1 : 'يتفاعل مع الأفراد بحماس متوازن يدعم القيادة الملهمة بفعالية. يظهر وضوحاً واستجابة في توجيه الوحدات نحو الأهداف الاستراتيجية.')}">
+                    <span th:text="${result1 != null ? result1 : 'يتفاعل مع الأفراد بحماس متوازن يدعم القيادة الملهمة بفعالية. يظهر وضوحاً واستجابة في توجيه الوحدات نحو الأهداف الاستراتيجية.'}">
                         يتفاعل مع الأفراد بحماس متوازن يدعم القيادة الملهمة بفعالية. يظهر وضوحاً واستجابة في توجيه الوحدات نحو الأهداف الاستراتيجية.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${compPage10 != null and compPage10.req1 != null ? compPage10.req1 : (req1 != null ? req1 : 'يبدي حماساً كبيراً لتحفيز الآخرين وإلهامهم نحو تحقيق الأهداف العسكرية.')}">
+                    <span th:text="${req1 != null ? req1 : 'يبدي حماساً كبيراً لتحفيز الآخرين وإلهامهم نحو تحقيق الأهداف العسكرية.'}">
                         يبدي حماساً كبيراً لتحفيز الآخرين وإلهامهم نحو تحقيق الأهداف العسكرية.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage10 != null and compPage10.indicator1Color != null ? compPage10.indicator1Color : (indicator1Color != null ? indicator1Color : '#d98a44')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#d98a44'}) + ';'"></span>
                 </td>
             </tr>
 
@@ -509,26 +509,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${compPage10 != null and compPage10.rec2 != null ? compPage10.rec2 : (rec2 != null ? rec2 : 'وفّر فرصاً لقيادة مبادرات تحفيزية بشكل مستقل لتعزيز الاتساق والقدرة على التكيف. اقترح مراقبة أنماط مختلفة من القيادة الملهمة لتحسين الاستجابة. شجع طلب تغذية راجعة من الزملاء والمرؤوسين لتطوير المهارات التحفيزية.')}">
+                    <span th:text="${rec2 != null ? rec2 : 'وفّر فرصاً لقيادة مبادرات تحفيزية بشكل مستقل لتعزيز الاتساق والقدرة على التكيف. اقترح مراقبة أنماط مختلفة من القيادة الملهمة لتحسين الاستجابة. شجع طلب تغذية راجعة من الزملاء والمرؤوسين لتطوير المهارات التحفيزية.'}">
                         وفّر فرصاً لقيادة مبادرات تحفيزية بشكل مستقل لتعزيز الاتساق والقدرة على التكيف. اقترح مراقبة أنماط مختلفة من القيادة الملهمة لتحسين الاستجابة. شجع طلب تغذية راجعة من الزملاء والمرؤوسين لتطوير المهارات التحفيزية.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${compPage10 != null and compPage10.result2 != null ? compPage10.result2 : (result2 != null ? result2 : 'يحافظ على نظرة متوازنة تجمع بين الواقعية والإيجابية، مما يدعم القيادة الملهمة بفعالية. يظهر ثقة وتفاؤلاً معتدلاً في معظم المواقف العملياتية.')}">
+                    <span th:text="${result2 != null ? result2 : 'يحافظ على نظرة متوازنة تجمع بين الواقعية والإيجابية، مما يدعم القيادة الملهمة بفعالية. يظهر ثقة وتفاؤلاً معتدلاً في معظم المواقف العملياتية.'}">
                         يحافظ على نظرة متوازنة تجمع بين الواقعية والإيجابية، مما يدعم القيادة الملهمة بفعالية. يظهر ثقة وتفاؤلاً معتدلاً في معظم المواقف العملياتية.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${compPage10 != null and compPage10.req2 != null ? compPage10.req2 : (req2 != null ? req2 : 'يعكس تفاؤلاً يشجع الآخرين ويعزز التزامهم بالأهداف العسكرية.')}">
+                    <span th:text="${req2 != null ? req2 : 'يعكس تفاؤلاً يشجع الآخرين ويعزز التزامهم بالأهداف العسكرية.'}">
                         يعكس تفاؤلاً يشجع الآخرين ويعزز التزامهم بالأهداف العسكرية.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage10 != null and compPage10.indicator2Color != null ? compPage10.indicator2Color : (indicator2Color != null ? indicator2Color : '#d98a44')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d98a44'}) + ';'"></span>
                 </td>
             </tr>
 
@@ -536,26 +536,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${compPage10 != null and compPage10.rec3 != null ? compPage10.rec3 : (rec3 != null ? rec3 : 'وفّر فرصاً لقيادة مبادرات تتطلب تأثيراً أكبر لتعزيز الاتساق والقدرة على التكيف. شجع مراقبة أنماط قيادية متنوعة لتحسين الاستجابة. حفز طلب الملاحظات من الجنود والزملاء لتحسين مهارات التأثير والإلهام.')}">
+                    <span th:text="${rec3 != null ? rec3 : 'وفّر فرصاً لقيادة مبادرات تتطلب تأثيراً أكبر لتعزيز الاتساق والقدرة على التكيف. شجع مراقبة أنماط قيادية متنوعة لتحسين الاستجابة. حفز طلب الملاحظات من الجنود والزملاء لتحسين مهارات التأثير والإلهام.'}">
                         وفّر فرصاً لقيادة مبادرات تتطلب تأثيراً أكبر لتعزيز الاتساق والقدرة على التكيف. شجع مراقبة أنماط قيادية متنوعة لتحسين الاستجابة. حفز طلب الملاحظات من الجنود والزملاء لتحسين مهارات التأثير والإلهام.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${compPage10 != null and compPage10.result3 != null ? compPage10.result3 : (result3 != null ? result3 : 'يؤثر في الآخرين بفعالية متوازنة تدعم القيادة الملهمة بشكل مناسب. يظهر قدرة على توجيه الوحدات وتحفيزها في معظم المواقف العملياتية.')}">
+                    <span th:text="${result3 != null ? result3 : 'يؤثر في الآخرين بفعالية متوازنة تدعم القيادة الملهمة بشكل مناسب. يظهر قدرة على توجيه الوحدات وتحفيزها في معظم المواقف العملياتية.'}">
                         يؤثر في الآخرين بفعالية متوازنة تدعم القيادة الملهمة بشكل مناسب. يظهر قدرة على توجيه الوحدات وتحفيزها في معظم المواقف العملياتية.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${compPage10 != null and compPage10.req3 != null ? compPage10.req3 : (req3 != null ? req3 : 'يمتلك قدرة على التأثير في الآخرين لتحفيزهم نحو تحقيق الأهداف المشتركة.')}">
+                    <span th:text="${req3 != null ? req3 : 'يمتلك قدرة على التأثير في الآخرين لتحفيزهم نحو تحقيق الأهداف المشتركة.'}">
                         يمتلك قدرة على التأثير في الآخرين لتحفيزهم نحو تحقيق الأهداف المشتركة.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage10 != null and compPage10.indicator3Color != null ? compPage10.indicator3Color : (indicator3Color != null ? indicator3Color : '#d98a44')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#d98a44'}) + ';'"></span>
                 </td>
             </tr>
         </tbody>

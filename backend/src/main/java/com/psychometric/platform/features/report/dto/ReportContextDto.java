@@ -524,14 +524,6 @@ public class ReportContextDto implements Serializable {
         map.put("growOptionsText", growOptionsText);
         map.put("growWillText", growWillText);
 
-        // Competency Pages 7..14
-        if (competencyPages != null) {
-            map.put("competencyPages", competencyPages);
-            competencyPages.forEach((p, dto) -> {
-                map.put("compPage" + p, dto);
-            });
-        }
-
         return map;
     }
 

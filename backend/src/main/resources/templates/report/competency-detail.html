@@ -434,13 +434,13 @@
         <tr><td colspan="2" style="height: 10px; border: none;"></td></tr>
         <!-- Score Data Row -->
         <tr>
-            <!-- Left Side 45%: Slider (Updated Dynamic Binding) -->
+            <!-- Left Side 45%: Slider (Direct Global Variable Binding) -->
             <td style="width: 45%; vertical-align: middle; padding: 10px 10px; position: relative; border: none;">
                 <div style="position: relative; width: 100%; height: 16px;">
-                    <!-- Track Line -->
+                    <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
                     <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                    <!-- Marker with Updated Backend Variable Binding -->
-                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((compPage7 != null and compPage7.competencyScore != null ? compPage7.competencyScore : (competencyScore != null ? competencyScore : 3.24)) - 1) * 20)) + '%;'">
+                    <!-- Marker with Direct Math -->
+                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${competencyScore != null ? competencyScore : 3}) - 1) * 20)) + '%;'">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                              th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#1e3a4c'}) + ';'"></div>
                         <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"

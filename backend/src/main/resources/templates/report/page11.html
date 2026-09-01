@@ -391,8 +391,8 @@
 <body>
     <div th:fragment="body">
 <div class="competency-header-block">
-        <h2 class="competency-title" th:text="${compPage11 != null ? compPage11.competencyTitle : (competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي')}">التفكير الاستراتيجي</h2>
-        <p class="competency-desc" th:text="${compPage11 != null ? compPage11.competencyDesc : (competencyDesc != null ? competencyDesc : 'قدرة القائد على فهم الصورة الكلية واستشراف التحديات والفرص المستقبلية ووضع خطط طويلة المدى تدعم رسالة المنظمة.')}">
+        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي'}">التفكير الاستراتيجي</h2>
+        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'قدرة القائد على فهم الصورة الكلية واستشراف التحديات والفرص المستقبلية ووضع خطط طويلة المدى تدعم رسالة المنظمة.'}">
             قدرة القائد على فهم الصورة الكلية واستشراف التحديات والفرص المستقبلية ووضع خطط طويلة المدى تدعم رسالة المنظمة.
         </p>
     </div>
@@ -434,17 +434,17 @@
         <tr><td colspan="2" style="height: 10px; border: none;"></td></tr>
         <!-- Score Data Row -->
         <tr>
-            <!-- Left Side 45%: Slider (Pure Thymeleaf Math & Dynamic Color) -->
+            <!-- Left Side 45%: Slider (Direct Global Variable Binding) -->
             <td style="width: 45%; vertical-align: middle; padding: 10px 10px; position: relative; border: none;">
                 <div style="position: relative; width: 100%; height: 16px;">
                     <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
                     <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                    <!-- Marker with Continuous Double Centered Math -->
-                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${compPage11 != null and compPage11.competencyScore != null ? compPage11.competencyScore : (competencyScore != null ? competencyScore : (strategicScore != null ? strategicScore : 3.41))}) - 1) * 20)) + '%;'">
+                    <!-- Marker with Direct Math -->
+                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${strategicScore != null ? strategicScore : (competencyScore != null ? competencyScore : 3)}) - 1) * 20)) + '%;'">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
-                             th:styleappend="'background-color: ' + (${compPage11 != null and compPage11.competencyColor != null ? compPage11.competencyColor : (competencyColor != null ? competencyColor : (strategicColor != null ? strategicColor : '#d98a44'))}) + ';'"></div>
+                             th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'"></div>
                         <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
-                             th:styleappend="'background-color: ' + (${compPage11 != null and compPage11.competencyColor != null ? compPage11.competencyColor : (competencyColor != null ? competencyColor : (strategicColor != null ? strategicColor : '#d98a44'))}) + ';'">
+                             th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'">
                             <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                 <circle cx="12" cy="7" r="4" fill="#ffffff" />
                                 <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
@@ -456,8 +456,8 @@
             <!-- Right Side 55%: Trait Name & Colored Pill -->
             <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
                 <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
-                      th:styleappend="'background-color: ' + (${compPage11 != null and compPage11.competencyColor != null ? compPage11.competencyColor : (competencyColor != null ? competencyColor : (strategicColor != null ? strategicColor : '#d98a44'))}) + ';'"></span>
-                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${compPage11 != null ? compPage11.competencyTitle : (competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي')}">التفكير الاستراتيجي</span>
+                      th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#c87d46')}) + ';'"></span>
+                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي'}">التفكير الاستراتيجي</span>
             </td>
         </tr>
     </table>
@@ -482,20 +482,20 @@
             <tr th:if="${req1 != null or competencyRows != null}">
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage11 != null and compPage11.indicator1Color != null ? compPage11.indicator1Color : (indicator1Color != null ? indicator1Color : '#d9776c')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#d9776c'}) + ';'"></span>
                 </td>
                 <td>
-                    <span th:text="${compPage11 != null and compPage11.req1 != null ? compPage11.req1 : (req1 != null ? req1 : 'يبدي اهتماماً استقصائياً لتحليل البيانات وتوقع المستقبل في اتخاذ القرارات الاستراتيجية.')}">
+                    <span th:text="${req1 != null ? req1 : 'يبدي اهتماماً استقصائياً لتحليل البيانات وتوقع المستقبل في اتخاذ القرارات الاستراتيجية.'}">
                         يبدي اهتماماً استقصائياً لتحليل البيانات وتوقع المستقبل في اتخاذ القرارات الاستراتيجية.
                     </span>
                 </td>
                 <td>
-                    <span th:text="${compPage11 != null and compPage11.result1 != null ? compPage11.result1 : (result1 != null ? result1 : 'يبدي اهتماماً محدوداً بالاستقصاء والتعمق في المعلومات، مما يقيّد قدرته على إجراء تحليل استراتيجي شامل. غالباً ما يعتمد على بيانات سطحية دون البحث في البدائل أو السيناريوهات المستقبلية.')}">
+                    <span th:text="${result1 != null ? result1 : 'يبدي اهتماماً محدوداً بالاستقصاء والتعمق في المعلومات، مما يقيّد قدرته على إجراء تحليل استراتيجي شامل. غالباً ما يعتمد على بيانات سطحية دون البحث في البدائل أو السيناريوهات المستقبلية.'}">
                         يبدي اهتماماً محدوداً بالاستقصاء والتعمق في المعلومات، مما يقيّد قدرته على إجراء تحليل استراتيجي شامل. غالباً ما يعتمد على بيانات سطحية دون البحث في البدائل أو السيناريوهات المستقبلية.
                     </span>
                 </td>
                 <td>
-                    <span th:text="${compPage11 != null and compPage11.rec1 != null ? compPage11.rec1 : (rec1 != null ? rec1 : 'شجّع المشاركة في مشاريع التخطيط الاستراتيجي تحت إشراف قادة ذوي خبرة لتعزيز مهارات الاستقصاء لديهم. قدّم التوجيه حول تقنيات التحليل الاستراتيجي وأدوات استشراف المستقبل. رشّح دورات قصيرة أو قراءات متخصصة في التفكير النقدي وتحليل السيناريوهات. حدد أهدافاً واضحة ومدعومة لتوسيع نطاق الاستقصاء في القرارات العملياتية.')}">
+                    <span th:text="${rec1 != null ? rec1 : 'شجّع المشاركة في مشاريع التخطيط الاستراتيجي تحت إشراف قادة ذوي خبرة لتعزيز مهارات الاستقصاء لديهم. قدّم التوجيه حول تقنيات التحليل الاستراتيجي وأدوات استشراف المستقبل. رشّح دورات قصيرة أو قراءات متخصصة في التفكير النقدي وتحليل السيناريوهات. حدد أهدافاً واضحة ومدعومة لتوسيع نطاق الاستقصاء في القرارات العملياتية.'}">
                         شجّع المشاركة في مشاريع التخطيط الاستراتيجي تحت إشراف قادة ذوي خبرة لتعزيز مهارات الاستقصاء لديهم. قدّم التوجيه حول تقنيات التحليل الاستراتيجي وأدوات استشراف المستقبل. رشّح دورات قصيرة أو قراءات متخصصة في التفكير النقدي وتحليل السيناريوهات. حدد أهدافاً واضحة ومدعومة لتوسيع نطاق الاستقصاء في القرارات العملياتية.
                     </span>
                 </td>
@@ -505,20 +505,20 @@
             <tr th:if="${req2 != null or (competencyRows != null and competencyRows.size() > 1)}">
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage11 != null and compPage11.indicator2Color != null ? compPage11.indicator2Color : (indicator2Color != null ? indicator2Color : '#d98a44')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d98a44'}) + ';'"></span>
                 </td>
                 <td>
-                    <span th:text="${compPage11 != null and compPage11.req2 != null ? compPage11.req2 : (req2 != null ? req2 : 'يمتلك قدرة على التفكير المجرد لفهم الأنماط واتخاذ قرارات استراتيجية ناجحة.')}">
+                    <span th:text="${req2 != null ? req2 : 'يمتلك قدرة على التفكير المجرد لفهم الأنماط واتخاذ قرارات استراتيجية ناجحة.'}">
                         يمتلك قدرة على التفكير المجرد لفهم الأنماط واتخاذ قرارات استراتيجية ناجحة.
                     </span>
                 </td>
                 <td>
-                    <span th:text="${compPage11 != null and compPage11.result2 != null ? compPage11.result2 : (result2 != null ? result2 : 'يتعامل بفعالية مع الأنماط ذات التعقيد المتوسط، مما يدعم تحليل المعطيات واتخاذ قرارات استراتيجية متوازنة. يُظهر قدرة مناسبة على التكيف مع التحديات العملياتية الجديدة.')}">
+                    <span th:text="${result2 != null ? result2 : 'يتعامل بفعالية مع الأنماط ذات التعقيد المتوسط، مما يدعم تحليل المعطيات واتخاذ قرارات استراتيجية متوازنة. يُظهر قدرة مناسبة على التكيف مع التحديات العملياتية الجديدة.'}">
                         يتعامل بفعالية مع الأنماط ذات التعقيد المتوسط، مما يدعم تحليل المعطيات واتخاذ قرارات استراتيجية متوازنة. يُظهر قدرة مناسبة على التكيف مع التحديات العملياتية الجديدة.
                     </span>
                 </td>
                 <td>
-                    <span th:text="${compPage11 != null and compPage11.rec2 != null ? compPage11.rec2 : (rec2 != null ? rec2 : 'وفّر فرصاً لقيادة مبادرات التخطيط الاستراتيجي بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة تحديات عملياتية متنوعة لتحسين الاستجابة. شجّع طلب الملاحظات من القادة الأعلى والأقران لتحسين مهارات التحليل الاستراتيجي.')}">
+                    <span th:text="${rec2 != null ? rec2 : 'وفّر فرصاً لقيادة مبادرات التخطيط الاستراتيجي بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة تحديات عملياتية متنوعة لتحسين الاستجابة. شجّع طلب الملاحظات من القادة الأعلى والأقران لتحسين مهارات التحليل الاستراتيجي.'}">
                         وفّر فرصاً لقيادة مبادرات التخطيط الاستراتيجي بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة تحديات عملياتية متنوعة لتحسين الاستجابة. شجّع طلب الملاحظات من القادة الأعلى والأقران لتحسين مهارات التحليل الاستراتيجي.
                     </span>
                 </td>
@@ -528,7 +528,7 @@
             <tr th:if="${req3 != null}">
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage11 != null and compPage11.indicator3Color != null ? compPage11.indicator3Color : (indicator3Color != null ? indicator3Color : '#d98a44')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#d98a44'}) + ';'"></span>
                 </td>
                 <td>
                     <span th:text="${req3}"></span>

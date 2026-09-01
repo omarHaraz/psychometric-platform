@@ -391,8 +391,8 @@
 <body>
     <div th:fragment="body">
 <div class="competency-header-block">
-        <h2 class="competency-title" th:text="${compPage12 != null ? compPage12.competencyTitle : (competencyTitle != null ? competencyTitle : 'تطوير المهارات')}">تطوير المهارات</h2>
-        <p class="competency-desc" th:text="${compPage12 != null ? compPage12.competencyDesc : (competencyDesc != null ? competencyDesc : 'الالتزام المستمر بتعلم واكتساب معارف وقدرات جديدة ومساعدة المرؤوسين على تطوير كفاءاتهم المهنية.')}">
+        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'تطوير المهارات'}">تطوير المهارات</h2>
+        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'الالتزام المستمر بتعلم واكتساب معارف وقدرات جديدة ومساعدة المرؤوسين على تطوير كفاءاتهم المهنية.'}">
             الالتزام المستمر بتعلم واكتساب معارف وقدرات جديدة ومساعدة المرؤوسين على تطوير كفاءاتهم المهنية.
         </p>
     </div>
@@ -434,17 +434,17 @@
         <tr><td colspan="2" style="height: 10px; border: none;"></td></tr>
         <!-- Score Data Row -->
         <tr>
-            <!-- Left Side 45%: Slider (Pure Thymeleaf Math & Dynamic Color) -->
+            <!-- Left Side 45%: Slider (Direct Global Variable Binding) -->
             <td style="width: 45%; vertical-align: middle; padding: 10px 10px; position: relative; border: none;">
                 <div style="position: relative; width: 100%; height: 16px;">
                     <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
                     <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                    <!-- Marker with Continuous Double Centered Math -->
-                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${compPage12 != null and compPage12.competencyScore != null ? compPage12.competencyScore : (competencyScore != null ? competencyScore : (skillsScore != null ? skillsScore : 3.35))}) - 1) * 20)) + '%;'">
+                    <!-- Marker with Direct Math -->
+                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${skillsScore != null ? skillsScore : (competencyScore != null ? competencyScore : 3)}) - 1) * 20)) + '%;'">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
-                             th:styleappend="'background-color: ' + (${compPage12 != null and compPage12.competencyColor != null ? compPage12.competencyColor : (competencyColor != null ? competencyColor : (skillsColor != null ? skillsColor : '#558b6e'))}) + ';'"></div>
+                             th:styleappend="'background-color: ' + (${skillsColor != null ? skillsColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'"></div>
                         <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
-                             th:styleappend="'background-color: ' + (${compPage12 != null and compPage12.competencyColor != null ? compPage12.competencyColor : (competencyColor != null ? competencyColor : (skillsColor != null ? skillsColor : '#558b6e'))}) + ';'">
+                             th:styleappend="'background-color: ' + (${skillsColor != null ? skillsColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'">
                             <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                 <circle cx="12" cy="7" r="4" fill="#ffffff" />
                                 <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
@@ -456,8 +456,8 @@
             <!-- Right Side 55%: Trait Name & Colored Pill -->
             <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
                 <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
-                      th:styleappend="'background-color: ' + (${compPage12 != null and compPage12.competencyColor != null ? compPage12.competencyColor : (competencyColor != null ? competencyColor : (skillsColor != null ? skillsColor : '#558b6e'))}) + ';'"></span>
-                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${compPage12 != null ? compPage12.competencyTitle : (competencyTitle != null ? competencyTitle : 'تطوير المهارات')}">تطوير المهارات</span>
+                      th:styleappend="'background-color: ' + (${skillsColor != null ? skillsColor : (competencyColor != null ? competencyColor : '#c87d46')}) + ';'"></span>
+                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'تطوير المهارات'}">تطوير المهارات</span>
             </td>
         </tr>
     </table>
@@ -482,26 +482,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${compPage12 != null and compPage12.rec1 != null ? compPage12.rec1 : (rec1 != null ? rec1 : 'وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. رشّح مراقبة أنواع مختلفة من برامج التطوير لتحسين الاستجابة. شجّع طلب ملاحظات من الفريق والزملاء لتحسين مهارات إدارة التطوير.')}">
+                    <span th:text="${rec1 != null ? rec1 : 'وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. رشّح مراقبة أنواع مختلفة من برامج التطوير لتحسين الاستجابة. شجّع طلب ملاحظات من الفريق والزملاء لتحسين مهارات إدارة التطوير.'}">
                         وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. رشّح مراقبة أنواع مختلفة من برامج التطوير لتحسين الاستجابة. شجّع طلب ملاحظات من الفريق والزملاء لتحسين مهارات إدارة التطوير.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${compPage12 != null and compPage12.result1 != null ? compPage12.result1 : (result1 != null ? result1 : 'يحدد أهداف أداء واضحة ويتابع التقدم بانتظام، مما يدعم تطوير المهارات بشكل متوازن. يمتلك قدرة معقولة على تعديل المبادرات التدريبية حسب الحاجة.')}">
+                    <span th:text="${result1 != null ? result1 : 'يحدد أهداف أداء واضحة ويتابع التقدم بانتظام، مما يدعم تطوير المهارات بشكل متوازن. يمتلك قدرة معقولة على تعديل المبادرات التدريبية حسب الحاجة.'}">
                         يحدد أهداف أداء واضحة ويتابع التقدم بانتظام، مما يدعم تطوير المهارات بشكل متوازن. يمتلك قدرة معقولة على تعديل المبادرات التدريبية حسب الحاجة.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${compPage12 != null and compPage12.req1 != null ? compPage12.req1 : (req1 != null ? req1 : 'يطبق مبادئ التحسين المستمر لتطوير المهارات وتعزيز قدرات الفريق العسكري.')}">
+                    <span th:text="${req1 != null ? req1 : 'يطبق مبادئ التحسين المستمر لتطوير المهارات وتعزيز قدرات الفريق العسكري.'}">
                         يطبق مبادئ التحسين المستمر لتطوير المهارات وتعزيز قدرات الفريق العسكري.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage12 != null and compPage12.indicator1Color != null ? compPage12.indicator1Color : (indicator1Color != null ? indicator1Color : '#d98a44')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#d98a44'}) + ';'"></span>
                 </td>
             </tr>
 
@@ -509,26 +509,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${compPage12 != null and compPage12.rec2 != null ? compPage12.rec2 : (rec2 != null ? rec2 : 'شجّع المشاركة في دورات تدريبية عسكرية متقدمة لتعزيز الثقة في التعلم المستمر. قدّم الإرشاد من قادة ذوي خبرة في تطوير المهارات والابتكار. اقترح قراءات أو برامج قصيرة حول القيادة التكيفية والتطوير المهني. ساعد في تحديد أهداف واضحة ومدعومة لاستكشاف أساليب تدريبية جديدة.')}">
+                    <span th:text="${rec2 != null ? rec2 : 'شجّع المشاركة في دورات تدريبية عسكرية متقدمة لتعزيز الثقة في التعلم المستمر. قدّم الإرشاد من قادة ذوي خبرة في تطوير المهارات والابتكار. اقترح قراءات أو برامج قصيرة حول القيادة التكيفية والتطوير المهني. ساعد في تحديد أهداف واضحة ومدعومة لاستكشاف أساليب تدريبية جديدة.'}">
                         شجّع المشاركة في دورات تدريبية عسكرية متقدمة لتعزيز الثقة في التعلم المستمر. قدّم الإرشاد من قادة ذوي خبرة في تطوير المهارات والابتكار. اقترح قراءات أو برامج قصيرة حول القيادة التكيفية والتطوير المهني. ساعد في تحديد أهداف واضحة ومدعومة لاستكشاف أساليب تدريبية جديدة.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${compPage12 != null and compPage12.result2 != null ? compPage12.result2 : (result2 != null ? result2 : 'يبدي اهتماماً محدوداً باستكشاف مهارات جديدة، مما يعيق تطوير المهارات القيادية والعسكرية. قد يكتفي بالأساليب التقليدية دون السعي للتحديث أو التطوير.')}">
+                    <span th:text="${result2 != null ? result2 : 'يبدي اهتماماً محدوداً باستكشاف مهارات جديدة، مما يعيق تطوير المهارات القيادية والعسكرية. قد يكتفي بالأساليب التقليدية دون السعي للتحديث أو التطوير.'}">
                         يبدي اهتماماً محدوداً باستكشاف مهارات جديدة، مما يعيق تطوير المهارات القيادية والعسكرية. قد يكتفي بالأساليب التقليدية دون السعي للتحديث أو التطوير.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${compPage12 != null and compPage12.req2 != null ? compPage12.req2 : (req2 != null ? req2 : 'يبدي فضولاً دائماً لتطوير المهارات والقدرات بهدف رفع الأداء العسكري.')}">
+                    <span th:text="${req2 != null ? req2 : 'يبدي فضولاً دائماً لتطوير المهارات والقدرات بهدف رفع الأداء العسكري.'}">
                         يبدي فضولاً دائماً لتطوير المهارات والقدرات بهدف رفع الأداء العسكري.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage12 != null and compPage12.indicator2Color != null ? compPage12.indicator2Color : (indicator2Color != null ? indicator2Color : '#d9776c')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d9776c'}) + ';'"></span>
                 </td>
             </tr>
 
@@ -536,26 +536,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${compPage12 != null and compPage12.rec3 != null ? compPage12.rec3 : (rec3 != null ? rec3 : 'وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. اقترح مراقبة أساليب تطوير متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الزملاء والمرؤوسين لتحسين مهارات إدارة التطوير.')}">
+                    <span th:text="${rec3 != null ? rec3 : 'وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. اقترح مراقبة أساليب تطوير متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الزملاء والمرؤوسين لتحسين مهارات إدارة التطوير.'}">
                         وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. اقترح مراقبة أساليب تطوير متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الزملاء والمرؤوسين لتحسين مهارات إدارة التطوير.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${compPage12 != null and compPage12.result3 != null ? compPage12.result3 : (result3 != null ? result3 : 'يسعى بشكل متوازن لتطوير قدراته، مما يدعم تحسيناً مستمراً في تطوير المهارات. يظهر استعداداً معقولاً لتعلم مهارات جديدة وتطبيقها.')}">
+                    <span th:text="${result3 != null ? result3 : 'يسعى بشكل متوازن لتطوير قدراته، مما يدعم تحسيناً مستمراً في تطوير المهارات. يظهر استعداداً معقولاً لتعلم مهارات جديدة وتطبيقها.'}">
                         يسعى بشكل متوازن لتطوير قدراته، مما يدعم تحسيناً مستمراً في تطوير المهارات. يظهر استعداداً معقولاً لتعلم مهارات جديدة وتطبيقها.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${compPage12 != null and compPage12.req3 != null ? compPage12.req3 : (req3 != null ? req3 : 'يتمتع بدافع قوي لتطوير المهارات والارتقاء بالقدرات القيادية والعسكرية بشكل مستمر.')}">
+                    <span th:text="${req3 != null ? req3 : 'يتمتع بدافع قوي لتطوير المهارات والارتقاء بالقدرات القيادية والعسكرية بشكل مستمر.'}">
                         يتمتع بدافع قوي لتطوير المهارات والارتقاء بالقدرات القيادية والعسكرية بشكل مستمر.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${compPage12 != null and compPage12.indicator3Color != null ? compPage12.indicator3Color : (indicator3Color != null ? indicator3Color : '#d98a44')}) + ';'"></span>
+                          th:style="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#d98a44'}) + ';'"></span>
                 </td>
             </tr>
         </tbody>
