@@ -6,7 +6,7 @@
     <title>Cover Page - تقرير الكفاءات للقادة</title>
     <style th:fragment="style">
         /* ==========================================================================
-           PDF &amp; Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
+           PDF &amp; Print Optimization (OpenHTMLtoPDF, Flying Saucer compatible)
            ========================================================================== */
         @page {
             size: A4 portrait;
@@ -32,7 +32,7 @@
         }
 
         /* Page Container */
-        .page-container {
+        .pdf-page-wrapper, .page-container {
             position: relative;
             width: 210mm;
             height: 297mm;
@@ -48,8 +48,9 @@
             top: 0;
             left: 0;
             right: 0;
+            width: 100%;
             height: 8px;
-            background: #1e3a4c;
+            background-color: #1e3a4c;
             z-index: 5;
         }
 
@@ -58,22 +59,18 @@
             top: 8px;
             left: 0;
             right: 0;
+            width: 100%;
             height: 4px;
-            background: #7a4b3a;
+            background-color: #7a4b3a;
             z-index: 5;
         }
 
-        /* Flexbox Centering Layout */
+        /* Flex / Table Centering Layout */
         .flex-center-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            display: block;
             text-align: center;
             width: 100%;
-            height: 100%;
-            min-height: 297mm;
-            padding: 35mm 22mm 40mm 22mm;
+            padding: 38mm 22mm 45mm 22mm;
             position: relative;
             z-index: 2;
         }
@@ -92,7 +89,7 @@
         }
 
         .header-symbol {
-            margin: 0 auto 20px auto;
+            margin: 0 auto 18px auto;
             color: #1e3a4c;
             font-size: 24px;
             line-height: 1;
@@ -101,8 +98,8 @@
         .divider-small {
             width: 48px;
             height: 3px;
-            background: #7a4b3a;
-            margin: 0 auto 30px auto;
+            background-color: #7a4b3a;
+            margin: 0 auto 28px auto;
             border: none;
             border-radius: 2px;
         }
@@ -122,7 +119,7 @@
             font-size: 22px;
             font-weight: 600;
             color: #7a4b3a;
-            margin: 0 0 38px 0;
+            margin: 0 0 34px 0;
             direction: rtl;
             text-align: center;
             letter-spacing: 1px;
@@ -132,14 +129,13 @@
         .meta-card {
             width: 400px;
             max-width: 90%;
-            margin: 0 auto 36px auto;
+            margin: 0 auto 32px auto;
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
             border-top: 3px solid #1e3a4c;
             border-radius: 6px;
-            padding: 20px 24px;
+            padding: 18px 24px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
         }
 
         .meta-line {
@@ -183,88 +179,101 @@
 
         /* 4. Logo Container */
         .logo-container {
-            margin: 10px auto 0 auto;
+            margin: 8px auto 0 auto;
             text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: block;
         }
 
         .company-logo {
-            max-width: 140px;
-            max-height: 65px;
-            object-fit: contain;
-            display: inline-block;
+            max-width: 180px;
+            max-height: 70px;
+            display: block;
             margin: 0 auto;
         }
 
-        /* 5. Modern Multi-Segment Footer Banner (Matching Page 2 Design) */
-        .bottom-banner-wrapper {
+        /* 5. Solid Bottom Footer Frame (OpenHTMLtoPDF Display Table structure) */
+        .cover-footer {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             width: 100%;
-            height: 38px;
-            background: #7a4b3a;
+            height: 48px;
+            background-color: #7a4b3a;
+            color: #ffffff;
+            display: table;
             z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20mm;
             box-sizing: border-box;
         }
 
-        .banner-left-shape {
-            position: absolute;
-            bottom: 0;
-            left: 20mm;
-            width: 90px;
-            height: 38px;
-            background: #1e3a4c;
-            transform: skew(-25deg);
-            z-index: 11;
+        .cover-footer-row {
+            display: table-row;
+            width: 100%;
+            height: 48px;
         }
 
-        .banner-text-right {
-            position: relative;
-            z-index: 12;
+        .cover-footer-cell-left {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: left;
+            padding-left: 20mm;
+            width: 40%;
+        }
+
+        .cover-footer-accent {
+            display: inline-block;
+            background-color: #1e3a4c;
+            color: #ffffff;
+            height: 48px;
+            line-height: 48px;
+            padding: 0 16px;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: 'Inter', 'Arial', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .cover-footer-cell-right {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: right;
+            padding-right: 20mm;
             color: #ffffff;
             font-size: 11px;
             font-weight: 600;
             font-family: 'Inter', 'Arial', sans-serif;
-            margin-left: auto;
             direction: ltr;
         }
 
         .banner-subtext {
             position: absolute;
-            bottom: 42px;
+            bottom: 54px;
             right: 20mm;
             font-size: 10px;
             color: #64748b;
             font-family: 'Inter', 'Arial', sans-serif;
             direction: ltr;
+            z-index: 5;
         }
 
         .page-footer-label {
             position: absolute;
-            bottom: 42px;
+            bottom: 54px;
             left: 20mm;
             font-size: 11px;
             color: #64748b;
             direction: rtl;
+            z-index: 5;
         }
     </style>
 </head>
 <body>
-    <div th:fragment="body">
-<div class="page-container">
+    <div th:fragment="body" class="pdf-page-wrapper">
         <!-- Top Accents -->
         <div class="top-accent-bar"></div>
         <div class="copper-accent-stripe"></div>
 
-        <!-- Flexbox Centered Content -->
+        <!-- Centered Content Area -->
         <div class="flex-center-container">
             
             <!-- 1. Header -->
@@ -289,16 +298,17 @@
                 </div>
             </div>
 
-            <!-- 4. Logo (Base64 data URI / Dynamic Thymeleaf URL / Fallback SVG) -->
+            <!-- 4. Logo (Base64 data URI / Dynamic Thymeleaf URL) -->
             <div class="logo-container">
-                <img class="company-logo" 
-                     th:src="${companyLogoBase64 != null ? companyLogoBase64 : (logoUrl != null ? logoUrl : '')}" 
-                     alt="Executive Logo" />
+                <img th:if="${companyLogoBase64 != null}" 
+                     th:src="${companyLogoBase64.startsWith('data:') ? companyLogoBase64 : ('data:image/png;base64,' + companyLogoBase64)}" 
+                     alt="Executive Logo" 
+                     class="company-logo" />
             </div>
 
         </div>
 
-        <!-- 5. Footer -->
+        <!-- 5. Footer Metadata Labels -->
         <div class="page-footer-label" dir="rtl">
             <span th:text="${candidateId}">CAN-98234</span> | تقرير الكفاءات للقادة تطوير
         </div>
@@ -306,11 +316,17 @@
             &#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
         </div>
 
-        <div class="bottom-banner-wrapper">
-            <div class="banner-left-shape"></div>
-            <div class="banner-text-right">Executive Leadership Evaluation</div>
+        <!-- 6. Solid Footer Frame Bar -->
+        <div class="cover-footer">
+            <div class="cover-footer-row">
+                <div class="cover-footer-cell-left">
+                    <span class="cover-footer-accent">EXECUTIVE</span>
+                </div>
+                <div class="cover-footer-cell-right">
+                    Executive Leadership Evaluation
+                </div>
+            </div>
         </div>
-    </div>
     </div>
 </body>
 </html>

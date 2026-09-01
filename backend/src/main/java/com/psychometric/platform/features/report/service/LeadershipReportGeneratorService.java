@@ -79,7 +79,12 @@ public class LeadershipReportGeneratorService {
         String candidateId = rawScore.getAttemptToken() != null ? rawScore.getAttemptToken() : "PCIV126371";
         report.setCandidateId(candidateId);
         report.setCandidateName(rawScore.getCandidateName());
-        report.setReportDate(LocalDate.now().toString());
+
+        // Check if scoredAt exists, convert to LocalDate, otherwise fallback to now
+        String reportDate = rawScore.getScoredAt() != null 
+                ? java.time.LocalDateTime.ofInstant(rawScore.getScoredAt(), java.time.ZoneId.systemDefault()).toLocalDate().toString() 
+                : java.time.LocalDate.now().toString();
+        report.setReportDate(reportDate);
         report.setEvaluationPurpose("تقرير الكفاءات للقادة: تطوير");
 
         // Page 1: Composite Score
