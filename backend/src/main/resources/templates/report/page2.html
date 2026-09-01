@@ -154,17 +154,21 @@
 </head>
 <body>
     <div th:fragment="body">
-        <!-- 1. Page Header -->
-        <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 8px;">
-            <tr>
-                <td style="text-align: right; vertical-align: middle; border: none; padding: 0;">
-                    <h1 class="main-title">المقدمة</h1>
-                </td>
-                <td style="text-align: left; vertical-align: middle; border: none; padding: 0;">
-                    <span style="font-weight: bold; color: #1e3a4c; font-size: 11px;">صفحة 2</span>
-                </td>
-            </tr>
-        </table>
+        <!-- 1. Page Header (Bulletproof Layout) -->
+        <div style="width: 100%; border-bottom: 2px solid #1e3a4c; padding-bottom: 12px; margin-bottom: 16px; background: transparent;">
+            <table style="width: 100%; border-collapse: collapse; border: none; background: transparent;">
+                <tr>
+                    <!-- Left: Page Number -->
+                    <td style="text-align: left; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 12px; background: transparent; display: inline-block;">صفحة 2</span>
+                    </td>
+                    <!-- Right: Main Title -->
+                    <td style="text-align: right; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
+                        <h1 style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 24px; font-weight: 800; color: #1e3a4c; line-height: 1.2; background: transparent;">المقدمة</h1>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
         <!-- Section 1: Evaluation Intro -->
         <div style="text-align: right; margin-top: 4px; margin-bottom: 2px;">
