@@ -1806,96 +1806,25 @@ function renderScoreModalContent(score, token) {
     applyCurrentTranslation();
 }
 
-window.downloadReport = async function(event, token) {
+window.downloadReport = function(event, token) {
     const btn = event ? event.currentTarget : null;
     const originalHtml = btn ? btn.innerHTML : "";
     if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = `<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span><span>Preparing Report...</span>`;
+        btn.innerHTML = `<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span><span>Downloading...</span>`;
+        setTimeout(() => {
+            if (btn) btn.innerHTML = originalHtml;
+        }, 3500);
     }
+
+    // Direct binary stream endpoint - fully compatible with IDM and standard browsers
+    const downloadUrl = `${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/pdf`;
     
-    try {
-        // 1. Fetch full 15-page AI-driven PDF stream directly from backend
-        let streamEndpoint = `${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/pdf`;
-        let streamRes = await fetch(streamEndpoint, {
-            headers: getAuthHeader()
-        });
-
-        if (!streamRes.ok && streamRes.status === 404) {
-            streamEndpoint = `${API_BASE}/api/reports/${encodeURIComponent(token)}/pdf`;
-            streamRes = await fetch(streamEndpoint, {
-                headers: getAuthHeader()
-            });
-        }
-
-        if (streamRes.ok) {
-            const blob = await streamRes.blob();
-            const blobUrl = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = blobUrl;
-            a.download = `Leadership_Assessment_Report_${token.substring(0, 8)}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-            return;
-        }
-
-        // 2. Fallback: Request report download URL from JSON endpoint
-        let downloadEndpoint = `${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/download`;
-        let res = await fetch(downloadEndpoint, {
-            headers: getAuthHeader()
-        });
-
-        if (!res.ok && res.status === 404) {
-            downloadEndpoint = `${API_BASE}/api/reports/${encodeURIComponent(token)}/download`;
-            res = await fetch(downloadEndpoint, {
-                headers: getAuthHeader()
-            });
-        }
-
-        if (res.ok) {
-            const data = await res.json();
-            if (data.reportUrl) {
-                try {
-                    const pdfBlobRes = await fetch(data.reportUrl);
-                    if (pdfBlobRes.ok) {
-                        const blob = await pdfBlobRes.blob();
-                        const blobUrl = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = blobUrl;
-                        a.download = `Leadership_Assessment_Report_${token.substring(0, 8)}.pdf`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-                        return;
-                    }
-                } catch (fetchErr) {
-                    console.warn("Direct blob fetch failed, navigating to link", fetchErr);
-                }
-
-                window.open(data.reportUrl, "_blank");
-                return;
-            }
-        }
-
-        throw new Error('Report generation failed or server busy.');
-
-    } catch (e) {
-        console.error("Error downloading report:", e);
-        window.showCustomModal({
-            title: 'Report Download',
-            message: e.message || 'Failed to download report. Please try again.',
-            type: 'danger',
-            icon: 'error'
-        });
-    } finally {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = originalHtml;
-        }
-    }
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = `Leadership_Assessment_Report_${token.substring(0, 8)}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 };
 
 function downloadScoreJson(score, token) {
