@@ -38,11 +38,11 @@ public class ReportContextDto implements Serializable {
     // =========================================================================
     private Integer socialScore = 5;
     private String socialRisk = "متوسط";
-    private String socialInterpretation = "من المرجح أنه أجاب بصدق من دون إظهار صورة إيجابية بشدة. ما من إجراءات أخرى يلزم اتخاذها.";
+    private String socialInterpretation = null;
 
     private Integer centralScore = 2;
     private String centralRisk = "منخفض";
-    private String centralInterpretation = "من المرجح أنه أجاب بصراحة بدون رغبة في إخفاء شخصيته الحقيقية. ما من إجراءات أخرى يلزم اتخاذها.";
+    private String centralInterpretation = null;
 
     // =========================================================================
     // Page 3: Framework Definitions (page3.html / page-3-framework.html)
