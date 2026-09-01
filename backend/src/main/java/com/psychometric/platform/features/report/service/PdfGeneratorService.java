@@ -42,12 +42,21 @@ public class PdfGeneratorService {
             throw new IllegalArgumentException("ReportContextDto cannot be null");
         }
 
-        log.info("Generating PDF report for candidate: {}", reportDto.getCandidateId());
+        log.info("Generating PDF report for candidate: {} ({})", reportDto.getCandidateId(), reportDto.getCandidateName());
 
         try {
             // 1. Process Thymeleaf Master Report Template into HTML String
             Context context = reportDto.toThymeleafContext();
             context.setLocale(new Locale("ar"));
+
+            log.info("[PDF-RENDER-DEBUG] Candidate ID: {}", reportDto.getCandidateId());
+            log.info("[PDF-RENDER-DEBUG] commScore: {}, commColor: {}", context.getVariable("commScore"), context.getVariable("commColor"));
+            log.info("[PDF-RENDER-DEBUG] initiativeScore: {}, initiativeColor: {}", context.getVariable("initiativeScore"), context.getVariable("initiativeColor"));
+            log.info("[PDF-RENDER-DEBUG] decisionScore: {}, leadershipScore: {}", context.getVariable("decisionScore"), context.getVariable("leadershipScore"));
+            log.info("[PDF-RENDER-DEBUG] abstractScore: {}, numericalScore: {}, verbalScore: {}", 
+                    context.getVariable("abstractScore"), context.getVariable("numericalScore"), context.getVariable("verbalScore"));
+            System.out.println(">>> [PDF-RENDER] commScore=" + context.getVariable("commScore") + ", initiativeScore=" + context.getVariable("initiativeScore") + ", candidate=" + reportDto.getCandidateName());
+
             String htmlContent = templateEngine.process("report/master-report", context);
 
             // 2. Build PDF using OpenHTMLtoPDF with RTL text support & Unicode Bidirectional shaping
