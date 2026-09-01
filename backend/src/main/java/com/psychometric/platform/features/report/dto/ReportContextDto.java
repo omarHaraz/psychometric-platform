@@ -314,7 +314,7 @@ public class ReportContextDto implements Serializable {
         private String candidateId;
         private String competencyTitle;
         private String competencyDesc;
-        private Integer competencyScore;
+        private Double competencyScore;
         private String competencyColor;
 
         // Row 1
@@ -349,8 +349,10 @@ public class ReportContextDto implements Serializable {
         public String getCompetencyDesc() { return competencyDesc; }
         public void setCompetencyDesc(String competencyDesc) { this.competencyDesc = competencyDesc; }
 
-        public Integer getCompetencyScore() { return competencyScore; }
-        public void setCompetencyScore(Integer competencyScore) { this.competencyScore = competencyScore; }
+        public Double getCompetencyScore() { return competencyScore; }
+        public void setCompetencyScore(Double competencyScore) { this.competencyScore = competencyScore; }
+        public void setCompetencyScore(Integer competencyScore) { this.competencyScore = competencyScore != null ? competencyScore.doubleValue() : null; }
+        public void setCompetencyScore(Number competencyScore) { this.competencyScore = competencyScore != null ? competencyScore.doubleValue() : null; }
 
         public String getCompetencyColor() { return competencyColor; }
         public void setCompetencyColor(String competencyColor) { this.competencyColor = competencyColor; }
@@ -499,6 +501,14 @@ public class ReportContextDto implements Serializable {
         map.put("growRealityText", growRealityText);
         map.put("growOptionsText", growOptionsText);
         map.put("growWillText", growWillText);
+
+        // Competency Pages 7..14
+        if (competencyPages != null) {
+            map.put("competencyPages", competencyPages);
+            competencyPages.forEach((p, dto) -> {
+                map.put("compPage" + p, dto);
+            });
+        }
 
         return map;
     }

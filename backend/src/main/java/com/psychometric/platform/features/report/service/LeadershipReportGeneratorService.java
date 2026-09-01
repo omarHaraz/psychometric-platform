@@ -231,41 +231,58 @@ public class LeadershipReportGeneratorService {
     }
 
     private void initializeDetailedCompetencyPages(AssessmentScoreResponseDto raw, ReportContextDto report) {
+        Map<String, Double> traitMap = new HashMap<>();
+        if (raw.getTraitScores() != null) {
+            for (var ts : raw.getTraitScores()) {
+                if (ts.getTraitCode() != null && ts.getScorePct() != null) {
+                    traitMap.put(ts.getTraitCode().trim(), ts.getScorePct());
+                }
+            }
+        }
+
         for (int p = 7; p <= 14; p++) {
             CompetencyDetailDto defaultDto = ReportContextDto.getDefaultCompetencyPage(p, report.getCandidateId());
 
-            // Sync with backend calculated score & color
+            // Sync with backend calculated continuous Double score & color
             switch (p) {
                 case 7 -> {
-                    defaultDto.setCompetencyScore(report.getCommScore());
+                    double dScore = scaleTo5Double(traitMap.getOrDefault("COMMUNICATION_AND_INFLUENCE", 80.0));
+                    defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getCommColor());
                 }
                 case 8 -> {
-                    defaultDto.setCompetencyScore(report.getInitiativeScore());
+                    double dScore = scaleTo5Double(traitMap.getOrDefault("INITIATIVE", 50.0));
+                    defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getInitiativeColor());
                 }
                 case 9 -> {
-                    defaultDto.setCompetencyScore(report.getDecisionScore());
+                    double dScore = scaleTo5Double(traitMap.getOrDefault("DECISION_MAKING_AND_RESPONSIBILITY", 70.0));
+                    defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getDecisionColor());
                 }
                 case 10 -> {
-                    defaultDto.setCompetencyScore(report.getLeadershipScore());
+                    double dScore = scaleTo5Double(traitMap.getOrDefault("INSPIRING_LEADERSHIP", 70.0));
+                    defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getLeadershipColor());
                 }
                 case 11 -> {
-                    defaultDto.setCompetencyScore(report.getStrategicScore());
+                    double dScore = scaleTo5Double(traitMap.getOrDefault("STRATEGIC_THINKING", 40.0));
+                    defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getStrategicColor());
                 }
                 case 12 -> {
-                    defaultDto.setCompetencyScore(report.getSkillsScore());
+                    double dScore = scaleTo5Double(traitMap.getOrDefault("SKILL_DEVELOPMENT", 40.0));
+                    defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getSkillsColor());
                 }
                 case 13 -> {
-                    defaultDto.setCompetencyScore(report.getAdaptabilityScore());
+                    double dScore = scaleTo5Double(traitMap.getOrDefault("ADAPTABILITY", 70.0));
+                    defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getAdaptabilityColor());
                 }
                 case 14 -> {
-                    defaultDto.setCompetencyScore(report.getAnalysisScore());
+                    double dScore = scaleTo5Double(traitMap.getOrDefault("SYSTEMATIC_ANALYSIS_AND_PLANNING", 90.0));
+                    defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getAnalysisColor());
                 }
             }
@@ -464,6 +481,15 @@ public class LeadershipReportGeneratorService {
         if (scorePct == null) return 5;
         int scaled = (int) Math.round((Math.max(0.0, Math.min(100.0, scorePct)) / 100.0) * 9.0) + 1;
         return Math.max(1, Math.min(10, scaled));
+    }
+
+    /**
+     * Converts a 0..100 percentage score to a continuous Double 1..5 scale (2 decimal places).
+     */
+    public static double scaleTo5Double(Double scorePct) {
+        if (scorePct == null) return 3.0;
+        double scaled = (Math.max(0.0, Math.min(100.0, scorePct)) / 100.0) * 4.0 + 1.0;
+        return Math.round(scaled * 100.0) / 100.0;
     }
 
     /**

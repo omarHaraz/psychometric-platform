@@ -391,9 +391,9 @@
 <body>
     <div th:fragment="body">
 <div class="competency-header-block">
-        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'اتخاذ القرار وتحمل المسؤولية'}">اتخاذ القرار وتحمل المسؤولية</h2>
-        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'قدرة القائد على اختيار القرار الصحيح في الوقت المناسب اعتمادًا على المعلومات المتاحة، مع تحمل نتائج قراراته بكل التزام وشجاعة.'}">
-            قدرة القائد على اختيار القرار الصحيح في الوقت المناسب اعتمادًا على المعلومات المتاحة، مع تحمل نتائج قراراته بكل التزام وشجاعة.
+        <h2 class="competency-title" th:text="${compPage9 != null ? compPage9.competencyTitle : (competencyTitle != null ? competencyTitle : 'اتخاذ القرار وتحمل المسؤولية')}">اتخاذ القرار وتحمل المسؤولية</h2>
+        <p class="competency-desc" th:text="${compPage9 != null ? compPage9.competencyDesc : (competencyDesc != null ? competencyDesc : 'قدرة القائد على تقييم البدائل واختيار أفضل مسار عمل بثقة، وتحمل المسؤولية الكاملة عن النتائج والتوجيهات الصادرة.')}">
+            قدرة القائد على تقييم البدائل واختيار أفضل مسار عمل بثقة، وتحمل المسؤولية الكاملة عن النتائج والتوجيهات الصادرة.
         </p>
     </div>
 
@@ -439,12 +439,12 @@
                 <div style="position: relative; width: 100%; height: 16px;">
                     <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
                     <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                    <!-- Marker with Centered Math -->
-                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${competencyScore != null ? competencyScore : 4}) - 1) * 20)) + '%;'">
+                    <!-- Marker with Continuous Double Centered Math -->
+                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${compPage9 != null and compPage9.competencyScore != null ? compPage9.competencyScore : (competencyScore != null ? competencyScore : (decisionScore != null ? decisionScore : 3.24))}) - 1) * 20)) + '%;'">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
-                             th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#1e3a4c'}) + ';'"></div>
+                             th:styleappend="'background-color: ' + (${compPage9 != null and compPage9.competencyColor != null ? compPage9.competencyColor : (competencyColor != null ? competencyColor : (decisionColor != null ? decisionColor : '#d98a44'))}) + ';'"></div>
                         <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
-                             th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#1e3a4c'}) + ';'">
+                             th:styleappend="'background-color: ' + (${compPage9 != null and compPage9.competencyColor != null ? compPage9.competencyColor : (competencyColor != null ? competencyColor : (decisionColor != null ? decisionColor : '#d98a44'))}) + ';'">
                             <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                 <circle cx="12" cy="7" r="4" fill="#ffffff" />
                                 <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
@@ -456,8 +456,8 @@
             <!-- Right Side 55%: Trait Name & Colored Pill -->
             <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
                 <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
-                      th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#c87d46'}) + ';'"></span>
-                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'التواصل والتأثير الفعال'}">التواصل والتأثير الفعال</span>
+                      th:styleappend="'background-color: ' + (${compPage9 != null and compPage9.competencyColor != null ? compPage9.competencyColor : (competencyColor != null ? competencyColor : (decisionColor != null ? decisionColor : '#d98a44'))}) + ';'"></span>
+                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${compPage9 != null ? compPage9.competencyTitle : (competencyTitle != null ? competencyTitle : 'اتخاذ القرار وتحمل المسؤولية')}">اتخاذ القرار وتحمل المسؤولية</span>
             </td>
         </tr>
     </table>
@@ -482,26 +482,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${rec1 != null ? rec1 : 'وفّر فرصاً لإدارة مواقف قرار أكثر تعقيداً بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة سيناريوهات عملياتية متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من القادة والزملاء لتطوير مهارات اتخاذ القرار.'}">
+                    <span th:text="${compPage9 != null and compPage9.rec1 != null ? compPage9.rec1 : (rec1 != null ? rec1 : 'وفّر فرصاً لإدارة مواقف قرار أكثر تعقيداً بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة سيناريوهات عملياتية متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من القادة والزملاء لتطوير مهارات اتخاذ القرار.')}">
                         وفّر فرصاً لإدارة مواقف قرار أكثر تعقيداً بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة سيناريوهات عملياتية متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من القادة والزملاء لتطوير مهارات اتخاذ القرار.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${result1 != null ? result1 : 'يتخذ القرارات بثقة معتدلة تدعم الأداء المتوازن في مختلف المواقف العملياتية. يبدو قادراً على تحمل مسؤولية القرارات الروتينية والمتوسطة التعقيد.'}">
+                    <span th:text="${compPage9 != null and compPage9.result1 != null ? compPage9.result1 : (result1 != null ? result1 : 'يتخذ القرارات بثقة معتدلة تدعم الأداء المتوازن في مختلف المواقف العملياتية. يبدو قادراً على تحمل مسؤولية القرارات الروتينية والمتوسطة التعقيد.')}">
                         يتخذ القرارات بثقة معتدلة تدعم الأداء المتوازن في مختلف المواقف العملياتية. يبدو قادراً على تحمل مسؤولية القرارات الروتينية والمتوسطة التعقيد.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${req1 != null ? req1 : 'يُظهر ثقة كبيرة في اتخاذ القرارات وتحمل النتائج بشجاعة.'}">
+                    <span th:text="${compPage9 != null and compPage9.req1 != null ? compPage9.req1 : (req1 != null ? req1 : 'يُظهر ثقة كبيرة في اتخاذ القرارات وتحمل النتائج بشجاعة.')}">
                         يُظهر ثقة كبيرة في اتخاذ القرارات وتحمل النتائج بشجاعة.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#d98a44'}) + ';'"></span>
+                          th:style="'background-color: ' + (${compPage9 != null and compPage9.indicator1Color != null ? compPage9.indicator1Color : (indicator1Color != null ? indicator1Color : '#d98a44')}) + ';'"></span>
                 </td>
             </tr>
 
@@ -509,26 +509,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${rec2 != null ? rec2 : 'وفّر فرصاً لقيادة عمليات معقدة بشكل مستقل لتعزيز اتساق القرارات والقدرة على التكيف. رشّح مراقبة مواقف تكتيكية متنوعة لتحسين الاستجابة. شجع طلب التغذية الراجعة من الرؤساء والزملاء لتطوير مهارات اتخاذ القرارات الاستراتيجية.'}">
+                    <span th:text="${compPage9 != null and compPage9.rec2 != null ? compPage9.rec2 : (rec2 != null ? rec2 : 'وفّر فرصاً لقيادة عمليات معقدة بشكل مستقل لتعزيز اتساق القرارات والقدرة على التكيف. رشّح مراقبة مواقف تكتيكية متنوعة لتحسين الاستجابة. شجع طلب التغذية الراجعة من الرؤساء والزملاء لتطوير مهارات اتخاذ القرارات الاستراتيجية.')}">
                         وفّر فرصاً لقيادة عمليات معقدة بشكل مستقل لتعزيز اتساق القرارات والقدرة على التكيف. رشّح مراقبة مواقف تكتيكية متنوعة لتحسين الاستجابة. شجع طلب التغذية الراجعة من الرؤساء والزملاء لتطوير مهارات اتخاذ القرارات الاستراتيجية.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${result2 != null ? result2 : 'يحلل المعلومات بكفاءة معقولة تدعم اتخاذ قرارات متوازنة في معظم المواقف العملياتية. يُظهر التزاماً مقبولاً بتحمل نتائج قراراته في السياقات المألوفة.'}">
+                    <span th:text="${compPage9 != null and compPage9.result2 != null ? compPage9.result2 : (result2 != null ? result2 : 'يحلل المعلومات بكفاءة معقولة تدعم اتخاذ قرارات متوازنة في معظم المواقف العملياتية. يُظهر التزاماً مقبولاً بتحمل نتائج قراراته في السياقات المألوفة.')}">
                         يحلل المعلومات بكفاءة معقولة تدعم اتخاذ قرارات متوازنة في معظم المواقف العملياتية. يُظهر التزاماً مقبولاً بتحمل نتائج قراراته في السياقات المألوفة.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${req2 != null ? req2 : 'يمتلك قدرة معرفية متقدمة لتحليل المعلومات واتخاذ قرارات مسؤولة.'}">
+                    <span th:text="${compPage9 != null and compPage9.req2 != null ? compPage9.req2 : (req2 != null ? req2 : 'يمتلك قدرة معرفية متقدمة لتحليل المعلومات واتخاذ قرارات مسؤولة.')}">
                         يمتلك قدرة معرفية متقدمة لتحليل المعلومات واتخاذ قرارات مسؤولة.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d98a44'}) + ';'"></span>
+                          th:style="'background-color: ' + (${compPage9 != null and compPage9.indicator2Color != null ? compPage9.indicator2Color : (indicator2Color != null ? indicator2Color : '#d98a44')}) + ';'"></span>
                 </td>
             </tr>
 
@@ -536,26 +536,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${rec3 != null ? rec3 : 'وفّر فرصاً لإدارة قرارات استراتيجية بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة مواقف عملياتية متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الرؤساء والأقران لصقل مهارات اتخاذ القرار وتحمل المسؤولية.'}">
+                    <span th:text="${compPage9 != null and compPage9.rec3 != null ? compPage9.rec3 : (rec3 != null ? rec3 : 'وفّر فرصاً لإدارة قرارات استراتيجية بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة مواقف عملياتية متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الرؤساء والأقران لصقل مهارات اتخاذ القرار وتحمل المسؤولية.')}">
                         وفّر فرصاً لإدارة قرارات استراتيجية بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة مواقف عملياتية متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الرؤساء والأقران لصقل مهارات اتخاذ القرار وتحمل المسؤولية.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${result3 != null ? result3 : 'يتعامل مع القرارات بدقة متوازنة تدعم تحمله للمسؤولية بشكل مناسب. يبدو منضبطاً ومستجيباً لمتطلبات المواقف العملياتية.'}">
+                    <span th:text="${compPage9 != null and compPage9.result3 != null ? compPage9.result3 : (result3 != null ? result3 : 'يتعامل مع القرارات بدقة متوازنة تدعم تحمله للمسؤولية بشكل مناسب. يبدو منضبطاً ومستجيباً لمتطلبات المواقف العملياتية.')}">
                         يتعامل مع القرارات بدقة متوازنة تدعم تحمله للمسؤولية بشكل مناسب. يبدو منضبطاً ومستجيباً لمتطلبات المواقف العملياتية.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${req3 != null ? req3 : 'يتسم بالدقة والانضباط عند اتخاذ القرارات وتحمل المسؤولية بشجاعة.'}">
+                    <span th:text="${compPage9 != null and compPage9.req3 != null ? compPage9.req3 : (req3 != null ? req3 : 'يتسم بالدقة والانضباط عند اتخاذ القرارات وتحمل المسؤولية بشجاعة.')}">
                         يتسم بالدقة والانضباط عند اتخاذ القرارات وتحمل المسؤولية بشجاعة.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#d98a44'}) + ';'"></span>
+                          th:style="'background-color: ' + (${compPage9 != null and compPage9.indicator3Color != null ? compPage9.indicator3Color : (indicator3Color != null ? indicator3Color : '#d98a44')}) + ';'"></span>
                 </td>
             </tr>
         </tbody>

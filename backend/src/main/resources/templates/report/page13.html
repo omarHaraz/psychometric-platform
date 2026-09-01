@@ -391,9 +391,9 @@
 <body>
     <div th:fragment="body">
 <div class="competency-header-block">
-        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'القدرة على التكيف'}">القدرة على التكيف</h2>
-        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'القدرة على التكيف مع التغيرات المفاجئة وتعديل الخطط بمرونة لضمان استمرارية العمل وتحقيق الأهداف بكفاءة.'}">
-            القدرة على التكيف مع التغيرات المفاجئة وتعديل الخطط بمرونة لضمان استمرارية العمل وتحقيق الأهداف بكفاءة.
+        <h2 class="competency-title" th:text="${compPage13 != null ? compPage13.competencyTitle : (competencyTitle != null ? competencyTitle : 'القدرة على التكيف')}">القدرة على التكيف</h2>
+        <p class="competency-desc" th:text="${compPage13 != null ? compPage13.competencyDesc : (competencyDesc != null ? competencyDesc : 'المرونة في التعامل مع المتغيرات والمواقف غير المتوقعة وتعديل الأولويات والاستجابة بفعالية لمتطلبات البيئة المتغيرة.')}">
+            المرونة في التعامل مع المتغيرات والمواقف غير المتوقعة وتعديل الأولويات والاستجابة بفعالية لمتطلبات البيئة المتغيرة.
         </p>
     </div>
 
@@ -439,12 +439,12 @@
                 <div style="position: relative; width: 100%; height: 16px;">
                     <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
                     <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                    <!-- Marker with Centered Math -->
-                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${competencyScore != null ? competencyScore : 4}) - 1) * 20)) + '%;'">
+                    <!-- Marker with Continuous Double Centered Math -->
+                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${compPage13 != null and compPage13.competencyScore != null ? compPage13.competencyScore : (competencyScore != null ? competencyScore : (adaptabilityScore != null ? adaptabilityScore : 3.29))}) - 1) * 20)) + '%;'">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
-                             th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#1e3a4c'}) + ';'"></div>
+                             th:styleappend="'background-color: ' + (${compPage13 != null and compPage13.competencyColor != null ? compPage13.competencyColor : (competencyColor != null ? competencyColor : (adaptabilityColor != null ? adaptabilityColor : '#d98a44'))}) + ';'"></div>
                         <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
-                             th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#1e3a4c'}) + ';'">
+                             th:styleappend="'background-color: ' + (${compPage13 != null and compPage13.competencyColor != null ? compPage13.competencyColor : (competencyColor != null ? competencyColor : (adaptabilityColor != null ? adaptabilityColor : '#d98a44'))}) + ';'">
                             <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                 <circle cx="12" cy="7" r="4" fill="#ffffff" />
                                 <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
@@ -456,8 +456,8 @@
             <!-- Right Side 55%: Trait Name & Colored Pill -->
             <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
                 <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
-                      th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#c87d46'}) + ';'"></span>
-                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'التواصل والتأثير الفعال'}">التواصل والتأثير الفعال</span>
+                      th:styleappend="'background-color: ' + (${compPage13 != null and compPage13.competencyColor != null ? compPage13.competencyColor : (competencyColor != null ? competencyColor : (adaptabilityColor != null ? adaptabilityColor : '#d98a44'))}) + ';'"></span>
+                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${compPage13 != null ? compPage13.competencyTitle : (competencyTitle != null ? competencyTitle : 'القدرة على التكيف')}">القدرة على التكيف</span>
             </td>
         </tr>
     </table>
@@ -482,26 +482,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${rec1 != null ? rec1 : 'وفّر فرصاً لقيادة عمليات في بيئات ديناميكية لتعزيز المرونة والاستجابة. شجّع مراقبة أساليب قيادية متنوعة في إدارة الأزمات. سهّل الحصول على تغذية راجعة من الرؤساء والزملاء لتحسين مهارات التكيف.'}">
+                    <span th:text="${compPage13 != null and compPage13.rec1 != null ? compPage13.rec1 : (rec1 != null ? rec1 : 'وفّر فرصاً لقيادة عمليات في بيئات ديناميكية لتعزيز المرونة والاستجابة. شجّع مراقبة أساليب قيادية متنوعة في إدارة الأزمات. سهّل الحصول على تغذية راجعة من الرؤساء والزملاء لتحسين مهارات التكيف.')}">
                         وفّر فرصاً لقيادة عمليات في بيئات ديناميكية لتعزيز المرونة والاستجابة. شجّع مراقبة أساليب قيادية متنوعة في إدارة الأزمات. سهّل الحصول على تغذية راجعة من الرؤساء والزملاء لتحسين مهارات التكيف.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${result1 != null ? result1 : 'يتعامل مع الضغوط بشكل متزن، مما يمكنه من التكيف مع التغيرات التكتيكية بفعالية معقولة. يُظهر قدرة على استعادة التوازن بعد النكسات والحفاظ على جاهزية الوحدة.'}">
+                    <span th:text="${compPage13 != null and compPage13.result1 != null ? compPage13.result1 : (result1 != null ? result1 : 'يتعامل مع الضغوط بشكل متزن، مما يمكنه من التكيف مع التغيرات التكتيكية بفعالية معقولة. يُظهر قدرة على استعادة التوازن بعد النكسات والحفاظ على جاهزية الوحدة.')}">
                         يتعامل مع الضغوط بشكل متزن، مما يمكنه من التكيف مع التغيرات التكتيكية بفعالية معقولة. يُظهر قدرة على استعادة التوازن بعد النكسات والحفاظ على جاهزية الوحدة.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${req1 != null ? req1 : 'يتسم بمرونة عالية في التكيف مع التغيرات المفاجئة لضمان استمرارية العمليات العسكرية.'}">
+                    <span th:text="${compPage13 != null and compPage13.req1 != null ? compPage13.req1 : (req1 != null ? req1 : 'يتسم بمرونة عالية في التكيف مع التغيرات المفاجئة لضمان استمرارية العمليات العسكرية.')}">
                         يتسم بمرونة عالية في التكيف مع التغيرات المفاجئة لضمان استمرارية العمليات العسكرية.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#d98a44'}) + ';'"></span>
+                          th:style="'background-color: ' + (${compPage13 != null and compPage13.indicator1Color != null ? compPage13.indicator1Color : (indicator1Color != null ? indicator1Color : '#d98a44')}) + ';'"></span>
                 </td>
             </tr>
 
@@ -509,26 +509,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${rec2 != null ? rec2 : 'وفّر فرصاً لقيادة عمليات معقدة بشكل مستقل لتعزيز الاتساق والقدرة على التكيف. رشّح مراقبة أنواع مختلفة من السيناريوهات العسكرية لتحسين الاستجابة. شجّع طلب الملاحظات من القادة الأعلى والأقران لتطوير مهارات إدارة التغيير.'}">
+                    <span th:text="${compPage13 != null and compPage13.rec2 != null ? compPage13.rec2 : (rec2 != null ? rec2 : 'وفّر فرصاً لقيادة عمليات معقدة بشكل مستقل لتعزيز الاتساق والقدرة على التكيف. رشّح مراقبة أنواع مختلفة من السيناريوهات العسكرية لتحسين الاستجابة. شجّع طلب الملاحظات من القادة الأعلى والأقران لتطوير مهارات إدارة التغيير.')}">
                         وفّر فرصاً لقيادة عمليات معقدة بشكل مستقل لتعزيز الاتساق والقدرة على التكيف. رشّح مراقبة أنواع مختلفة من السيناريوهات العسكرية لتحسين الاستجابة. شجّع طلب الملاحظات من القادة الأعلى والأقران لتطوير مهارات إدارة التغيير.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${result2 != null ? result2 : 'يتعامل مع التغيرات بتوازن معقول، مما يدعم استمرارية العمليات العسكرية بفعالية. يظهر قدرة مناسبة على تعديل الخطط عند الحاجة.'}">
+                    <span th:text="${compPage13 != null and compPage13.result2 != null ? compPage13.result2 : (result2 != null ? result2 : 'يتعامل مع التغيرات بتوازن معقول، مما يدعم استمرارية العمليات العسكرية بفعالية. يظهر قدرة مناسبة على تعديل الخطط عند الحاجة.')}">
                         يتعامل مع التغيرات بتوازن معقول، مما يدعم استمرارية العمليات العسكرية بفعالية. يظهر قدرة مناسبة على تعديل الخطط عند الحاجة.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${req2 != null ? req2 : 'يتمتع بقدرة كبيرة على التكيف مع التغيرات لضمان استمرارية العمليات العسكرية.'}">
+                    <span th:text="${compPage13 != null and compPage13.req2 != null ? compPage13.req2 : (req2 != null ? req2 : 'يتمتع بقدرة كبيرة على التكيف مع التغيرات لضمان استمرارية العمليات العسكرية.')}">
                         يتمتع بقدرة كبيرة على التكيف مع التغيرات لضمان استمرارية العمليات العسكرية.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d98a44'}) + ';'"></span>
+                          th:style="'background-color: ' + (${compPage13 != null and compPage13.indicator2Color != null ? compPage13.indicator2Color : (indicator2Color != null ? indicator2Color : '#d98a44')}) + ';'"></span>
                 </td>
             </tr>
 
@@ -536,26 +536,26 @@
             <tr>
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
-                    <span th:text="${rec3 != null ? rec3 : 'وفّر فرصاً لقيادة عمليات معقدة بشكل مستقل لتعزيز الثبات والقدرة على التكيف. اقترح مراقبة أنواع متنوعة من المواقف الضاغطة لتحسين الاستجابة. شجّع طلب التغذية الراجعة من الرؤساء والزملاء لتطوير مهارات إدارة الضغوط.'}">
+                    <span th:text="${compPage13 != null and compPage13.rec3 != null ? compPage13.rec3 : (rec3 != null ? rec3 : 'وفّر فرصاً لقيادة عمليات معقدة بشكل مستقل لتعزيز الثبات والقدرة على التكيف. اقترح مراقبة أنواع متنوعة من المواقف الضاغطة لتحسين الاستجابة. شجّع طلب التغذية الراجعة من الرؤساء والزملاء لتطوير مهارات إدارة الضغوط.')}">
                         وفّر فرصاً لقيادة عمليات معقدة بشكل مستقل لتعزيز الثبات والقدرة على التكيف. اقترح مراقبة أنواع متنوعة من المواقف الضاغطة لتحسين الاستجابة. شجّع طلب التغذية الراجعة من الرؤساء والزملاء لتطوير مهارات إدارة الضغوط.
                     </span>
                 </td>
                 <!-- 2nd in DOM: Result -->
                 <td>
-                    <span th:text="${result3 != null ? result3 : 'يتعامل مع الضغوط بشكل متزن، مما يدعم قدرته على التكيف مع التغيرات العملياتية بفعالية. يظهر استقراراً معقولاً عند مواجهة المواقف غير المتوقعة في الميدان.'}">
+                    <span th:text="${compPage13 != null and compPage13.result3 != null ? compPage13.result3 : (result3 != null ? result3 : 'يتعامل مع الضغوط بشكل متزن، مما يدعم قدرته على التكيف مع التغيرات العملياتية بفعالية. يظهر استقراراً معقولاً عند مواجهة المواقف غير المتوقعة في الميدان.')}">
                         يتعامل مع الضغوط بشكل متزن، مما يدعم قدرته على التكيف مع التغيرات العملياتية بفعالية. يظهر استقراراً معقولاً عند مواجهة المواقف غير المتوقعة في الميدان.
                     </span>
                 </td>
                 <!-- 3rd in DOM: Requirements -->
                 <td>
-                    <span th:text="${req3 != null ? req3 : 'يظهر قدرة قوية على تحمل الضغوط لتعديل الخطط بمرونة في البيئات العملياتية المتقلبة.'}">
+                    <span th:text="${compPage13 != null and compPage13.req3 != null ? compPage13.req3 : (req3 != null ? req3 : 'يظهر قدرة قوية على تحمل الضغوط لتعديل الخطط بمرونة في البيئات العملياتية المتقلبة.')}">
                         يظهر قدرة قوية على تحمل الضغوط لتعديل الخطط بمرونة في البيئات العملياتية المتقلبة.
                     </span>
                 </td>
                 <!-- 4th in DOM (Right): Level Pill -->
                 <td class="td-level-cell">
                     <span class="level-status-pill" 
-                          th:style="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#d98a44'}) + ';'"></span>
+                          th:style="'background-color: ' + (${compPage13 != null and compPage13.indicator3Color != null ? compPage13.indicator3Color : (indicator3Color != null ? indicator3Color : '#d98a44')}) + ';'"></span>
                 </td>
             </tr>
         </tbody>
