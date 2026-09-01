@@ -54,8 +54,8 @@
             margin: 0 auto;
         }
 
-        .pdf-page-wrapper:last-child {
-            page-break-after: auto;
+        .page-number-display::before {
+            content: "صفحة " counter(page);
         }
     </style>
 </head>
