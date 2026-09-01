@@ -158,6 +158,29 @@ public class LeadershipReportGeneratorService {
         report.setUnconventionalityScore(scaleTo10(categoryScoreMap.getOrDefault("اللامألوفية", 70.0)));
     }
 
+    private Double findTraitScorePct(Map<String, Double> traitMap, List<AssessmentScoreResponseDto.TraitScoreDto> traitScores, String code, int displayOrder, double fallbackDefault) {
+        if (traitMap != null && traitMap.containsKey(code)) {
+            return traitMap.get(code);
+        }
+        if (traitMap != null) {
+            String normalizedCode = code.replace("_", "").toLowerCase();
+            for (var entry : traitMap.entrySet()) {
+                if (entry.getKey() != null && entry.getKey().replace("_", "").equalsIgnoreCase(normalizedCode)) {
+                    return entry.getValue();
+                }
+            }
+        }
+        if (traitScores != null) {
+            for (var ts : traitScores) {
+                if (ts.getDisplayOrder() != null && ts.getDisplayOrder() == displayOrder && ts.getScorePct() != null) {
+                    return ts.getScorePct();
+                }
+            }
+        }
+        log.warn("Trait score for {} (displayOrder={}) not found in raw payload, using fallback: {}", code, displayOrder, fallbackDefault);
+        return fallbackDefault;
+    }
+
     private void normalizeCompetenciesAndCognitive(AssessmentScoreResponseDto raw, ReportContextDto report) {
         Map<String, Double> traitMap = new HashMap<>();
         if (raw.getTraitScores() != null) {
@@ -169,40 +192,40 @@ public class LeadershipReportGeneratorService {
         }
 
         // 1. Overall Score
-        int overall5 = scaleTo5(raw.getCompositeScore() != null ? raw.getCompositeScore() : 80.0);
+        int overall5 = scaleTo5(raw.getCompositeScore() != null ? raw.getCompositeScore() : 50.0);
         report.setOverallScore(overall5);
         report.setOverallColor(determineColor(overall5, 4));
 
         // 2. Behavioral Competencies
-        int comm = scaleTo5(traitMap.getOrDefault("COMMUNICATION_AND_INFLUENCE", 80.0));
+        int comm = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "COMMUNICATION_AND_INFLUENCE", 1, 50.0));
         report.setCommScore(comm);
         report.setCommColor(determineColor(comm, ROLE_BENCHMARKS.get("COMMUNICATION_AND_INFLUENCE")));
 
-        int init = scaleTo5(traitMap.getOrDefault("INITIATIVE", 50.0));
+        int init = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "INITIATIVE", 2, 50.0));
         report.setInitiativeScore(init);
         report.setInitiativeColor(determineColor(init, ROLE_BENCHMARKS.get("INITIATIVE")));
 
-        int dec = scaleTo5(traitMap.getOrDefault("DECISION_MAKING_AND_RESPONSIBILITY", 70.0));
+        int dec = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "DECISION_MAKING_AND_RESPONSIBILITY", 3, 50.0));
         report.setDecisionScore(dec);
         report.setDecisionColor(determineColor(dec, ROLE_BENCHMARKS.get("DECISION_MAKING_AND_RESPONSIBILITY")));
 
-        int lead = scaleTo5(traitMap.getOrDefault("INSPIRING_LEADERSHIP", 70.0));
+        int lead = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "INSPIRING_LEADERSHIP", 4, 50.0));
         report.setLeadershipScore(lead);
         report.setLeadershipColor(determineColor(lead, ROLE_BENCHMARKS.get("INSPIRING_LEADERSHIP")));
 
-        int strat = scaleTo5(traitMap.getOrDefault("STRATEGIC_THINKING", 40.0));
+        int strat = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "STRATEGIC_THINKING", 5, 50.0));
         report.setStrategicScore(strat);
         report.setStrategicColor(determineColor(strat, ROLE_BENCHMARKS.get("STRATEGIC_THINKING")));
 
-        int skills = scaleTo5(traitMap.getOrDefault("SKILL_DEVELOPMENT", 40.0));
+        int skills = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "SKILL_DEVELOPMENT", 6, 50.0));
         report.setSkillsScore(skills);
         report.setSkillsColor(determineColor(skills, ROLE_BENCHMARKS.get("SKILL_DEVELOPMENT")));
 
-        int adapt = scaleTo5(traitMap.getOrDefault("ADAPTABILITY", 70.0));
+        int adapt = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "ADAPTABILITY", 7, 50.0));
         report.setAdaptabilityScore(adapt);
         report.setAdaptabilityColor(determineColor(adapt, ROLE_BENCHMARKS.get("ADAPTABILITY")));
 
-        int plan = scaleTo5(traitMap.getOrDefault("SYSTEMATIC_ANALYSIS_AND_PLANNING", 90.0));
+        int plan = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "SYSTEMATIC_ANALYSIS_AND_PLANNING", 8, 50.0));
         report.setAnalysisScore(plan);
         report.setAnalysisColor(determineColor(plan, ROLE_BENCHMARKS.get("SYSTEMATIC_ANALYSIS_AND_PLANNING")));
 
@@ -216,15 +239,15 @@ public class LeadershipReportGeneratorService {
             }
         }
 
-        int abs = scaleTo5(gcatMap.getOrDefault(GcatSubtestCode.ABSTRACT, 75.0));
+        int abs = scaleTo5(gcatMap.getOrDefault(GcatSubtestCode.ABSTRACT, 50.0));
         report.setAbstractScore(abs);
         report.setAbstractColor(determineColor(abs, ROLE_BENCHMARKS.get("ABSTRACT")));
 
-        int num = scaleTo5(gcatMap.getOrDefault(GcatSubtestCode.NUMERICAL, 75.0));
+        int num = scaleTo5(gcatMap.getOrDefault(GcatSubtestCode.NUMERICAL, 50.0));
         report.setNumericalScore(num);
         report.setNumericalColor(determineColor(num, ROLE_BENCHMARKS.get("NUMERICAL")));
 
-        int verb = scaleTo5(gcatMap.getOrDefault(GcatSubtestCode.VERBAL, 40.0));
+        int verb = scaleTo5(gcatMap.getOrDefault(GcatSubtestCode.VERBAL, 50.0));
         report.setVerbalScore(verb);
         report.setVerbalColor(determineColor(verb, ROLE_BENCHMARKS.get("VERBAL")));
         report.setGeneralAbilitiesColor(determineColor((abs + num + verb) / 3, 4));
@@ -246,42 +269,42 @@ public class LeadershipReportGeneratorService {
             // Sync with backend calculated continuous Double score & color
             switch (p) {
                 case 7 -> {
-                    double dScore = scaleTo5Double(traitMap.getOrDefault("COMMUNICATION_AND_INFLUENCE", 80.0));
+                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "COMMUNICATION_AND_INFLUENCE", 1, 50.0));
                     defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getCommColor());
                 }
                 case 8 -> {
-                    double dScore = scaleTo5Double(traitMap.getOrDefault("INITIATIVE", 50.0));
+                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INITIATIVE", 2, 50.0));
                     defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getInitiativeColor());
                 }
                 case 9 -> {
-                    double dScore = scaleTo5Double(traitMap.getOrDefault("DECISION_MAKING_AND_RESPONSIBILITY", 70.0));
+                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "DECISION_MAKING_AND_RESPONSIBILITY", 3, 50.0));
                     defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getDecisionColor());
                 }
                 case 10 -> {
-                    double dScore = scaleTo5Double(traitMap.getOrDefault("INSPIRING_LEADERSHIP", 70.0));
+                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INSPIRING_LEADERSHIP", 4, 50.0));
                     defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getLeadershipColor());
                 }
                 case 11 -> {
-                    double dScore = scaleTo5Double(traitMap.getOrDefault("STRATEGIC_THINKING", 40.0));
+                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "STRATEGIC_THINKING", 5, 50.0));
                     defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getStrategicColor());
                 }
                 case 12 -> {
-                    double dScore = scaleTo5Double(traitMap.getOrDefault("SKILL_DEVELOPMENT", 40.0));
+                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SKILL_DEVELOPMENT", 6, 50.0));
                     defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getSkillsColor());
                 }
                 case 13 -> {
-                    double dScore = scaleTo5Double(traitMap.getOrDefault("ADAPTABILITY", 70.0));
+                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "ADAPTABILITY", 7, 50.0));
                     defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getAdaptabilityColor());
                 }
                 case 14 -> {
-                    double dScore = scaleTo5Double(traitMap.getOrDefault("SYSTEMATIC_ANALYSIS_AND_PLANNING", 90.0));
+                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SYSTEMATIC_ANALYSIS_AND_PLANNING", 8, 50.0));
                     defaultDto.setCompetencyScore(dScore);
                     defaultDto.setCompetencyColor(report.getAnalysisColor());
                 }
