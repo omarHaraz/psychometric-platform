@@ -92,21 +92,16 @@
         <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 15px;">
             <!-- Header Row -->
             <tr>
-                <!-- 1st in DOM (Left Side): Scale 1-10 -->
-                <td style="width: 45%; background-color: #8a5a44; padding: 6px 11px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; vertical-align: middle;">
-                    <table style="width: 100%; border-collapse: collapse; text-align: center; color: #ffffff; font-weight: bold; font-size: 11px; border: none;">
+                <!-- 1st in DOM (Left Side): Scale 1-5 -->
+                <td style="width: 45%; background-color: #8a5a44; padding: 6px 10px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; vertical-align: middle;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: center; color: #ffffff; font-weight: bold; font-size: 11.5px; border: none;">
                         <tr>
-                            <!-- DOM Reversed for RTL Engine: 10 down to 1 -->
-                            <td style="width: 10%; border: none; color: #ffffff;">10</td>
-                            <td style="width: 10%; border: none; color: #ffffff;">9</td>
-                            <td style="width: 10%; border: none; color: #ffffff;">8</td>
-                            <td style="width: 10%; border: none; color: #ffffff;">7</td>
-                            <td style="width: 10%; border: none; color: #ffffff;">6</td>
-                            <td style="width: 10%; border: none; color: #ffffff;">5</td>
-                            <td style="width: 10%; border: none; color: #ffffff;">4</td>
-                            <td style="width: 10%; border: none; color: #ffffff;">3</td>
-                            <td style="width: 10%; border: none; color: #ffffff;">2</td>
-                            <td style="width: 10%; border: none; color: #ffffff;">1</td>
+                            <!-- DOM Reversed for RTL Engine: 5 -> 4 -> 3 -> 2 -> 1 -->
+                            <td style="width: 20%; border: none; color: #ffffff;">5</td>
+                            <td style="width: 20%; border: none; color: #ffffff;">4</td>
+                            <td style="width: 20%; border: none; color: #ffffff;">3</td>
+                            <td style="width: 20%; border: none; color: #ffffff;">2</td>
+                            <td style="width: 20%; border: none; color: #ffffff;">1</td>
                         </tr>
                     </table>
                 </td>
@@ -124,7 +119,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${commScore != null ? commScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${commScore != null ? commScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
@@ -147,7 +142,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${initiativeScore != null ? initiativeScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${initiativeScore != null ? initiativeScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
@@ -170,7 +165,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${decisionScore != null ? decisionScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${decisionScore != null ? decisionScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
@@ -193,7 +188,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${leadershipScore != null ? leadershipScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${leadershipScore != null ? leadershipScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
@@ -216,7 +211,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${strategicScore != null ? strategicScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${strategicScore != null ? strategicScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
@@ -239,7 +234,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${skillsScore != null ? skillsScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${skillsScore != null ? skillsScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
@@ -262,7 +257,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${adaptabilityScore != null ? adaptabilityScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${adaptabilityScore != null ? adaptabilityScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
@@ -285,7 +280,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${analysisScore != null ? analysisScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${analysisScore != null ? analysisScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
@@ -315,7 +310,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${abstractScore != null ? abstractScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${abstractScore != null ? abstractScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
@@ -338,7 +333,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${numericalScore != null ? numericalScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${numericalScore != null ? numericalScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
@@ -361,7 +356,7 @@
                 <td style="width: 45%; vertical-align: middle; padding: 6px 11px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${verbalScore != null ? verbalScore : 5}) - 1) * 11.111) + '%;'">
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (((${verbalScore != null ? verbalScore : 3}) - 1) * 25) + '%;'">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"></div>
                             <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
