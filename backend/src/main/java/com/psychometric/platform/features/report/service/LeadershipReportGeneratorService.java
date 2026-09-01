@@ -196,40 +196,40 @@ public class LeadershipReportGeneratorService {
         report.setOverallScore(overall5);
         report.setOverallColor(determineColor(overall5, 4));
 
-        // 2. Behavioral Competencies
-        int comm = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "COMMUNICATION_AND_INFLUENCE", 1, 50.0));
+        // 2. Behavioral Competencies (Continuous Double Scale 1.0–5.0)
+        double comm = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "COMMUNICATION_AND_INFLUENCE", 1, 50.0));
         report.setCommScore(comm);
-        report.setCommColor(determineColor(comm, ROLE_BENCHMARKS.get("COMMUNICATION_AND_INFLUENCE")));
+        report.setCommColor(determineColor((int) Math.round(comm), ROLE_BENCHMARKS.get("COMMUNICATION_AND_INFLUENCE")));
 
-        int init = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "INITIATIVE", 2, 50.0));
+        double init = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INITIATIVE", 2, 50.0));
         report.setInitiativeScore(init);
-        report.setInitiativeColor(determineColor(init, ROLE_BENCHMARKS.get("INITIATIVE")));
+        report.setInitiativeColor(determineColor((int) Math.round(init), ROLE_BENCHMARKS.get("INITIATIVE")));
 
-        int dec = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "DECISION_MAKING_AND_RESPONSIBILITY", 3, 50.0));
+        double dec = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "DECISION_MAKING_AND_RESPONSIBILITY", 3, 50.0));
         report.setDecisionScore(dec);
-        report.setDecisionColor(determineColor(dec, ROLE_BENCHMARKS.get("DECISION_MAKING_AND_RESPONSIBILITY")));
+        report.setDecisionColor(determineColor((int) Math.round(dec), ROLE_BENCHMARKS.get("DECISION_MAKING_AND_RESPONSIBILITY")));
 
-        int lead = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "INSPIRING_LEADERSHIP", 4, 50.0));
+        double lead = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INSPIRING_LEADERSHIP", 4, 50.0));
         report.setLeadershipScore(lead);
-        report.setLeadershipColor(determineColor(lead, ROLE_BENCHMARKS.get("INSPIRING_LEADERSHIP")));
+        report.setLeadershipColor(determineColor((int) Math.round(lead), ROLE_BENCHMARKS.get("INSPIRING_LEADERSHIP")));
 
-        int strat = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "STRATEGIC_THINKING", 5, 50.0));
+        double strat = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "STRATEGIC_THINKING", 5, 50.0));
         report.setStrategicScore(strat);
-        report.setStrategicColor(determineColor(strat, ROLE_BENCHMARKS.get("STRATEGIC_THINKING")));
+        report.setStrategicColor(determineColor((int) Math.round(strat), ROLE_BENCHMARKS.get("STRATEGIC_THINKING")));
 
-        int skills = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "SKILL_DEVELOPMENT", 6, 50.0));
+        double skills = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SKILL_DEVELOPMENT", 6, 50.0));
         report.setSkillsScore(skills);
-        report.setSkillsColor(determineColor(skills, ROLE_BENCHMARKS.get("SKILL_DEVELOPMENT")));
+        report.setSkillsColor(determineColor((int) Math.round(skills), ROLE_BENCHMARKS.get("SKILL_DEVELOPMENT")));
 
-        int adapt = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "ADAPTABILITY", 7, 50.0));
+        double adapt = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "ADAPTABILITY", 7, 50.0));
         report.setAdaptabilityScore(adapt);
-        report.setAdaptabilityColor(determineColor(adapt, ROLE_BENCHMARKS.get("ADAPTABILITY")));
+        report.setAdaptabilityColor(determineColor((int) Math.round(adapt), ROLE_BENCHMARKS.get("ADAPTABILITY")));
 
-        int plan = scaleTo5(findTraitScorePct(traitMap, raw.getTraitScores(), "SYSTEMATIC_ANALYSIS_AND_PLANNING", 8, 50.0));
+        double plan = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SYSTEMATIC_ANALYSIS_AND_PLANNING", 8, 50.0));
         report.setAnalysisScore(plan);
-        report.setAnalysisColor(determineColor(plan, ROLE_BENCHMARKS.get("SYSTEMATIC_ANALYSIS_AND_PLANNING")));
+        report.setAnalysisColor(determineColor((int) Math.round(plan), ROLE_BENCHMARKS.get("SYSTEMATIC_ANALYSIS_AND_PLANNING")));
 
-        // 3. Cognitive Abilities (GCAT)
+        // 3. Cognitive Abilities (GCAT) (Continuous Double Scale 1.0–5.0)
         Map<GcatSubtestCode, Double> gcatMap = new HashMap<>();
         if (raw.getGcatSubtestScores() != null) {
             for (var gs : raw.getGcatSubtestScores()) {
@@ -239,18 +239,18 @@ public class LeadershipReportGeneratorService {
             }
         }
 
-        int abs = scaleTo5(gcatMap.getOrDefault(GcatSubtestCode.ABSTRACT, 50.0));
+        double abs = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.ABSTRACT, 50.0));
         report.setAbstractScore(abs);
-        report.setAbstractColor(determineColor(abs, ROLE_BENCHMARKS.get("ABSTRACT")));
+        report.setAbstractColor(determineColor((int) Math.round(abs), ROLE_BENCHMARKS.get("ABSTRACT")));
 
-        int num = scaleTo5(gcatMap.getOrDefault(GcatSubtestCode.NUMERICAL, 50.0));
+        double num = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.NUMERICAL, 50.0));
         report.setNumericalScore(num);
-        report.setNumericalColor(determineColor(num, ROLE_BENCHMARKS.get("NUMERICAL")));
+        report.setNumericalColor(determineColor((int) Math.round(num), ROLE_BENCHMARKS.get("NUMERICAL")));
 
-        int verb = scaleTo5(gcatMap.getOrDefault(GcatSubtestCode.VERBAL, 50.0));
+        double verb = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.VERBAL, 50.0));
         report.setVerbalScore(verb);
-        report.setVerbalColor(determineColor(verb, ROLE_BENCHMARKS.get("VERBAL")));
-        report.setGeneralAbilitiesColor(determineColor((abs + num + verb) / 3, 4));
+        report.setVerbalColor(determineColor((int) Math.round(verb), ROLE_BENCHMARKS.get("VERBAL")));
+        report.setGeneralAbilitiesColor(determineColor((int) Math.round((abs + num + verb) / 3.0), 4));
     }
 
     private void initializeDetailedCompetencyPages(AssessmentScoreResponseDto raw, ReportContextDto report) {

@@ -77,40 +77,40 @@ public class ReportContextDto implements Serializable {
     private Integer overallScore = 4;
     private String overallColor = "#c87d46";
 
-    private Integer commScore = 4;
+    private Double commScore = 4.0;
     private String commColor = "#c87d46";
 
-    private Integer initiativeScore = 4;
+    private Double initiativeScore = 4.0;
     private String initiativeColor = "#c87d46";
 
-    private Integer decisionScore = 4;
+    private Double decisionScore = 4.0;
     private String decisionColor = "#c87d46";
 
-    private Integer leadershipScore = 4;
+    private Double leadershipScore = 4.0;
     private String leadershipColor = "#c87d46";
 
-    private Integer strategicScore = 2;
+    private Double strategicScore = 2.0;
     private String strategicColor = "#d32f2f";
 
-    private Integer skillsScore = 2;
+    private Double skillsScore = 2.0;
     private String skillsColor = "#d32f2f";
 
-    private Integer adaptabilityScore = 4;
+    private Double adaptabilityScore = 4.0;
     private String adaptabilityColor = "#c87d46";
 
-    private Integer analysisScore = 5;
+    private Double analysisScore = 5.0;
     private String analysisColor = "#388e3c";
 
     // General Abilities (Score: 1–5, Color: HEX)
     private String generalAbilitiesColor = "#c87d46";
 
-    private Integer abstractScore = 4;
+    private Double abstractScore = 4.0;
     private String abstractColor = "#c87d46";
 
-    private Integer numericalScore = 4;
+    private Double numericalScore = 4.0;
     private String numericalColor = "#c87d46";
 
-    private Integer verbalScore = 2;
+    private Double verbalScore = 2.0;
     private String verbalColor = "#d32f2f";
 
     // =========================================================================
@@ -216,50 +216,66 @@ public class ReportContextDto implements Serializable {
     public String getOverallColor() { return overallColor; }
     public void setOverallColor(String overallColor) { this.overallColor = overallColor; }
 
-    public Integer getCommScore() { return commScore; }
-    public void setCommScore(Integer commScore) { this.commScore = commScore; }
+    public Double getCommScore() { return commScore; }
+    public void setCommScore(Double commScore) { this.commScore = commScore; }
+    public void setCommScore(Integer commScore) { this.commScore = commScore != null ? commScore.doubleValue() : null; }
+    public void setCommScore(Number commScore) { this.commScore = commScore != null ? commScore.doubleValue() : null; }
 
     public String getCommColor() { return commColor; }
     public void setCommColor(String commColor) { this.commColor = commColor; }
 
-    public Integer getInitiativeScore() { return initiativeScore; }
-    public void setInitiativeScore(Integer initiativeScore) { this.initiativeScore = initiativeScore; }
+    public Double getInitiativeScore() { return initiativeScore; }
+    public void setInitiativeScore(Double initiativeScore) { this.initiativeScore = initiativeScore; }
+    public void setInitiativeScore(Integer initiativeScore) { this.initiativeScore = initiativeScore != null ? initiativeScore.doubleValue() : null; }
+    public void setInitiativeScore(Number initiativeScore) { this.initiativeScore = initiativeScore != null ? initiativeScore.doubleValue() : null; }
 
     public String getInitiativeColor() { return initiativeColor; }
     public void setInitiativeColor(String initiativeColor) { this.initiativeColor = initiativeColor; }
 
-    public Integer getDecisionScore() { return decisionScore; }
-    public void setDecisionScore(Integer decisionScore) { this.decisionScore = decisionScore; }
+    public Double getDecisionScore() { return decisionScore; }
+    public void setDecisionScore(Double decisionScore) { this.decisionScore = decisionScore; }
+    public void setDecisionScore(Integer decisionScore) { this.decisionScore = decisionScore != null ? decisionScore.doubleValue() : null; }
+    public void setDecisionScore(Number decisionScore) { this.decisionScore = decisionScore != null ? decisionScore.doubleValue() : null; }
 
     public String getDecisionColor() { return decisionColor; }
     public void setDecisionColor(String decisionColor) { this.decisionColor = decisionColor; }
 
-    public Integer getLeadershipScore() { return leadershipScore; }
-    public void setLeadershipScore(Integer leadershipScore) { this.leadershipScore = leadershipScore; }
+    public Double getLeadershipScore() { return leadershipScore; }
+    public void setLeadershipScore(Double leadershipScore) { this.leadershipScore = leadershipScore; }
+    public void setLeadershipScore(Integer leadershipScore) { this.leadershipScore = leadershipScore != null ? leadershipScore.doubleValue() : null; }
+    public void setLeadershipScore(Number leadershipScore) { this.leadershipScore = leadershipScore != null ? leadershipScore.doubleValue() : null; }
 
     public String getLeadershipColor() { return leadershipColor; }
     public void setLeadershipColor(String leadershipColor) { this.leadershipColor = leadershipColor; }
 
-    public Integer getStrategicScore() { return strategicScore; }
-    public void setStrategicScore(Integer strategicScore) { this.strategicScore = strategicScore; }
+    public Double getStrategicScore() { return strategicScore; }
+    public void setStrategicScore(Double strategicScore) { this.strategicScore = strategicScore; }
+    public void setStrategicScore(Integer strategicScore) { this.strategicScore = strategicScore != null ? strategicScore.doubleValue() : null; }
+    public void setStrategicScore(Number strategicScore) { this.strategicScore = strategicScore != null ? strategicScore.doubleValue() : null; }
 
     public String getStrategicColor() { return strategicColor; }
     public void setStrategicColor(String strategicColor) { this.strategicColor = strategicColor; }
 
-    public Integer getSkillsScore() { return skillsScore; }
-    public void setSkillsScore(Integer skillsScore) { this.skillsScore = skillsScore; }
+    public Double getSkillsScore() { return skillsScore; }
+    public void setSkillsScore(Double skillsScore) { this.skillsScore = skillsScore; }
+    public void setSkillsScore(Integer skillsScore) { this.skillsScore = skillsScore != null ? skillsScore.doubleValue() : null; }
+    public void setSkillsScore(Number skillsScore) { this.skillsScore = skillsScore != null ? skillsScore.doubleValue() : null; }
 
     public String getSkillsColor() { return skillsColor; }
     public void setSkillsColor(String skillsColor) { this.skillsColor = skillsColor; }
 
-    public Integer getAdaptabilityScore() { return adaptabilityScore; }
-    public void setAdaptabilityScore(Integer adaptabilityScore) { this.adaptabilityScore = adaptabilityScore; }
+    public Double getAdaptabilityScore() { return adaptabilityScore; }
+    public void setAdaptabilityScore(Double adaptabilityScore) { this.adaptabilityScore = adaptabilityScore; }
+    public void setAdaptabilityScore(Integer adaptabilityScore) { this.adaptabilityScore = adaptabilityScore != null ? adaptabilityScore.doubleValue() : null; }
+    public void setAdaptabilityScore(Number adaptabilityScore) { this.adaptabilityScore = adaptabilityScore != null ? adaptabilityScore.doubleValue() : null; }
 
     public String getAdaptabilityColor() { return adaptabilityColor; }
     public void setAdaptabilityColor(String adaptabilityColor) { this.adaptabilityColor = adaptabilityColor; }
 
-    public Integer getAnalysisScore() { return analysisScore; }
-    public void setAnalysisScore(Integer analysisScore) { this.analysisScore = analysisScore; }
+    public Double getAnalysisScore() { return analysisScore; }
+    public void setAnalysisScore(Double analysisScore) { this.analysisScore = analysisScore; }
+    public void setAnalysisScore(Integer analysisScore) { this.analysisScore = analysisScore != null ? analysisScore.doubleValue() : null; }
+    public void setAnalysisScore(Number analysisScore) { this.analysisScore = analysisScore != null ? analysisScore.doubleValue() : null; }
 
     public String getAnalysisColor() { return analysisColor; }
     public void setAnalysisColor(String analysisColor) { this.analysisColor = analysisColor; }
@@ -267,20 +283,26 @@ public class ReportContextDto implements Serializable {
     public String getGeneralAbilitiesColor() { return generalAbilitiesColor; }
     public void setGeneralAbilitiesColor(String generalAbilitiesColor) { this.generalAbilitiesColor = generalAbilitiesColor; }
 
-    public Integer getAbstractScore() { return abstractScore; }
-    public void setAbstractScore(Integer abstractScore) { this.abstractScore = abstractScore; }
+    public Double getAbstractScore() { return abstractScore; }
+    public void setAbstractScore(Double abstractScore) { this.abstractScore = abstractScore; }
+    public void setAbstractScore(Integer abstractScore) { this.abstractScore = abstractScore != null ? abstractScore.doubleValue() : null; }
+    public void setAbstractScore(Number abstractScore) { this.abstractScore = abstractScore != null ? abstractScore.doubleValue() : null; }
 
     public String getAbstractColor() { return abstractColor; }
     public void setAbstractColor(String abstractColor) { this.abstractColor = abstractColor; }
 
-    public Integer getNumericalScore() { return numericalScore; }
-    public void setNumericalScore(Integer numericalScore) { this.numericalScore = numericalScore; }
+    public Double getNumericalScore() { return numericalScore; }
+    public void setNumericalScore(Double numericalScore) { this.numericalScore = numericalScore; }
+    public void setNumericalScore(Integer numericalScore) { this.numericalScore = numericalScore != null ? numericalScore.doubleValue() : null; }
+    public void setNumericalScore(Number numericalScore) { this.numericalScore = numericalScore != null ? numericalScore.doubleValue() : null; }
 
     public String getNumericalColor() { return numericalColor; }
     public void setNumericalColor(String numericalColor) { this.numericalColor = numericalColor; }
 
-    public Integer getVerbalScore() { return verbalScore; }
-    public void setVerbalScore(Integer verbalScore) { this.verbalScore = verbalScore; }
+    public Double getVerbalScore() { return verbalScore; }
+    public void setVerbalScore(Double verbalScore) { this.verbalScore = verbalScore; }
+    public void setVerbalScore(Integer verbalScore) { this.verbalScore = verbalScore != null ? verbalScore.doubleValue() : null; }
+    public void setVerbalScore(Number verbalScore) { this.verbalScore = verbalScore != null ? verbalScore.doubleValue() : null; }
 
     public String getVerbalColor() { return verbalColor; }
     public void setVerbalColor(String verbalColor) { this.verbalColor = verbalColor; }
