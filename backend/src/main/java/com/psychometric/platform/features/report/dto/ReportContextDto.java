@@ -377,43 +377,63 @@ public class ReportContextDto implements Serializable {
         public void setCompetencyScore(Number competencyScore) { this.competencyScore = competencyScore != null ? competencyScore.doubleValue() : null; }
 
         public String getCompetencyColor() { return competencyColor; }
-        public void setCompetencyColor(String competencyColor) { this.competencyColor = competencyColor; }
+        public static String cleanString(String s) {
+            if (s == null) return null;
+            String stripped = s.replaceAll("^[\\s\\u00A0\\u200B\\u3000]+|[\\s\\u00A0\\u200B\\u3000]+$", "");
+            String allStripped = s.replaceAll("[\\s\\u00A0\\u200B\\u3000]+", "");
+            if (allStripped.isEmpty() || allStripped.equalsIgnoreCase("null") || allStripped.equals("-") || allStripped.equals("—")) {
+                return null;
+            }
+            return stripped;
+        }
+
+        public static String cleanOrNull(String s) {
+            if (s == null) return null;
+            String stripped = s.replaceAll("^[\\s\\u00A0\\u200B\\u3000]+|[\\s\\u00A0\\u200B\\u3000]+$", "");
+            String allStripped = s.replaceAll("[\\s\\u00A0\\u200B\\u3000]+", "");
+            if (allStripped.isEmpty() || allStripped.equalsIgnoreCase("null") || allStripped.equals("-") || allStripped.equals("—")) {
+                return null;
+            }
+            return allStripped.length() > 5 ? stripped : null;
+        }
+
+        public void setCompetencyColor(String competencyColor) { this.competencyColor = cleanString(competencyColor); }
 
         public String getIndicator1Color() { return indicator1Color; }
-        public void setIndicator1Color(String indicator1Color) { this.indicator1Color = indicator1Color; }
+        public void setIndicator1Color(String indicator1Color) { this.indicator1Color = cleanString(indicator1Color); }
 
         public String getReq1() { return req1; }
-        public void setReq1(String req1) { this.req1 = req1; }
+        public void setReq1(String req1) { this.req1 = cleanOrNull(req1); }
 
         public String getResult1() { return result1; }
-        public void setResult1(String result1) { this.result1 = result1; }
+        public void setResult1(String result1) { this.result1 = cleanOrNull(result1); }
 
         public String getRec1() { return rec1; }
-        public void setRec1(String rec1) { this.rec1 = rec1; }
+        public void setRec1(String rec1) { this.rec1 = cleanOrNull(rec1); }
 
         public String getIndicator2Color() { return indicator2Color; }
-        public void setIndicator2Color(String indicator2Color) { this.indicator2Color = indicator2Color; }
+        public void setIndicator2Color(String indicator2Color) { this.indicator2Color = cleanString(indicator2Color); }
 
         public String getReq2() { return req2; }
-        public void setReq2(String req2) { this.req2 = req2; }
+        public void setReq2(String req2) { this.req2 = cleanOrNull(req2); }
 
         public String getResult2() { return result2; }
-        public void setResult2(String result2) { this.result2 = result2; }
+        public void setResult2(String result2) { this.result2 = cleanOrNull(result2); }
 
         public String getRec2() { return rec2; }
-        public void setRec2(String rec2) { this.rec2 = rec2; }
+        public void setRec2(String rec2) { this.rec2 = cleanOrNull(rec2); }
 
         public String getIndicator3Color() { return indicator3Color; }
-        public void setIndicator3Color(String indicator3Color) { this.indicator3Color = indicator3Color; }
+        public void setIndicator3Color(String indicator3Color) { this.indicator3Color = cleanString(indicator3Color); }
 
         public String getReq3() { return req3; }
-        public void setReq3(String req3) { this.req3 = req3; }
+        public void setReq3(String req3) { this.req3 = cleanOrNull(req3); }
 
         public String getResult3() { return result3; }
-        public void setResult3(String result3) { this.result3 = result3; }
+        public void setResult3(String result3) { this.result3 = cleanOrNull(result3); }
 
         public String getRec3() { return rec3; }
-        public void setRec3(String rec3) { this.rec3 = rec3; }
+        public void setRec3(String rec3) { this.rec3 = cleanOrNull(rec3); }
 
         /**
          * Converts this individual competency page data into a map of Thymeleaf model attributes.
@@ -421,35 +441,50 @@ public class ReportContextDto implements Serializable {
         public Map<String, Object> toMap() {
             Map<String, Object> map = new HashMap<>();
             if (pageNum != null) map.put("pageNum", pageNum);
-            if (candidateId != null) map.put("candidateId", candidateId);
-            if (competencyTitle != null) map.put("competencyTitle", competencyTitle);
-            if (competencyDesc != null) map.put("competencyDesc", competencyDesc);
+            if (cleanString(candidateId) != null) map.put("candidateId", candidateId.trim());
+            if (cleanString(competencyTitle) != null) map.put("competencyTitle", competencyTitle.trim());
+            if (cleanString(competencyDesc) != null) map.put("competencyDesc", competencyDesc.trim());
             if (competencyScore != null) map.put("competencyScore", competencyScore);
-            if (competencyColor != null) map.put("competencyColor", competencyColor);
+            if (cleanString(competencyColor) != null) map.put("competencyColor", competencyColor.trim());
 
-            if (indicator1Color != null) {
-                map.put("indicator1Color", indicator1Color);
-                map.put("color1", indicator1Color);
+            String cReq1 = cleanOrNull(req1);
+            String cResult1 = cleanOrNull(result1);
+            String cRec1 = cleanOrNull(rec1);
+            if (cReq1 != null && cResult1 != null && cRec1 != null) {
+                if (cleanString(indicator1Color) != null) {
+                    map.put("indicator1Color", indicator1Color.trim());
+                    map.put("color1", indicator1Color.trim());
+                }
+                map.put("req1", cReq1);
+                map.put("result1", cResult1);
+                map.put("rec1", cRec1);
             }
-            if (req1 != null) map.put("req1", req1);
-            if (result1 != null) map.put("result1", result1);
-            if (rec1 != null) map.put("rec1", rec1);
 
-            if (indicator2Color != null) {
-                map.put("indicator2Color", indicator2Color);
-                map.put("color2", indicator2Color);
+            String cReq2 = cleanOrNull(req2);
+            String cResult2 = cleanOrNull(result2);
+            String cRec2 = cleanOrNull(rec2);
+            if (cReq2 != null && cResult2 != null && cRec2 != null) {
+                if (cleanString(indicator2Color) != null) {
+                    map.put("indicator2Color", indicator2Color.trim());
+                    map.put("color2", indicator2Color.trim());
+                }
+                map.put("req2", cReq2);
+                map.put("result2", cResult2);
+                map.put("rec2", cRec2);
             }
-            if (req2 != null) map.put("req2", req2);
-            if (result2 != null) map.put("result2", result2);
-            if (rec2 != null) map.put("rec2", rec2);
 
-            if (indicator3Color != null) {
-                map.put("indicator3Color", indicator3Color);
-                map.put("color3", indicator3Color);
+            String cReq3 = cleanOrNull(req3);
+            String cResult3 = cleanOrNull(result3);
+            String cRec3 = cleanOrNull(rec3);
+            if (cReq3 != null && cResult3 != null && cRec3 != null) {
+                if (cleanString(indicator3Color) != null) {
+                    map.put("indicator3Color", indicator3Color.trim());
+                    map.put("color3", indicator3Color.trim());
+                }
+                map.put("req3", cReq3);
+                map.put("result3", cResult3);
+                map.put("rec3", cRec3);
             }
-            if (req3 != null) map.put("req3", req3);
-            if (result3 != null) map.put("result3", result3);
-            if (rec3 != null) map.put("rec3", rec3);
 
             return map;
         }

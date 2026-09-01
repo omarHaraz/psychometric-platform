@@ -480,9 +480,12 @@
                 <th class="col-level" style="border-top-right-radius: 4px; text-align: center;">المستوى</th>
             </tr>
         </thead>
-                <tbody>
+        <tbody>
             <!-- Row 1: Dynamic Indicator 1 -->
-            <tr th:if="${req1 != null and !#strings.isEmpty(req1)}">
+            <tr th:if="${req1 != null and rec1 != null and result1 != null
+                        and req1.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 5
+                        and rec1.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0
+                        and result1.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0}">
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
                     <span th:text="${rec1}"></span>
@@ -502,7 +505,10 @@
             </tr>
 
             <!-- Row 2: Dynamic Indicator 2 -->
-            <tr th:if="${req2 != null and !#strings.isEmpty(req2)}">
+            <tr th:if="${req2 != null and rec2 != null and result2 != null
+                        and req2.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 5
+                        and rec2.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0
+                        and result2.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0}">
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
                     <span th:text="${rec2}"></span>
@@ -522,7 +528,10 @@
             </tr>
 
             <!-- Row 3: Dynamic Indicator 3 -->
-            <tr th:if="${req3 != null and !#strings.isEmpty(req3)}">
+            <tr th:if="${req3 != null and rec3 != null and result3 != null
+                        and req3.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 5
+                        and rec3.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0
+                        and result3.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0}">
                 <!-- 1st in DOM (Left): Recommendations -->
                 <td>
                     <span th:text="${rec3}"></span>

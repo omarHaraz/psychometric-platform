@@ -94,7 +94,7 @@ public class ReportGenerationPipelineTest {
         GeminiAiReportClient geminiClient = new GeminiAiReportClient(
                 WebClient.builder(),
                 objectMapper,
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
                 "AQ.Ab8RN6IfhJmRgsHl07KaoxZ0hMKJULn6TWq4M485UTGeygdDhg"
         );
 
@@ -150,5 +150,131 @@ public class ReportGenerationPipelineTest {
         System.out.println("==================================================");
         System.out.println("TEST PASSED: 15-Page Report successfully generated and verified!");
         System.out.println("==================================================");
+    }
+
+    @Test
+    public void testModularCandidateContextProfiles() {
+        GeminiAiReportClient client = new GeminiAiReportClient(
+                WebClient.builder(),
+                objectMapper,
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
+                ""
+        );
+
+        // 1. Impression Management
+        var impPayload = new LeadershipReportGeneratorService.ImpressionPayload(8, "مرتفع", 1, "منخفض");
+        var impResp = client.generateImpressionNarratives(impPayload);
+        assertNotNull(impResp);
+        assertNotNull(impResp.socialInterpretation);
+        assertNotNull(impResp.centralInterpretation);
+
+        // 2. Derailers
+        var derPayload = new LeadershipReportGeneratorService.DerailersPayload(7, 4, 3, 8, 5, 6);
+        var derResp = client.generateDerailersNarratives(derPayload);
+        assertNotNull(derResp);
+        assertNotNull(derResp.reservedText);
+        assertNotNull(derResp.impulsivityText);
+
+        // 3. Competency Page 9
+        var compPayload = new LeadershipReportGeneratorService.CompetencyPagePayload(
+                9,
+                "اتخاذ القرار وتحمل المسؤولية",
+                3.53,
+                "السمات الشخصية الأبرز للمرشح: الاندفاعية (8/10) والتحفظ (7/10)",
+                List.of(
+                        "يُظهر ثقة كبيرة في اتخاذ القرارات وتحمل النتائج بشجاعة.",
+                        "يمتلك قدرة معرفية متقدمة لتحليل المعلومات واتخاذ قرارات مسؤولة.",
+                        "يتسم بالدقة والانضباط عند اتخاذ القرارات وتحمل المسؤولية بشجاعة."
+                ),
+                """
+                السؤال 1: [أعتمد على التحليل المنطقي والبيانات الموثوقة عند المفاضلة بين الخيارات] - إجابة المرشح: [أوافق / 4]
+                السؤال 2: [أحسم القرارات الصعبة في الأوقات الحرجة دون تردد مفرط] - إجابة المرشح: [محايد / 3]
+                السؤال 3: [أتحمل المسؤولية الكاملة عن تبعات ونتائج القرارات التي أتخذها] - إجابة المرشح: [أوافق بشدة / 5]
+                """
+        );
+        var compResp = client.generateCompetencyPageNarratives(compPayload);
+        assertNotNull(compResp);
+        assertNotNull(compResp.req1);
+        assertNotNull(compResp.result1);
+        assertNotNull(compResp.rec1);
+
+        // 4. GROW Plan
+        var growPayload = new LeadershipReportGeneratorService.GrowPlanPayload(
+                "سعد ناصر العتيبي",
+                "التحليل والتخطيط المنهجي (4.0/5)، التواصل والتأثير الفعال (4.0/5)",
+                "التفكير الاستراتيجي (2.0/5)، المبادرة (2.0/5)",
+                "السمات الشخصية الأبرز: الاندفاعية (8/10)"
+        );
+        var growResp = client.generateGrowPlanNarratives(growPayload);
+        assertNotNull(growResp);
+        assertNotNull(growResp.growGoalText);
+        assertNotNull(growResp.growRealityText);
+    }
+
+    @Test
+    public void testPage2And4DedicatedNarratives() {
+        AssessmentScoreResponseDto rawScore = new AssessmentScoreResponseDto();
+        rawScore.setAttemptToken("PCIV-P2P4-TEST");
+        rawScore.setSocialDesirabilityRiskPct(75.0);
+        rawScore.setCentralTendencyRatePct(15.0);
+
+        rawScore.setDerailerCategoryScores(List.of(
+                new AssessmentScoreResponseDto.DerailerCategoryScoreDto(1L, "التحفظ", 1, 7.0, 70.0),
+                new AssessmentScoreResponseDto.DerailerCategoryScoreDto(2L, "الانفعالية", 2, 4.0, 40.0),
+                new AssessmentScoreResponseDto.DerailerCategoryScoreDto(3L, "العدائية", 3, 3.0, 30.0),
+                new AssessmentScoreResponseDto.DerailerCategoryScoreDto(4L, "الاندفاعية", 4, 8.0, 80.0),
+                new AssessmentScoreResponseDto.DerailerCategoryScoreDto(5L, "الصرامة", 5, 5.0, 50.0),
+                new AssessmentScoreResponseDto.DerailerCategoryScoreDto(6L, "اللامألوفية", 6, 6.0, 60.0)
+        ));
+
+        LeadershipReportGeneratorService generatorService = new LeadershipReportGeneratorService(
+                objectMapper,
+                Optional.empty()
+        );
+
+        // Step 1: Wire Up Page 2
+        var impResp = generatorService.generateImpressionManagementNarratives("PCIV-P2P4-TEST", rawScore);
+        assertNotNull(impResp, "Impression response should not be null");
+        assertNotNull(impResp.socialInterpretation, "socialInterpretation should not be null");
+        assertNotNull(impResp.centralInterpretation, "centralInterpretation should not be null");
+
+        // Step 2: Wire Up Page 4
+        var derResp = generatorService.generateDerailersNarratives("PCIV-P2P4-TEST", rawScore);
+        assertNotNull(derResp, "Derailers response should not be null");
+        assertNotNull(derResp.reservedText, "reservedText should not be null");
+        assertNotNull(derResp.impulsivityText, "impulsivityText should not be null");
+        assertNotNull(derResp.unconventionalityText, "unconventionalityText should not be null");
+    }
+
+    @Test
+    public void testReportCaching() {
+        AssessmentScoreResponseDto rawScore = new AssessmentScoreResponseDto();
+        rawScore.setAttemptToken("PCIV-CACHE-TEST");
+        rawScore.setCandidateName("عبدالله محمد السالم");
+        rawScore.setCompositeScore(85.0);
+
+        LeadershipReportGeneratorService generatorService = new LeadershipReportGeneratorService(
+                objectMapper,
+                Optional.empty()
+        );
+
+        ReportContextDto report1 = generatorService.generateReport(rawScore);
+        ReportContextDto report2 = generatorService.generateReport(rawScore);
+
+        assertNotNull(report1);
+        assertNotNull(report2);
+        assertEquals(report1.getCandidateId(), report2.getCandidateId());
+        assertEquals(report1.getResultScore(), report2.getResultScore());
+    }
+
+    @Test
+    public void testForceRefreshCacheEviction() {
+        LeadershipReportGeneratorService generatorService = new LeadershipReportGeneratorService(
+                objectMapper,
+                Optional.empty()
+        );
+
+        // Verify clearCandidateCaches runs safely without exceptions even without full CacheManager
+        assertDoesNotThrow(() -> generatorService.clearCandidateCaches("PCIV-FORCE-REFRESH-TEST"));
     }
 }

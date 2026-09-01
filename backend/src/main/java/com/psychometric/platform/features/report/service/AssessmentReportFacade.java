@@ -48,37 +48,44 @@ public class AssessmentReportFacade {
      * Generates or retrieves the cached PDF report download URL for the given assessment attempt token.
      *
      * @param attemptToken the unique assessment attempt token
+     * @param forceRefresh if true, evicts caches and forces a fresh AI report generation
      * @return secure Cloudinary CDN download URL for the PDF report
      */
     @Transactional
-    public String getOrGenerateReportPdfUrl(String attemptToken) {
-        log.info("Processing assessment report request for attempt token: {}", attemptToken);
+    public String getOrGenerateReportPdfUrl(String attemptToken, boolean forceRefresh) {
+        log.info("Processing assessment report request for attempt token: {} (forceRefresh={})", attemptToken, forceRefresh);
 
         AssessmentScore score = scoreRepository.findByAttemptAttemptToken(attemptToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Assessment score not found for attempt token: " + attemptToken));
 
-        // 1. Cache Check: Return existing PDF URL if already generated and valid (.pdf extension)
-        if (score.getReportPdfUrl() != null && !score.getReportPdfUrl().isBlank() && score.getReportPdfUrl().toLowerCase().endsWith(".pdf")) {
-            log.info("Cache hit: Returning existing report PDF URL for attempt {}: {}", attemptToken, score.getReportPdfUrl());
-            return score.getReportPdfUrl();
+        // 1. If forceRefresh is requested, evict in-memory and section AI caches
+        if (forceRefresh) {
+            log.info("Force refresh requested: Clearing all caches for attempt {}", attemptToken);
+            reportGeneratorService.clearCandidateCaches(attemptToken);
+        } else {
+            // 2. Cache Check: Return existing PDF URL if already generated and valid (.pdf extension)
+            if (score.getReportPdfUrl() != null && !score.getReportPdfUrl().isBlank() && score.getReportPdfUrl().toLowerCase().endsWith(".pdf")) {
+                log.info("Cache hit: Returning existing report PDF URL for attempt {}: {}", attemptToken, score.getReportPdfUrl());
+                return score.getReportPdfUrl();
+            }
         }
 
-        log.info("Cache miss or regenerating valid .pdf URL: Generating AI-driven leadership report PDF for attempt: {}", attemptToken);
+        log.info("Generating AI-driven leadership report PDF for attempt: {}", attemptToken);
 
-        // 2. Fetch and Convert Raw Scoring Data
+        // 3. Fetch and Convert Raw Scoring Data
         AssessmentScoreResponseDto rawScoreDto = AssessmentScoreResponseDto.fromEntity(score);
 
-        // 3. AI Normalization & Arabic Narrative Generation
+        // 4. AI Normalization & Arabic Narrative Generation
         ReportContextDto reportContextDto = reportGeneratorService.generateReport(rawScoreDto);
 
-        // 4. PDF Compilation using OpenHTMLtoPDF & Master Thymeleaf Template
+        // 5. PDF Compilation using OpenHTMLtoPDF & Master Thymeleaf Template
         byte[] pdfBytes = pdfGeneratorService.generatePdfReport(reportContextDto);
 
-        // 5. Upload to Cloudinary CDN
+        // 6. Upload to Cloudinary CDN
         String fileName = "leadership_report_" + attemptToken + ".pdf";
         String cloudinaryUrl = cloudinaryService.uploadPdf(pdfBytes, fileName, "psychometric/reports");
 
-        // 6. Cache the generated URL in the database
+        // 7. Cache the generated URL in the database
         score.setReportPdfUrl(cloudinaryUrl);
         scoreRepository.save(score);
 
@@ -86,16 +93,27 @@ public class AssessmentReportFacade {
         return cloudinaryUrl;
     }
 
+    public String getOrGenerateReportPdfUrl(String attemptToken) {
+        return getOrGenerateReportPdfUrl(attemptToken, false);
+    }
+
     /**
      * Generates PDF bytes on-the-fly for direct streaming / local download without Cloudinary.
      */
     @Transactional(readOnly = true)
-    public byte[] generateDirectPdfBytes(String attemptToken) {
+    public byte[] generateDirectPdfBytes(String attemptToken, boolean forceRefresh) {
+        if (forceRefresh) {
+            reportGeneratorService.clearCandidateCaches(attemptToken);
+        }
         AssessmentScore score = scoreRepository.findByAttemptAttemptToken(attemptToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Assessment score not found for attempt token: " + attemptToken));
 
         AssessmentScoreResponseDto rawScoreDto = AssessmentScoreResponseDto.fromEntity(score);
         ReportContextDto reportContextDto = reportGeneratorService.generateReport(rawScoreDto);
         return pdfGeneratorService.generatePdfReport(reportContextDto);
+    }
+
+    public byte[] generateDirectPdfBytes(String attemptToken) {
+        return generateDirectPdfBytes(attemptToken, false);
     }
 }

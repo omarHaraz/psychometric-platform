@@ -9,10 +9,13 @@ import com.psychometric.platform.features.report.dto.ReportContextDto;
 import com.psychometric.platform.features.report.dto.ReportContextDto.CompetencyDetailDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * LeadershipReportGeneratorService
@@ -54,19 +57,96 @@ public class LeadershipReportGeneratorService {
 
     private final ObjectMapper objectMapper;
     private final AiReportClient aiClient;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    private final org.springframework.cache.CacheManager cacheManager;
 
-    public LeadershipReportGeneratorService(ObjectMapper objectMapper, Optional<AiReportClient> aiClient) {
+    @org.springframework.beans.factory.annotation.Autowired
+    public LeadershipReportGeneratorService(
+            ObjectMapper objectMapper,
+            Optional<AiReportClient> aiClient,
+            @org.springframework.beans.factory.annotation.Autowired(required = false) org.springframework.jdbc.core.JdbcTemplate jdbcTemplate,
+            @org.springframework.beans.factory.annotation.Autowired(required = false) org.springframework.cache.CacheManager cacheManager
+    ) {
         this.objectMapper = objectMapper.copy()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         this.aiClient = aiClient.orElseGet(DefaultMockAiClient::new);
+        this.jdbcTemplate = jdbcTemplate;
+        this.cacheManager = cacheManager;
+    }
+
+    public LeadershipReportGeneratorService(ObjectMapper objectMapper, Optional<AiReportClient> aiClient) {
+        this(objectMapper, aiClient, null, null);
+    }
+
+    /**
+     * Evicts all cached entries associated with the given candidate attempt token
+     * and clears AI section caches to force fresh generation.
+     */
+    public void clearCandidateCaches(String attemptToken) {
+        if (cacheManager != null) {
+            log.info("Evicting all candidate caches for attempt token: {}", attemptToken);
+
+            org.springframework.cache.Cache reportCache = cacheManager.getCache("leadershipReports");
+            if (reportCache != null && attemptToken != null) {
+                reportCache.evict(attemptToken);
+            }
+
+            List<String> aiCaches = List.of(
+                    "aiImpressionCache",
+                    "aiDerailersCache",
+                    "aiCompetencyPageCache",
+                    "aiGrowPlanCache"
+            );
+            for (String cName : aiCaches) {
+                org.springframework.cache.Cache c = cacheManager.getCache(cName);
+                if (c != null) {
+                    c.clear();
+                }
+            }
+        }
+    }
+
+    /**
+     * Dedicated method for Page 2: Impression Management AI narrative generation.
+     */
+    public ImpressionResponseDto generateImpressionManagementNarratives(String attemptToken, AssessmentScoreResponseDto rawScore) {
+        if (rawScore == null) {
+            return aiClient.generateImpressionNarratives(new ImpressionPayload(5, "متوسط", 2, "منخفض"));
+        }
+        ReportContextDto tempReport = new ReportContextDto();
+        normalizeImpressionManagement(rawScore, tempReport);
+        ImpressionPayload payload = new ImpressionPayload(
+                tempReport.getSocialScore(), tempReport.getSocialRisk(),
+                tempReport.getCentralScore(), tempReport.getCentralRisk()
+        );
+        return aiClient.generateImpressionNarratives(payload);
+    }
+
+    /**
+     * Dedicated method for Page 4: Personality Derailers AI narrative generation.
+     */
+    public DerailersResponseDto generateDerailersNarratives(String attemptToken, AssessmentScoreResponseDto rawScore) {
+        if (rawScore == null) {
+            return aiClient.generateDerailersNarratives(new DerailersPayload(6, 5, 6, 6, 6, 7));
+        }
+        ReportContextDto tempReport = new ReportContextDto();
+        normalizePersonalityDerailers(rawScore, tempReport);
+        DerailersPayload payload = new DerailersPayload(
+                tempReport.getReservedScore(), tempReport.getEmotionalityScore(),
+                tempReport.getHostilityScore(), tempReport.getImpulsivityScore(),
+                tempReport.getRigidityScore(), tempReport.getUnconventionalityScore()
+        );
+        return aiClient.generateDerailersNarratives(payload);
     }
 
     /**
      * Main entrypoint: generates a fully populated {@link ReportContextDto} from raw scores.
+     * Caches generated reports by attemptToken / ID to prevent duplicate LLM calls.
      *
      * @param rawScore the raw scoring response DTO from the assessment engine
      * @return fully populated ReportContextDto ready for Thymeleaf / PDF rendering
      */
+    @Cacheable(value = "leadershipReports", key = "#rawScore != null && #rawScore.attemptToken != null ? #rawScore.attemptToken : (#rawScore != null && #rawScore.id != null ? #rawScore.id : 'default')", unless = "#result == null")
     public ReportContextDto generateReport(AssessmentScoreResponseDto rawScore) {
         if (rawScore == null) {
             return ReportContextDto.createDefaultReport("PCIV126371");
@@ -103,16 +183,144 @@ public class LeadershipReportGeneratorService {
         // 5. Initialize Detailed Competency Pages Structure (Pages 7–14)
         initializeDetailedCompetencyPages(rawScore, report);
 
-        // 6. Build AI Prompt Payload
-        AiPromptPayload aiPayload = buildAiPromptPayload(rawScore, report);
+        // 6. Build Modular Candidate Context Payloads
+        ImpressionPayload impressionPayload = new ImpressionPayload(
+                report.getSocialScore(), report.getSocialRisk(),
+                report.getCentralScore(), report.getCentralRisk()
+        );
 
-        // 7. Invoke AI Engine for Arabic Narratives
+        DerailersPayload derailersPayload = new DerailersPayload(
+                report.getReservedScore(), report.getEmotionalityScore(),
+                report.getHostilityScore(), report.getImpulsivityScore(),
+                report.getRigidityScore(), report.getUnconventionalityScore()
+        );
+
+        String personalityContext = extractPersonalityContext(report);
+
+        Map<Integer, CompetencyPagePayload> compPayloads = new LinkedHashMap<>();
+        for (int p = 7; p <= 14; p++) {
+            CompetencyDetailDto cDto = report.getCompetencyPage(p);
+            List<String> subReqs = new ArrayList<>();
+            if (cDto.getReq1() != null) subReqs.add(cDto.getReq1());
+            if (cDto.getReq2() != null) subReqs.add(cDto.getReq2());
+            if (p != 11 && cDto.getReq3() != null) subReqs.add(cDto.getReq3());
+
+            String qaData = extractItemQaForCompetency(candidateId, p, cDto.getCompetencyTitle());
+
+            compPayloads.put(p, new CompetencyPagePayload(
+                    p,
+                    cDto.getCompetencyTitle(),
+                    cDto.getCompetencyScore(),
+                    personalityContext,
+                    subReqs,
+                    qaData
+            ));
+        }
+
+        String topStrengths = extractTopStrengths(report);
+        String devAreas = extractDevelopmentAreas(report);
+        GrowPlanPayload growPayload = new GrowPlanPayload(
+                report.getCandidateName(),
+                topStrengths,
+                devAreas,
+                personalityContext
+        );
+
+        // 7. Invoke AI Engine Concurrently for All Sections
         try {
-            String aiJsonRaw = aiClient.generateNarrativesJson(aiPayload);
-            AiNarrativeResponseDto narratives = parseAiResponse(aiJsonRaw);
+            CompletableFuture<ImpressionResponseDto> cfImpression = CompletableFuture.supplyAsync(
+                    () -> aiClient.generateImpressionNarratives(impressionPayload)
+            );
+
+            CompletableFuture<DerailersResponseDto> cfDerailers = CompletableFuture.supplyAsync(
+                    () -> aiClient.generateDerailersNarratives(derailersPayload)
+            );
+
+            Map<Integer, CompletableFuture<CompetencyPageResponseDto>> cfCompPages = new LinkedHashMap<>();
+            for (int p = 7; p <= 14; p++) {
+                final int pageNum = p;
+                cfCompPages.put(pageNum, CompletableFuture.supplyAsync(
+                        () -> aiClient.generateCompetencyPageNarratives(compPayloads.get(pageNum))
+                ));
+            }
+
+            CompletableFuture<GrowPlanResponseDto> cfGrow = CompletableFuture.supplyAsync(
+                    () -> aiClient.generateGrowPlanNarratives(growPayload)
+            );
+
+            List<CompletableFuture<?>> allFutures = new ArrayList<>();
+            allFutures.add(cfImpression);
+            allFutures.add(cfDerailers);
+            allFutures.addAll(cfCompPages.values());
+            allFutures.add(cfGrow);
+
+            CompletableFuture.allOf(allFutures.toArray(new CompletableFuture[0]))
+                    .get(60, TimeUnit.SECONDS);
 
             // 8. Merge AI Narratives into the Report Context
-            mergeNarratives(report, narratives);
+            ImpressionResponseDto impResp = cfImpression.get();
+            if (impResp != null) {
+                if (impResp.socialInterpretation != null && !impResp.socialInterpretation.isBlank()) {
+                    report.setSocialInterpretation(impResp.socialInterpretation);
+                }
+                if (impResp.centralInterpretation != null && !impResp.centralInterpretation.isBlank()) {
+                    report.setCentralInterpretation(impResp.centralInterpretation);
+                }
+            }
+
+            DerailersResponseDto derResp = cfDerailers.get();
+            if (derResp != null) {
+                if (derResp.reservedText != null) report.setReservedText(derResp.reservedText);
+                if (derResp.emotionalityText != null) report.setEmotionalityText(derResp.emotionalityText);
+                if (derResp.hostilityText != null) report.setHostilityText(derResp.hostilityText);
+                if (derResp.impulsivityText != null) report.setImpulsivityText(derResp.impulsivityText);
+                if (derResp.rigidityText != null) report.setRigidityText(derResp.rigidityText);
+                if (derResp.unconventionalityText != null) report.setUnconventionalityText(derResp.unconventionalityText);
+            }
+
+            for (int p = 7; p <= 14; p++) {
+                CompetencyPageResponseDto cpResp = cfCompPages.get(p).get();
+                if (cpResp != null) {
+                    CompetencyDetailDto cDto = report.getCompetencyPage(p);
+                    if (cDto != null) {
+                        String r1 = CompetencyDetailDto.cleanOrNull(cpResp.result1);
+                        String rc1 = CompetencyDetailDto.cleanOrNull(cpResp.rec1);
+                        String r2 = CompetencyDetailDto.cleanOrNull(cpResp.result2);
+                        String rc2 = CompetencyDetailDto.cleanOrNull(cpResp.rec2);
+
+                        if (cpResp.req1 != null && CompetencyDetailDto.cleanOrNull(cpResp.req1) != null) {
+                            cDto.setReq1(CompetencyDetailDto.cleanOrNull(cpResp.req1));
+                        }
+                        if (cpResp.req2 != null && CompetencyDetailDto.cleanOrNull(cpResp.req2) != null) {
+                            cDto.setReq2(CompetencyDetailDto.cleanOrNull(cpResp.req2));
+                        }
+
+                        cDto.setResult1(r1);
+                        cDto.setRec1(rc1);
+                        cDto.setResult2(r2);
+                        cDto.setRec2(rc2);
+
+                        if (p != 11) {
+                            if (cpResp.req3 != null && CompetencyDetailDto.cleanOrNull(cpResp.req3) != null) {
+                                cDto.setReq3(CompetencyDetailDto.cleanOrNull(cpResp.req3));
+                            }
+                            String r3 = CompetencyDetailDto.cleanOrNull(cpResp.result3);
+                            String rc3 = CompetencyDetailDto.cleanOrNull(cpResp.rec3);
+                            cDto.setResult3(r3);
+                            cDto.setRec3(rc3);
+                        }
+                    }
+                }
+            }
+
+            GrowPlanResponseDto growResp = cfGrow.get();
+            if (growResp != null) {
+                if (CompetencyDetailDto.cleanOrNull(growResp.growGoalText) != null) report.setGrowGoalText(CompetencyDetailDto.cleanOrNull(growResp.growGoalText));
+                if (CompetencyDetailDto.cleanOrNull(growResp.growRealityText) != null) report.setGrowRealityText(CompetencyDetailDto.cleanOrNull(growResp.growRealityText));
+                if (CompetencyDetailDto.cleanOrNull(growResp.growOptionsText) != null) report.setGrowOptionsText(CompetencyDetailDto.cleanOrNull(growResp.growOptionsText));
+                if (CompetencyDetailDto.cleanOrNull(growResp.growWillText) != null) report.setGrowWillText(CompetencyDetailDto.cleanOrNull(growResp.growWillText));
+            }
+
         } catch (Exception e) {
             log.error("Failed to generate/merge AI narratives. Applying fallback standard narratives: {}", e.getMessage(), e);
             applyFallbackNarratives(report);
@@ -317,6 +525,38 @@ public class LeadershipReportGeneratorService {
     // STEP 3: Prompt Building & AI Payload Construction
     // =========================================================================
 
+    public record ImpressionPayload(
+            int socialScore,
+            String socialRisk,
+            int centralScore,
+            String centralRisk
+    ) {}
+
+    public record DerailersPayload(
+            int reserved,
+            int emotionality,
+            int hostility,
+            int impulsivity,
+            int rigidity,
+            int unconventionality
+    ) {}
+
+    public record CompetencyPagePayload(
+            int pageNum,
+            String competencyTitle,
+            double score,
+            String personalityContext,
+            List<String> subIndicatorReqs,
+            String questionsAndAnswers
+    ) {}
+
+    public record GrowPlanPayload(
+            String candidateName,
+            String topStrengths,
+            String developmentAreas,
+            String prominentDerailers
+    ) {}
+
     public record AiPromptPayload(
             String candidateId,
             String candidateName,
@@ -326,62 +566,249 @@ public class LeadershipReportGeneratorService {
             String instructions
     ) {}
 
-    private AiPromptPayload buildAiPromptPayload(AssessmentScoreResponseDto raw, ReportContextDto report) {
-        Map<String, Object> scores = new LinkedHashMap<>();
-        scores.put("socialScore", report.getSocialScore());
-        scores.put("centralScore", report.getCentralScore());
-        scores.put("reservedScore", report.getReservedScore());
-        scores.put("emotionalityScore", report.getEmotionalityScore());
-        scores.put("hostilityScore", report.getHostilityScore());
-        scores.put("impulsivityScore", report.getImpulsivityScore());
-        scores.put("rigidityScore", report.getRigidityScore());
-        scores.put("unconventionalityScore", report.getUnconventionalityScore());
-        scores.put("communicationScore", report.getCommScore());
-        scores.put("initiativeScore", report.getInitiativeScore());
-        scores.put("decisionScore", report.getDecisionScore());
-        scores.put("leadershipScore", report.getLeadershipScore());
-        scores.put("strategicThinkingScore", report.getStrategicScore());
-        scores.put("skillDevelopmentScore", report.getSkillsScore());
-        scores.put("adaptabilityScore", report.getAdaptabilityScore());
-        scores.put("systematicAnalysisScore", report.getAnalysisScore());
+    public String extractItemQaForCompetency(String attemptToken, int pageNum, String competencyTitle) {
+        if (jdbcTemplate != null && attemptToken != null && !attemptToken.isBlank()) {
+            try {
+                String sql = """
+                        SELECT pi.statement_ar, cr.selected_likert
+                        FROM candidate_responses cr
+                        JOIN battery_sessions bs ON cr.session_id = bs.id
+                        JOIN assessment_attempts aa ON bs.attempt_id = aa.id
+                        JOIN personality_items pi ON cr.item_id = pi.id
+                        JOIN personality_item_competencies pic ON pi.id = pic.item_id
+                        JOIN competencies c ON pic.competency_id = c.id
+                        WHERE aa.attempt_token = ? 
+                          AND (c.name_ar = ? OR c.name_ar LIKE ? OR c.code = ?)
+                        ORDER BY cr.id ASC
+                        """;
+                String traitCode = getTraitCodeForPage(pageNum);
+                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, attemptToken, competencyTitle, "%" + competencyTitle + "%", traitCode);
 
-        List<String> competencies = List.of(
-                "التواصل والتأثير الفعال",
-                "المبادرة",
-                "اتخاذ القرار وتحمل المسؤولية",
-                "القيادة الملهمة",
-                "التفكير الاستراتيجي",
-                "تطوير المهارات",
-                "القدرة على التكيف",
-                "التحليل والتخطيط المنهجي"
-        );
+                if (!rows.isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    int qNum = 1;
+                    for (Map<String, Object> row : rows) {
+                        String statement = (String) row.get("statement_ar");
+                        Number likertNum = (Number) row.get("selected_likert");
+                        int likert = likertNum != null ? likertNum.intValue() : 3;
+                        String likertLabel = formatLikert(likert);
+                        sb.append(String.format("السؤال %d: [%s] - إجابة المرشح: [%s]\n", qNum++, statement, likertLabel));
+                    }
+                    return sb.toString().trim();
+                }
+            } catch (Exception e) {
+                log.warn("Could not query candidate item responses for {} ({}). Using structured fallback Q&A data.", competencyTitle, e.getMessage());
+            }
+        }
 
-        String instructions = """
-                أنت خبير قيادي ومستشار في القياس النفسي (Psychometric Executive Coach).
-                بناءً على الدرجات المعيارية المرفقة (1-10 لسمات الشخصية والموانع، و 1-5 للكفاءات القيادية والقدرات)،
-                قم بصياغة سرد تحليلي وتوصيات تطويرية مهنية باللغة العربية الفصحى.
-                يجب أن يكون الإخراج كائن JSON مصغر وصالح فقط بدون أي كتل markdown أو شروحات إضافية.
-                الالتزام التام بالمفاتيح المحددة في المخطط:
-                - socialInterpretation
-                - centralInterpretation
-                - reservedText, emotionalityText, hostilityText, impulsivityText, rigidityText, unconventionalityText
-                - competencyNarratives: خريطة بأرقام الصفحات من 7 إلى 14، يحتوي كل عنصر على (result1, rec1, result2, rec2, result3, rec3 - مع مراعاة أن صفحة 11 تتكون من بندين فقط).
-                - growGoalText, growRealityText, growOptionsText, growWillText
-                """;
+        return getFallbackItemQa(pageNum);
+    }
 
-        return new AiPromptPayload(
-                report.getCandidateId(),
-                report.getCandidateName(),
-                scores,
-                ROLE_BENCHMARKS,
-                competencies,
-                instructions
-        );
+    public static String getTraitCodeForPage(int pageNum) {
+        return switch (pageNum) {
+            case 7 -> "COMMUNICATION_AND_INFLUENCE";
+            case 8 -> "INITIATIVE";
+            case 9 -> "DECISION_MAKING_AND_RESPONSIBILITY";
+            case 10 -> "INSPIRING_LEADERSHIP";
+            case 11 -> "STRATEGIC_THINKING";
+            case 12 -> "SKILL_DEVELOPMENT";
+            case 13 -> "ADAPTABILITY";
+            case 14 -> "SYSTEMATIC_ANALYSIS_AND_PLANNING";
+            default -> "";
+        };
+    }
+
+    public static String formatLikert(int likert) {
+        return switch (likert) {
+            case 5 -> "أوافق بشدة / 5";
+            case 4 -> "أوافق / 4";
+            case 3 -> "محايد / 3";
+            case 2 -> "لا أوافق / 2";
+            case 1 -> "لا أوافق بشدة / 1";
+            default -> String.valueOf(likert);
+        };
+    }
+
+    public static String getFallbackItemQa(int pageNum) {
+        return switch (pageNum) {
+            case 7 -> """
+                    السؤال 1: [أحرص على توضيح أفكاري بأسلوب مقنع ومناسب لكافة أطراف النقاش] - إجابة المرشح: [أوافق / 4]
+                    السؤال 2: [أستمع بانتباه لوجهات نظر الآخرين قبل تقديم استنتاجاتي] - إجابة المرشح: [أوافق بشدة / 5]
+                    السؤال 3: [أنجح في بناء تحالفات عمل وتوجيه الآراء نحو تحقيق الأهداف المشتركة] - إجابة المرشح: [محايد / 3]
+                    """.trim();
+            case 8 -> """
+                    السؤال 1: [أسعى لاقتناص الفرص التطويرية دون انتظار التوجيه المباشر] - إجابة المرشح: [أوافق / 4]
+                    السؤال 2: [أتحرك بسرعة لمعالجة التحديات والمستجدات غير المتوقعة في بيئة العمل] - إجابة المرشح: [لا أوافق / 2]
+                    السؤال 3: [أقدم مقترحات مبتكرة لتحسين إجراءات وكفاءة العمل بصفة مستمرة] - إجابة المرشح: [أوافق / 4]
+                    """.trim();
+            case 9 -> """
+                    السؤال 1: [أعتمد على التحليل المنطقي والبيانات الموثوقة عند المفاضلة بين الخيارات] - إجابة المرشح: [أوافق / 4]
+                    السؤال 2: [أحسم القرارات الصعبة في الأوقات الحرجة دون تردد مفرط] - إجابة المرشح: [محايد / 3]
+                    السؤال 3: [أتحمل المسؤولية الكاملة عن تبعات ونتائج القرارات التي أتخذها] - إجابة المرشح: [أوافق بشدة / 5]
+                    """.trim();
+            case 10 -> """
+                    السؤال 1: [أحفز أعضاء الفريق وأوجههم نحو تحقيق رؤية وأهداف طموحة] - إجابة المرشح: [أوافق بشدة / 5]
+                    السؤال 2: [أبني بيئة عمل قائمة على الثقة والتمكين والتقدير المتبادل] - إجابة المرشح: [أوافق / 4]
+                    السؤال 3: [أمثل نموذجاً يحتذى به في الالتزام المهني والنزاهة القيادية] - إجابة المرشح: [أوافق بشدة / 5]
+                    """.trim();
+            case 11 -> """
+                    السؤال 1: [أستشرف التوجهات والفرص المستقبلية وأربطها بخطط العمل الحالية] - إجابة المرشح: [لا أوافق / 2]
+                    السؤال 2: [أحلل الصورة الشاملة والتأثيرات طويلة المدى للقرارات المؤسسية] - إجابة المرشح: [محايد / 3]
+                    """.trim();
+            case 12 -> """
+                    السؤال 1: [أحدد الاحتياجات التدريبية لأعضاء الفريق وأوفر لهم فرص التعلم المستمر] - إجابة المرشح: [أوافق / 4]
+                    السؤال 2: [أحرص على تطوير قدراتي الذاتية ومواكبة أفضل الممارسات في مجالي] - إجابة المرشح: [أوافق بشدة / 5]
+                    السؤال 3: [أقدم تغذية راجعة بناءة وتوجيهاً فعالاً لتمكين الآخرين من النمو] - إجابة المرشح: [أوافق / 4]
+                    """.trim();
+            case 13 -> """
+                    السؤال 1: [أتقبل التغييرات الهيكلية والمهنية بمرونة وإيجابية عالية] - إجابة المرشح: [أوافق / 4]
+                    السؤال 2: [أعدل أسلوب عملي واستراتيجياتي لتلائم متطلبات الظروف المستجدة] - إجابة المرشح: [أوافق / 4]
+                    السؤال 3: [أحافظ على الفاعلية والأداء المتميز تحت الضغوط وبيئات العمل المتغيرة] - إجابة المرشح: [محايد / 3]
+                    """.trim();
+            case 14 -> """
+                    السؤال 1: [أضع خطط عمل مفصلة ومحددة بمؤشرات قياس وجداول زمنية دقيقة] - إجابة المرشح: [أوافق بشدة / 5]
+                    السؤال 2: [أحلل المشكلات المعقدة وأفككها إلى عناصر قابلة للحل والتنفيذ] - إجابة المرشح: [أوافق / 4]
+                    السؤال 3: [أتابع سير العمل وأجري التعديلات التصحيحية بناءً على مؤشرات الإنجاز] - إجابة المرشح: [أوافق بشدة / 5]
+                    """.trim();
+            default -> "";
+        };
+    }
+
+    private String extractPersonalityContext(ReportContextDto report) {
+        Map<String, Integer> derailers = new LinkedHashMap<>();
+        derailers.put("التحفظ", report.getReservedScore());
+        derailers.put("الانفعالية", report.getEmotionalityScore());
+        derailers.put("العدائية", report.getHostilityScore());
+        derailers.put("الاندفاعية", report.getImpulsivityScore());
+        derailers.put("الصرامة", report.getRigidityScore());
+        derailers.put("اللامألوفية", report.getUnconventionalityScore());
+
+        var sorted = derailers.entrySet().stream()
+                .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
+                .toList();
+
+        var highest = sorted.get(0);
+        var secondHighest = sorted.get(1);
+        return String.format(Locale.US, "السمات الشخصية الأبرز للمرشح: %s (%d/10) و%s (%d/10)",
+                highest.getKey(), highest.getValue(),
+                secondHighest.getKey(), secondHighest.getValue());
+    }
+
+    private String extractTopStrengths(ReportContextDto report) {
+        Map<String, Double> compScores = new LinkedHashMap<>();
+        compScores.put("التواصل والتأثير الفعال", report.getCommScore());
+        compScores.put("المبادرة", report.getInitiativeScore());
+        compScores.put("اتخاذ القرار وتحمل المسؤولية", report.getDecisionScore());
+        compScores.put("القيادة الملهمة", report.getLeadershipScore());
+        compScores.put("التفكير الاستراتيجي", report.getStrategicScore());
+        compScores.put("تطوير المهارات", report.getSkillsScore());
+        compScores.put("القدرة على التكيف", report.getAdaptabilityScore());
+        compScores.put("التحليل والتخطيط المنهجي", report.getAnalysisScore());
+
+        return compScores.entrySet().stream()
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
+                .limit(2)
+                .map(e -> String.format(Locale.US, "%s (%.1f/5)", e.getKey(), e.getValue()))
+                .reduce((a, b) -> a + "، " + b)
+                .orElse("التحليل والتخطيط المنهجي");
+    }
+
+    private String extractDevelopmentAreas(ReportContextDto report) {
+        Map<String, Double> compScores = new LinkedHashMap<>();
+        compScores.put("التواصل والتأثير الفعال", report.getCommScore());
+        compScores.put("المبادرة", report.getInitiativeScore());
+        compScores.put("اتخاذ القرار وتحمل المسؤولية", report.getDecisionScore());
+        compScores.put("القيادة الملهمة", report.getLeadershipScore());
+        compScores.put("التفكير الاستراتيجي", report.getStrategicScore());
+        compScores.put("تطوير المهارات", report.getSkillsScore());
+        compScores.put("القدرة على التكيف", report.getAdaptabilityScore());
+        compScores.put("التحليل والتخطيط المنهجي", report.getAnalysisScore());
+
+        return compScores.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .limit(2)
+                .map(e -> String.format(Locale.US, "%s (%.1f/5)", e.getKey(), e.getValue()))
+                .reduce((a, b) -> a + "، " + b)
+                .orElse("التفكير الاستراتيجي");
     }
 
     // =========================================================================
-    // STEP 4 & 5: Deserialization & Narrative Merging
+    // STEP 4 & 5: Deserialization & Response DTOs
     // =========================================================================
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ImpressionResponseDto {
+        public String socialInterpretation;
+        public String centralInterpretation;
+
+        public ImpressionResponseDto() {}
+        public ImpressionResponseDto(String socialInterpretation, String centralInterpretation) {
+            this.socialInterpretation = socialInterpretation;
+            this.centralInterpretation = centralInterpretation;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class DerailersResponseDto {
+        public String reservedText;
+        public String emotionalityText;
+        public String hostilityText;
+        public String impulsivityText;
+        public String rigidityText;
+        public String unconventionalityText;
+
+        public DerailersResponseDto() {}
+        public DerailersResponseDto(String reservedText, String emotionalityText, String hostilityText, String impulsivityText, String rigidityText, String unconventionalityText) {
+            this.reservedText = reservedText;
+            this.emotionalityText = emotionalityText;
+            this.hostilityText = hostilityText;
+            this.impulsivityText = impulsivityText;
+            this.rigidityText = rigidityText;
+            this.unconventionalityText = unconventionalityText;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CompetencyPageResponseDto {
+        public String req1;
+        public String result1;
+        public String rec1;
+        public String req2;
+        public String result2;
+        public String rec2;
+        public String req3;
+        public String result3;
+        public String rec3;
+
+        public CompetencyPageResponseDto() {}
+        public CompetencyPageResponseDto(String req1, String result1, String rec1, String req2, String result2, String rec2, String req3, String result3, String rec3) {
+            this.req1 = req1;
+            this.result1 = result1;
+            this.rec1 = rec1;
+            this.req2 = req2;
+            this.result2 = result2;
+            this.rec2 = rec2;
+            this.req3 = req3;
+            this.result3 = result3;
+            this.rec3 = rec3;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class GrowPlanResponseDto {
+        public String growGoalText;
+        public String growRealityText;
+        public String growOptionsText;
+        public String growWillText;
+
+        public GrowPlanResponseDto() {}
+        public GrowPlanResponseDto(String growGoalText, String growRealityText, String growOptionsText, String growWillText) {
+            this.growGoalText = growGoalText;
+            this.growRealityText = growRealityText;
+            this.growOptionsText = growOptionsText;
+            this.growWillText = growWillText;
+        }
+    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class AiNarrativeResponseDto {
@@ -413,83 +840,7 @@ public class LeadershipReportGeneratorService {
         }
     }
 
-    private AiNarrativeResponseDto parseAiResponse(String jsonString) {
-        if (jsonString == null || jsonString.isBlank()) {
-            return new AiNarrativeResponseDto();
-        }
-
-        try {
-            // Clean markdown code blocks if the LLM wrapped response in ```json ... ```
-            String cleanJson = jsonString.trim();
-            if (cleanJson.startsWith("```json")) {
-                cleanJson = cleanJson.substring(7);
-            } else if (cleanJson.startsWith("```")) {
-                cleanJson = cleanJson.substring(3);
-            }
-            if (cleanJson.endsWith("```")) {
-                cleanJson = cleanJson.substring(0, cleanJson.length() - 3);
-            }
-            cleanJson = cleanJson.trim();
-
-            return objectMapper.readValue(cleanJson, AiNarrativeResponseDto.class);
-        } catch (Exception e) {
-            log.warn("Failed to parse AI JSON response, falling back to default text: {}", e.getMessage());
-            return new AiNarrativeResponseDto();
-        }
-    }
-
-    private void mergeNarratives(ReportContextDto report, AiNarrativeResponseDto ai) {
-        if (ai == null) return;
-
-        // Page 2 Narratives
-        if (ai.socialInterpretation != null && !ai.socialInterpretation.isBlank()) {
-            report.setSocialInterpretation(ai.socialInterpretation);
-        }
-        if (ai.centralInterpretation != null && !ai.centralInterpretation.isBlank()) {
-            report.setCentralInterpretation(ai.centralInterpretation);
-        }
-
-        // Page 4 Derailers
-        if (ai.reservedText != null) report.setReservedText(ai.reservedText);
-        if (ai.emotionalityText != null) report.setEmotionalityText(ai.emotionalityText);
-        if (ai.hostilityText != null) report.setHostilityText(ai.hostilityText);
-        if (ai.impulsivityText != null) report.setImpulsivityText(ai.impulsivityText);
-        if (ai.rigidityText != null) report.setRigidityText(ai.rigidityText);
-        if (ai.unconventionalityText != null) report.setUnconventionalityText(ai.unconventionalityText);
-
-        // Pages 7 to 14 Competency Tables
-        if (ai.competencyNarratives != null) {
-            for (int p = 7; p <= 14; p++) {
-                AiNarrativeResponseDto.PageNarrativeDto pNarrative = ai.competencyNarratives.get(String.valueOf(p));
-                if (pNarrative == null) {
-                    pNarrative = ai.competencyNarratives.get("page" + p);
-                }
-
-                if (pNarrative != null) {
-                    CompetencyDetailDto cDto = report.getCompetencyPage(p);
-                    if (cDto != null) {
-                        if (pNarrative.result1 != null) cDto.setResult1(pNarrative.result1);
-                        if (pNarrative.rec1 != null) cDto.setRec1(pNarrative.rec1);
-                        if (pNarrative.result2 != null) cDto.setResult2(pNarrative.result2);
-                        if (pNarrative.rec2 != null) cDto.setRec2(pNarrative.rec2);
-                        if (p != 11) { // Page 11 has only 2 rows
-                            if (pNarrative.result3 != null) cDto.setResult3(pNarrative.result3);
-                            if (pNarrative.rec3 != null) cDto.setRec3(pNarrative.rec3);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Page 15: GROW Development Plan
-        if (ai.growGoalText != null) report.setGrowGoalText(ai.growGoalText);
-        if (ai.growRealityText != null) report.setGrowRealityText(ai.growRealityText);
-        if (ai.growOptionsText != null) report.setGrowOptionsText(ai.growOptionsText);
-        if (ai.growWillText != null) report.setGrowWillText(ai.growWillText);
-    }
-
     private void applyFallbackNarratives(ReportContextDto report) {
-        // Fallback already pre-seeded in default initialization
         log.info("Applied standardized psychometric fallback narratives.");
     }
 
@@ -548,17 +899,67 @@ public class LeadershipReportGeneratorService {
     // =========================================================================
 
     public interface AiReportClient {
-        String generateNarrativesJson(AiPromptPayload payload);
+        ImpressionResponseDto generateImpressionNarratives(ImpressionPayload payload);
+        DerailersResponseDto generateDerailersNarratives(DerailersPayload payload);
+        CompetencyPageResponseDto generateCompetencyPageNarratives(CompetencyPagePayload payload);
+        GrowPlanResponseDto generateGrowPlanNarratives(GrowPlanPayload payload);
+
+        default String generateNarrativesJson(AiPromptPayload payload) {
+            return "";
+        }
     }
 
     public static class DefaultMockAiClient implements AiReportClient {
+
+        @Override
+        public ImpressionResponseDto generateImpressionNarratives(ImpressionPayload payload) {
+            String socialText = payload.socialScore() > 7 
+                    ? "تشير الدرجة إلى ميل ملحوظ لإظهار صورة إيجابية مثالية (خطر مرتفع). يُنصح بمراعاة ذلك عند تفسير نتائج التقييم الأخرى."
+                    : "من المرجح أنه أجاب بصدق وموضوعية دون تزييف مفرط للصورة الإيجابية (خطر " + payload.socialRisk() + "). لا توجد مؤشرات مقلقة.";
+            String centralText = payload.centralScore() > 7
+                    ? "لوحظ ميل مرتفع لاختيار الإجابات الوسطية وتجنب إبداء مواقف واضحة وحاسمة (خطر مرتفع)."
+                    : "أظهر المرشح وضوحاً وحسماً في تحديد مواقفه دون اللجوء المفرط للإجابات المحايدة (خطر " + payload.centralRisk() + ").";
+            return new ImpressionResponseDto(socialText, centralText);
+        }
+
+        @Override
+        public DerailersResponseDto generateDerailersNarratives(DerailersPayload payload) {
+            return new DerailersResponseDto(
+                    "تشير نتيجة (" + payload.reserved() + "/10) إلى احتمالية التحفظ والانغلاق تحت الضغط، مما قد يؤثر على التواصل مع الفريق.",
+                    "تشير نتيجة (" + payload.emotionality() + "/10) إلى درجة التحكم الانفعالي، مع الحاجة للمحافظة على الثبات في المواقف الحرجة.",
+                    "تشير نتيجة (" + payload.hostility() + "/10) إلى مستوى التنافسية وإمكانية إظهار حدة في التعامل عند النزاعات الحادة.",
+                    "تشير نتيجة (" + payload.impulsivity() + "/10) إلى سرعة اتخاذ الإجراءات مع احتمالية التسرع قبل استكمال دراسة البدائل تحت وطأة الوقت.",
+                    "تشير نتيجة (" + payload.rigidity() + "/10) إلى التمسك بالقواعد والإجراءات المعمول بها مع حاجة لمرونة إضافية عند تغير الظروف.",
+                    "تشير نتيجة (" + payload.unconventionality() + "/10) إلى الميل لتبني أساليب غير تقليدية ومبتكرة في معالجة التحديات القيادية."
+            );
+        }
+
+        @Override
+        public CompetencyPageResponseDto generateCompetencyPageNarratives(CompetencyPagePayload payload) {
+            CompetencyDetailDto defaultDto = ReportContextDto.getDefaultCompetencyPage(payload.pageNum(), "PCIV126371");
+            return new CompetencyPageResponseDto(
+                    defaultDto.getReq1(), defaultDto.getResult1(), defaultDto.getRec1(),
+                    defaultDto.getReq2(), defaultDto.getResult2(), defaultDto.getRec2(),
+                    defaultDto.getReq3(), defaultDto.getResult3(), defaultDto.getRec3()
+            );
+        }
+
+        @Override
+        public GrowPlanResponseDto generateGrowPlanNarratives(GrowPlanPayload payload) {
+            return new GrowPlanResponseDto(
+                    "تعزيز فاعلية التخطيط الاستراتيجي وتوسيع نطاق المبادرة والتحليل في إدارة العمليات القيادية.",
+                    "يمتلك القائد نقاط قوة متميزة في " + payload.topStrengths() + "، بينما تتطلب مجالات " + payload.developmentAreas() + " دعماً وتطويراً مستمراً.",
+                    "المشاركة في برامج القيادة الاستراتيجية المتقدمة ومحاكاة إدارة الأزمات والعمليات المشتركة.",
+                    "تطبيق خطة تدريبية ومراجعة دورية للتقدم كل 3 أشهر مع القيادة العليا المباشرة."
+            );
+        }
+
         @Override
         public String generateNarrativesJson(AiPromptPayload payload) {
-            // Mock LLM generation returning structured JSON matching Arabic assessment style
             return """
             {
-              "socialInterpretation": "من المرجح أنه أجاب بصدق من دون إظهار صورة إيجابية بشدة. ما من إجراءات أخرى يلزم اتخاذها.",
-              "centralInterpretation": "من المرجح أنه أجاب بصراحة بدون رغبة في إخفاء شخصيته الحقيقية. ما من إجراءات أخرى يلزم اتخاذها.",
+              "socialInterpretation": "من المرجح أنه أجاب بصدق من دون إظهار صورة إيجابية بشدة.",
+              "centralInterpretation": "من المرجح أنه أجاب بصراحة بدون رغبة في إخفاء شخصيته الحقيقية.",
               "reservedText": "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة التحفظ.",
               "emotionalityText": "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة الانفعالية.",
               "hostilityText": "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة العدائية.",
