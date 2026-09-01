@@ -397,23 +397,35 @@
         </p>
     </div>
 
-    <!-- 3. Visual Score Scale Bar (Strict Table Layout) -->
-    <table style="width: 100%; border-collapse: collapse; border: none; margin-top: 12px; margin-bottom: 12px;">
+    <!-- 3. Visual Score Scale Bar (Strict Fixed Table Layout) -->
+    <table style="width: 100%; table-layout: fixed; border-collapse: collapse; border: none; margin-top: 12px; margin-bottom: 12px;">
+        <colgroup>
+            <col style="width: 45%;" />
+            <col style="width: 55%;" />
+        </colgroup>
         <!-- Brown Header Row -->
         <tr>
-            <!-- 1st in DOM (Left Side): Scale 1-5 -->
+            <!-- 1st in DOM (Left Side 45%): Scale 1-5 -->
             <td style="width: 45%; background-color: #8a5a44; padding: 6px 10px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; vertical-align: middle;">
-                <table style="width: 100%; border-collapse: collapse; text-align: center; color: white; font-weight: bold; font-size: 11.5px; border: none;">
+                <table style="width: 100%; table-layout: fixed; border-collapse: collapse; text-align: center; color: white; font-weight: bold; font-size: 11.5px; border: none;">
+                    <colgroup>
+                        <col style="width: 20%;" />
+                        <col style="width: 20%;" />
+                        <col style="width: 20%;" />
+                        <col style="width: 20%;" />
+                        <col style="width: 20%;" />
+                    </colgroup>
                     <tr>
-                        <td style="width: 20%; border: none; color: #ffffff;">5</td>
-                        <td style="width: 20%; border: none; color: #ffffff;">4</td>
-                        <td style="width: 20%; border: none; color: #ffffff;">3</td>
-                        <td style="width: 20%; border: none; color: #ffffff;">2</td>
-                        <td style="width: 20%; border: none; color: #ffffff;">1</td>
+                        <!-- Physical Left-to-Right: 5 -> 4 -> 3 -> 2 -> 1 -->
+                        <td style="width: 20%; border: none; color: #ffffff; padding: 0;">5</td>
+                        <td style="width: 20%; border: none; color: #ffffff; padding: 0;">4</td>
+                        <td style="width: 20%; border: none; color: #ffffff; padding: 0;">3</td>
+                        <td style="width: 20%; border: none; color: #ffffff; padding: 0;">2</td>
+                        <td style="width: 20%; border: none; color: #ffffff; padding: 0;">1</td>
                     </tr>
                 </table>
             </td>
-            <!-- 2nd in DOM (Right Side): Title -->
+            <!-- 2nd in DOM (Right Side 55%): Title -->
             <td style="width: 55%; background-color: #8a5a44; padding: 6px 16px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; text-align: right; color: white; font-weight: bold; font-size: 12px; vertical-align: middle;">
                 القدرات أو الكفاءات السلوكية
             </td>
@@ -422,10 +434,12 @@
         <tr><td colspan="2" style="height: 10px; border: none;"></td></tr>
         <!-- Score Data Row -->
         <tr>
-            <!-- Left Side: Slider (Pure Thymeleaf Math & Dynamic Color) -->
-            <td style="width: 45%; vertical-align: middle; padding: 10px; position: relative; border: none;">
+            <!-- Left Side 45%: Slider (Pure Thymeleaf Math & Dynamic Color) -->
+            <td style="width: 45%; vertical-align: middle; padding: 10px 10px; position: relative; border: none;">
                 <div style="position: relative; width: 100%; height: 16px;">
-                    <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                    <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
+                    <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                    <!-- Marker with Centered Math -->
                     <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${competencyScore != null ? competencyScore : 4}) - 1) * 20)) + '%;'">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                              th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#1e3a4c'}) + ';'"></div>
@@ -439,7 +453,7 @@
                     </div>
                 </div>
             </td>
-            <!-- Right Side: Trait Name & Colored Pill -->
+            <!-- Right Side 55%: Trait Name & Colored Pill -->
             <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
                 <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
                       th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#c87d46'}) + ';'"></span>
