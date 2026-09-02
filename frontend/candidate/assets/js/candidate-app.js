@@ -296,6 +296,36 @@ function translateNode(node, toLang) {
     }
 }
 
+function updateNavigationDirection() {
+    const isRtl = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
+    const prevBtn = document.getElementById("prevQuestionBtn");
+    const nextBtn = document.getElementById("nextQuestionBtn");
+    const startBtn = document.getElementById("startAssessmentBtn");
+
+    if (prevBtn) {
+        if (isRtl) {
+            prevBtn.innerHTML = `<span>السابق</span><span class="material-symbols-outlined text-sm">arrow_forward</span>`;
+        } else {
+            prevBtn.innerHTML = `<span class="material-symbols-outlined text-sm">arrow_back</span><span>Previous</span>`;
+        }
+    }
+
+    if (nextBtn) {
+        if (isRtl) {
+            nextBtn.innerHTML = `<span class="material-symbols-outlined text-sm">arrow_back</span><span>التالي</span>`;
+        } else {
+            nextBtn.innerHTML = `<span>Next</span><span class="material-symbols-outlined text-sm">arrow_forward</span>`;
+        }
+    }
+
+    if (startBtn) {
+        const icon = startBtn.querySelector(".material-symbols-outlined");
+        if (icon) {
+            icon.textContent = isRtl ? "arrow_back" : "arrow_forward";
+        }
+    }
+}
+
 function applyTranslation(lang) {
     translateNode(document.body, lang);
     // Also update dynamic elements rendered by JS
@@ -304,13 +334,17 @@ function applyTranslation(lang) {
     } else {
         document.body.style.fontFamily = "";
     }
+    updateNavigationDirection();
 }
 
 window.applyTranslation = applyTranslation;
+window.updateNavigationDirection = updateNavigationDirection;
 
 function applyCurrentTranslation() {
     if (document.documentElement.getAttribute("dir") === "rtl") {
         applyTranslation("ar");
+    } else {
+        updateNavigationDirection();
     }
 }
 
@@ -399,6 +433,7 @@ const BATTERY_METADATA = [
 function initCandidateApp() {
     checkAuth();
     initEventListeners();
+    updateNavigationDirection();
     loadAssessmentState();
     loadAssessmentHistory();
 }
@@ -511,6 +546,10 @@ function initEventListeners() {
                     warningBlock.classList.remove("border-r-4", "border-r-[#131b2e]", "rounded-l");
                     warningBlock.classList.add("border-l-4", "border-l-[#131b2e]", "rounded-r");
                 }
+            }
+            updateNavigationDirection();
+            if (activeItems && activeItems.length > 0 && activeSession) {
+                renderCurrentQuestion();
             }
             if (currentAttempt) {
                 updateTestSidebar(currentAttempt);
@@ -1003,8 +1042,24 @@ function recordItemTime(idx) {
 // 1. Likert Scale Question Renderer (PQ10 & Derailers)
 function renderLikertQuestion(item, container) {
     const currentVal = responsesMap[item.id]?.selectedLikert || null;
+    const isRtl = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
 
-    const scaleLabels = [
+    // In Arabic (RTL): options flow from Right to Left:
+    // 1st box on the far right = "موافق بشدة" (5 - Strongly Agree)
+    // 2nd box = "موافق" (4 - Agree)
+    // 3rd box = "محايد" (3 - Neutral)
+    // 4th box = "غير موافق" (2 - Disagree)
+    // 5th box on the far left = "غير موافق بشدة" (1 - Strongly Disagree)
+    // In English (LTR): options flow from Left to Right:
+    // 1st box on the far left = "Strongly Disagree" (1)
+    // 5th box on the far right = "Strongly Agree" (5)
+    const scaleLabels = isRtl ? [
+        { val: 5, labelEn: "Strongly Agree", labelAr: "موافق بشدة" },
+        { val: 4, labelEn: "Agree", labelAr: "موافق" },
+        { val: 3, labelEn: "Neutral", labelAr: "محايد" },
+        { val: 2, labelEn: "Disagree", labelAr: "غير موافق" },
+        { val: 1, labelEn: "Strongly Disagree", labelAr: "غير موافق بشدة" }
+    ] : [
         { val: 1, labelEn: "Strongly Disagree", labelAr: "غير موافق بشدة" },
         { val: 2, labelEn: "Disagree", labelAr: "غير موافق" },
         { val: 3, labelEn: "Neutral", labelAr: "محايد" },
@@ -1014,19 +1069,19 @@ function renderLikertQuestion(item, container) {
 
     let html = `
         <div class="space-y-4">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Statement ${currentItemIndex + 1}</span>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isRtl ? 'العبارة' : 'Statement'} ${currentItemIndex + 1}</span>
             <h2 class="text-xl sm:text-2xl font-bold text-on-surface leading-relaxed arabic-text">
-                ${item.statementAr || ""}
+                ${isRtl ? (item.statementAr || item.statementEn || "") : (item.statementEn || item.statementAr || "")}
             </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-4">
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-4 likert-scale-container" dir="${isRtl ? 'rtl' : 'ltr'}">
     `;
 
     scaleLabels.forEach(s => {
         const isActive = (currentVal === s.val);
         html += `
-            <button type="button" class="likert-btn ${isActive ? 'active' : ''} flex flex-col items-center justify-center p-4 border border-slate-300 rounded-xl transition-all text-center gap-2 cursor-pointer bg-white" data-value="${s.val}">
+            <button type="button" class="likert-btn ${isActive ? 'active' : ''} flex flex-col items-center justify-center p-4 border border-slate-300 rounded-xl transition-all text-center gap-2 cursor-pointer bg-white hover:border-primary/50" data-value="${s.val}">
                 <span class="w-6 h-6 rounded-full border-2 border-slate-400 flex items-center justify-center indicator"></span>
                 <span class="text-xs font-bold text-slate-800 arabic-text">${s.labelAr}</span>
                 <span class="text-[10px] text-slate-500">${s.labelEn}</span>
