@@ -725,21 +725,16 @@ function showView(viewId) {
     const historySection = document.getElementById("historySection");
     const mainContentArea = document.getElementById("mainContentArea");
 
+    // ALWAYS show sidebars to maintain the 3-column structural layout
     if (mainSidebar) mainSidebar.classList.remove("hidden");
     if (instructionsSidebar) instructionsSidebar.classList.add("hidden");
-
-    // CRITICAL FIX: Only show the Progress Tracker during Exam and Instructions
+    
     if (testSidebar) {
-        if (viewId === "view-instructions" || viewId === "view-active-test" || viewId === "view-onboarding") {
-            testSidebar.classList.remove("hidden");
-            testSidebar.style.display = "block"; // Ensure it shows
-        } else {
-            testSidebar.classList.add("hidden");
-            testSidebar.style.display = "none";  // Ensure it completely collapses
-        }
+        testSidebar.classList.remove("hidden");
+        testSidebar.style.display = "block"; 
     }
 
-    // Hide history during exam/instructions
+    // Hide history only during active test or instructions
     if (historySection) {
         if (viewId === "view-instructions" || viewId === "view-active-test") {
             historySection.classList.add("hidden");
@@ -781,6 +776,7 @@ async function loadAssessmentState() {
         }
 
         if (!attempt) {
+            updateTestSidebar(null); // Force the sidebar into the empty state
             showView("view-empty");
             return;
         }
@@ -790,6 +786,7 @@ async function loadAssessmentState() {
 
     } catch (err) {
         console.error("Error loading assessment:", err);
+        updateTestSidebar(null);
         showView("view-empty");
     }
 }
@@ -2414,6 +2411,19 @@ function updateTestSidebar(attempt) {
     if (!navList || !progressText) return;
 
     const isArabic = document.documentElement.getAttribute("dir") === "rtl";
+
+    // NEW: Handle Empty Dashboard State
+    if (!attempt || attempt.state === "EMPTY") {
+        progressText.textContent = isArabic ? "لا يوجد تقييم نشط" : "No Active Assessment";
+        navList.innerHTML = `
+            <div class="flex flex-col items-center justify-center p-6 mt-2 text-center text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                <span class="material-symbols-outlined mb-2 text-slate-300 text-2xl">hourglass_empty</span>
+                <span class="leading-relaxed">${isArabic ? "عند تعيين اختبار لك، سيظهر تقدمك هنا." : "When a test is assigned, your progress will appear here."}</span>
+            </div>
+        `;
+        return;
+    }
+
     const currentIndex = (attempt && typeof attempt.currentBatteryIndex === 'number') ? attempt.currentBatteryIndex : 0;
 
     progressText.textContent = isArabic ? `الجزء ${currentIndex + 1} من 4` : `Part ${currentIndex + 1} of 4`;
