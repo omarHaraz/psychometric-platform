@@ -80,7 +80,7 @@
             <div class="card-header p-2 ps-3 d-flex justify-content-between align-items-center">
               <div>
                 <p class="text-xs mb-0 text-capitalize font-weight-bold text-secondary">Candidates</p>
-                <h4 class="mb-0 font-weight-bold text-dark">Active</h4>
+                <h4 id="statCandidates" class="mb-0 font-weight-bold text-dark">Active</h4>
               </div>
               <div class="icon icon-md icon-shape bg-gradient-info shadow-info text-center border-radius-lg d-flex align-items-center justify-content-center">
                 <i class="material-symbols-rounded opacity-10 text-white">people</i>
@@ -98,7 +98,7 @@
             <div class="card-header p-2 ps-3 d-flex justify-content-between align-items-center">
               <div>
                 <p class="text-xs mb-0 text-capitalize font-weight-bold text-secondary">Administrators</p>
-                <h4 class="mb-0 font-weight-bold text-dark">Staff</h4>
+                <h4 id="statAdmins" class="mb-0 font-weight-bold text-dark">Staff</h4>
               </div>
               <div class="icon icon-md icon-shape bg-gradient-success shadow-success text-center border-radius-lg d-flex align-items-center justify-content-center">
                 <i class="material-symbols-rounded opacity-10 text-white">manage_accounts</i>
@@ -179,44 +179,53 @@
   <script src="../assets/js/loadComponents.js"></script>
   <script src="../assets/js/admin-ui.js"></script>
 
-  <script>
-    const API_BASE_URL = 'http://localhost:8081';
+  <script type="module">
+    import { API_BASE } from "../../shared/config/api-config.js";
 
     function getAuthHeaders() {
       const userStr = localStorage.getItem('user');
       const u = userStr ? JSON.parse(userStr) : null;
-      return u?.token ? { 'Authorization': 'Bearer ' + u.token } : {};
+      return u?.token ? { 'Authorization': 'Bearer ' + u.token, 'Content-Type': 'application/json' } : {};
     }
 
     async function loadDashboardStats() {
       const headers = getAuthHeaders();
+      if (!headers.Authorization) return;
 
-      // Load Products count
-      fetch(`${API_BASE_URL}/api/products`, { headers })
-        .then(r => r.ok ? r.json() : [])
-        .then(data => { document.getElementById('statProducts').textContent = Array.isArray(data) ? data.length : '0'; })
-        .catch(() => { document.getElementById('statProducts').textContent = '0'; });
+      // Load Candidates count
+      try {
+        const res = await fetch(`${API_BASE}/api/candidate/management`, { headers });
+        if (res.ok) {
+          const candidates = await res.json();
+          const el = document.getElementById('statCandidates');
+          if (el && Array.isArray(candidates)) {
+            el.textContent = candidates.length;
+          }
+        }
+      } catch (err) {
+        console.debug('Could not load candidates count:', err);
+      }
 
-      // Load Categories count
-      fetch(`${API_BASE_URL}/api/categories`, { headers })
-        .then(r => r.ok ? r.json() : [])
-        .then(data => { document.getElementById('statCategories').textContent = Array.isArray(data) ? data.length : '0'; })
-        .catch(() => { document.getElementById('statCategories').textContent = '0'; });
-
-      // Load Attributes count
-      fetch(`${API_BASE_URL}/api/attributes`, { headers })
-        .then(r => r.ok ? r.json() : [])
-        .then(data => { document.getElementById('statAttributes').textContent = Array.isArray(data) ? data.length : '0'; })
-        .catch(() => { document.getElementById('statAttributes').textContent = '0'; });
-
-      // Load Inventory count
-      fetch(`${API_BASE_URL}/api/inventory`, { headers })
-        .then(r => r.ok ? r.json() : [])
-        .then(data => { document.getElementById('statInventory').textContent = Array.isArray(data) ? data.length : '0'; })
-        .catch(() => { document.getElementById('statInventory').textContent = '0'; });
+      // Load Admins count (if authorized)
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/management`, { headers });
+        if (res.ok) {
+          const admins = await res.json();
+          const el = document.getElementById('statAdmins');
+          if (el && Array.isArray(admins)) {
+            el.textContent = admins.length;
+          }
+        }
+      } catch (err) {
+        console.debug('Could not load admins count:', err);
+      }
     }
 
-    document.addEventListener('DOMContentLoaded', loadDashboardStats);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadDashboardStats);
+    } else {
+      loadDashboardStats();
+    }
   </script>
 </body>
 

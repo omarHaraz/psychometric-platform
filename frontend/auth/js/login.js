@@ -28,21 +28,22 @@ const clearErrors = () => {
 const validateForm = () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
+    const isArabic = (document.documentElement.getAttribute("dir") || document.documentElement.dir || "ltr") === "rtl" || document.documentElement.getAttribute("lang") === "ar";
     let isValid = true;
 
     if (!email) {
-        setFieldError(emailError, 'Email is required.');
+        setFieldError(emailError, isArabic ? 'يرجى إدخال البريد الإلكتروني.' : 'Email is required.');
         isValid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        setFieldError(emailError, 'Please enter a valid email address.');
+        setFieldError(emailError, isArabic ? 'يرجى إدخال بريد إلكتروني صحيح (مثال: user@example.com).' : 'Please enter a valid email address (e.g. user@example.com).');
         isValid = false;
     }
 
     if (!password) {
-        setFieldError(passwordError, 'Password is required.');
+        setFieldError(passwordError, isArabic ? 'يرجى إدخال كلمة المرور.' : 'Password is required.');
         isValid = false;
     } else if (password.length < 6) {
-        setFieldError(passwordError, 'Password must be at least 6 characters.');
+        setFieldError(passwordError, isArabic ? 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.' : 'Password must be at least 6 characters.');
         isValid = false;
     }
 
