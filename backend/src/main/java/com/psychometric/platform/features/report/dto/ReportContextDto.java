@@ -567,6 +567,9 @@ public class ReportContextDto implements Serializable {
         map.put("growOptionsText", growOptionsText);
         map.put("growWillText", growWillText);
 
+        // Required for dynamic fragments to look up specific page data directly
+        map.put("competencyPages", competencyPages);
+
         return map;
     }
 
