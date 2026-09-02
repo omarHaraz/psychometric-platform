@@ -703,31 +703,25 @@ function showView(viewId) {
     if (activeEl) activeEl.classList.remove("hidden");
 
     // Toggle Sidebars & Sections
-    const dashboardSidebar = document.getElementById("dashboardSidebar");
+    const mainSidebar = document.getElementById("mainSidebar") || document.getElementById("dashboardSidebar");
     const testSidebar = document.getElementById("testSidebar");
     const instructionsSidebar = document.getElementById("instructionsSidebar");
     const historySection = document.getElementById("historySection");
     const mainContentArea = document.getElementById("mainContentArea");
 
+    if (testSidebar) testSidebar.classList.remove("hidden");
+    if (mainSidebar) mainSidebar.classList.remove("hidden");
+    if (instructionsSidebar) instructionsSidebar.classList.add("hidden");
+
     if (viewId === "view-instructions" || viewId === "view-active-test") {
-        if (dashboardSidebar) dashboardSidebar.classList.add("hidden");
-        if (instructionsSidebar) instructionsSidebar.classList.add("hidden");
-        if (testSidebar) testSidebar.classList.remove("hidden");
         if (historySection) historySection.classList.add("hidden");
-        if (mainContentArea) {
-            mainContentArea.classList.add("flex-1");
-            mainContentArea.classList.remove("flex-grow");
-        }
     } else {
-        // Dashboard views (pending, complete, empty)
-        if (testSidebar) testSidebar.classList.add("hidden");
-        if (dashboardSidebar) dashboardSidebar.classList.remove("hidden");
-        if (instructionsSidebar) instructionsSidebar.classList.remove("hidden");
         if (historySection) historySection.classList.remove("hidden");
-        if (mainContentArea) {
-            mainContentArea.classList.add("flex-1");
-            mainContentArea.classList.remove("flex-grow");
-        }
+    }
+
+    if (mainContentArea) {
+        mainContentArea.classList.add("flex-1");
+        mainContentArea.classList.remove("flex-grow");
     }
 }
 
