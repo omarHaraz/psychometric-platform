@@ -819,6 +819,7 @@ function handleAttemptState(attempt) {
 
 // Show Pending Portal View
 function showPendingPortal(attempt) {
+    updateTestSidebar(attempt);
     showView("view-pending-portal");
     updateBatteryCardStates(attempt);
     applyCurrentTranslation();
@@ -958,6 +959,10 @@ function openPreBatteryInstructions(batteryIndex, isIntermission = false) {
         }, 1000);
     } else if (intermissionBlock) {
         intermissionBlock.classList.add("hidden");
+    }
+
+    if (currentAttempt && currentAttempt.state === "INIT") {
+        currentAttempt.state = "IN_PROGRESS";
     }
 
     updateTestSidebar(currentAttempt);
@@ -2406,28 +2411,74 @@ function generatePrintableReportWindow(score, token) {
 
 
 function updateTestSidebar(attempt) {
-    const navList = document.getElementById("batteryNavList");
-    const progressText = document.getElementById("sidebarProgressText");
-    if (!navList || !progressText) return;
+    const sidebarEl = document.getElementById("testSidebar");
+    if (!sidebarEl) return;
 
     const isArabic = document.documentElement.getAttribute("dir") === "rtl";
 
-    // NEW: Handle Empty Dashboard State
-    if (!attempt || attempt.state === "EMPTY") {
-        progressText.textContent = isArabic ? "لا يوجد تقييم نشط" : "No Active Assessment";
-        navList.innerHTML = `
-            <div class="flex flex-col items-center justify-center p-6 mt-2 text-center text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                <span class="material-symbols-outlined mb-2 text-slate-300 text-2xl">hourglass_empty</span>
-                <span class="leading-relaxed">${isArabic ? "عند تعيين اختبار لك، سيظهر تقدمك هنا." : "When a test is assigned, your progress will appear here."}</span>
+    // 1. EMPTY / PENDING DASHBOARD STATE: Show General Instructions
+    if (!attempt || attempt.state === "EMPTY" || attempt.state === "INIT" || attempt.state === "ALL_SUBMITTED" || attempt.state === "SCORED") {
+        sidebarEl.innerHTML = `
+            <div class="flex items-center gap-3 mb-5 pb-4 border-b border-slate-100">
+                <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                    <span class="material-symbols-outlined text-2xl">info</span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm text-on-surface">${isArabic ? "تعليمات وإرشادات الاختبار" : "General Exam Instructions"}</h3>
+                    <p class="text-[11px] text-on-surface-variant">${isArabic ? "إرشادات هامة للمرشحين" : "Key guidelines for candidates"}</p>
+                </div>
+            </div>
+            <div class="flex flex-col gap-3.5">
+                <div class="space-y-1.5">
+                    <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px] text-primary">timer</span> 
+                        ${isArabic ? "جلسة متواصلة واحدة" : "Continuous Session"}
+                    </h4>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        ${isArabic ? "خصّص حوالي 90 دقيقة من الوقت الهادئ دون انقطاع. المؤقت يعمل بشكل مستمر بمجرد البدء." : "Allocate approx. 90 minutes of quiet, uninterrupted time. Timers run continuously once started."}
+                    </p>
+                </div>
+                <div class="space-y-1.5 border-t border-slate-100 pt-3">
+                    <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px] text-primary">psychology</span> 
+                        ${isArabic ? "الإجابة العفوية والصادقة" : "Spontaneous Responses"}
+                    </h4>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        ${isArabic ? "في بطاريات الشخصية والمخاطر، اختر الاستجابة التلقائية التي تمثلك في بيئة العمل اليومية." : "In personality & derailer batteries, choose the first response that naturally represents your behavior."}
+                    </p>
+                </div>
+                <div class="space-y-1.5 border-t border-slate-100 pt-3">
+                    <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px] text-primary">wifi</span> 
+                        ${isArabic ? "استقرار النظام والاتصال" : "System & Stability"}
+                    </h4>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        ${isArabic ? "استخدم اتصال إنترنت مستقر ومتصفح Chrome أو Edge على الحاسوب وتجنب تحديث الصفحة." : "Use a stable internet connection on desktop Chrome or Edge. Avoid refreshing the page during tests."}
+                    </p>
+                </div>
             </div>
         `;
-        return;
+        return; // Exit here, do not render the progress tracker
     }
 
-    const currentIndex = (attempt && typeof attempt.currentBatteryIndex === 'number') ? attempt.currentBatteryIndex : 0;
+    // 2. ACTIVE TEST STATE: Show Progress Tracker
+    const currentIndex = (typeof attempt.currentBatteryIndex === 'number') ? attempt.currentBatteryIndex : 0;
+    
+    // Inject the Progress Header and NavList container
+    sidebarEl.innerHTML = `
+        <div class="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
+            <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-2xl">psychology</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-sm text-on-surface">${isArabic ? "نظرة عامة على التقدم" : "Progress Overview"}</h3>
+                <p id="sidebarProgressText" class="text-xs text-on-surface-variant">${isArabic ? `الجزء ${currentIndex + 1} من 4` : `Part ${currentIndex + 1} of 4`}</p>
+            </div>
+        </div>
+        <nav id="batteryNavList" class="flex flex-col gap-1.5"></nav>
+    `;
 
-    progressText.textContent = isArabic ? `الجزء ${currentIndex + 1} من 4` : `Part ${currentIndex + 1} of 4`;
-
+    const navList = document.getElementById("batteryNavList");
     const batteryTitles = [
         { en: "Personality Assessment", ar: "اختبار الشخصية" },
         { en: "Situational Judgment Test (SJT)", ar: "اختبار الحكم على المواقف" },
