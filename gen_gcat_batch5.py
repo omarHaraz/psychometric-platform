@@ -226,7 +226,7 @@ new_json_data = r"""[
     "subtest_dimension": "VERBAL",
     "difficulty": "MEDIUM",
     "exam_mode": "FULL",
-    "title_in_arabic": "التناظر اللفظي",
+    "title_in_arabic": "حدّد الزوج الذي تربطه بالكلمتين العلاقة نفسها.",
     "pattern_type": "علاقة التضاد الاتجاهي",
     "prompt_text": "ما الاختيار الأكثر تقارباً مع المفردات التالية من حيث العلاقة والارتباط؟\n\nأعلى : أسفل",
     "options": {
@@ -248,7 +248,7 @@ new_json_data = r"""[
     "subtest_dimension": "VERBAL",
     "difficulty": "EASY",
     "exam_mode": "FULL",
-    "title_in_arabic": "التناظر اللفظي",
+    "title_in_arabic": "حدّد الزوج الذي تربطه بالكلمتين العلاقة نفسها.",
     "pattern_type": "علاقة المهنة بمكان العمل",
     "prompt_text": "طبيب : مستشفى = ؟",
     "options": {
@@ -270,7 +270,7 @@ new_json_data = r"""[
     "subtest_dimension": "VERBAL",
     "difficulty": "EASY",
     "exam_mode": "FULL",
-    "title_in_arabic": "التناظر اللفظي",
+    "title_in_arabic": "حدّد الزوج الذي تربطه بالكلمتين العلاقة نفسها.",
     "pattern_type": "علاقة الأداة بوظيفتها",
     "prompt_text": "قلم : كتابة = ؟",
     "options": {
@@ -292,7 +292,7 @@ new_json_data = r"""[
     "subtest_dimension": "VERBAL",
     "difficulty": "MEDIUM",
     "exam_mode": "FULL",
-    "title_in_arabic": "التناظر اللفظي",
+    "title_in_arabic": "حدّد الزوج الذي تربطه بالكلمتين العلاقة نفسها.",
     "pattern_type": "علاقة الظرف بخصيصته الملازمة",
     "prompt_text": "ليل : ظلام = ؟",
     "options": {
@@ -314,7 +314,7 @@ new_json_data = r"""[
     "subtest_dimension": "VERBAL",
     "difficulty": "EASY",
     "exam_mode": "FULL",
-    "title_in_arabic": "التناظر اللفظي",
+    "title_in_arabic": "حدّد الزوج الذي تربطه بالكلمتين العلاقة نفسها.",
     "pattern_type": "علاقة الأداة/المفعول بالنشاط",
     "prompt_text": "كتاب : قراءة = ؟",
     "options": {
