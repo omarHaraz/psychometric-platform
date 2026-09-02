@@ -1175,15 +1175,18 @@ function renderCurrentQuestion() {
     }
 
     const container = document.getElementById("questionBody");
-    container.innerHTML = "";
+    const sequenceIdx = (activeSession && activeSession.sequenceOrder !== undefined) ? activeSession.sequenceOrder : currentItemIndex;
+    const batteryType = (activeSession && activeSession.batteryType) || (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : sequenceIdx === 2 ? "DERAILERS" : "GCAT");
 
-    const batteryType = activeSession.batteryType;
     if (batteryType === "PQ10" || batteryType === "DERAILERS") {
         renderLikertQuestion(item, container);
     } else if (batteryType === "SJT") {
         renderSjtRankingQuestion(item, container);
     } else if (batteryType === "GCAT") {
         renderGcatMcqQuestion(item, container);
+    } else {
+        console.error("Unknown battery type, falling back to Likert.", batteryType);
+        renderLikertQuestion(item, container);
     }
     applyCurrentTranslation();
 }

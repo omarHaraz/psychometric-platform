@@ -85,17 +85,19 @@
         /* 1. Master CSS Grid Layout (3-Column Native RTL Grid) */
         .dashboard-master-grid {
             display: grid !important;
-            grid-template-columns: 290px minmax(0, 1fr) 290px !important;
-            gap: 2rem !important;
+            /* Adjusted column widths to prevent squishing the center content */
+            grid-template-columns: 260px minmax(500px, 1fr) 260px !important;
+            gap: 1.5rem !important;
             align-items: start !important;
             width: 100% !important;
-            max-width: 1440px !important;
+            max-width: 1536px !important;
             margin: 0 auto !important;
             padding: 2rem 1.5rem !important;
             box-sizing: border-box !important;
         }
 
-        @media (max-width: 1200px) {
+        /* Lowered breakpoint to 1024px so standard laptops keep the 3 columns */
+        @media (max-width: 1024px) {
             .dashboard-master-grid {
                 grid-template-columns: 1fr !important;
             }
@@ -515,8 +517,8 @@
             </div>
         </div>
 
-        <!-- Assessment History Card (Under Central Card) -->
-        <section id="historySection" class="history-card bg-white border border-slate-200 rounded-xl p-6 space-y-4 w-full shadow-xs">
+        <!-- Assessment History Section -->
+        <section id="historySection" class="history-card bg-white border border-slate-200 rounded-xl p-6 shadow-xs mt-6 space-y-4 w-full">
             <div class="flex justify-between items-center pb-2 border-b border-slate-100">
                 <div>
                     <h2 class="text-base font-bold text-on-surface">Assessment History</h2>
