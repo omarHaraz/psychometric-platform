@@ -123,23 +123,29 @@ const i18nDict = {
     "04 &bull; Cognitive (GCAT)": "04 • القدرات المعرفية (GCAT)",
     "24 patterns • 20 mins • MCQ": "24 نمط • 20 دقيقة • خيارات متعددة",
     "42 questions • 20 mins • MCQ": "42 سؤال • 20 دقيقة • خيارات متعددة",
-    "Personality (PQ10)": "الشخصية (PQ10)",
-    "Personality Assessment": "تقييم الشخصية",
-    "Personality Evaluation (PQ10)": "تقييم الشخصية (PQ10)",
-    "Situational Judgment (SJT)": "حكم المواقف (SJT)",
-    "SJT Ranking": "حكم المواقف (SJT)",
-    "Situational Judgment Assessment": "تقييم حكم المواقف",
-    "Derailers & Drivers": "محاذير السلوك والدوافع",
-    "Derailers Assessment": "تقييم محاذير السلوك",
-    "Cognitive Abilities": "القدرات المعرفية",
-    "Cognitive (GCAT)": "القدرات المعرفية (GCAT)",
-    "Cognitive Abilities (GCAT)": "القدرات المعرفية (GCAT)",
+    "Personality Assessment": "اختبار الشخصية",
+    "Situational Judgment Test (SJT)": "اختبار الحكم على المواقف",
+    "Derailers Assessment": "اختبار السلوكيات المعطلة",
+    "Cognitive Abilities Test": "اختبار القدرات المعرفية",
+    "Personality (PQ10)": "اختبار الشخصية",
+    "Personality Evaluation (PQ10)": "اختبار الشخصية",
+    "Situational Judgment (SJT)": "اختبار الحكم على المواقف",
+    "SJT Ranking": "اختبار الحكم على المواقف",
+    "Situational Judgment Assessment": "اختبار الحكم على المواقف",
+    "Derailers & Drivers": "اختبار السلوكيات المعطلة",
+    "Cognitive Abilities": "اختبار القدرات المعرفية",
+    "Cognitive (GCAT)": "اختبار القدرات المعرفية",
+    "Cognitive Abilities (GCAT)": "اختبار القدرات المعرفية",
     "Part 1: Personality (PQ10)": "اختبار الشخصية",
     "Part 2: SJT Ranking": "اختبار الحكم على المواقف",
     "Part 2: Situational Judgment (SJT)": "اختبار الحكم على المواقف",
     "Part 3: Derailers & Drivers": "اختبار السلوكيات المعطلة",
     "Part 4: Cognitive Abilities": "اختبار القدرات المعرفية",
     "Part 4: Cognitive (GCAT)": "اختبار القدرات المعرفية",
+    "DERAILERS": "المعرقلات",
+    "PQ10": "الشخصية",
+    "SJT": "حكم المواقف",
+    "GCAT": "القدرات المعرفية",
     "READY": "جاهز",
     "LOCKED": "مغلق",
     "SUBMITTED": "مكتمل",
@@ -380,11 +386,12 @@ let remainingSeconds = 0;
 // Battery definitions metadata
 const BATTERY_METADATA = [
     {
-        name: "Personality Evaluation (PQ10)",
+        name: "Personality Assessment",
         nameAr: "اختبار الشخصية",
         part: "Part 1 of 4",
         partAr: "الجزء 1 من 4",
         badge: "PQ10",
+        badgeAr: "الشخصية",
         itemsCount: 140,
         itemCountAr: "140 سؤالاً",
         timeLimit: "40 Minutes",
@@ -405,11 +412,12 @@ const BATTERY_METADATA = [
         ]
     },
     {
-        name: "Situational Judgment (SJT)",
+        name: "Situational Judgment Test (SJT)",
         nameAr: "اختبار الحكم على المواقف",
         part: "Part 2 of 4",
         partAr: "الجزء 2 من 4",
         badge: "SJT",
+        badgeAr: "حكم المواقف",
         itemsCount: 16,
         itemCountAr: "16 سؤالاً",
         timeLimit: "45 Minutes",
@@ -430,11 +438,12 @@ const BATTERY_METADATA = [
         ]
     },
     {
-        name: "Derailers & Drivers",
+        name: "Derailers Assessment",
         nameAr: "اختبار السلوكيات المعطلة",
         part: "Part 3 of 4",
         partAr: "الجزء 3 من 4",
         badge: "DERAILERS",
+        badgeAr: "المعرقلات",
         itemsCount: 60,
         itemCountAr: "60 سؤالاً",
         timeLimit: "20 Minutes",
@@ -455,11 +464,12 @@ const BATTERY_METADATA = [
         ]
     },
     {
-        name: "Cognitive Abilities (GCAT)",
+        name: "Cognitive Abilities Test",
         nameAr: "اختبار القدرات المعرفية",
         part: "Part 4 of 4",
         partAr: "الجزء 4 من 4",
         badge: "GCAT",
+        badgeAr: "القدرات المعرفية",
         itemsCount: 42,
         itemCountAr: "42 سؤالاً",
         timeLimit: "20 Min Strict",
@@ -1004,9 +1014,12 @@ async function fetchAndRenderBatteryItems(session) {
         }
 
         // Setup battery header
+        const isArabic = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
         const meta = BATTERY_METADATA[session.sequenceOrder] || BATTERY_METADATA[0];
-        document.getElementById("activeBatteryBadge").textContent = meta.badge;
-        document.getElementById("activeBatteryTitle").textContent = meta.name;
+        const badgeEl = document.getElementById("activeBatteryBadge");
+        if (badgeEl) badgeEl.textContent = isArabic ? (meta.badgeAr || meta.badge) : meta.badge;
+        const titleEl = document.getElementById("activeBatteryTitle");
+        if (titleEl) titleEl.textContent = isArabic ? meta.nameAr : meta.name;
 
         // Perform initial heartbeat to get server timer
         await sendHeartbeat();
@@ -1119,7 +1132,24 @@ function renderCurrentQuestion() {
     // Update Progress
     const total = activeItems.length;
     const currentNum = currentItemIndex + 1;
-    document.getElementById("activeProgressLabel").textContent = `Item ${currentNum} of ${total}`;
+    const isArabic = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
+    
+    const progressLabel = document.getElementById("activeProgressLabel");
+    if (progressLabel) {
+        progressLabel.textContent = isArabic ? `السؤال ${currentNum} من ${total}` : `Question ${currentNum} of ${total}`;
+    }
+
+    const activeBatteryTitle = document.getElementById("activeBatteryTitle");
+    const activeBatteryBadge = document.getElementById("activeBatteryBadge");
+    if (activeSession && typeof activeSession.sequenceOrder === 'number') {
+        const meta = BATTERY_METADATA[activeSession.sequenceOrder] || BATTERY_METADATA[0];
+        if (activeBatteryTitle) {
+            activeBatteryTitle.textContent = isArabic ? meta.nameAr : meta.name;
+        }
+        if (activeBatteryBadge) {
+            activeBatteryBadge.textContent = isArabic ? (meta.badgeAr || meta.badge) : meta.badge;
+        }
+    }
     
     const pct = Math.round((currentNum / total) * 100);
     document.getElementById("progressBarFill").style.width = `${pct}%`;
@@ -2302,10 +2332,10 @@ function updateTestSidebar(attempt) {
     progressText.textContent = isArabic ? `الجزء ${currentIndex + 1} من 4` : `Part ${currentIndex + 1} of 4`;
 
     const batteryTitles = [
-        { en: "Part 1: Personality (PQ10)", ar: "اختبار الشخصية" },
-        { en: "Part 2: SJT Ranking", ar: "اختبار الحكم على المواقف" },
-        { en: "Part 3: Derailers & Drivers", ar: "اختبار السلوكيات المعطلة" },
-        { en: "Part 4: Cognitive Abilities", ar: "اختبار القدرات المعرفية" }
+        { en: "Personality Assessment", ar: "اختبار الشخصية" },
+        { en: "Situational Judgment Test (SJT)", ar: "اختبار الحكم على المواقف" },
+        { en: "Derailers Assessment", ar: "اختبار السلوكيات المعطلة" },
+        { en: "Cognitive Abilities Test", ar: "اختبار القدرات المعرفية" }
     ];
 
     let html = "";
