@@ -31,7 +31,7 @@ public class CompetencyScaleAlignmentTest {
         outDir.mkdirs();
 
         for (int score = 1; score <= 5; score++) {
-            CompetencyDetailDto comp = ReportContextDto.getDefaultCompetencyPage(7, "PCIV126371");
+            CompetencyDetailDto comp = ReportContextDto.getDefaultCompetencyPage(6, "PCIV126371");
             comp.setCompetencyScore(score);
             comp.setCompetencyTitle("التواصل والتأثير الفعال");
             comp.setCompetencyColor("#1e3a4c");

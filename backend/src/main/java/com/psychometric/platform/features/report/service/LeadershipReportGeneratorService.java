@@ -147,16 +147,16 @@ public class LeadershipReportGeneratorService {
             }
         }
 
-        populateCompetencyData(report, 7, "COMMUNICATION_AND_INFLUENCE", traitMap, rawScore.getTraitScores(), report.getCommColor());
-        populateCompetencyData(report, 8, "INITIATIVE", traitMap, rawScore.getTraitScores(), report.getInitiativeColor());
-        populateCompetencyData(report, 9, "DECISION_MAKING_AND_RESPONSIBILITY", traitMap, rawScore.getTraitScores(), report.getDecisionColor());
-        populateCompetencyData(report, 10, "INSPIRING_LEADERSHIP", traitMap, rawScore.getTraitScores(), report.getLeadershipColor());
-        populateCompetencyData(report, 11, "STRATEGIC_THINKING", traitMap, rawScore.getTraitScores(), report.getStrategicColor());
-        populateCompetencyData(report, 12, "SKILL_DEVELOPMENT", traitMap, rawScore.getTraitScores(), report.getSkillsColor());
-        populateCompetencyData(report, 13, "ADAPTABILITY", traitMap, rawScore.getTraitScores(), report.getAdaptabilityColor());
-        populateCompetencyData(report, 14, "SYSTEMATIC_ANALYSIS_AND_PLANNING", traitMap, rawScore.getTraitScores(), report.getAnalysisColor());
+        populateCompetencyData(report, 6, "COMMUNICATION_AND_INFLUENCE", traitMap, rawScore.getTraitScores(), report.getCommColor());
+        populateCompetencyData(report, 7, "INITIATIVE", traitMap, rawScore.getTraitScores(), report.getInitiativeColor());
+        populateCompetencyData(report, 8, "DECISION_MAKING_AND_RESPONSIBILITY", traitMap, rawScore.getTraitScores(), report.getDecisionColor());
+        populateCompetencyData(report, 9, "INSPIRING_LEADERSHIP", traitMap, rawScore.getTraitScores(), report.getLeadershipColor());
+        populateCompetencyData(report, 10, "STRATEGIC_THINKING", traitMap, rawScore.getTraitScores(), report.getStrategicColor());
+        populateCompetencyData(report, 11, "SKILL_DEVELOPMENT", traitMap, rawScore.getTraitScores(), report.getSkillsColor());
+        populateCompetencyData(report, 12, "ADAPTABILITY", traitMap, rawScore.getTraitScores(), report.getAdaptabilityColor());
+        populateCompetencyData(report, 13, "SYSTEMATIC_ANALYSIS_AND_PLANNING", traitMap, rawScore.getTraitScores(), report.getAnalysisColor());
 
-        // Populate Static Narratives for Page 2, 4, and 15
+        // Populate Static Narratives for Page 2, 4, and 14
         populateStaticNarratives(rawScore, report);
 
         return report;
@@ -362,7 +362,7 @@ public class LeadershipReportGeneratorService {
         dto.setPageNum(pageNum);
         dto.setCandidateId(report.getCandidateId());
         
-        int expectedDisplayOrder = pageNum - 6;
+        int expectedDisplayOrder = pageNum - 5;
         double dScore = scaleTo5Double(findTraitScorePct(traitMap, traitScores, competencyCode, expectedDisplayOrder, 50.0));
         dto.setCompetencyScore(dScore);
         dto.setCompetencyColor(competencyColor);

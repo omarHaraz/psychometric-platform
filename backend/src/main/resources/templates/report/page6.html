@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Detailed Competency Breakdown - تقرير الكفاءات للقادة</title>
+    <title th:text="${competencyTitle != null ? competencyTitle : 'المبادرة'} + ' - تقرير الكفاءات للقادة'">المبادرة - تقرير الكفاءات للقادة</title>
     <style th:fragment="style">
         /* ==========================================================================
            PDF &amp; Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
@@ -31,7 +31,7 @@
             line-height: 1.5;
         }
 
-        /* 1. New Top Running Banner &amp; Framing Header */
+        /* 1. Top Running Banner &amp; Framing Header */
         .top-running-banner {
             display: flex;
             align-items: center;
@@ -109,7 +109,7 @@
             text-align: justify;
         }
 
-        /* 3. Visual Score Scale Bar (Matching Page 5) */
+        /* 3. Visual Score Scale Bar (Matching Reference) */
         .scale-bar-container {
             margin-top: 12px;
             margin-bottom: 12px;
@@ -346,6 +346,7 @@
             padding: 8px 4px !important;
         }
 
+        /* Dynamic Indicator Status Pill */
         .level-status-pill {
             width: 18px;
             height: 28px;
@@ -353,10 +354,6 @@
             display: inline-block;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
-
-        .pill-green  { background-color: #388e3c; }
-        .pill-red    { background-color: #d32f2f; }
-        .pill-orange { background-color: #d97736; }
 
         /* 5. Modern Bottom Footer Banner */
         .bottom-banner-container {
@@ -395,8 +392,8 @@
     <div th:fragment="body">
 <div class="competency-header-block">
         <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'التواصل والتأثير الفعال'}">التواصل والتأثير الفعال</h2>
-        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'القدرة على نقل المعلومات بوضوح وفعالية مع ضمان فهم الرسائل المتبادلة عبر جميع المستويات وتعزيز التنسيق لتحقيق الأهداف العسكرية بكفاءة عالية.'}">
-            القدرة على نقل المعلومات بوضوح وفعالية مع ضمان فهم الرسائل المتبادلة عبر جميع المستويات وتعزيز التنسيق لتحقيق الأهداف العسكرية بكفاءة عالية.
+        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'قدرة القائد على نقل الأفكار والمعلومات بوضوح وإقناع، والتأثير الإيجابي في الآخرين، وبناء علاقات عمل قوية تدعم تحقيق أهداف المنظمة.'}">
+            قدرة القائد على نقل الأفكار والمعلومات بوضوح وإقناع، والتأثير الإيجابي في الآخرين، وبناء علاقات عمل قوية تدعم تحقيق أهداف المنظمة.
         </p>
     </div>
 
@@ -470,7 +467,7 @@
         تطابق الكفاءات السلوكية القيادية و المهارات مع تحليل سمات شخصية وقدرات <span class="candidate-id-span" th:text="${candidateId != null ? candidateId : 'PCIV126371'}">PCIV126371</span> العامة:
     </div>
 
-    <!-- 4-Column Table -->
+    <!-- 4-Column Table with Fully Dynamic Indicator Colors -->
     <table class="detail-table">
         <thead>
             <tr>

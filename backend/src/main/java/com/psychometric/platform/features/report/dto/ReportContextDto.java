@@ -561,7 +561,7 @@ public class ReportContextDto implements Serializable {
         map.put("verbalScore", verbalScore);
         map.put("verbalColor", verbalColor);
 
-        // Page 15
+        // Page 14 (GROW Plan)
         map.put("growGoalText", growGoalText);
         map.put("growRealityText", growRealityText);
         map.put("growOptionsText", growOptionsText);
@@ -581,7 +581,7 @@ public class ReportContextDto implements Serializable {
     }
 
     /**
-     * Populates a Spring MVC {@link Model} for a specific detailed competency page (Pages 7–14).
+     * Populates a Spring MVC {@link Model} for a specific detailed competency page (Pages 6–13).
      */
     public void populateCompetencyModel(Model model, int pageNum) {
         populateModel(model);
@@ -617,7 +617,7 @@ public class ReportContextDto implements Serializable {
     }
 
     /**
-     * Retrieves or creates default competency data for a given page number (7..14).
+     * Retrieves or creates default competency data for a given page number (6..13).
      */
     public CompetencyDetailDto getCompetencyPage(int pageNum) {
         if (competencyPages != null && competencyPages.containsKey(pageNum)) {
@@ -636,7 +636,7 @@ public class ReportContextDto implements Serializable {
         dto.setCandidateId(cid);
 
         switch (pageNum) {
-            case 7: // التواصل والتأثير الفعال
+            case 6: // التواصل والتأثير الفعال
                 dto.setCompetencyTitle("التواصل والتأثير الفعال");
                 dto.setCompetencyDesc("قدرة القائد على نقل الأفكار والمعلومات بوضوح وإقناع، والتأثير الإيجابي في الآخرين، وبناء علاقات عمل قوية تدعم تحقيق أهداف المنظمة.");
                 dto.setCompetencyScore(4);
@@ -655,7 +655,7 @@ public class ReportContextDto implements Serializable {
                 dto.setRec3("وفّر فرصاً لقيادة مفاوضات وإدارة حوارات استراتيجية لتعزيز المرونة وسرعة الوصول إلى حلول مبتكرة.");
                 break;
 
-            case 8: // المبادرة
+            case 7: // المبادرة
                 dto.setCompetencyTitle("المبادرة");
                 dto.setCompetencyDesc("قدرة القائد على التحرك من تلقاء نفسه دون انتظار الأوامر، عبر اقتراح الأفكار واتخاذ الإجراءات المناسبة في الوقت المناسب لتحسين العمل وحل المشكلات وتحقيق الأهداف بسرعة وفعالية.");
                 dto.setCompetencyScore(2);
@@ -674,7 +674,7 @@ public class ReportContextDto implements Serializable {
                 dto.setRec3("وفر فرصاً لقيادة مبادرات مستقلة لتعزيز الاتساق والقدرة على التكيف. اقترح مراقبة أنماط متنوعة من المواقف الحرجة لتحسين الاستجابة. شجع طلب الملاحظات من القادة والزملاء لتطوير مهارات المبادرة.");
                 break;
 
-            case 9: // اتخاذ القرار وتحمل المسؤولية
+            case 8: // اتخاذ القرار وتحمل المسؤولية
                 dto.setCompetencyTitle("اتخاذ القرار وتحمل المسؤولية");
                 dto.setCompetencyDesc("قدرة القائد على اختيار القرار الصحيح في الوقت المناسب اعتمادًا على المعلومات المتاحة، مع تحمل نتائج قراراته بكل التزام وشجاعة.");
                 dto.setCompetencyScore(3);
@@ -693,7 +693,7 @@ public class ReportContextDto implements Serializable {
                 dto.setRec3("وفّر فرصاً لإدارة قرارات استراتيجية بشكل مستقل لتعزيز الاتساق والمرونة. رشّح مراقبة مواقف عملياتية متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الرؤساء والأقران لصقل مهارات اتخاذ القرار وتحمل المسؤولية.");
                 break;
 
-            case 10: // القيادة الملهمة
+            case 9: // القيادة الملهمة
                 dto.setCompetencyTitle("القيادة الملهمة");
                 dto.setCompetencyDesc("قدرة القائد على تحفيز الآخرين بروح إيجابية ورؤية واضحة، وجعلهم يؤمنون بالأهداف ويعملون بحماس لتحقيقها من خلال القدوة والتأثير الإيجابي.");
                 dto.setCompetencyScore(3);
@@ -712,7 +712,7 @@ public class ReportContextDto implements Serializable {
                 dto.setRec3("وفّر فرصاً لقيادة مبادرات تتطلب تأثيراً أكبر لتعزيز الاتساق والقدرة على التكيف. شجع مراقبة أنماط قيادية متنوعة لتحسين الاستجابة. حفز طلب الملاحظات من الجنود والزملاء لتحسين مهارات التأثير والإلهام.");
                 break;
 
-            case 11: // التفكير الاستراتيجي (2 rows only)
+            case 10: // التفكير الاستراتيجي (2 rows only)
                 dto.setCompetencyTitle("التفكير الاستراتيجي");
                 dto.setCompetencyDesc("القدرة على تحليل المعطيات، واستشراف المستقبل، واتخاذ قرارات استراتيجية فعالة.");
                 dto.setCompetencyScore(2);
@@ -731,7 +731,7 @@ public class ReportContextDto implements Serializable {
                 dto.setRec3(null);
                 break;
 
-            case 12: // تطوير المهارات
+            case 11: // تطوير المهارات
                 dto.setCompetencyTitle("تطوير المهارات");
                 dto.setCompetencyDesc("قدرة القائد على تعلم مهارات جديدة باستمرار وتطوير قدراته وقدرات فريقه لتحسين الأداء ومواكبة التغيرات في بيئة العمل.");
                 dto.setCompetencyScore(2);
@@ -750,7 +750,7 @@ public class ReportContextDto implements Serializable {
                 dto.setRec3("وفر فرصاً لقيادة مبادرات تطوير مستقلة لتعزيز الاتساق والمرونة. اقترح مراقبة أساليب تطوير متنوعة لتحسين الاستجابة. شجع طلب ملاحظات من الزملاء والمرؤوسين لتحسين مهارات إدارة التطوير.");
                 break;
 
-            case 13: // القدرة على التكيف
+            case 12: // القدرة على التكيف
                 dto.setCompetencyTitle("القدرة على التكيف");
                 dto.setCompetencyDesc("القدرة على التكيف مع التغيرات المفاجئة وتعديل الخطط بمرونة لضمان استمرارية العمل وتحقيق الأهداف بكفاءة.");
                 dto.setCompetencyScore(3);
@@ -769,7 +769,7 @@ public class ReportContextDto implements Serializable {
                 dto.setRec3("وفّر فرصاً لقيادة عمليات معقدة بشكل مستقل لتعزيز الثبات والقدرة على التكيف. اقترح مراقبة أنواع متنوعة من المواقف الضاغطة لتحسين الاستجابة. شجّع طلب التغذية الراجعة من الرؤساء والزملاء لتطوير مهارات إدارة الضغوط.");
                 break;
 
-            case 14: // التحليل والتخطيط المنهجي
+            case 13: // التحليل والتخطيط المنهجي
                 dto.setCompetencyTitle("التحليل والتخطيط المنهجي");
                 dto.setCompetencyDesc("قدرة القائد على دراسة المواقف بعناية، وفهم المعلومات بشكل منطقي، ثم وضع خطط منظمة ومدروسة تساعد على تحقيق الأهداف بكفاءة وفعالية.");
                 dto.setCompetencyScore(4);
@@ -800,7 +800,7 @@ public class ReportContextDto implements Serializable {
     }
 
     /**
-     * Initializes default data for all 15 pages in the report.
+     * Initializes default data for all 14 pages in the report.
      */
     public static ReportContextDto createDefaultReport(String candidateId) {
         ReportContextDto report = new ReportContextDto();
@@ -808,7 +808,7 @@ public class ReportContextDto implements Serializable {
             report.setCandidateId(candidateId);
         }
 
-        for (int p = 7; p <= 14; p++) {
+        for (int p = 6; p <= 13; p++) {
             report.getCompetencyPages().put(p, getDefaultCompetencyPage(p, report.getCandidateId()));
         }
 

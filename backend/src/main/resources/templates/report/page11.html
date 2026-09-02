@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title th:text="${competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي'} + ' - تقرير الكفاءات للقادة'">التفكير الاستراتيجي - تقرير الكفاءات للقادة</title>
+    <title th:text="${competencyTitle != null ? competencyTitle : 'تطوير المهارات'} + ' - تقرير الكفاءات للقادة'">تطوير المهارات - تقرير الكفاءات للقادة</title>
     <style th:fragment="style">
         /* ==========================================================================
            PDF &amp; Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
@@ -391,9 +391,9 @@
 <body>
     <div th:fragment="body">
 <div class="competency-header-block">
-        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي'}">التفكير الاستراتيجي</h2>
-        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'قدرة القائد على فهم الصورة الكلية واستشراف التحديات والفرص المستقبلية ووضع خطط طويلة المدى تدعم رسالة المنظمة.'}">
-            قدرة القائد على فهم الصورة الكلية واستشراف التحديات والفرص المستقبلية ووضع خطط طويلة المدى تدعم رسالة المنظمة.
+        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'تطوير المهارات'}">تطوير المهارات</h2>
+        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'الالتزام المستمر بتعلم واكتساب معارف وقدرات جديدة ومساعدة المرؤوسين على تطوير كفاءاتهم المهنية.'}">
+            الالتزام المستمر بتعلم واكتساب معارف وقدرات جديدة ومساعدة المرؤوسين على تطوير كفاءاتهم المهنية.
         </p>
     </div>
 
@@ -440,11 +440,11 @@
                     <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
                     <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
                     <!-- Marker with Direct Math -->
-                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${strategicScore != null ? strategicScore : (competencyScore != null ? competencyScore : 3)}) - 1) * 20)) + '%;'">
+                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${skillsScore != null ? skillsScore : (competencyScore != null ? competencyScore : 3)}) - 1) * 20)) + '%;'">
                         <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
-                             th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'"></div>
+                             th:styleappend="'background-color: ' + (${skillsColor != null ? skillsColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'"></div>
                         <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
-                             th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'">
+                             th:styleappend="'background-color: ' + (${skillsColor != null ? skillsColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'">
                             <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                 <circle cx="12" cy="7" r="4" fill="#ffffff" />
                                 <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
@@ -456,8 +456,8 @@
             <!-- Right Side 55%: Trait Name & Colored Pill -->
             <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
                 <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
-                      th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#c87d46')}) + ';'"></span>
-                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي'}">التفكير الاستراتيجي</span>
+                      th:styleappend="'background-color: ' + (${skillsColor != null ? skillsColor : (competencyColor != null ? competencyColor : '#c87d46')}) + ';'"></span>
+                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'تطوير المهارات'}">تطوير المهارات</span>
             </td>
         </tr>
     </table>
@@ -467,7 +467,7 @@
         تطابق الكفاءات السلوكية القيادية و المهارات مع تحليل سمات شخصية وقدرات <span class="candidate-id-span" th:text="${candidateId != null ? candidateId : 'PCIV126371'}">PCIV126371</span> العامة:
     </div>
 
-    <!-- 4-Column Table (Supporting 2 or 3 Dynamic Rows) -->
+    <!-- 4-Column Table -->
     <table class="detail-table">
         <thead>
             <tr>

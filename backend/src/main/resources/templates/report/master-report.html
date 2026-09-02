@@ -14,8 +14,7 @@
     <th:block th:insert="~{report/page4 :: style}"></th:block>
     <th:block th:insert="~{report/page5 :: style}"></th:block>
     <th:block th:insert="~{report/page6 :: style}"></th:block>
-    <th:block th:insert="~{report/page7 :: style}"></th:block>
-    <th:block th:insert="~{report/page15 :: style}"></th:block>
+    <th:block th:insert="~{report/page14 :: style}"></th:block>
 
     <style>
         /* ==========================================================================
@@ -73,10 +72,27 @@
     <!-- Page 5: Results Summary – Competencies &amp; General Abilities -->
     <div class="pdf-page-wrapper" th:insert="~{report/page5 :: body}"></div>
 
-    <!-- Page 6: Section Divider / Transition -->
-    <div class="pdf-page-wrapper" th:insert="~{report/page6 :: body}"></div>
+    <!-- Page 6: Communication &amp; Influence -->
+    <div class="pdf-page-wrapper" 
+         th:with="competencyTitle=${competencyPages[6].competencyTitle}, 
+                  competencyDesc=${competencyPages[6].competencyDesc}, 
+                  competencyScore=${competencyPages[6].competencyScore}, 
+                  competencyColor=${competencyPages[6].competencyColor}, 
+                  indicator1Color=${competencyPages[6].indicator1Color}, 
+                  req1=${competencyPages[6].req1}, 
+                  result1=${competencyPages[6].result1}, 
+                  rec1=${competencyPages[6].rec1}, 
+                  indicator2Color=${competencyPages[6].indicator2Color}, 
+                  req2=${competencyPages[6].req2}, 
+                  result2=${competencyPages[6].result2}, 
+                  rec2=${competencyPages[6].rec2}, 
+                  indicator3Color=${competencyPages[6].indicator3Color}, 
+                  req3=${competencyPages[6].req3}, 
+                  result3=${competencyPages[6].result3}, 
+                  rec3=${competencyPages[6].rec3}" 
+         th:insert="~{report/page6 :: body}"></div>
 
-    <!-- Page 7: Communication &amp; Influence -->
+    <!-- Page 7: Initiative -->
     <div class="pdf-page-wrapper" 
          th:with="competencyTitle=${competencyPages[7].competencyTitle}, 
                   competencyDesc=${competencyPages[7].competencyDesc}, 
@@ -96,7 +112,7 @@
                   rec3=${competencyPages[7].rec3}" 
          th:insert="~{report/page7 :: body}"></div>
 
-    <!-- Page 8: Initiative -->
+    <!-- Page 8: Decision Making &amp; Responsibility -->
     <div class="pdf-page-wrapper" 
          th:with="competencyTitle=${competencyPages[8].competencyTitle}, 
                   competencyDesc=${competencyPages[8].competencyDesc}, 
@@ -116,7 +132,7 @@
                   rec3=${competencyPages[8].rec3}" 
          th:insert="~{report/page8 :: body}"></div>
 
-    <!-- Page 9: Decision Making &amp; Responsibility -->
+    <!-- Page 9: Inspiring Leadership -->
     <div class="pdf-page-wrapper" 
          th:with="competencyTitle=${competencyPages[9].competencyTitle}, 
                   competencyDesc=${competencyPages[9].competencyDesc}, 
@@ -136,7 +152,7 @@
                   rec3=${competencyPages[9].rec3}" 
          th:insert="~{report/page9 :: body}"></div>
 
-    <!-- Page 10: Inspiring Leadership -->
+    <!-- Page 10: Strategic Thinking -->
     <div class="pdf-page-wrapper" 
          th:with="competencyTitle=${competencyPages[10].competencyTitle}, 
                   competencyDesc=${competencyPages[10].competencyDesc}, 
@@ -156,7 +172,7 @@
                   rec3=${competencyPages[10].rec3}" 
          th:insert="~{report/page10 :: body}"></div>
 
-    <!-- Page 11: Strategic Thinking -->
+    <!-- Page 11: Skill Development -->
     <div class="pdf-page-wrapper" 
          th:with="competencyTitle=${competencyPages[11].competencyTitle}, 
                   competencyDesc=${competencyPages[11].competencyDesc}, 
@@ -176,7 +192,7 @@
                   rec3=${competencyPages[11].rec3}" 
          th:insert="~{report/page11 :: body}"></div>
 
-    <!-- Page 12: Skill Development -->
+    <!-- Page 12: Adaptability -->
     <div class="pdf-page-wrapper" 
          th:with="competencyTitle=${competencyPages[12].competencyTitle}, 
                   competencyDesc=${competencyPages[12].competencyDesc}, 
@@ -196,7 +212,7 @@
                   rec3=${competencyPages[12].rec3}" 
          th:insert="~{report/page12 :: body}"></div>
 
-    <!-- Page 13: Adaptability -->
+    <!-- Page 13: Systematic Analysis &amp; Planning -->
     <div class="pdf-page-wrapper" 
          th:with="competencyTitle=${competencyPages[13].competencyTitle}, 
                   competencyDesc=${competencyPages[13].competencyDesc}, 
@@ -216,28 +232,8 @@
                   rec3=${competencyPages[13].rec3}" 
          th:insert="~{report/page13 :: body}"></div>
 
-    <!-- Page 14: Systematic Analysis &amp; Planning -->
-    <div class="pdf-page-wrapper" 
-         th:with="competencyTitle=${competencyPages[14].competencyTitle}, 
-                  competencyDesc=${competencyPages[14].competencyDesc}, 
-                  competencyScore=${competencyPages[14].competencyScore}, 
-                  competencyColor=${competencyPages[14].competencyColor}, 
-                  indicator1Color=${competencyPages[14].indicator1Color}, 
-                  req1=${competencyPages[14].req1}, 
-                  result1=${competencyPages[14].result1}, 
-                  rec1=${competencyPages[14].rec1}, 
-                  indicator2Color=${competencyPages[14].indicator2Color}, 
-                  req2=${competencyPages[14].req2}, 
-                  result2=${competencyPages[14].result2}, 
-                  rec2=${competencyPages[14].rec2}, 
-                  indicator3Color=${competencyPages[14].indicator3Color}, 
-                  req3=${competencyPages[14].req3}, 
-                  result3=${competencyPages[14].result3}, 
-                  rec3=${competencyPages[14].rec3}" 
-         th:insert="~{report/page14 :: body}"></div>
-
-    <!-- Page 15: Development Plan – GROW Model -->
-    <div class="pdf-page-wrapper" th:insert="~{report/page15 :: body}"></div>
+    <!-- Page 14: Development Plan – GROW Model -->
+    <div class="pdf-page-wrapper" th:insert="~{report/page14 :: body}"></div>
 
 </body>
 </html>
