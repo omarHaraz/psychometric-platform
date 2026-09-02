@@ -233,42 +233,43 @@ public class LeadershipReportGeneratorService {
         }
 
         // 1. Overall Score
-        int overall5 = scaleTo5(raw.getCompositeScore() != null ? raw.getCompositeScore() : 50.0);
+        double compositePct = raw.getCompositeScore() != null ? raw.getCompositeScore() : 50.0;
+        int overall5 = scaleTo5(compositePct);
         report.setOverallScore(overall5);
-        report.setOverallColor(determineColor(overall5, 4));
+        report.setOverallColor(getTierColor(scaleTo5Double(compositePct)));
 
         // 2. Behavioral Competencies (Continuous Double Scale 1.0–5.0)
         double comm = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "COMMUNICATION_AND_INFLUENCE", 1, 50.0));
         report.setCommScore(comm);
-        report.setCommColor(determineColor((int) Math.round(comm), ROLE_BENCHMARKS.get("COMMUNICATION_AND_INFLUENCE")));
+        report.setCommColor(getTierColor(comm));
 
         double init = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INITIATIVE", 2, 50.0));
         report.setInitiativeScore(init);
-        report.setInitiativeColor(determineColor((int) Math.round(init), ROLE_BENCHMARKS.get("INITIATIVE")));
+        report.setInitiativeColor(getTierColor(init));
 
         double dec = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "DECISION_MAKING_AND_RESPONSIBILITY", 3, 50.0));
         report.setDecisionScore(dec);
-        report.setDecisionColor(determineColor((int) Math.round(dec), ROLE_BENCHMARKS.get("DECISION_MAKING_AND_RESPONSIBILITY")));
+        report.setDecisionColor(getTierColor(dec));
 
         double lead = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INSPIRING_LEADERSHIP", 4, 50.0));
         report.setLeadershipScore(lead);
-        report.setLeadershipColor(determineColor((int) Math.round(lead), ROLE_BENCHMARKS.get("INSPIRING_LEADERSHIP")));
+        report.setLeadershipColor(getTierColor(lead));
 
         double strat = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "STRATEGIC_THINKING", 5, 50.0));
         report.setStrategicScore(strat);
-        report.setStrategicColor(determineColor((int) Math.round(strat), ROLE_BENCHMARKS.get("STRATEGIC_THINKING")));
+        report.setStrategicColor(getTierColor(strat));
 
         double skills = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SKILL_DEVELOPMENT", 6, 50.0));
         report.setSkillsScore(skills);
-        report.setSkillsColor(determineColor((int) Math.round(skills), ROLE_BENCHMARKS.get("SKILL_DEVELOPMENT")));
+        report.setSkillsColor(getTierColor(skills));
 
         double adapt = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "ADAPTABILITY", 7, 50.0));
         report.setAdaptabilityScore(adapt);
-        report.setAdaptabilityColor(determineColor((int) Math.round(adapt), ROLE_BENCHMARKS.get("ADAPTABILITY")));
+        report.setAdaptabilityColor(getTierColor(adapt));
 
         double plan = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SYSTEMATIC_ANALYSIS_AND_PLANNING", 8, 50.0));
         report.setAnalysisScore(plan);
-        report.setAnalysisColor(determineColor((int) Math.round(plan), ROLE_BENCHMARKS.get("SYSTEMATIC_ANALYSIS_AND_PLANNING")));
+        report.setAnalysisColor(getTierColor(plan));
 
         // 3. Cognitive Abilities (GCAT) (Continuous Double Scale 1.0–5.0)
         Map<GcatSubtestCode, Double> gcatMap = new HashMap<>();
@@ -282,16 +283,16 @@ public class LeadershipReportGeneratorService {
 
         double abs = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.ABSTRACT, 50.0));
         report.setAbstractScore(abs);
-        report.setAbstractColor(determineColor((int) Math.round(abs), ROLE_BENCHMARKS.get("ABSTRACT")));
+        report.setAbstractColor(getTierColor(abs));
 
         double num = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.NUMERICAL, 50.0));
         report.setNumericalScore(num);
-        report.setNumericalColor(determineColor((int) Math.round(num), ROLE_BENCHMARKS.get("NUMERICAL")));
+        report.setNumericalColor(getTierColor(num));
 
         double verb = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.VERBAL, 50.0));
         report.setVerbalScore(verb);
-        report.setVerbalColor(determineColor((int) Math.round(verb), ROLE_BENCHMARKS.get("VERBAL")));
-        report.setGeneralAbilitiesColor(determineColor((int) Math.round((abs + num + verb) / 3.0), 4));
+        report.setVerbalColor(getTierColor(verb));
+        report.setGeneralAbilitiesColor(getTierColor((abs + num + verb) / 3.0));
     }
 
 
@@ -559,6 +560,19 @@ public class LeadershipReportGeneratorService {
         if (scorePct == null) return 3;
         int scaled = (int) Math.round((Math.max(0.0, Math.min(100.0, scorePct)) / 100.0) * 4.0) + 1;
         return Math.max(1, Math.min(5, scaled));
+    }
+
+    /**
+     * Standardized 3-tier color evaluation based on score thresholds:
+     * - Score >= 4.0 -> Green (#388e3c)
+     * - Score >= 3.0 -> Orange (#d97736)
+     * - Score < 3.0  -> Red (#d32f2f)
+     */
+    public static String getTierColor(Double score) {
+        if (score == null) return "#1e3a4c"; // fallback
+        if (score >= 4.0) return "#388e3c"; // Green
+        if (score >= 3.0) return "#d97736"; // Orange
+        return "#d32f2f"; // Red
     }
 
     /**

@@ -535,31 +535,31 @@ public class ReportContextDto implements Serializable {
 
         // Page 5
         map.put("overallScore", overallScore);
-        map.put("overallColor", overallColor);
+        map.put("overallColor", overallColor != null ? overallColor : getTierColor(overallScore != null ? overallScore.doubleValue() : null));
         map.put("commScore", commScore);
-        map.put("commColor", commColor);
+        map.put("commColor", commColor != null ? commColor : getTierColor(commScore));
         map.put("initiativeScore", initiativeScore);
-        map.put("initiativeColor", initiativeColor);
+        map.put("initiativeColor", initiativeColor != null ? initiativeColor : getTierColor(initiativeScore));
         map.put("decisionScore", decisionScore);
-        map.put("decisionColor", decisionColor);
+        map.put("decisionColor", decisionColor != null ? decisionColor : getTierColor(decisionScore));
         map.put("leadershipScore", leadershipScore);
-        map.put("leadershipColor", leadershipColor);
+        map.put("leadershipColor", leadershipColor != null ? leadershipColor : getTierColor(leadershipScore));
         map.put("strategicScore", strategicScore);
-        map.put("strategicColor", strategicColor);
+        map.put("strategicColor", strategicColor != null ? strategicColor : getTierColor(strategicScore));
         map.put("skillsScore", skillsScore);
-        map.put("skillsColor", skillsColor);
+        map.put("skillsColor", skillsColor != null ? skillsColor : getTierColor(skillsScore));
         map.put("adaptabilityScore", adaptabilityScore);
-        map.put("adaptabilityColor", adaptabilityColor);
+        map.put("adaptabilityColor", adaptabilityColor != null ? adaptabilityColor : getTierColor(adaptabilityScore));
         map.put("analysisScore", analysisScore);
-        map.put("analysisColor", analysisColor);
+        map.put("analysisColor", analysisColor != null ? analysisColor : getTierColor(analysisScore));
 
-        map.put("generalAbilitiesColor", generalAbilitiesColor);
+        map.put("generalAbilitiesColor", generalAbilitiesColor != null ? generalAbilitiesColor : getTierColor(3.67));
         map.put("abstractScore", abstractScore);
-        map.put("abstractColor", abstractColor);
+        map.put("abstractColor", abstractColor != null ? abstractColor : getTierColor(abstractScore));
         map.put("numericalScore", numericalScore);
-        map.put("numericalColor", numericalColor);
+        map.put("numericalColor", numericalColor != null ? numericalColor : getTierColor(numericalScore));
         map.put("verbalScore", verbalScore);
-        map.put("verbalColor", verbalColor);
+        map.put("verbalColor", verbalColor != null ? verbalColor : getTierColor(verbalScore));
 
         // Page 14 (GROW Plan)
         map.put("growGoalText", growGoalText);
@@ -808,6 +808,19 @@ public class ReportContextDto implements Serializable {
     }
 
     /**
+     * Standardized 3-tier color evaluation based on score thresholds:
+     * - Score >= 4.0 -> Green (#388e3c)
+     * - Score >= 3.0 -> Orange (#d97736)
+     * - Score < 3.0  -> Red (#d32f2f)
+     */
+    public static String getTierColor(Double score) {
+        if (score == null) return "#1e3a4c"; // fallback
+        if (score >= 4.0) return "#388e3c"; // Green
+        if (score >= 3.0) return "#d97736"; // Orange
+        return "#d32f2f"; // Red
+    }
+
+    /**
      * Initializes default data for all 14 pages in the report.
      */
     public static ReportContextDto createDefaultReport(String candidateId) {
@@ -815,6 +828,35 @@ public class ReportContextDto implements Serializable {
         if (candidateId != null) {
             report.setCandidateId(candidateId);
         }
+
+        // Page 5 Default Competency Scores & Master Colors
+        report.setCommScore(4.0);
+        report.setCommColor(getTierColor(4.0));
+        report.setInitiativeScore(2.0);
+        report.setInitiativeColor(getTierColor(2.0));
+        report.setDecisionScore(3.0);
+        report.setDecisionColor(getTierColor(3.0));
+        report.setLeadershipScore(3.0);
+        report.setLeadershipColor(getTierColor(3.0));
+        report.setStrategicScore(2.0);
+        report.setStrategicColor(getTierColor(2.0));
+        report.setSkillsScore(2.0);
+        report.setSkillsColor(getTierColor(2.0));
+        report.setAdaptabilityScore(3.0);
+        report.setAdaptabilityColor(getTierColor(3.0));
+        report.setAnalysisScore(4.0);
+        report.setAnalysisColor(getTierColor(4.0));
+
+        // Page 5 Default GCAT Cognitive Scores & Master Colors
+        report.setAbstractScore(4.0);
+        report.setAbstractColor(getTierColor(4.0));
+        report.setNumericalScore(4.0);
+        report.setNumericalColor(getTierColor(4.0));
+        report.setVerbalScore(3.0);
+        report.setVerbalColor(getTierColor(3.0));
+        report.setGeneralAbilitiesColor(getTierColor((4.0 + 4.0 + 3.0) / 3.0));
+        report.setOverallScore(4);
+        report.setOverallColor(getTierColor(4.0));
 
         for (int p = 6; p <= 13; p++) {
             report.getCompetencyPages().put(p, getDefaultCompetencyPage(p, report.getCandidateId()));
