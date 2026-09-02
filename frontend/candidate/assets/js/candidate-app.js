@@ -134,13 +134,12 @@ const i18nDict = {
     "Cognitive Abilities": "القدرات المعرفية",
     "Cognitive (GCAT)": "القدرات المعرفية (GCAT)",
     "Cognitive Abilities (GCAT)": "القدرات المعرفية (GCAT)",
-    "Cognitive Aptitude Assessment": "تقييم القدرات المعرفية",
-    "Part 1: Personality (PQ10)": "الجزء 1: الشخصية (PQ10)",
-    "Part 2: SJT Ranking": "الجزء 2: حكم المواقف (SJT)",
-    "Part 2: Situational Judgment (SJT)": "الجزء 2: حكم المواقف (SJT)",
-    "Part 3: Derailers & Drivers": "الجزء 3: محاذير السلوك والدوافع",
-    "Part 4: Cognitive Abilities": "الجزء 4: القدرات المعرفية",
-    "Part 4: Cognitive (GCAT)": "الجزء 4: القدرات المعرفية (GCAT)",
+    "Part 1: Personality (PQ10)": "اختبار الشخصية",
+    "Part 2: SJT Ranking": "اختبار الحكم على المواقف",
+    "Part 2: Situational Judgment (SJT)": "اختبار الحكم على المواقف",
+    "Part 3: Derailers & Drivers": "اختبار السلوكيات المعطلة",
+    "Part 4: Cognitive Abilities": "اختبار القدرات المعرفية",
+    "Part 4: Cognitive (GCAT)": "اختبار القدرات المعرفية",
     "READY": "جاهز",
     "LOCKED": "مغلق",
     "SUBMITTED": "مكتمل",
@@ -373,7 +372,7 @@ let remainingSeconds = 0;
 const BATTERY_METADATA = [
     {
         name: "Personality (PQ10)",
-        nameAr: "الشخصية (PQ10)",
+        nameAr: "اختبار الشخصية",
         part: "Part 1 of 4",
         badge: "PQ10",
         itemsCount: 140,
@@ -388,7 +387,7 @@ const BATTERY_METADATA = [
     },
     {
         name: "Situational Judgment (SJT)",
-        nameAr: "حكم المواقف (SJT)",
+        nameAr: "اختبار الحكم على المواقف",
         part: "Part 2 of 4",
         badge: "SJT",
         itemsCount: 16,
@@ -403,7 +402,7 @@ const BATTERY_METADATA = [
     },
     {
         name: "Derailers & Drivers",
-        nameAr: "محاذير السلوك والدوافع",
+        nameAr: "اختبار السلوكيات المعطلة",
         part: "Part 3 of 4",
         badge: "DERAILERS",
         itemsCount: 60,
@@ -418,7 +417,7 @@ const BATTERY_METADATA = [
     },
     {
         name: "Cognitive Abilities (GCAT)",
-        nameAr: "القدرات المعرفية (GCAT)",
+        nameAr: "اختبار القدرات المعرفية",
         part: "Part 4 of 4",
         badge: "GCAT",
         itemsCount: 42,
@@ -2180,10 +2179,10 @@ function updateTestSidebar(attempt) {
     progressText.textContent = isArabic ? `الجزء ${currentIndex + 1} من 4` : `Part ${currentIndex + 1} of 4`;
 
     const batteryTitles = [
-        { en: "Part 1: Personality (PQ10)", ar: "الجزء 1: الشخصية (PQ10)" },
-        { en: "Part 2: SJT Ranking", ar: "الجزء 2: حكم المواقف (SJT)" },
-        { en: "Part 3: Derailers & Drivers", ar: "الجزء 3: محاذير السلوك والدوافع" },
-        { en: "Part 4: Cognitive Abilities", ar: "الجزء 4: القدرات المعرفية" }
+        { en: "Part 1: Personality (PQ10)", ar: "اختبار الشخصية" },
+        { en: "Part 2: SJT Ranking", ar: "اختبار الحكم على المواقف" },
+        { en: "Part 3: Derailers & Drivers", ar: "اختبار السلوكيات المعطلة" },
+        { en: "Part 4: Cognitive Abilities", ar: "اختبار القدرات المعرفية" }
     ];
 
     let html = "";
