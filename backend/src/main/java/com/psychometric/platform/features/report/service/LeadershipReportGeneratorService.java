@@ -587,9 +587,13 @@ public class LeadershipReportGeneratorService {
      */
     public static String getTierColor(Double score) {
         if (score == null) return "#1e3a4c"; // fallback
-        if (score >= 4.0) return "#388e3c"; // Green
-        if (score >= 3.0) return "#d97736"; // Orange
-        return "#d32f2f"; // Red
+        if (score >= 4.0) {
+            return "#388e3c"; // Green (4.0 to 5.0)
+        } else if (score >= 3.0) {
+            return "#d97736"; // Orange (3.0 up to 4.0)
+        } else {
+            return "#d32f2f"; // Red (Below 3.0)
+        }
     }
 
     /**
