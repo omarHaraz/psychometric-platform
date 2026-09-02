@@ -725,10 +725,20 @@ function showView(viewId) {
     const historySection = document.getElementById("historySection");
     const mainContentArea = document.getElementById("mainContentArea");
 
-    if (testSidebar) testSidebar.classList.remove("hidden");
+    // 1. Always show the Left Utility Sidebar
     if (mainSidebar) mainSidebar.classList.remove("hidden");
     if (instructionsSidebar) instructionsSidebar.classList.add("hidden");
 
+    // 2. Conditionally Show/Hide the Right Progress Sidebar
+    if (testSidebar) {
+        if (viewId === "view-empty" || viewId === "view-loading" || viewId === "view-complete") {
+            testSidebar.classList.add("hidden"); // Hide when no active exam
+        } else {
+            testSidebar.classList.remove("hidden"); // Show for onboarding, instructions, and active test
+        }
+    }
+
+    // 3. Conditionally Show/Hide Assessment History
     if (viewId === "view-instructions" || viewId === "view-active-test") {
         if (historySection) historySection.classList.add("hidden");
     } else {

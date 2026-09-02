@@ -129,6 +129,16 @@
         .hidden {
             display: none !important;
         }
+
+        /* 4. When the right Progress Sidebar is hidden, let the center column expand */
+        #testSidebar.hidden ~ #mainContentArea,
+        #mainLayoutWrapper > #mainContentArea:first-of-type {
+            /* Grid handles this natively — hidden elements vacate their track */
+        }
+        /* Ensure hidden grid children leave no ghost space */
+        #testSidebar.hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body class="bg-[#F8FAFC] text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary/20">
