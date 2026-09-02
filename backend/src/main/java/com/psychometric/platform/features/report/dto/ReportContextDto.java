@@ -568,7 +568,11 @@ public class ReportContextDto implements Serializable {
         map.put("growWillText", growWillText);
 
         // Required for dynamic fragments to look up specific page data directly
-        map.put("competencyPages", competencyPages);
+        Map<Integer, CompetencyDetailDto> safeCompPages = new HashMap<>();
+        for (int p = 6; p <= 13; p++) {
+            safeCompPages.put(p, getCompetencyPage(p));
+        }
+        map.put("competencyPages", safeCompPages);
 
         return map;
     }
@@ -620,8 +624,12 @@ public class ReportContextDto implements Serializable {
      * Retrieves or creates default competency data for a given page number (6..13).
      */
     public CompetencyDetailDto getCompetencyPage(int pageNum) {
-        if (competencyPages != null && competencyPages.containsKey(pageNum)) {
+        if (competencyPages != null && competencyPages.containsKey(pageNum) && competencyPages.get(pageNum) != null) {
             return competencyPages.get(pageNum);
+        }
+        // Fallback for legacy cached maps that were keyed 7..14
+        if (competencyPages != null && competencyPages.containsKey(pageNum + 1) && competencyPages.get(pageNum + 1) != null) {
+            return competencyPages.get(pageNum + 1);
         }
         return getDefaultCompetencyPage(pageNum, this.candidateId);
     }
