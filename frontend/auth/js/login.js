@@ -7,13 +7,20 @@ const formError = document.getElementById('formError');
 const emailError = document.getElementById('emailError');
 const passwordError = document.getElementById('passwordError');
 
+const errorEl = document.getElementById("loginErrorMsg");
+
 const setFieldError = (field, message) => {
-    field.textContent = message;
+    if (field) field.textContent = message;
 };
 
 const clearErrors = () => {
-    formError.hidden = true;
-    formError.textContent = '';
+    if (formError) {
+        formError.hidden = true;
+        formError.textContent = '';
+    }
+    if (errorEl) {
+        errorEl.classList.add("hidden");
+    }
     setFieldError(emailError, '');
     setFieldError(passwordError, '');
 };
@@ -46,6 +53,8 @@ loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearErrors();
 
+    const isArabic = (document.documentElement.getAttribute("dir") || document.documentElement.dir || "ltr") === "rtl" || document.documentElement.getAttribute("lang") === "ar";
+
     if (!validateForm()) {
         return;
     }
@@ -53,38 +62,47 @@ loginForm.addEventListener('submit', async (e) => {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
-    try {
-            const user = await AuthService.login(email, password);
-            const payload = JSON.parse(atob(user.token.split('.')[1]));
-            const roles = payload.roles || [];
-          
-const repoPrefix = window.location.pathname.includes("/customer/")
-    ? window.location.pathname.split("/customer/")[0]
-    : window.location.pathname.includes("/auth/")
-        ? window.location.pathname.split("/auth/")[0]
-        : window.location.pathname.includes("/admin/")
-            ? window.location.pathname.split("/admin/")[0]
-            : "";
+    const loginBtn = document.getElementById("loginBtn");
+    if (loginBtn) {
+        loginBtn.disabled = true;
+        loginBtn.classList.add("opacity-75", "cursor-not-allowed");
+    }
 
-if (roles.includes("ROLE_ADMIN") || roles.includes("ROLE_SUPER_ADMIN")) {
-    console.log("Redirecting to admin...");
-    window.location.href = `${repoPrefix}/admin/pages/dashboard.html`;
-} else {
-    console.log("Redirecting to candidate portal...");
-    window.location.href = `${repoPrefix}/candidate/index.html`;
-}
-    } catch (error) {
-        formError.hidden = false;
-        const resData = error.response?.data;
-        if (resData && typeof resData === 'object' && resData.fieldErrors) {
-            const fe = resData.fieldErrors;
-            if (fe.email) setFieldError(emailError, fe.email);
-            if (fe.password) setFieldError(passwordError, fe.password);
-            formError.textContent = resData.message || 'Please correct the errors above.';
-        } else if (resData && typeof resData === 'object' && resData.message) {
-            formError.textContent = resData.message;
+    try {
+        const user = await AuthService.login(email, password);
+        const payload = JSON.parse(atob(user.token.split('.')[1]));
+        const roles = payload.roles || [];
+      
+        const repoPrefix = window.location.pathname.includes("/customer/")
+            ? window.location.pathname.split("/customer/")[0]
+            : window.location.pathname.includes("/auth/")
+                ? window.location.pathname.split("/auth/")[0]
+                : window.location.pathname.includes("/admin/")
+                    ? window.location.pathname.split("/admin/")[0]
+                    : "";
+
+        if (roles.includes("ROLE_ADMIN") || roles.includes("ROLE_SUPER_ADMIN")) {
+            window.location.href = `${repoPrefix}/admin/pages/dashboard.html`;
         } else {
-            formError.textContent = error.message || (typeof resData === 'string' ? resData : 'Login failed. Please check your credentials.');
+            window.location.href = `${repoPrefix}/candidate/index.html`;
+        }
+    } catch (error) {
+        if (loginBtn) {
+            loginBtn.disabled = false;
+            loginBtn.classList.remove("opacity-75", "cursor-not-allowed");
+        }
+
+        if (errorEl) {
+            errorEl.classList.remove("hidden");
+            const status = error.response?.status;
+            if (status === 401 || status === 400 || error.message === "INVALID_CREDENTIALS" || (error.message && error.message.toLowerCase().includes("bad credentials"))) {
+                errorEl.textContent = isArabic ? "البريد الإلكتروني أو كلمة المرور غير صحيحة." : "Invalid email or password.";
+            } else {
+                errorEl.textContent = isArabic ? "حدث خطأ في النظام. يرجى المحاولة لاحقاً." : "A system error occurred. Please try again later.";
+            }
+        } else if (formError) {
+            formError.hidden = false;
+            formError.textContent = error.message || 'Login failed. Please check your credentials.';
         }
     }
 });
@@ -94,18 +112,26 @@ if (roles.includes("ROLE_ADMIN") || roles.includes("ROLE_SUPER_ADMIN")) {
 });
 
 const togglePassword = document.getElementById('togglePassword');
-const eyeIcon = togglePassword.querySelector('i');
-
-togglePassword.addEventListener('click', () => {
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeIcon.classList.remove('fa-eye');
-        eyeIcon.classList.add('fa-eye-slash');
-        togglePassword.setAttribute('aria-label', 'Hide password');
-    } else {
-        passwordInput.type = 'password';
-        eyeIcon.classList.remove('fa-eye-slash');
-        eyeIcon.classList.add('fa-eye');
-        togglePassword.setAttribute('aria-label', 'Show password');
-    }
-});
+if (togglePassword) {
+    togglePassword.addEventListener('click', () => {
+        const iconSpan = togglePassword.querySelector('.material-symbols-outlined');
+        const iconI = togglePassword.querySelector('i');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            if (iconSpan) iconSpan.textContent = 'visibility_off';
+            if (iconI) {
+                iconI.classList.remove('fa-eye');
+                iconI.classList.add('fa-eye-slash');
+            }
+            togglePassword.setAttribute('aria-label', 'Hide password');
+        } else {
+            passwordInput.type = 'password';
+            if (iconSpan) iconSpan.textContent = 'visibility';
+            if (iconI) {
+                iconI.classList.remove('fa-eye-slash');
+                iconI.classList.add('fa-eye');
+            }
+            togglePassword.setAttribute('aria-label', 'Show password');
+        }
+    });
+}
