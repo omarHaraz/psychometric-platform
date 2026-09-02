@@ -801,11 +801,15 @@ async function loadAssessmentState() {
         }
 
         if (!attempt) {
-            const res = await fetch(`${API_BASE}/api/attempts/me/pending`, {
-                headers: getAuthHeader()
-            });
-            if (res.ok) {
-                attempt = await res.json();
+            try {
+                const res = await fetch(`${API_BASE}/api/attempts/me/pending`, {
+                    headers: getAuthHeader()
+                });
+                if (res.ok && res.status === 200) {
+                    attempt = await res.json().catch(() => null);
+                }
+            } catch (pendingErr) {
+                console.debug("No pending assessment attempt assigned.");
             }
         }
 

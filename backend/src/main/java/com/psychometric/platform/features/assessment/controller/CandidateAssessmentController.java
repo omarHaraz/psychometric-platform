@@ -28,7 +28,7 @@ public class CandidateAssessmentController {
     public ResponseEntity<AssessmentAttempt> getPendingAttempt(@AuthenticationPrincipal String username) {
         AssessmentAttempt attempt = sessionService.getPendingAttempt(username);
         if (attempt == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(attempt);
     }
