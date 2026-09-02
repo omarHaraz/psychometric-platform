@@ -82,19 +82,41 @@
             unicode-bidi: isolate;
         }
 
-        /* Middle Column Flexbox Container */
-        .middle-column-container, .middle-column-wrapper {
+        /* 1. Master CSS Grid Layout (3-Column Native RTL Grid) */
+        .dashboard-master-grid {
+            display: grid !important;
+            grid-template-columns: 290px minmax(0, 1fr) 290px !important;
+            gap: 2rem !important;
+            align-items: start !important;
+            width: 100% !important;
+            max-width: 1440px !important;
+            margin: 0 auto !important;
+            padding: 2rem 1.5rem !important;
+            box-sizing: border-box !important;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-master-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* 2. Content Core (Middle Column) Vertical Flexbox */
+        .content-core {
             display: flex !important;
             flex-direction: column !important;
             gap: 2rem !important;
-            position: relative !important;
             width: 100% !important;
-            align-items: stretch !important;
             min-width: 0 !important;
+            position: relative !important;
             height: auto !important;
         }
 
-        .assessment-card, .history-card {
+        /* 3. Standard Block Elements */
+        .card-active-assessment,
+        .card-assessment-history,
+        .assessment-card,
+        .history-card {
             width: 100% !important;
             max-width: 100% !important;
             height: auto !important;
@@ -131,11 +153,11 @@
         </div>
     </header>
 
-    <!-- MAIN APP CONTAINER -->
-    <main id="mainLayoutWrapper" class="main-layout-wrapper w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-grow flex flex-col md:flex-row gap-6 items-start justify-between">
+    <!-- MAIN APP CONTAINER (CSS GRID) -->
+    <main id="mainLayoutWrapper" class="dashboard-master-grid" dir="rtl">
         
-        <!-- 1. RIGHT COLUMN (in RTL) / LEFT COLUMN (in LTR): PROGRESS TRACKER -->
-        <aside id="testSidebar" class="sidebar-progress w-full md:w-64 lg:w-72 shrink-0 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <!-- COLUMN 1: PROGRESS TRACKER (Renders on the RIGHT in RTL) -->
+        <aside id="testSidebar" class="sidebar-progress bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
             <div class="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
                 <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                     <span class="material-symbols-outlined text-2xl">psychology</span>
@@ -150,16 +172,16 @@
             </nav>
         </aside>
 
-        <!-- 2. MIDDLE COLUMN: MAIN ASSESSMENT AREA -->
-        <div id="mainContentArea" class="main-assessment-content middle-column-wrapper middle-column-container flex-1 min-w-0 flex flex-col gap-8 w-full relative" style="flex-grow: 1; max-width: 850px;">
+        <!-- COLUMN 2: MAIN CONTENT AREA (Renders in the CENTER) -->
+        <div id="mainContentArea" class="content-core">
             <!-- Loading State -->
-            <div id="view-loading" class="assessment-card flex flex-col items-center justify-center py-20 text-center space-y-4 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+            <div id="view-loading" class="assessment-card card-active-assessment flex flex-col items-center justify-center py-20 text-center space-y-4 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
                 <div class="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
                 <p class="text-sm font-medium text-on-surface-variant">جاري مزامنة جلسة التقييم...</p>
             </div>
 
             <!-- 1. VIEW: NO ACTIVE ASSESSMENT ASSIGNED (Empty state) -->
-            <div id="view-empty" class="assessment-card hidden text-center py-12 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+            <div id="view-empty" class="assessment-card card-active-assessment hidden text-center py-12 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
                 <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-3xl">assignment_late</span>
                 </div>

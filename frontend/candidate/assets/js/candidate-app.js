@@ -736,8 +736,7 @@ function showView(viewId) {
     }
 
     if (mainContentArea) {
-        mainContentArea.classList.add("flex-1", "middle-column-container");
-        mainContentArea.classList.remove("flex-grow");
+        mainContentArea.classList.add("content-core");
     }
 }
 
