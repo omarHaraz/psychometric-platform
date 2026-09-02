@@ -1322,7 +1322,7 @@ function renderSjtRankingQuestion(item, container) {
 
     let html = `
         <div class="space-y-3 survey-content" dir="rtl" style="direction: rtl; text-align: right;">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isGlobalRtl ? 'الموقف' : 'Scenario'} ${currentItemIndex + 1} &bull; ${item.itemCode || ""}</span>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isGlobalRtl ? 'الموقف' : 'Scenario'} ${currentItemIndex + 1}</span>
             <h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${item.titleAr || ""}</h2>
             <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 leading-relaxed arabic-text" dir="rtl">
                 ${item.narrativeAr || ""}
@@ -1485,7 +1485,7 @@ function renderGcatMcqQuestion(item, container) {
 
     let html = `
         <div class="space-y-4 survey-content" dir="rtl" style="direction: rtl; text-align: right;">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isGlobalRtl ? 'السؤال' : 'Question'} ${currentItemIndex + 1} &bull; ${item.itemCode || ""}</span>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isGlobalRtl ? 'السؤال' : 'Question'} ${currentItemIndex + 1}</span>
             ${questionBodyHtml}
         </div>
 
