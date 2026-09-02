@@ -725,19 +725,31 @@ function showView(viewId) {
     const historySection = document.getElementById("historySection");
     const mainContentArea = document.getElementById("mainContentArea");
 
-    if (testSidebar) testSidebar.classList.remove("hidden");
     if (mainSidebar) mainSidebar.classList.remove("hidden");
     if (instructionsSidebar) instructionsSidebar.classList.add("hidden");
 
-    if (viewId === "view-instructions" || viewId === "view-active-test") {
-        if (historySection) historySection.classList.add("hidden");
-    } else {
-        if (historySection) historySection.classList.remove("hidden");
+    // CRITICAL FIX: Only show the Progress Tracker during Exam and Instructions
+    if (testSidebar) {
+        if (viewId === "view-instructions" || viewId === "view-active-test" || viewId === "view-onboarding") {
+            testSidebar.classList.remove("hidden");
+            testSidebar.style.display = "block"; // Ensure it shows
+        } else {
+            testSidebar.classList.add("hidden");
+            testSidebar.style.display = "none";  // Ensure it completely collapses
+        }
+    }
+
+    // Hide history during exam/instructions
+    if (historySection) {
+        if (viewId === "view-instructions" || viewId === "view-active-test") {
+            historySection.classList.add("hidden");
+        } else {
+            historySection.classList.remove("hidden");
+        }
     }
 
     if (mainContentArea) {
         mainContentArea.classList.add("flex-1");
-        mainContentArea.classList.remove("flex-grow");
     }
 }
 
