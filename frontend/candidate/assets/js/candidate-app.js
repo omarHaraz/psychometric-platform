@@ -242,7 +242,40 @@ const i18nDict = {
     "System & Stability": "استقرار النظام والاتصال",
     "Use a stable internet connection on desktop Chrome or Edge. Avoid refreshing the page during tests.": "استخدم اتصال إنترنت مستقر ومتصفح Chrome أو Edge على الحاسوب وتجنب تحديث الصفحة.",
     "Battery Transition:": "الانتقال بين البطاريات:",
-    "A 1-minute preparation window is provided between each battery before the next section starts.": "يُمنح فاصل زمني مدته دقيقة واحدة بين كل بطارية وأخرى للاستعداد الذهني والانتقال."
+    "A 1-minute preparation window is provided between each battery before the next section starts.": "يُمنح فاصل زمني مدته دقيقة واحدة بين كل بطارية وأخرى للاستعداد الذهني والانتقال.",
+    "TYPE": "نوع الأسئلة",
+    "TIME ALLOWED": "الوقت المسموح",
+    "TOTAL ITEMS": "عدد الأسئلة",
+    "Important Instructions:": "تعليمات هامة:",
+    "Multiple Choice (MCQ)": "اختيار من متعدد (MCQ)",
+    "20 Min Strict": "20 دقيقة (محدد بدقة)",
+    "Min Strict 20": "20 دقيقة (محدد بدقة)",
+    "42 Items": "42 سؤالاً",
+    "Items 42": "42 سؤالاً",
+    "140 Items": "140 سؤالاً",
+    "16 Items": "16 سؤالاً",
+    "60 Items": "60 سؤالاً",
+    "40 Minutes": "40 دقيقة",
+    "45 Minutes": "45 دقيقة",
+    "20 Minutes": "20 دقيقة",
+    "Likert Scale": "مقياس ليكرت",
+    "4-Option Ranking": "ترتيب الخيارات (4)",
+    "Evaluates Verbal, Numerical, and Abstract pattern reasoning aptitude.": "يقيس هذا الاختبار قدرات الاستدلال اللفظي، والعددي، والأنماط التجريدية.",
+    "Each question has one single correct answer option.": "يحتوي كل سؤال على خيار إجابة صحيح واحد فقط.",
+    "This battery has a STRICT 20-minute time cutoff enforced by the server.": "وقت هذه البطارية محدد بدقة بـ 20 دقيقة مفروضة من الخادم، ولا يمكن إيقاف المؤقت.",
+    "Work as quickly and accurately as possible.": "أجب بأكبر قدر ممكن من السرعة والدقة، ويتم حفظ إجاباتك تلقائياً.",
+    "Read each item carefully and respond with your immediate, natural judgment.": "اقرأ كل سؤال بعناية وأجب بناءً على حكمك الفطري والمباشر.",
+    "There are no 'right' or 'wrong' personality answers; consistency is evaluated.": "لا توجد إجابات \"صحيحة\" أو \"خاطئة\" في تقييم الشخصية؛ بل يتم تقييم مدى اتساق الإجابات.",
+    "The test timer is strictly enforced by the server. Once started, it cannot be paused.": "وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.",
+    "Your answers auto-save continuously in real time.": "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي.",
+    "You will be presented with real-world executive scenarios and workplace challenges.": "اقرأ كل موقف قيادي بعناية وأجب بناءً على حكمك الفطري والمباشر.",
+    "Order the 4 available actions from Most Effective (Rank 1) to Least Effective (Rank 4).": "رتّب الإجراءات الأربعة المقترحة من الأكثر فعالية (الترتيب 1) إلى الأقل فعالية (الترتيب 4).",
+    "Use the up/down arrows to adjust the relative ranking of each proposed response.": "استخدم الأسهم لترتيب الإجراءات من الأكثر فعالية إلى الأقل فعالية.",
+    "You have 45 minutes to complete all 16 scenarios.": "لديك 45 دقيقة لإكمال جميع السيناريوهات الـ 16.",
+    "This section assesses behavior tendencies under pressure, stress, and heavy workloads.": "اقرأ كل سؤال بعناية وأجب بناءً على حكمك الفطري والمباشر.",
+    "Indicate your level of agreement with each workplace scenario statement.": "حدد مستوى موافقتك على كل عبارة في بيئة العمل.",
+    "Be frank and transparent in your self-assessment.": "لا توجد إجابات \"صحيحة\" أو \"خاطئة\" في تقييم السلوكيات؛ كن صريحاً وشفافاً.",
+    "You have 20 minutes for this 60-item battery.": "لديك 20 دقيقة لإكمال هذه البطارية المكونة من 60 سؤالاً."
 };
 
 // Create reverse dictionary
@@ -359,7 +392,8 @@ window.applyTranslation = applyTranslation;
 window.updateNavigationDirection = updateNavigationDirection;
 
 function applyCurrentTranslation() {
-    if (document.documentElement.getAttribute("dir") === "rtl") {
+    const isArabic = (document.documentElement.getAttribute("dir") || document.documentElement.dir || "rtl") !== "ltr";
+    if (isArabic) {
         applyTranslation("ar");
     } else {
         updateNavigationDirection();
@@ -483,10 +517,10 @@ const BATTERY_METADATA = [
             "Work as quickly and accurately as possible."
         ],
         instructionsAr: [
-            "اقرأ كل مسألة بدقة وحدد الإجابة المنطقية الصحيحة.",
-            "يحتوي كل سؤال على خيار صحيح واحد فقط.",
-            "وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.",
-            "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي."
+            "يقيس هذا الاختبار قدرات الاستدلال اللفظي، والعددي، والأنماط التجريدية.",
+            "يحتوي كل سؤال على خيار إجابة صحيح واحد فقط.",
+            "وقت هذه البطارية محدد بدقة بـ 20 دقيقة مفروضة من الخادم، ولا يمكن إيقاف المؤقت.",
+            "أجب بأكبر قدر ممكن من السرعة والدقة، ويتم حفظ إجاباتك تلقائياً."
         ]
     }
 ];
@@ -859,7 +893,8 @@ function openPreBatteryInstructions(batteryIndex, isIntermission = false) {
         intermissionTimerInterval = null;
     }
 
-    const isArabic = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
+    const htmlDir = document.documentElement.getAttribute("dir") || document.documentElement.dir || "rtl";
+    const isArabic = htmlDir !== "ltr";
     const meta = BATTERY_METADATA[batteryIndex] || BATTERY_METADATA[0];
 
     const instPartEl = document.getElementById("instPartNumber");
@@ -1437,9 +1472,9 @@ function renderGcatMcqQuestion(item, container) {
         }
     } else {
         // Verbal / General Questions:
+        // CRITICAL FIX: Removed item.titleAr to hide generic titles (e.g., "الاستنتاج الكمي المباشر")
         questionBodyHtml = `
-            ${item.titleAr ? `<h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${item.titleAr}</h2>` : ''}
-            ${item.promptTextAr ? `<p class="text-sm text-slate-700 arabic-text leading-relaxed text-right" dir="rtl">${item.promptTextAr}</p>` : ''}
+            ${item.promptTextAr ? `<p class="text-base text-slate-800 arabic-text leading-relaxed text-right font-medium whitespace-pre-line" dir="rtl">${item.promptTextAr}</p>` : ''}
             ${item.questionImageUrl ? `
                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
                     <img src="${item.questionImageUrl}" alt="Diagram" class="max-h-64 rounded-lg object-contain mx-auto">
