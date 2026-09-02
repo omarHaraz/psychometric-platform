@@ -372,8 +372,9 @@ public class LeadershipReportGeneratorService {
         dto.setIndicator2Color(colorIndicator);
         dto.setIndicator3Color(colorIndicator);
 
-        switch (competencyCode) {
-            case "COMMUNICATION_AND_INFLUENCE":
+        String title = competencyCode != null ? competencyCode.trim().toUpperCase() : "";
+        
+            if (title.contains("COMMUNICATION") || title.contains("التواصل والتأثير")) {
                 dto.setCompetencyTitle("التواصل والتأثير الفعال");
                 dto.setCompetencyDesc("قدرة القائد على نقل الأفكار والمعلومات بوضوح وإقناع، والتأثير الإيجابي في الآخرين، وبناء علاقات عمل قوية تدعم تحقيق أهداف المنظمة.");
                 
@@ -391,9 +392,8 @@ public class LeadershipReportGeneratorService {
                 if (dScore >= 4.0) { dto.setResult3("مفاوض بارع يبني توافقاً بسلاسة."); dto.setRec3("تمثيل المؤسسة في شراكات استراتيجية."); }
                 else if (dScore >= 3.0) { dto.setResult3("يقنع بالبيانات لكنه يواجه صعوبة مع المقاومة."); dto.setRec3("تطوير استراتيجيات التفاوض."); }
                 else { dto.setResult3("يفتقر للمرونة ويميل لفرض الرأي."); dto.setRec3("ورش عمل في الإقناع الدبلوماسي."); }
-                break;
 
-            case "INITIATIVE":
+            } else if (title.contains("INITIATIVE") || title.contains("المبادرة")) {
                 dto.setCompetencyTitle("المبادرة");
                 dto.setCompetencyDesc("قدرة القائد على التحرك من تلقاء نفسه دون انتظار الأوامر، عبر اقتراح الأفكار واتخاذ الإجراءات المناسبة في الوقت المناسب لتحسين العمل وحل المشكلات وتحقيق الأهداف بسرعة وفعالية.");
 
@@ -411,9 +411,8 @@ public class LeadershipReportGeneratorService {
                 if (dScore >= 4.0) { dto.setResult3("يقتنص الفرص ويحولها لنجاحات مؤسسية."); dto.setRec3("المشاركة في التخطيط التوسعي."); }
                 else if (dScore >= 3.0) { dto.setResult3("يستغل الفرص الواضحة والمباشرة."); dto.setRec3("التدرب على رصد الفرص الخفية."); }
                 else { dto.setResult3("يفوت الفرص لتردده في اتخاذ الخطوة الأولى."); dto.setRec3("تعزيز الجرأة المهنية."); }
-                break;
 
-            case "DECISION_MAKING_AND_RESPONSIBILITY":
+            } else if (title.contains("DECISION") || title.contains("اتخاذ القرار")) {
                 dto.setCompetencyTitle("اتخاذ القرار وتحمل المسؤولية");
                 dto.setCompetencyDesc("القدرة على جمع وتحليل المعلومات لتقييم الخيارات المتاحة واستنتاج حلول عملية، واتخاذ القرارات في الوقت المناسب مع تحمل المسؤولية الكاملة عن نتائجها.");
 
@@ -431,9 +430,8 @@ public class LeadershipReportGeneratorService {
                 if (dScore >= 4.0) { dto.setResult3("يتحمل المسؤولية كاملة عن نتائج فريقه."); dto.setRec3("تولي قيادة إدارات متعثرة."); }
                 else if (dScore >= 3.0) { dto.setResult3("يتحمل المسؤولية في المواقف المعتادة."); dto.setRec3("تعزيز ثقافة الشفافية المطلقة."); }
                 else { dto.setResult3("يميل لإلقاء اللوم على الظروف أو الآخرين."); dto.setRec3("جلسات توجيه حول أخلاقيات القيادة."); }
-                break;
 
-            case "INSPIRING_LEADERSHIP":
+            } else if (title.contains("INSPIRING") || title.contains("القيادة الملهمة")) {
                 dto.setCompetencyTitle("القيادة الملهمة");
                 dto.setCompetencyDesc("القدرة على إلهام وتوجيه الآخرين نحو تحقيق الرؤية المشتركة، من خلال بناء الثقة، وتحفيز الأداء، وتمكين الأفراد، وخلق بيئة عمل تشجع على التميز والابتكار.");
 
@@ -451,9 +449,8 @@ public class LeadershipReportGeneratorService {
                 if (dScore >= 4.0) { dto.setResult3("موجه بارع يساهم في بناء صف ثانٍ من القادة."); dto.setRec3("تأسيس برنامج إرشاد داخلي."); }
                 else if (dScore >= 3.0) { dto.setResult3("يقدم توجيهاً عند الطلب فقط."); dto.setRec3("جدولة جلسات توجيه دورية."); }
                 else { dto.setResult3("يتجاهل دور التوجيه ويركز على التنفيذ فقط."); dto.setRec3("برامج إعداد الموجهين."); }
-                break;
 
-            case "STRATEGIC_THINKING":
+            } else if (title.contains("STRATEGIC") || title.contains("التفكير الاستراتيجي")) {
                 dto.setCompetencyTitle("التفكير الاستراتيجي");
                 dto.setCompetencyDesc("القدرة على استيعاب الصورة الكلية والتوجهات المستقبلية، وتحليل البيئة الداخلية والخارجية لصياغة رؤى استراتيجية تدعم تحقيق الأهداف طويلة المدى للمنظمة.");
 
@@ -471,9 +468,8 @@ public class LeadershipReportGeneratorService {
                 if (dScore >= 4.0) { dto.setResult3("يضمن انسجام كافة المبادرات مع الأهداف العليا."); dto.setRec3("الإشراف على محافظ المشاريع الاستراتيجية."); }
                 else if (dScore >= 3.0) { dto.setResult3("يوائم الأهداف الأساسية بفاعلية مقبولة."); dto.setRec3("مراجعة مؤشرات الأداء الاستراتيجية."); }
                 else { dto.setResult3("ينفذ خططاً تتعارض أحياناً مع التوجه العام."); dto.setRec3("تحديث الفهم للرؤية المؤسسية."); }
-                break;
 
-            case "SKILL_DEVELOPMENT":
+            } else if (title.contains("SKILL") || title.contains("تطوير المهارات")) {
                 dto.setCompetencyTitle("تطوير المهارات");
                 dto.setCompetencyDesc("القدرة على تحديد الاحتياجات التدريبية لنفسه وللآخرين، والسعي المستمر لاكتساب معارف ومهارات جديدة، وتوفير التوجيه والدعم لرفع مستوى الكفاءة والأداء العام.");
 
@@ -491,9 +487,8 @@ public class LeadershipReportGeneratorService {
                 if (dScore >= 4.0) { dto.setResult3("يتبنى عقلية التعلم المستمر ويواكب أحدث الممارسات."); dto.setRec3("تمثيل المؤسسة في مؤتمرات تخصصية."); }
                 else if (dScore >= 3.0) { dto.setResult3("يتعلم مهارات جديدة عندما يتطلب العمل ذلك."); dto.setRec3("توسيع نطاق القراءة والاطلاع التخصصي."); }
                 else { dto.setResult3("يقاوم تعلم مهارات جديدة ويعتمد على خبراته القديمة."); dto.setRec3("التكليف بمهام تتطلب تقنيات حديثة."); }
-                break;
 
-            case "ADAPTABILITY":
+            } else if (title.contains("ADAPTABILITY") || title.contains("التكيف")) {
                 dto.setCompetencyTitle("القدرة على التكيف");
                 dto.setCompetencyDesc("القدرة على التعامل بمرونة وإيجابية مع التغييرات والمواقف الغامضة أو الضاغطة، وتعديل خطط العمل لتتناسب مع متطلبات البيئة المتغيرة، دون المساس بجودة الأداء.");
 
@@ -511,9 +506,8 @@ public class LeadershipReportGeneratorService {
                 if (dScore >= 4.0) { dto.setResult3("عرّاب للتغيير يقود فريقه بسلاسة نحو الرؤية الجديدة."); dto.setRec3("إدارة برامج التحول المؤسسي."); }
                 else if (dScore >= 3.0) { dto.setResult3("يدعم التغيير لكنه لا يأخذ دور المبادرة في قيادته."); dto.setRec3("تولي دور سفير التغيير في إدارته."); }
                 else { dto.setResult3("يبث السلبية تجاه المبادرات الجديدة."); dto.setRec3("جلسات توجيه حول أهمية المواكبة الاستراتيجية."); }
-                break;
 
-            case "SYSTEMATIC_ANALYSIS_AND_PLANNING":
+            } else if (title.contains("SYSTEMATIC") || title.contains("التحليل والتخطيط")) {
                 dto.setCompetencyTitle("التحليل والتخطيط المنهجي");
                 dto.setCompetencyDesc("القدرة على دراسة المشكلات بعمق، ووضع خطط عمل مفصلة وممنهجة تتضمن ترتيب الأولويات وتوزيع الموارد بكفاءة، مع متابعة التنفيذ لضمان تحقيق الأهداف المحددة بدقة.");
 
@@ -531,7 +525,7 @@ public class LeadershipReportGeneratorService {
                 if (dScore >= 4.0) { dto.setResult3("يدير الموارد ببراعة ويحقق أقصى عائد بأقل تكلفة."); dto.setRec3("الإشراف على الميزانيات التشغيلية الكبرى."); }
                 else if (dScore >= 3.0) { dto.setResult3("يخصص الموارد بشكل مقبول مع بعض الهدر."); dto.setRec3("التدريب على إدارة الموارد الرشيقة."); }
                 else { dto.setResult3("يستنزف الموارد ويواجه صعوبة في ترتيب الأولويات."); dto.setRec3("تطبيق مصفوفات إدارة الوقت والأولويات."); }
-                break;
+
         }
 
         report.getCompetencyPages().put(pageNum, dto);

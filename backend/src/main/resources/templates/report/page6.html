@@ -480,71 +480,32 @@
                 <th class="col-level" style="border-top-right-radius: 4px; text-align: center;">المستوى</th>
             </tr>
         </thead>
-        <tbody>
+                                <tbody>
             <!-- Row 1: Dynamic Indicator 1 -->
-            <tr th:if="${req1 != null and rec1 != null and result1 != null
-                        and req1.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 5
-                        and rec1.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0
-                        and result1.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0}">
-                <!-- 1st in DOM (Left): Recommendations -->
-                <td>
-                    <span th:text="${rec1}"></span>
-                </td>
-                <!-- 2nd in DOM: Result -->
-                <td>
-                    <span th:text="${result1}"></span>
-                </td>
-                <!-- 3rd in DOM: Requirements -->
-                <td>
-                    <span th:text="${req1}"></span>
-                </td>
-                <!-- 4th in DOM (Right): Level Pill -->
+            <tr th:if="${req1 != null and #strings.length(#strings.trim(req1)) > 5}">
+                <td><span th:text="${rec1}"></span></td>
+                <td><span th:text="${result1}"></span></td>
+                <td><span th:text="${req1}"></span></td>
                 <td class="td-level-cell">
                     <span class="level-status-pill" th:style="'background-color: ' + (${color1 != null ? color1 : indicator1Color}) + ';'"></span>
                 </td>
             </tr>
 
             <!-- Row 2: Dynamic Indicator 2 -->
-            <tr th:if="${req2 != null and rec2 != null and result2 != null
-                        and req2.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 5
-                        and rec2.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0
-                        and result2.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0}">
-                <!-- 1st in DOM (Left): Recommendations -->
-                <td>
-                    <span th:text="${rec2}"></span>
-                </td>
-                <!-- 2nd in DOM: Result -->
-                <td>
-                    <span th:text="${result2}"></span>
-                </td>
-                <!-- 3rd in DOM: Requirements -->
-                <td>
-                    <span th:text="${req2}"></span>
-                </td>
-                <!-- 4th in DOM (Right): Level Pill -->
+            <tr th:if="${req2 != null and #strings.length(#strings.trim(req2)) > 5}">
+                <td><span th:text="${rec2}"></span></td>
+                <td><span th:text="${result2}"></span></td>
+                <td><span th:text="${req2}"></span></td>
                 <td class="td-level-cell">
                     <span class="level-status-pill" th:style="'background-color: ' + (${color2 != null ? color2 : indicator2Color}) + ';'"></span>
                 </td>
             </tr>
 
             <!-- Row 3: Dynamic Indicator 3 -->
-            <tr th:if="${req3 != null and rec3 != null and result3 != null
-                        and req3.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 5
-                        and rec3.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0
-                        and result3.replaceAll('[\s\u00A0\u200B\u3000]+','').length() > 0}">
-                <!-- 1st in DOM (Left): Recommendations -->
-                <td>
-                    <span th:text="${rec3}"></span>
-                </td>
-                <!-- 2nd in DOM: Result -->
-                <td>
-                    <span th:text="${result3}"></span>
-                </td>
-                <!-- 3rd in DOM: Requirements -->
-                <td>
-                    <span th:text="${req3}"></span>
-                </td>
-                <!-- 4th in DOM (Right): Level Pill -->
+            <tr th:if="${req3 != null and #strings.length(#strings.trim(req3)) > 5}">
+                <td><span th:text="${rec3}"></span></td>
+                <td><span th:text="${result3}"></span></td>
+                <td><span th:text="${req3}"></span></td>
                 <td class="td-level-cell">
                     <span class="level-status-pill" th:style="'background-color: ' + (${color3 != null ? color3 : indicator3Color}) + ';'"></span>
                 </td>

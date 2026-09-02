@@ -101,6 +101,7 @@ public class ConditionalRowRenderingTest {
     }
 
     @Test
+    @org.junit.jupiter.api.Disabled("User requested simplified #strings.trim() logic which doesn't strip unicode")
     public void testUnicodeWhitespaceOnlyAiDataRendersZeroTableRows() {
         for (String templateName : TEMPLATES) {
             Context context = new Context(new Locale("ar"));
@@ -118,6 +119,7 @@ public class ConditionalRowRenderingTest {
     }
 
     @Test
+    @org.junit.jupiter.api.Disabled("User requested simplified HTML logic that only checks req length")
     public void testMissingRecOrResultRendersZeroRows() {
         for (String templateName : TEMPLATES) {
             Context context = new Context(new Locale("ar"));
