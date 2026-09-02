@@ -83,13 +83,24 @@
         }
 
         /* Middle Column Flexbox Container */
-        .middle-column-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            position: relative;
-            width: 100%;
-            height: auto;
+        .middle-column-container, .middle-column-wrapper {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2rem !important;
+            position: relative !important;
+            width: 100% !important;
+            align-items: stretch !important;
+            min-width: 0 !important;
+            height: auto !important;
+        }
+
+        .assessment-card, .history-card {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            position: relative !important;
+            display: block !important;
+            box-sizing: border-box !important;
         }
     </style>
 </head>
@@ -140,15 +151,15 @@
         </aside>
 
         <!-- 2. MIDDLE COLUMN: MAIN ASSESSMENT AREA -->
-        <div id="mainContentArea" class="main-assessment-content middle-column-container flex-1 min-w-0 flex flex-col gap-6 w-full relative" style="flex-grow: 1; max-width: 850px;">
+        <div id="mainContentArea" class="main-assessment-content middle-column-wrapper middle-column-container flex-1 min-w-0 flex flex-col gap-8 w-full relative" style="flex-grow: 1; max-width: 850px;">
             <!-- Loading State -->
-            <div id="view-loading" class="flex flex-col items-center justify-center py-20 text-center space-y-4 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+            <div id="view-loading" class="assessment-card flex flex-col items-center justify-center py-20 text-center space-y-4 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
                 <div class="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
                 <p class="text-sm font-medium text-on-surface-variant">جاري مزامنة جلسة التقييم...</p>
             </div>
 
             <!-- 1. VIEW: NO ACTIVE ASSESSMENT ASSIGNED (Empty state) -->
-            <div id="view-empty" class="hidden text-center py-12 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+            <div id="view-empty" class="assessment-card hidden text-center py-12 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
                 <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-3xl">assignment_late</span>
                 </div>
@@ -159,7 +170,7 @@
             </div>
 
             <!-- 2. VIEW: ONBOARDING / ASSESSMENT OVERVIEW SCREEN -->
-            <div id="view-onboarding" class="hidden space-y-6 w-full">
+            <div id="view-onboarding" class="assessment-card hidden space-y-6 w-full">
                 <!-- Assessment Hero Card -->
                 <section class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-100">
@@ -484,7 +495,7 @@
         </div>
 
         <!-- Assessment History Card (Under Central Card) -->
-        <section id="historySection" class="bg-white border border-slate-200 rounded-xl p-6 space-y-4 w-full shadow-xs">
+        <section id="historySection" class="history-card bg-white border border-slate-200 rounded-xl p-6 space-y-4 w-full shadow-xs">
             <div class="flex justify-between items-center pb-2 border-b border-slate-100">
                 <div>
                     <h2 class="text-base font-bold text-on-surface">Assessment History</h2>
