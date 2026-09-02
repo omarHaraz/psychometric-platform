@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang != null ? lang : 'ar'}" th:dir="${dir != null ? dir : 'rtl'}">
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Page 5 - ملخص النتائج</title>
+    <title>Page 5 - Results Summary</title>
     <style th:fragment="style">
-        /* ==========================================================================
-           PDF & Print Optimization (OpenHTMLtoPDF Compatible)
-           ========================================================================== */
         @page {
             size: A4 portrait;
             margin: 0;
@@ -25,13 +22,20 @@
             font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Arial', sans-serif;
             background-color: #ffffff;
             color: #1e293b;
-            direction: rtl;
-            text-align: right;
             font-size: 11px;
             line-height: 1.5;
         }
 
-        /* 0. Main Page 5 Uniform 10px Boundary Wrapper */
+        html[dir="rtl"], body[dir="rtl"], .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        html[dir="ltr"], body[dir="ltr"], .ltr {
+            direction: ltr;
+            text-align: left;
+        }
+
         .page5-wrapper {
             padding: 10px;
             width: 100%;
@@ -40,24 +44,47 @@
             position: relative;
         }
 
-        /* 1. Page Main Header */
         .page-header-box {
             width: 100%;
             border-bottom: 2px solid #1e3a4c;
             padding-bottom: 10px;
-            margin-bottom: 14px;
+            margin-bottom: 8px;
             background: transparent;
         }
 
-        /* 2. Results Table */
-        .results-table-page5 {
+        table.results-table-page5 {
             width: 100%;
             border-collapse: collapse;
-            border: none;
-            margin-bottom: 15px;
+            font-size: 11px;
+            background-color: #ffffff;
+            margin-top: 4px;
         }
 
-        /* Modern Bottom Footer Banner */
+        table.results-table-page5 th {
+            background-color: #7a4b3a;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 11.5px;
+            padding: 8px 12px;
+            border: none;
+            box-sizing: border-box;
+        }
+
+        table.results-table-page5 td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .section-separator-row td {
+            background-color: #f8fafc;
+            font-weight: 800;
+            color: #1e3a4c;
+            font-size: 11px;
+            padding: 8px 12px;
+            border-top: 1.5px solid #cbd5e1;
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+
         .bottom-banner-container {
             position: absolute;
             bottom: 0;
@@ -67,43 +94,42 @@
             padding: 0 10px 10px 10px;
             box-sizing: border-box;
         }
-
-        .banner-copyright {
-            font-size: 8.5px;
-            color: #64748b;
-            font-family: 'Inter', 'Arial', sans-serif;
-            direction: ltr;
-            text-align: center;
-            margin-top: 5px;
-        }
     </style>
 </head>
-<body>
+<body th:class="${dir != null ? dir : 'rtl'}">
     <div th:fragment="body" class="page5-wrapper">
-        <!-- 1. Page Header (Bulletproof Layout) -->
+        <!-- 1. Page Header (Bidi Layout) -->
         <div class="page-header-box">
             <table style="width: 100%; border-collapse: collapse; border: none; background: transparent;">
-                <tr>
-                    <!-- Left: Page Number -->
-                    <td style="text-align: left; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px; background: transparent; display: inline-block;">صفحة 5</span>
+                <!-- LTR Header -->
+                <tr th:if="${dir == 'en' || dir == 'ltr'}">
+                    <td style="text-align: left; vertical-align: bottom; width: 60%; border: none; padding: 0; background: transparent;">
+                        <h1 style="margin: 0; font-family: 'Cairo', 'Arial', sans-serif; font-size: 24px; font-weight: 800; color: #1e3a4c; line-height: 1.2;" th:text="#{report.summary.title}">Results Summary</h1>
                     </td>
-                    <!-- Right: Main Title -->
-                    <td style="text-align: right; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <h1 style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 24px; font-weight: 800; color: #1e3a4c; line-height: 1.2; background: transparent;">ملخّص النتائج</h1>
+                    <td style="text-align: right; vertical-align: bottom; width: 40%; border: none; padding: 0; background: transparent;">
+                        <span style="font-family: 'Cairo', 'Arial', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px;" th:text="#{report.common.page} + ' 5'">Page 5</span>
+                    </td>
+                </tr>
+                <!-- RTL Header -->
+                <tr th:if="${dir == 'rtl' || dir == null}">
+                    <td style="text-align: left; vertical-align: bottom; width: 40%; border: none; padding: 0; background: transparent;">
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px;" th:text="#{report.common.page} + ' 5'">صفحة 5</span>
+                    </td>
+                    <td style="text-align: right; vertical-align: bottom; width: 60%; border: none; padding: 0; background: transparent;">
+                        <h1 style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 24px; font-weight: 800; color: #1e3a4c; line-height: 1.2;" th:text="#{report.summary.title}">ملخّص النتائج</h1>
                     </td>
                 </tr>
             </table>
         </div>
 
         <!-- Subtitle and Legend -->
-        <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 10px;">
+        <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 8px;">
             <tr>
-                <td style="text-align: right; vertical-align: middle; border: none; padding: 0;">
-                    <p style="margin: 0; font-size: 11px; color: #475569;">يعرض البيان التالي نتائج المرشح</p>
+                <td th:style="${dir == 'en' || dir == 'ltr'} ? 'text-align: left; vertical-align: middle; border: none; padding: 0;' : 'text-align: right; vertical-align: middle; border: none; padding: 0;'">
+                    <p style="margin: 0; font-size: 11px; color: #475569;" th:text="#{report.summary.competencies_subtitle}">يعرض البيان التالي نتائج المرشح</p>
                     <div style="font-size: 10.5px; color: #475569; margin-top: 2px;">
-                        <span style="vertical-align: middle;">مؤشر الإمكانيات الشخصية</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background-color: #1e3a4c; vertical-align: middle; margin-right: 4px; text-align: center;">
+                        <span style="vertical-align: middle;" th:text="#{report.summary.legend_potential}">مؤشر الإمكانيات الشخصية</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background-color: #1e3a4c; vertical-align: middle; margin: 0 4px; text-align: center;">
                             <svg viewBox="0 0 24 24" style="width: 8px; height: 8px; margin: 3px auto; display: block;">
                                 <circle cx="12" cy="7" r="4" fill="#ffffff" />
                                 <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
@@ -114,47 +140,41 @@
             </tr>
         </table>
 
-        <!-- 2. Master Results Table -->
-        <table class="results-table-page5">
+        <!-- 2. Master Results Table (LTR Version) -->
+        <table th:if="${dir == 'en' || dir == 'ltr'}" class="results-table-page5">
             <thead>
             <tr style="background-color: #7a4b3a; color: #ffffff;">
-                <!-- Trait Name Column -->
-                <th style="width: 30%; text-align: right; padding: 12px 15px; border: none; font-size: 12px; vertical-align: middle;">
-                    القدرات أو الكفاءات السلوكية
+                <th style="width: 32%; text-align: left; padding: 10px 14px; border: none; font-size: 11.5px; vertical-align: middle;" th:text="#{report.summary.competencies_header}">
+                    Behavioral Competencies
                 </th>
-                <!-- Scale Column -->
-                <th style="width: 70%; padding: 0; border: none; vertical-align: bottom;">
+                <th style="width: 68%; padding: 0; border: none; vertical-align: middle;">
                     <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 11px; margin: 0; padding: 0;">
                         <tr>
-                            <!-- In RTL, DOM order 1 to 5 renders visually from Right to Left -->
-                            <td style="color: #ffffff; font-weight: bold; padding: 12px 0;">1</td>
-                            <td style="color: #ffffff; font-weight: bold; padding: 12px 0;">2</td>
-                            <td style="color: #ffffff; font-weight: bold; padding: 12px 0;">3</td>
-                            <td style="color: #ffffff; font-weight: bold; padding: 12px 0;">4</td>
-                            <td style="color: #ffffff; font-weight: bold; padding: 12px 0;">5</td>
+                            <td style="color: #ffffff; font-weight: bold; padding: 10px 0; width: 20%;">1</td>
+                            <td style="color: #ffffff; font-weight: bold; padding: 10px 0; width: 20%;">2</td>
+                            <td style="color: #ffffff; font-weight: bold; padding: 10px 0; width: 20%;">3</td>
+                            <td style="color: #ffffff; font-weight: bold; padding: 10px 0; width: 20%;">4</td>
+                            <td style="color: #ffffff; font-weight: bold; padding: 10px 0; width: 20%;">5</td>
                         </tr>
                     </table>
                 </th>
             </tr>
             </thead>
             <tbody>
-            <!-- Spacer Row -->
-            <tr><td colspan="2" style="height: 10px; border: none;"></td></tr>
-
-            <!-- Row 1: التواصل والتأثير الفعال -->
+            <!-- Row 1: Communication -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 9px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${commColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;">التواصل والتأثير الفعال</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.communication}">Communication & Influence</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${commScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${commScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${commColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${commColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -165,21 +185,20 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Row 2: المبادرة -->
+            <!-- Row 2: Initiative -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 9px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${initiativeColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;">المبادرة</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.initiative}">Initiative</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${initiativeScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${initiativeScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${initiativeColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${initiativeColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -190,21 +209,20 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Row 3: اتخاذ القرار وتحمل المسؤولية -->
+            <!-- Row 3: Decision Making -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 9px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${decisionColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;">اتخاذ القرار وتحمل المسؤولية</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.decision_making}">Decision Making & Accountability</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${decisionScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${decisionScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${decisionColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${decisionColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -215,21 +233,20 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Row 4: القيادة الملهمة -->
+            <!-- Row 4: Inspiring Leadership -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 9px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${leadershipColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;">القيادة الملهمة</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.inspiring_leadership}">Inspiring Leadership</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${leadershipScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${leadershipScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${leadershipColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${leadershipColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -240,21 +257,20 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Row 5: التفكير الاستراتيجي -->
+            <!-- Row 5: Strategic Thinking -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 9px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${strategicColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;">التفكير الاستراتيجي</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.strategic_thinking}">Strategic Thinking</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${strategicScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${strategicScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${strategicColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${strategicColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -265,21 +281,20 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Row 6: تطوير المهارات -->
+            <!-- Row 6: Skill Development -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 9px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${skillsColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;">تطوير المهارات</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.skill_development}">Skill Development</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${skillsScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${skillsScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${skillsColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${skillsColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -290,21 +305,20 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Row 7: القدرة على التكيف -->
+            <!-- Row 7: Adaptability -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 9px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${adaptabilityColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;">القدرة على التكيف</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.adaptability}">Adaptability</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${adaptabilityScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${adaptabilityScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${adaptabilityColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${adaptabilityColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -315,21 +329,20 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Row 8: التحليل والتخطيط المنهجي -->
+            <!-- Row 8: Analysis & Planning -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 9px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${analysisColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;">التحليل والتخطيط المنهجي</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.analysis_planning}">Systematic Analysis & Planning</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${analysisScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${analysisScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${analysisColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${analysisColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -341,27 +354,25 @@
                 </td>
             </tr>
 
-            <!-- Section 2 Header: General Abilities -->
-            <tr style="border: none;">
-                <td colspan="2" style="width: 100%; padding: 16px 15px 6px 15px; text-align: right; border: none;">
-                    <span style="font-size: 13.5px; font-weight: 800; color: #1e3a4c;">القدرات العامة</span>
-                </td>
+            <!-- Section 2: General Cognitive Abilities -->
+            <tr class="section-separator-row">
+                <td colspan="2" style="text-align: left;" th:text="#{report.summary.cognitive_header}">General Cognitive Abilities</td>
             </tr>
 
-            <!-- Row 9: الاستدلال التجريدي -->
+            <!-- Row 9: Abstract Reasoning -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 6px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${abstractColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 600; color: #1e293b; vertical-align: middle;">الاستدلال التجريدي</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.cog.abstract}">Abstract Reasoning</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${abstractScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${abstractScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${abstractColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${abstractColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -372,21 +383,20 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Row 10: الاستدلال الرقمي -->
+            <!-- Row 10: Numerical Reasoning -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 6px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${numericalColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 600; color: #1e293b; vertical-align: middle;">الاستدلال الرقمي</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.cog.numerical}">Numerical Reasoning</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${numericalScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${numericalScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${numericalColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${numericalColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -397,21 +407,20 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Row 11: الاستدلال اللفظي -->
+            <!-- Row 11: Verbal Reasoning -->
             <tr>
-                <td style="width: 30%; vertical-align: middle; padding: 6px 15px; text-align: right; border: none;">
-                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                <td style="width: 32%; vertical-align: middle; padding: 8px 12px; text-align: left; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-right: 8px;" 
                           th:styleappend="'background-color: ' + (${verbalColor}) + ';'"></span>
-                    <span style="font-size: 11px; font-weight: 600; color: #1e293b; vertical-align: middle;">الاستدلال اللفظي</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.cog.verbal}">Verbal Reasoning</span>
                 </td>
-                <td style="width: 70%; vertical-align: middle; padding: 9px 10px; position: relative; border: none;">
+                <td style="width: 68%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
                         <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${verbalScore}) - 1) * 20)) + '%;'">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; background-color: #1e3a4c; z-index: 1; border-radius: 2px;"
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; z-index: 2; text-align: center; left: ' + (10 + (((${verbalScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
                                  th:styleappend="'background-color: ' + (${verbalColor}) + ';'"></div>
-                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background-color: #1e3a4c; z-index: 2; text-align: center;"
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
                                  th:styleappend="'background-color: ' + (${verbalColor}) + ';'">
                                 <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
                                     <circle cx="12" cy="7" r="4" fill="#ffffff" />
@@ -425,18 +434,309 @@
             </tbody>
         </table>
 
-        <!-- 3. Modern Bottom Footer Banner -->
+        <!-- 2. Master Results Table (RTL Version) -->
+        <table th:if="${dir == 'rtl' || dir == null}" class="results-table-page5">
+            <thead>
+            <tr style="background-color: #7a4b3a; color: #ffffff;">
+                <th style="width: 30%; text-align: right; padding: 10px 14px; border: none; font-size: 11.5px; vertical-align: middle;" th:text="#{report.summary.competencies_header}">
+                    القدرات أو الكفاءات السلوكية
+                </th>
+                <th style="width: 70%; padding: 0; border: none; vertical-align: middle;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 11px; margin: 0; padding: 0;">
+                        <tr>
+                            <td style="color: #ffffff; font-weight: bold; padding: 10px 0; width: 20%;">1</td>
+                            <td style="color: #ffffff; font-weight: bold; padding: 10px 0; width: 20%;">2</td>
+                            <td style="color: #ffffff; font-weight: bold; padding: 10px 0; width: 20%;">3</td>
+                            <td style="color: #ffffff; font-weight: bold; padding: 10px 0; width: 20%;">4</td>
+                            <td style="color: #ffffff; font-weight: bold; padding: 10px 0; width: 20%;">5</td>
+                        </tr>
+                    </table>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Row 1: التواصل والتأثير الفعال -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${commColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.communication}">التواصل والتأثير الفعال</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${commScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${commColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${commColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Row 2: المبادرة -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${initiativeColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.initiative}">المبادرة</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${initiativeScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${initiativeColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${initiativeColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Row 3: اتخاذ القرار -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${decisionColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.decision_making}">اتخاذ القرار وتحمل المسؤولية</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${decisionScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${decisionColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${decisionColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Row 4: القيادة الملهمة -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${leadershipColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.inspiring_leadership}">القيادة الملهمة</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${leadershipScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${leadershipColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${leadershipColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Row 5: التفكير الاستراتيجي -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${strategicColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.strategic_thinking}">التفكير الاستراتيجي</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${strategicScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${strategicColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${strategicColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Row 6: تطوير المهارات -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${skillsColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.skill_development}">تطوير المهارات</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${skillsScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${skillsColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${skillsColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Row 7: القدرة على التكيف -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${adaptabilityColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.adaptability}">القدرة على التكيف</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${adaptabilityScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${adaptabilityColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${adaptabilityColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Row 8: التحليل والتخطيط المنهجي -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${analysisColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.comp.analysis_planning}">التحليل والتخطيط المنهجي</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${analysisScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${analysisColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${analysisColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Section 2: General Cognitive Abilities -->
+            <tr class="section-separator-row">
+                <td colspan="2" style="text-align: right;" th:text="#{report.summary.cognitive_header}">القدرات العامة</td>
+            </tr>
+
+            <!-- Row 9: الاستدلال التجريدي -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${abstractColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.cog.abstract}">الاستدلال التجريدي</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${abstractScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${abstractColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${abstractColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Row 10: الاستدلال الرقمي -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${numericalColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.cog.numerical}">الاستدلال الرقمي</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${numericalScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${numericalColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${numericalColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Row 11: الاستدلال اللفظي -->
+            <tr>
+                <td style="width: 30%; vertical-align: middle; padding: 8px 12px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 18px; border-radius: 4px; vertical-align: middle; margin-left: 8px;" 
+                          th:styleappend="'background-color: ' + (${verbalColor}) + ';'"></span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="#{report.cog.verbal}">الاستدلال اللفظي</span>
+                </td>
+                <td style="width: 70%; vertical-align: middle; padding: 8px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${verbalScore}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${verbalColor}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${verbalColor}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- 5. Modern Bottom Footer Banner -->
         <div class="bottom-banner-container">
             <table style="width: 100%; border-collapse: collapse; height: 26px; border: none;">
                 <tr>
-                    <td style="background-color: #7a4b3a; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
-                        Executive Leadership Platform
+                    <td style="background-color: #7a4b3a; color: #ffffff; text-align: center; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none;" th:text="#{report.common.footer}">
+                        Executive Leadership Platform • All Rights Reserved © 2026
                     </td>
                 </tr>
             </table>
-            <div class="banner-copyright">
-                &#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
-            </div>
         </div>
     </div>
 </body>

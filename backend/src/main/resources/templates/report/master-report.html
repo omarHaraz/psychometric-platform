@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang != null ? lang : 'ar'}" th:dir="${dir != null ? dir : 'rtl'}">
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>تقرير الكفاءات للقادة - التقرير الشامل</title>
+    <title th:text="#{report.cover.title}">تقرير الكفاءات للقادة - التقرير الشامل</title>
     
-    <!-- Native Local Arabic Fonts loaded via PdfGeneratorService (Cairo and Amiri) -->
+    <!-- Native Local Fonts loaded via PdfGeneratorService (Cairo and Amiri) -->
 
     <!-- Aggregated Page Styles -->
     <th:block th:insert="~{report/cover-page :: style}"></th:block>
@@ -13,7 +13,7 @@
     <th:block th:insert="~{report/page3 :: style}"></th:block>
     <th:block th:insert="~{report/page4 :: style}"></th:block>
     <th:block th:insert="~{report/page5 :: style}"></th:block>
-    <th:block th:insert="~{report/page6 :: style}"></th:block>
+    <th:block th:insert="~{report/competency-detail :: style}"></th:block>
     <th:block th:insert="~{report/page14 :: style}"></th:block>
 
     <style>
@@ -36,8 +36,16 @@
             padding: 0;
             background-color: #ffffff;
             font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Arial', sans-serif;
+        }
+
+        html[dir="rtl"], body[dir="rtl"], .rtl {
             direction: rtl;
             text-align: right;
+        }
+
+        html[dir="ltr"], body[dir="ltr"], .ltr {
+            direction: ltr;
+            text-align: left;
         }
 
         .pdf-page-wrapper {
@@ -55,7 +63,7 @@
 
     </style>
 </head>
-<body>
+<body th:class="${dir != null ? dir : 'rtl'}">
 
     <!-- Page 1: Cover Page -->
     <div class="pdf-page-wrapper" th:insert="~{report/cover-page :: body}"></div>

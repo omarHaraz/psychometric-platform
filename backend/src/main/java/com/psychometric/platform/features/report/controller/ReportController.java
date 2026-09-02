@@ -51,22 +51,24 @@ public class ReportController {
     @Operation(summary = "Get or generate report download URL", description = "Returns the secure Cloudinary CDN URL for the leadership assessment PDF report")
     public ResponseEntity<Map<String, Object>> getReportDownloadUrl(
             @PathVariable("token") String token,
-            @RequestParam(name = "forceRefresh", defaultValue = "false") boolean forceRefresh
+            @RequestParam(name = "forceRefresh", defaultValue = "false") boolean forceRefresh,
+            @RequestParam(name = "lang", defaultValue = "ar") String lang
     ) {
-        String reportUrl = reportFacade.getOrGenerateReportPdfUrl(token, forceRefresh);
+        String reportUrl = reportFacade.getOrGenerateReportPdfUrl(token, forceRefresh, lang);
 
         return ResponseEntity.ok(Map.of(
                 "status", "success",
                 "attemptToken", token,
                 "reportUrl", reportUrl,
-                "forceRefreshed", forceRefresh
+                "forceRefreshed", forceRefresh,
+                "lang", lang
         ));
     }
 
     /**
      * Direct binary streaming download endpoint for environments without Cloudinary.
      * Use forceRefresh=true to bypass database cache and evict in-memory AI caches.
-     * If the assessment is incomplete, serves a modern Arabic informative notification page.
+     * If the assessment is incomplete, serves a modern informative notification page.
      */
     @GetMapping({
             "/assessments/{token}/report/pdf",
@@ -75,19 +77,20 @@ public class ReportController {
     @Operation(summary = "Direct PDF Stream", description = "Streams the raw PDF bytes directly to the browser for instant download")
     public ResponseEntity<?> streamReportPdf(
             @PathVariable("token") String token,
-            @RequestParam(name = "forceRefresh", defaultValue = "false") boolean forceRefresh
+            @RequestParam(name = "forceRefresh", defaultValue = "false") boolean forceRefresh,
+            @RequestParam(name = "lang", defaultValue = "ar") String lang
     ) {
         try {
-            byte[] pdfBytes = reportFacade.generateDirectPdfBytes(token, forceRefresh);
+            byte[] pdfBytes = reportFacade.generateDirectPdfBytes(token, forceRefresh, lang);
 
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"leadership_report_" + token + ".pdf\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"leadership_report_" + token + "_" + lang + ".pdf\"")
                     .contentType(MediaType.APPLICATION_PDF)
                     .contentLength(pdfBytes.length)
                     .body(pdfBytes);
         } catch (Exception ex) {
             log.warn("Report generation blocked for attempt token {}: {}", token, ex.getMessage());
-            Context context = new Context(new Locale("ar"));
+            Context context = new Context(new Locale(lang != null && lang.equalsIgnoreCase("en") ? "en" : "ar"));
             context.setVariable("attemptToken", token);
             context.setVariable("errorMessage", ex.getMessage());
             String html = templateEngine.process("error/incomplete-assessment", context);

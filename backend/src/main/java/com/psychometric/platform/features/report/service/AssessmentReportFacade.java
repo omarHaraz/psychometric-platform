@@ -52,8 +52,9 @@ public class AssessmentReportFacade {
      * @return secure Cloudinary CDN download URL for the PDF report
      */
     @Transactional
-    public String getOrGenerateReportPdfUrl(String attemptToken, boolean forceRefresh) {
-        log.info("Processing assessment report request for attempt token: {} (forceRefresh={})", attemptToken, forceRefresh);
+    public String getOrGenerateReportPdfUrl(String attemptToken, boolean forceRefresh, String lang) {
+        String normalizedLang = (lang != null && lang.trim().equalsIgnoreCase("en")) ? "en" : "ar";
+        log.info("Processing assessment report request for attempt token: {} (forceRefresh={}, lang={})", attemptToken, forceRefresh, normalizedLang);
 
         AssessmentScore score = scoreRepository.findByAttemptAttemptToken(attemptToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Assessment score not found for attempt token: " + attemptToken));
@@ -70,7 +71,7 @@ public class AssessmentReportFacade {
             }
         }
 
-        log.info("Generating AI-driven leadership report PDF for attempt: {}", attemptToken);
+        log.info("Generating AI-driven leadership report PDF for attempt: {} in {}", attemptToken, normalizedLang);
 
         // 3. Fetch and Convert Raw Scoring Data
         AssessmentScoreResponseDto rawScoreDto = AssessmentScoreResponseDto.fromEntity(score);
@@ -79,10 +80,10 @@ public class AssessmentReportFacade {
         ReportContextDto reportContextDto = reportGeneratorService.generateReport(rawScoreDto);
 
         // 5. PDF Compilation using OpenHTMLtoPDF & Master Thymeleaf Template
-        byte[] pdfBytes = pdfGeneratorService.generatePdfReport(reportContextDto);
+        byte[] pdfBytes = pdfGeneratorService.generatePdfReport(reportContextDto, normalizedLang);
 
         // 6. Upload to Cloudinary CDN
-        String fileName = "leadership_report_" + attemptToken + ".pdf";
+        String fileName = "leadership_report_" + attemptToken + "_" + normalizedLang + ".pdf";
         String cloudinaryUrl = cloudinaryService.uploadPdf(pdfBytes, fileName, "psychometric/reports");
 
         // 7. Cache the generated URL in the database
@@ -93,15 +94,20 @@ public class AssessmentReportFacade {
         return cloudinaryUrl;
     }
 
+    public String getOrGenerateReportPdfUrl(String attemptToken, boolean forceRefresh) {
+        return getOrGenerateReportPdfUrl(attemptToken, forceRefresh, "ar");
+    }
+
     public String getOrGenerateReportPdfUrl(String attemptToken) {
-        return getOrGenerateReportPdfUrl(attemptToken, false);
+        return getOrGenerateReportPdfUrl(attemptToken, false, "ar");
     }
 
     /**
      * Generates PDF bytes on-the-fly for direct streaming / local download without Cloudinary.
      */
     @Transactional(readOnly = true)
-    public byte[] generateDirectPdfBytes(String attemptToken, boolean forceRefresh) {
+    public byte[] generateDirectPdfBytes(String attemptToken, boolean forceRefresh, String lang) {
+        String normalizedLang = (lang != null && lang.trim().equalsIgnoreCase("en")) ? "en" : "ar";
         if (forceRefresh) {
             reportGeneratorService.clearCandidateCaches(attemptToken);
         }
@@ -110,10 +116,14 @@ public class AssessmentReportFacade {
 
         AssessmentScoreResponseDto rawScoreDto = AssessmentScoreResponseDto.fromEntity(score);
         ReportContextDto reportContextDto = reportGeneratorService.generateReport(rawScoreDto);
-        return pdfGeneratorService.generatePdfReport(reportContextDto);
+        return pdfGeneratorService.generatePdfReport(reportContextDto, normalizedLang);
+    }
+
+    public byte[] generateDirectPdfBytes(String attemptToken, boolean forceRefresh) {
+        return generateDirectPdfBytes(attemptToken, forceRefresh, "ar");
     }
 
     public byte[] generateDirectPdfBytes(String attemptToken) {
-        return generateDirectPdfBytes(attemptToken, false);
+        return generateDirectPdfBytes(attemptToken, false, "ar");
     }
 }

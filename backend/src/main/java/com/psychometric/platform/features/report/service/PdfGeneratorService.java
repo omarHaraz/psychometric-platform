@@ -32,71 +32,82 @@ public class PdfGeneratorService {
     }
 
     /**
-     * Renders the master Thymeleaf report template into an HTML string.
+     * Renders the master Thymeleaf report template into an HTML string with default Arabic locale.
      */
     public String generateHtmlReport(ReportContextDto reportDto) {
+        return generateHtmlReport(reportDto, "ar");
+    }
+
+    /**
+     * Renders the master Thymeleaf report template into an HTML string with specific language (ar / en).
+     */
+    public String generateHtmlReport(ReportContextDto reportDto, String lang) {
         if (reportDto == null) {
             throw new IllegalArgumentException("ReportContextDto cannot be null");
         }
+        String normalizedLang = (lang != null && lang.trim().equalsIgnoreCase("en")) ? "en" : "ar";
+        String dir = normalizedLang.equals("ar") ? "rtl" : "ltr";
+
         Context context = reportDto.toThymeleafContext();
-        context.setLocale(new Locale("ar"));
+        context.setLocale(new Locale(normalizedLang));
+        context.setVariable("lang", normalizedLang);
+        context.setVariable("dir", dir);
         return templateEngine.process("report/master-report", context);
     }
 
     /**
-     * Generates a complete 15-page PDF document byte array from a populated {@link ReportContextDto}.
-     *
-     * @param reportDto the fully populated report context data model
-     * @return PDF content as byte array
+     * Generates a complete PDF document byte array from a populated {@link ReportContextDto}.
      */
     public byte[] generatePdfReport(ReportContextDto reportDto) {
+        return generatePdfReport(reportDto, "ar");
+    }
+
+    /**
+     * Generates a complete PDF document byte array with specific language (ar / en).
+     */
+    public byte[] generatePdfReport(ReportContextDto reportDto, String lang) {
         if (reportDto == null) {
             throw new IllegalArgumentException("ReportContextDto cannot be null");
         }
 
-        var page7 = reportDto.getCompetencyPages() != null ? reportDto.getCompetencyPages().get(7) : null;
+        String normalizedLang = (lang != null && lang.trim().equalsIgnoreCase("en")) ? "en" : "ar";
+        String dir = normalizedLang.equals("ar") ? "rtl" : "ltr";
+        boolean isRtl = normalizedLang.equals("ar");
+
         log.info("================================================================================");
-        log.info("[PDF PIPELINE AUDIT] Generating PDF report for candidate: {} ({})", reportDto.getCandidateId(), reportDto.getCandidateName());
-        log.info("[PDF PIPELINE AUDIT] Competency: INITIATIVE | Scaled Double (1-5): {} | Master Color (initiativeColor): {} | Page 7 Color: {} | Row1 Color: {} | Row2 Color: {} | Row3 Color: {}",
-                reportDto.getInitiativeScore(),
-                reportDto.getInitiativeColor(),
-                page7 != null ? page7.getCompetencyColor() : "N/A",
-                page7 != null ? page7.getIndicator1Color() : "N/A",
-                page7 != null ? page7.getIndicator2Color() : "N/A",
-                page7 != null ? page7.getIndicator3Color() : "N/A"
-        );
+        log.info("[PDF PIPELINE AUDIT] Generating PDF report for candidate: {} ({}) | Lang: {} | Dir: {}",
+                reportDto.getCandidateId(), reportDto.getCandidateName(), normalizedLang, dir);
         log.info("================================================================================");
 
         try {
             // 1. Process Thymeleaf Master Report Template into HTML String
-            String htmlContent = generateHtmlReport(reportDto);
+            String htmlContent = generateHtmlReport(reportDto, normalizedLang);
 
-            // 2. Sanitize HTML → XHTML: OpenHTMLtoPDF parses as strict XML.
-            //    Any bare '&' in rendered content (e.g. from DB data) must be &amp;
-            //    Replace & that is NOT already part of a named/numeric entity reference.
+            // 2. Sanitize HTML -> XHTML: OpenHTMLtoPDF parses as strict XML.
             htmlContent = htmlContent.replaceAll("&(?!(amp|lt|gt|quot|apos|#\\d+|#x[0-9a-fA-F]+);)", "&amp;");
 
-            // 2. Build PDF using OpenHTMLtoPDF with RTL text support & Unicode Bidirectional shaping
+            // 3. Build PDF using OpenHTMLtoPDF with language-aware text direction
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 PdfRendererBuilder builder = new PdfRendererBuilder();
                 builder.useFastMode();
                 
-                // Explicitly register local TrueType Arabic fonts from classpath
+                // Explicitly register local TrueType fonts from classpath
                 builder.useFont(() -> getClass().getResourceAsStream("/fonts/Cairo-Regular.ttf"), "Cairo");
                 builder.useFont(() -> getClass().getResourceAsStream("/fonts/Amiri-Regular.ttf"), "Amiri");
                 builder.useFont(() -> getClass().getResourceAsStream("/fonts/Amiri-Bold.ttf"), "Amiri", 700, PdfRendererBuilder.FontStyle.NORMAL, true);
 
-                // Enable bidirectional text splitting, reordering and RTL shaping for Arabic
+                // Enable bidirectional text splitting, reordering and text direction
                 builder.useUnicodeBidiSplitter(new ICUBidiSplitter.ICUBidiSplitterFactory());
                 builder.useUnicodeBidiReorderer(new ICUBidiReorderer());
-                builder.defaultTextDirection(PdfRendererBuilder.TextDirection.RTL);
+                builder.defaultTextDirection(isRtl ? PdfRendererBuilder.TextDirection.RTL : PdfRendererBuilder.TextDirection.LTR);
                 
                 builder.withHtmlContent(htmlContent, "");
                 builder.toStream(outputStream);
                 builder.run();
 
                 byte[] pdfBytes = outputStream.toByteArray();
-                log.info("Successfully generated PDF report ({} bytes) for candidate: {}", pdfBytes.length, reportDto.getCandidateId());
+                log.info("Successfully generated PDF report ({} bytes) in {} (dir={}) for candidate: {}",
+                        pdfBytes.length, normalizedLang, dir, reportDto.getCandidateId());
                 return pdfBytes;
             }
 

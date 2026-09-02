@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang != null ? lang : 'ar'}" th:dir="${dir != null ? dir : 'rtl'}">
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Page 4 - ملخّص النتائج</title>
+    <title>Page 4 - Results Summary</title>
     <style th:fragment="style">
-        /* ==========================================================================
-           PDF and Print Optimization (Strict OpenHTMLtoPDF and Flying Saucer Compatible)
-           ========================================================================== */
         @page {
             size: A4 portrait;
             margin: 0;
@@ -25,13 +22,20 @@
             font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Arial', sans-serif;
             background-color: #ffffff;
             color: #1e293b;
-            direction: rtl;
-            text-align: right;
             font-size: 11px;
             line-height: 1.6;
         }
 
-        /* 0. Main Page 4 Uniform 10px Boundary Wrapper */
+        html[dir="rtl"], body[dir="rtl"], .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        html[dir="ltr"], body[dir="ltr"], .ltr {
+            direction: ltr;
+            text-align: left;
+        }
+
         .page4-wrapper {
             padding: 10px;
             width: 100%;
@@ -40,7 +44,6 @@
             position: relative;
         }
 
-        /* 1. Page Main Header */
         .page-header-box {
             width: 100%;
             border-bottom: 2px solid #1e3a4c;
@@ -56,7 +59,6 @@
             line-height: 1.5;
         }
 
-        /* 2. Synchronized Results Table (Reversed DOM: Scale 38% -> Desc 44% -> Trait 18%) */
         table.results-table {
             width: 100%;
             table-layout: fixed;
@@ -76,23 +78,6 @@
             vertical-align: bottom;
             border: none;
             box-sizing: border-box;
-        }
-
-        table.results-table th.th-scale {
-            width: 38%;
-            padding: 6px 8px;
-            border-top-left-radius: 4px;
-        }
-
-        table.results-table th.th-desc {
-            width: 44%;
-            text-align: right;
-        }
-
-        table.results-table th.th-trait {
-            width: 18%;
-            text-align: right;
-            border-top-right-radius: 4px;
         }
 
         table.results-table tr {
@@ -117,17 +102,14 @@
             font-weight: 700;
             color: #1e3a4c;
             font-size: 11.5px;
-            text-align: right;
         }
 
         .interpretation-cell {
             font-size: 10px;
             color: #334155;
-            text-align: right;
             line-height: 1.45;
         }
 
-        /* 3. Visual Slider Track in Table Cell */
         .slider-cell {
             padding: 10px 8px !important;
             vertical-align: middle;
@@ -162,7 +144,6 @@
             width: 22px;
             height: 22px;
             margin-top: -11px;
-            margin-right: -11px;
             border-radius: 50%;
             background-color: #1e3a4c;
             color: #ffffff;
@@ -174,7 +155,6 @@
             z-index: 2;
         }
 
-        /* 5. Bottom Positioned Solid Footer Banner */
         .bottom-banner-container {
             position: absolute;
             bottom: 0;
@@ -195,41 +175,178 @@
         }
     </style>
 </head>
-<body>
+<body th:class="${dir != null ? dir : 'rtl'}">
 <div th:fragment="body" class="page4-wrapper">
 
-    <!-- 1. Page Header (Bulletproof Layout) -->
+    <!-- 1. Page Header (Bidi Layout) -->
     <div class="page-header-box">
         <table style="width: 100%; border-collapse: collapse; border: none; background: transparent;">
-            <tr>
-                <!-- Left: Page Number -->
-                <td style="text-align: left; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                    <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px; background: transparent; display: inline-block;">صفحة 4</span>
+            <!-- LTR Header -->
+            <tr th:if="${dir == 'en' || dir == 'ltr'}">
+                <td style="text-align: left; vertical-align: bottom; width: 60%; border: none; padding: 0; background: transparent;">
+                    <h1 style="margin: 0; font-family: 'Cairo', 'Arial', sans-serif; font-size: 24px; font-weight: 800; color: #1e3a4c; line-height: 1.2;" th:text="#{report.summary.title}">Results Summary</h1>
                 </td>
-                <!-- Right: Main Title -->
-                <td style="text-align: right; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                    <h1 style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 24px; font-weight: 800; color: #1e3a4c; line-height: 1.2; background: transparent;">ملخّص النتائج</h1>
+                <td style="text-align: right; vertical-align: bottom; width: 40%; border: none; padding: 0; background: transparent;">
+                    <span style="font-family: 'Cairo', 'Arial', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px;" th:text="#{report.common.page} + ' 4'">Page 4</span>
+                </td>
+            </tr>
+            <!-- RTL Header -->
+            <tr th:if="${dir == 'rtl' || dir == null}">
+                <td style="text-align: left; vertical-align: bottom; width: 40%; border: none; padding: 0; background: transparent;">
+                    <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px;" th:text="#{report.common.page} + ' 4'">صفحة 4</span>
+                </td>
+                <td style="text-align: right; vertical-align: bottom; width: 60%; border: none; padding: 0; background: transparent;">
+                    <h1 style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 24px; font-weight: 800; color: #1e3a4c; line-height: 1.2;" th:text="#{report.summary.title}">ملخّص النتائج</h1>
                 </td>
             </tr>
         </table>
     </div>
 
     <!-- Subtitle -->
-    <p class="page-subtitle">
-        فيما يلي ملخّص لنتائج المرشح. ويُعرض في الأجزاء التالية من هذا التقرير ما تعنيه هذه النتائج في بيئة العمل بشكل أكثر تفصيلا.
+    <p class="page-subtitle" th:text="#{report.summary.derailers_subtitle}">
+        فيما يلي ملخّص لنتائج المرشح في محاذير السلوك والسمات المعرقلة. ويُعرض في الأجزاء التالية من هذا التقرير ما تعنيه هذه النتائج في بيئة العمل بشكل أكثر تفصيلا.
     </p>
 
-    <!-- 2. Results Table with Reversed DOM: Scale (40%) -> Interpretation (45%) -> Trait (15%) -->
-    <table class="results-table">
+    <!-- 2. Results Table (LTR Version) -->
+    <table th:if="${dir == 'en' || dir == 'ltr'}" class="results-table">
+        <thead>
+        <tr style="background-color: #7a4b3a; color: #ffffff;">
+            <th style="width: 16%; text-align: left; padding: 10px; border: none; font-size: 11.5px; vertical-align: middle;" th:text="#{report.derailers.trait}">Trait</th>
+            <th style="width: 44%; text-align: left; padding: 10px; border: none; font-size: 11.5px; vertical-align: middle;" th:text="#{report.derailers.interpretation}">Behavioral Interpretation</th>
+            <th style="width: 40%; padding: 0; border: none; vertical-align: bottom;">
+                <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 9.5px; margin: 0; padding: 0;">
+                    <tr>
+                        <td colspan="3" style="text-align: left; color: #bae6fd; font-weight: 700; padding-top: 5px; padding-left: 8px;" th:text="#{report.derailers.low}">Low</td>
+                        <td colspan="4" style="text-align: center; color: #fef08a; font-weight: 700; padding-top: 5px;" th:text="#{report.derailers.moderate}">Moderate</td>
+                        <td colspan="3" style="text-align: right; color: #fecaca; font-weight: 700; padding-top: 5px; padding-right: 8px;" th:text="#{report.derailers.high}">High</td>
+                    </tr>
+                    <tr>
+                        <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">1</td>
+                        <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">2</td>
+                        <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">3</td>
+                        <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">4</td>
+                        <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">5</td>
+                        <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">6</td>
+                        <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">7</td>
+                        <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">8</td>
+                        <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">9</td>
+                        <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">10</td>
+                    </tr>
+                </table>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Row 1: Reserved -->
+        <tr>
+            <td class="trait-name-cell" style="width: 16%; text-align: left;" th:text="#{report.trait.reserved}">Reserved</td>
+            <td class="interpretation-cell" style="width: 44%; text-align: left;"><span th:text="${reservedText}"></span></td>
+            <td class="slider-cell" style="width: 40%;">
+                <div class="slider-track-box">
+                    <div class="slider-inner-track">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-circle"
+                             th:style="'left: ' + (((${reservedScore != null ? reservedScore : 1}) - 1) * 11.111) + '%; margin-left: -11px; margin-right: 0;'">
+                            <span th:text="${reservedScore}"></span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <!-- Row 2: Emotionality -->
+        <tr>
+            <td class="trait-name-cell" style="width: 16%; text-align: left;" th:text="#{report.trait.emotionality}">Emotionality</td>
+            <td class="interpretation-cell" style="width: 44%; text-align: left;"><span th:text="${emotionalityText}"></span></td>
+            <td class="slider-cell" style="width: 40%;">
+                <div class="slider-track-box">
+                    <div class="slider-inner-track">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-circle"
+                             th:style="'left: ' + (((${emotionalityScore != null ? emotionalityScore : 1}) - 1) * 11.111) + '%; margin-left: -11px; margin-right: 0;'">
+                            <span th:text="${emotionalityScore}"></span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <!-- Row 3: Hostility -->
+        <tr>
+            <td class="trait-name-cell" style="width: 16%; text-align: left;" th:text="#{report.trait.hostility}">Hostility</td>
+            <td class="interpretation-cell" style="width: 44%; text-align: left;"><span th:text="${hostilityText}"></span></td>
+            <td class="slider-cell" style="width: 40%;">
+                <div class="slider-track-box">
+                    <div class="slider-inner-track">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-circle"
+                             th:style="'left: ' + (((${hostilityScore != null ? hostilityScore : 1}) - 1) * 11.111) + '%; margin-left: -11px; margin-right: 0;'">
+                            <span th:text="${hostilityScore}"></span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <!-- Row 4: Impulsivity -->
+        <tr>
+            <td class="trait-name-cell" style="width: 16%; text-align: left;" th:text="#{report.trait.impulsivity}">Impulsivity</td>
+            <td class="interpretation-cell" style="width: 44%; text-align: left;"><span th:text="${impulsivityText}"></span></td>
+            <td class="slider-cell" style="width: 40%;">
+                <div class="slider-track-box">
+                    <div class="slider-inner-track">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-circle"
+                             th:style="'left: ' + (((${impulsivityScore != null ? impulsivityScore : 1}) - 1) * 11.111) + '%; margin-left: -11px; margin-right: 0;'">
+                            <span th:text="${impulsivityScore}"></span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <!-- Row 5: Rigidity -->
+        <tr>
+            <td class="trait-name-cell" style="width: 16%; text-align: left;" th:text="#{report.trait.rigidity}">Rigidity</td>
+            <td class="interpretation-cell" style="width: 44%; text-align: left;"><span th:text="${rigidityText}"></span></td>
+            <td class="slider-cell" style="width: 40%;">
+                <div class="slider-track-box">
+                    <div class="slider-inner-track">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-circle"
+                             th:style="'left: ' + (((${rigidityScore != null ? rigidityScore : 1}) - 1) * 11.111) + '%; margin-left: -11px; margin-right: 0;'">
+                            <span th:text="${rigidityScore}"></span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <!-- Row 6: Unconventionality -->
+        <tr>
+            <td class="trait-name-cell" style="width: 16%; text-align: left;" th:text="#{report.trait.unconventionality}">Unconventionality</td>
+            <td class="interpretation-cell" style="width: 44%; text-align: left;"><span th:text="${unconventionalityText}"></span></td>
+            <td class="slider-cell" style="width: 40%;">
+                <div class="slider-track-box">
+                    <div class="slider-inner-track">
+                        <div class="slider-dashed-line"></div>
+                        <div class="slider-circle"
+                             th:style="'left: ' + (((${unconventionalityScore != null ? unconventionalityScore : 1}) - 1) * 11.111) + '%; margin-left: -11px; margin-right: 0;'">
+                            <span th:text="${unconventionalityScore}"></span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- 2. Results Table (RTL Version) -->
+    <table th:if="${dir == 'rtl' || dir == null}" class="results-table">
         <thead>
         <tr style="background-color: #7a4b3a; color: #ffffff;">
             <!-- Scale Column -->
             <th style="width: 40%; padding: 0; border: none; vertical-align: bottom;">
                 <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 9.5px; margin: 0; padding: 0;">
                     <tr>
-                        <td colspan="3" style="text-align: left; color: #fecaca; font-weight: 700; padding-top: 5px;">مرتفع</td>
-                        <td colspan="4" style="text-align: center; color: #fef08a; font-weight: 700; padding-top: 5px;">متوسط</td>
-                        <td colspan="3" style="text-align: right; color: #bae6fd; font-weight: 700; padding-top: 5px;">منخفض</td>
+                        <td colspan="3" style="text-align: left; color: #fecaca; font-weight: 700; padding-top: 5px; padding-left: 8px;" th:text="#{report.derailers.high}">مرتفع</td>
+                        <td colspan="4" style="text-align: center; color: #fef08a; font-weight: 700; padding-top: 5px;" th:text="#{report.derailers.moderate}">متوسط</td>
+                        <td colspan="3" style="text-align: right; color: #bae6fd; font-weight: 700; padding-top: 5px; padding-right: 8px;" th:text="#{report.derailers.low}">منخفض</td>
                     </tr>
                     <tr>
                         <td style="color: #ffffff; font-weight: bold; padding-bottom: 5px;">10</td>
@@ -246,9 +363,9 @@
                 </table>
             </th>
             <!-- Interpretation Column -->
-            <th style="width: 45%; text-align: right; padding: 10px; border: none; font-size: 11.5px; vertical-align: middle;">التفسير</th>
+            <th style="width: 44%; text-align: right; padding: 10px; border: none; font-size: 11.5px; vertical-align: middle;" th:text="#{report.derailers.interpretation}">التفسير</th>
             <!-- Trait Column -->
-            <th style="width: 15%; text-align: right; padding: 10px; border: none; font-size: 11.5px; vertical-align: middle;">السمة</th>
+            <th style="width: 16%; text-align: right; padding: 10px; border: none; font-size: 11.5px; vertical-align: middle;" th:text="#{report.derailers.trait}">السمة</th>
         </tr>
         </thead>
         <tbody>
@@ -259,16 +376,16 @@
                     <div class="slider-inner-track">
                         <div class="slider-dashed-line"></div>
                         <div class="slider-circle"
-                             th:style="'right: ' + (((${reservedScore != null ? reservedScore : 1}) - 1) * 11.111) + '%;'">
+                             th:style="'right: ' + (((${reservedScore != null ? reservedScore : 1}) - 1) * 11.111) + '%; margin-right: -11px; margin-left: 0;'">
                             <span th:text="${reservedScore}"></span>
                         </div>
                     </div>
                 </div>
             </td>
-            <td class="interpretation-cell" style="width: 45%;">
+            <td class="interpretation-cell" style="width: 44%;">
                 <span th:text="${reservedText}"></span>
             </td>
-            <td class="trait-name-cell" style="width: 15%;">التحفظ</td>
+            <td class="trait-name-cell" style="width: 16%; text-align: right;" th:text="#{report.trait.reserved}">التحفظ</td>
         </tr>
 
         <!-- Row 2: الانفعالية -->
@@ -278,16 +395,16 @@
                     <div class="slider-inner-track">
                         <div class="slider-dashed-line"></div>
                         <div class="slider-circle"
-                             th:style="'right: ' + (((${emotionalityScore != null ? emotionalityScore : 1}) - 1) * 11.111) + '%;'">
+                             th:style="'right: ' + (((${emotionalityScore != null ? emotionalityScore : 1}) - 1) * 11.111) + '%; margin-right: -11px; margin-left: 0;'">
                             <span th:text="${emotionalityScore}"></span>
                         </div>
                     </div>
                 </div>
             </td>
-            <td class="interpretation-cell" style="width: 45%;">
+            <td class="interpretation-cell" style="width: 44%;">
                 <span th:text="${emotionalityText}"></span>
             </td>
-            <td class="trait-name-cell" style="width: 15%;">الانفعالية</td>
+            <td class="trait-name-cell" style="width: 16%; text-align: right;" th:text="#{report.trait.emotionality}">الانفعالية</td>
         </tr>
 
         <!-- Row 3: العدائية -->
@@ -297,16 +414,16 @@
                     <div class="slider-inner-track">
                         <div class="slider-dashed-line"></div>
                         <div class="slider-circle"
-                             th:style="'right: ' + (((${hostilityScore != null ? hostilityScore : 1}) - 1) * 11.111) + '%;'">
+                             th:style="'right: ' + (((${hostilityScore != null ? hostilityScore : 1}) - 1) * 11.111) + '%; margin-right: -11px; margin-left: 0;'">
                             <span th:text="${hostilityScore}"></span>
                         </div>
                     </div>
                 </div>
             </td>
-            <td class="interpretation-cell" style="width: 45%;">
+            <td class="interpretation-cell" style="width: 44%;">
                 <span th:text="${hostilityText}"></span>
             </td>
-            <td class="trait-name-cell" style="width: 15%;">العدائية</td>
+            <td class="trait-name-cell" style="width: 16%; text-align: right;" th:text="#{report.trait.hostility}">العدائية</td>
         </tr>
 
         <!-- Row 4: الاندفاعية -->
@@ -316,16 +433,16 @@
                     <div class="slider-inner-track">
                         <div class="slider-dashed-line"></div>
                         <div class="slider-circle"
-                             th:style="'right: ' + (((${impulsivityScore != null ? impulsivityScore : 1}) - 1) * 11.111) + '%;'">
+                             th:style="'right: ' + (((${impulsivityScore != null ? impulsivityScore : 1}) - 1) * 11.111) + '%; margin-right: -11px; margin-left: 0;'">
                             <span th:text="${impulsivityScore}"></span>
                         </div>
                     </div>
                 </div>
             </td>
-            <td class="interpretation-cell" style="width: 45%;">
+            <td class="interpretation-cell" style="width: 44%;">
                 <span th:text="${impulsivityText}"></span>
             </td>
-            <td class="trait-name-cell" style="width: 15%;">الاندفاعية</td>
+            <td class="trait-name-cell" style="width: 16%; text-align: right;" th:text="#{report.trait.impulsivity}">الاندفاعية</td>
         </tr>
 
         <!-- Row 5: الصرامة -->
@@ -335,16 +452,16 @@
                     <div class="slider-inner-track">
                         <div class="slider-dashed-line"></div>
                         <div class="slider-circle"
-                             th:style="'right: ' + (((${rigidityScore != null ? rigidityScore : 1}) - 1) * 11.111) + '%;'">
+                             th:style="'right: ' + (((${rigidityScore != null ? rigidityScore : 1}) - 1) * 11.111) + '%; margin-right: -11px; margin-left: 0;'">
                             <span th:text="${rigidityScore}"></span>
                         </div>
                     </div>
                 </div>
             </td>
-            <td class="interpretation-cell" style="width: 45%;">
+            <td class="interpretation-cell" style="width: 44%;">
                 <span th:text="${rigidityText}"></span>
             </td>
-            <td class="trait-name-cell" style="width: 15%;">الصرامة</td>
+            <td class="trait-name-cell" style="width: 16%; text-align: right;" th:text="#{report.trait.rigidity}">الصرامة</td>
         </tr>
 
         <!-- Row 6: اللامألوفية -->
@@ -354,16 +471,16 @@
                     <div class="slider-inner-track">
                         <div class="slider-dashed-line"></div>
                         <div class="slider-circle"
-                             th:style="'right: ' + (((${unconventionalityScore != null ? unconventionalityScore : 1}) - 1) * 11.111) + '%;'">
+                             th:style="'right: ' + (((${unconventionalityScore != null ? unconventionalityScore : 1}) - 1) * 11.111) + '%; margin-right: -11px; margin-left: 0;'">
                             <span th:text="${unconventionalityScore}"></span>
                         </div>
                     </div>
                 </div>
             </td>
-            <td class="interpretation-cell" style="width: 45%;">
+            <td class="interpretation-cell" style="width: 44%;">
                 <span th:text="${unconventionalityText}"></span>
             </td>
-            <td class="trait-name-cell" style="width: 15%;">اللامألوفية</td>
+            <td class="trait-name-cell" style="width: 16%; text-align: right;" th:text="#{report.trait.unconventionality}">اللامألوفية</td>
         </tr>
         </tbody>
     </table>
@@ -372,14 +489,11 @@
     <div class="bottom-banner-container">
         <table style="width: 100%; border-collapse: collapse; height: 26px; border: none;">
             <tr>
-                <td style="background-color: #7a4b3a; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
-                    Executive Leadership Platform
+                <td style="background-color: #7a4b3a; color: #ffffff; text-align: center; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none;" th:text="#{report.common.footer}">
+                    Executive Leadership Platform • All Rights Reserved © 2026
                 </td>
             </tr>
         </table>
-        <div class="banner-copyright">
-            &amp;#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
-        </div>
     </div>
 </div>
 </body>
