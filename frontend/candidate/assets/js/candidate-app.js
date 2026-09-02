@@ -696,9 +696,15 @@ function initEventListeners() {
 
 // View Management
 function showView(viewId) {
+    // Alias view-pending-portal to view-onboarding if view-pending-portal element doesn't exist
+    if (viewId === "view-pending-portal" && !document.getElementById("view-pending-portal")) {
+        viewId = "view-onboarding";
+    }
+
     const views = [
         "view-loading",
         "view-empty",
+        "view-onboarding",
         "view-pending-portal",
         "view-instructions",
         "view-active-test",
@@ -730,7 +736,7 @@ function showView(viewId) {
     }
 
     if (mainContentArea) {
-        mainContentArea.classList.add("flex-1");
+        mainContentArea.classList.add("flex-1", "middle-column-container");
         mainContentArea.classList.remove("flex-grow");
     }
 }

@@ -81,6 +81,16 @@
             text-align: right !important;
             unicode-bidi: isolate;
         }
+
+        /* Middle Column Flexbox Container */
+        .middle-column-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body class="bg-[#F8FAFC] text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary/20">
@@ -130,20 +140,20 @@
         </aside>
 
         <!-- 2. MIDDLE COLUMN: MAIN ASSESSMENT AREA -->
-        <div id="mainContentArea" class="main-assessment-content flex-1 min-w-0 flex flex-col gap-6 w-full" style="flex-grow: 1; max-width: 850px;">
+        <div id="mainContentArea" class="main-assessment-content middle-column-container flex-1 min-w-0 flex flex-col gap-6 w-full relative" style="flex-grow: 1; max-width: 850px;">
             <!-- Loading State -->
-            <div id="view-loading" class="flex flex-col items-center justify-center py-20 text-center space-y-4">
+            <div id="view-loading" class="flex flex-col items-center justify-center py-20 text-center space-y-4 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
                 <div class="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
                 <p class="text-sm font-medium text-on-surface-variant">جاري مزامنة جلسة التقييم...</p>
             </div>
 
             <!-- 1. VIEW: NO ACTIVE ASSESSMENT ASSIGNED (Empty state) -->
-            <div id="view-empty" class="hidden text-center py-16 max-w-lg mx-auto bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+            <div id="view-empty" class="hidden text-center py-12 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
                 <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-3xl">assignment_late</span>
                 </div>
                 <h2 class="text-xl font-bold text-on-surface mb-2">لا يوجد اختبار نشط مخصص</h2>
-                <p class="text-sm text-on-surface-variant mb-6">
+                <p class="text-sm text-on-surface-variant max-w-md mx-auto">
                     لم يتم تعيين جلسة تقييم سيكومتري لحسابك حالياً. يرجى مراجعة مسؤول الموارد البشرية.
                 </p>
             </div>
