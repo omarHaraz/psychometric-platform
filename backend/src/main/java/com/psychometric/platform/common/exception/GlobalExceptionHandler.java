@@ -133,9 +133,13 @@ public class GlobalExceptionHandler {
             AccessDeniedException ex,
             HttpServletRequest request) {
 
+        String message = (ex.getMessage() != null && !ex.getMessage().isBlank() && !ex.getMessage().equalsIgnoreCase("Access Denied"))
+                ? ex.getMessage()
+                : "Access Denied: You do not have permission to perform this action.";
+
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.FORBIDDEN.value(),
-                "Access Denied: You do not have permission to perform this action.",
+                message,
                 request.getRequestURI()
         );
 
@@ -210,6 +214,20 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(
+            IllegalArgumentException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(BadRequestException.class)

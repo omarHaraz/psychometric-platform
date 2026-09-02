@@ -10,7 +10,7 @@
            ========================================================================== */
         @page {
             size: A4 portrait;
-            margin: 8mm 15mm 20mm 15mm;
+            margin: 0;
         }
 
         * {
@@ -31,267 +31,63 @@
             line-height: 1.5;
         }
 
-        /* 1. Top Running Banner &amp; Framing Header */
-        .top-running-banner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        /* 0. Main Page Uniform 10px Boundary Wrapper */
+        .page10-wrapper, .page-wrapper {
+            padding: 10px;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
             position: relative;
-            margin-bottom: 12px;
-            padding-bottom: 4px;
         }
 
-        .banner-left-wrap {
-            display: flex;
-            align-items: center;
-        }
-
-        .page-num-polygon-badge {
-            background-color: #1a4331;
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: 800;
-            font-family: 'Inter', 'Arial', sans-serif;
-            padding: 3px 18px 3px 12px;
-            clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 32px;
-            height: 22px;
-            line-height: 22px;
-        }
-
-        .running-report-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: #334155;
-            direction: rtl;
-            margin-right: auto;
-            padding-right: 4px;
-        }
-
-        .candidate-id-span {
-            font-family: 'Inter', 'Arial', sans-serif;
-            font-weight: 700;
-            color: #1e3a4c;
-        }
-
-        .top-accent-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: #8a5a44;
-            z-index: 1;
+        /* 1. Page Main Header */
+        .page-header-box {
+            width: 100%;
+            border-bottom: 2px solid #1e3a4c;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+            background: transparent;
         }
 
         /* 2. Competency Header Section */
         .competency-header-block {
-            margin-top: 10px;
-            margin-bottom: 12px;
+            margin-top: 6px;
+            margin-bottom: 14px;
         }
 
         .competency-title {
             font-size: 20px;
             font-weight: 800;
             color: #1e293b;
-            margin: 0 0 4px 0;
+            margin: 0 0 6px 0;
             line-height: 1.2;
         }
 
         .competency-desc {
-            font-size: 10.5px;
+            font-size: 11px;
             color: #334155;
             margin: 0;
-            line-height: 1.55;
+            line-height: 1.65;
             text-align: justify;
         }
 
-        /* 3. Visual Score Scale Bar */
-        .scale-bar-container {
-            margin-top: 12px;
-            margin-bottom: 12px;
-        }
-
-        .table-header-bar {
-            background-color: #8a5a44;
-            color: #ffffff;
-            padding: 6px 14px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            box-sizing: border-box;
-        }
-
-        .th-title-right {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #ffffff;
-            width: 55%;
-        }
-
-        .th-scale-left {
-            width: 45%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-sizing: border-box;
-        }
-
-        .th-level-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: #ffffff;
-            white-space: nowrap;
-            margin-left: 8px;
-        }
-
-        .scale-bubbles-track {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            direction: rtl;
-            flex-grow: 1;
-            padding: 0 10px;
-            position: relative;
-        }
-
-        .scale-dot {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 8px;
-        }
-
-        .scale-bubble {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background-color: #ffffff;
-            color: #8a5a44;
-            font-size: 10.5px;
-            font-weight: 800;
-            font-family: 'Inter', 'Arial', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 18px;
-            text-align: center;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Score Data Row */
-        .score-data-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 26px;
-            margin-bottom: 8px;
-        }
-
-        .score-trait-col {
-            width: 55%;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .trait-pill-icon {
-            width: 14px;
-            height: 19px;
-            border-radius: 4px;
-            flex-shrink: 0;
-            display: inline-block;
-        }
-
-        .score-trait-name {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        .score-slider-col {
-            width: 45%;
-            position: relative;
-            height: 26px;
-            display: flex;
-            align-items: center;
-            box-sizing: border-box;
-            padding: 0 20px;
-        }
-
-        .slider-track-line {
-            position: absolute;
-            top: 50%;
-            left: 20px;
-            right: 20px;
-            height: 0;
-            border-top: 1.5px solid #e2e8f0;
-            z-index: 1;
-        }
-
-        .slider-active-marker-wrap {
-            position: absolute;
-            top: 50%;
-            width: 32px;
-            height: 18px;
-            margin-top: -9px;
-            margin-right: -16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-        }
-
-        .marker-bar {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 3.5px;
-            margin-top: -1.75px;
-            background-color: #1e3a4c;
-            border-radius: 2px;
-            z-index: 1;
-        }
-
-        .marker-circle {
-            position: relative;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: #1e3a4c;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
-
-        .marker-circle svg {
-            width: 9px;
-            height: 9px;
-        }
-
-        /* 4. Detailed Match Section */
+        /* 3. Match Subheader */
         .match-subheader {
-            font-size: 11px;
+            font-size: 11.5px;
             font-weight: 700;
-            color: #1e293b;
-            margin: 12px 0 8px 0;
+            color: #1e3a4c;
+            margin: 0 0 12px 0;
             line-height: 1.4;
         }
 
-        /* 4-Column Detailed Table */
+        /* 4. Detail Table */
         table.detail-table {
             width: 100%;
             table-layout: fixed;
             border-collapse: collapse;
             margin-top: 4px;
-            margin-bottom: 16px;
-            font-size: 9.5px;
+            margin-bottom: 25px;
+            font-size: 10.5px;
             background-color: #ffffff;
         }
 
@@ -299,8 +95,8 @@
             background-color: #1a4331;
             color: #ffffff;
             font-weight: 700;
-            font-size: 10.5px;
-            padding: 7px 10px;
+            font-size: 11.5px;
+            padding: 10px 10px;
             text-align: right;
             border: none;
             box-sizing: border-box;
@@ -325,12 +121,16 @@
             border-top-left-radius: 4px;
         }
 
+        table.detail-table tr {
+            height: 96px;
+        }
+
         table.detail-table td {
-            padding: 10px 10px;
+            padding: 18px 10px;
             vertical-align: top;
             border: none;
             border-bottom: 1px solid #e2e8f0;
-            line-height: 1.55;
+            line-height: 1.65;
             color: #334155;
             box-sizing: border-box;
             text-align: justify;
@@ -342,15 +142,14 @@
 
         td.td-level-cell {
             text-align: center;
-            vertical-align: middle;
-            padding: 8px 4px !important;
+            vertical-align: middle !important;
+            padding: 12px 4px !important;
         }
 
-        /* Dynamic Indicator Status Pill */
         .level-status-pill {
-            width: 18px;
-            height: 28px;
-            border-radius: 5px;
+            width: 20px;
+            height: 32px;
+            border-radius: 6px;
             display: inline-block;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
@@ -362,168 +161,173 @@
             left: 0;
             right: 0;
             width: 100%;
-            padding: 0 15mm 6mm 15mm;
+            padding: 0 10px 10px 10px;
             box-sizing: border-box;
         }
 
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
         .banner-copyright {
-            font-size: 8px;
+            font-size: 8.5px;
             color: #64748b;
             font-family: 'Inter', 'Arial', sans-serif;
             direction: ltr;
             text-align: center;
-            margin-top: 3px;
+            margin-top: 4px;
         }
     </style>
 </head>
 <body>
-    <div th:fragment="body">
-<div class="competency-header-block">
-        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي'}">التفكير الاستراتيجي</h2>
-        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'قدرة القائد على فهم الصورة الكلية واستشراف التحديات والفرص المستقبلية ووضع خطط طويلة المدى تدعم رسالة المنظمة.'}">
-            قدرة القائد على فهم الصورة الكلية واستشراف التحديات والفرص المستقبلية ووضع خطط طويلة المدى تدعم رسالة المنظمة.
-        </p>
-    </div>
+    <div th:fragment="body" class="page10-wrapper">
+        <!-- 1. Page Header (Bulletproof Layout with Page Number) -->
+        <div class="page-header-box">
+            <table style="width: 100%; border-collapse: collapse; border: none; background: transparent;">
+                <tr>
+                    <!-- Left: Page Number -->
+                    <td style="text-align: left; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px; background: transparent; display: inline-block;" th:text="'صفحة ' + (${pageNum != null ? pageNum : 10})">صفحة 10</span>
+                    </td>
+                    <!-- Right: Running Title -->
+                    <td style="text-align: right; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
+                        <span style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 12px; font-weight: 700; color: #1e3a4c; line-height: 1.2; background: transparent;">
+                            تقرير الكفاءات للقادة | <span style="font-family: 'Inter', 'Arial', sans-serif;" th:text="${candidateId != null ? candidateId : 'CAN-98234'}">CAN-98234</span>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-    <!-- 3. Visual Score Scale Bar (Strict Fixed Table Layout) -->
-    <table style="width: 100%; table-layout: fixed; border-collapse: collapse; border: none; margin-top: 12px; margin-bottom: 12px;">
-        <colgroup>
-            <col style="width: 45%;" />
-            <col style="width: 55%;" />
-        </colgroup>
-        <!-- Brown Header Row -->
-        <tr>
-            <!-- 1st in DOM (Left Side 45%): Scale 1-5 -->
-            <td style="width: 45%; background-color: #8a5a44; padding: 6px 10px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; vertical-align: middle;">
-                <table style="width: 100%; table-layout: fixed; border-collapse: collapse; text-align: center; color: white; font-weight: bold; font-size: 11.5px; border: none;">
-                    <colgroup>
-                        <col style="width: 20%;" />
-                        <col style="width: 20%;" />
-                        <col style="width: 20%;" />
-                        <col style="width: 20%;" />
-                        <col style="width: 20%;" />
-                    </colgroup>
-                    <tr>
-                        <!-- Physical Left-to-Right: 5 -> 4 -> 3 -> 2 -> 1 -->
-                        <td style="width: 20%; border: none; color: #ffffff; padding: 0;">5</td>
-                        <td style="width: 20%; border: none; color: #ffffff; padding: 0;">4</td>
-                        <td style="width: 20%; border: none; color: #ffffff; padding: 0;">3</td>
-                        <td style="width: 20%; border: none; color: #ffffff; padding: 0;">2</td>
-                        <td style="width: 20%; border: none; color: #ffffff; padding: 0;">1</td>
-                    </tr>
-                </table>
-            </td>
-            <!-- 2nd in DOM (Right Side 55%): Title -->
-            <td style="width: 55%; background-color: #8a5a44; padding: 6px 16px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; text-align: right; color: white; font-weight: bold; font-size: 12px; vertical-align: middle;">
-                القدرات أو الكفاءات السلوكية
-            </td>
-        </tr>
-        <!-- Spacer -->
-        <tr><td colspan="2" style="height: 10px; border: none;"></td></tr>
-        <!-- Score Data Row -->
-        <tr>
-            <!-- Left Side 45%: Slider (Direct Global Variable Binding) -->
-            <td style="width: 45%; vertical-align: middle; padding: 10px 10px; position: relative; border: none;">
-                <div style="position: relative; width: 100%; height: 16px;">
-                    <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
-                    <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
-                    <!-- Marker with Direct Math -->
-                    <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${strategicScore != null ? strategicScore : (competencyScore != null ? competencyScore : 3)}) - 1) * 20)) + '%;'">
-                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
-                             th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'"></div>
-                        <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
-                             th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'">
-                            <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
-                                <circle cx="12" cy="7" r="4" fill="#ffffff" />
-                                <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
-                            </svg>
+        <div class="competency-header-block">
+            <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي'}">التفكير الاستراتيجي</h2>
+            <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'القدرة على تحليل المعطيات، واستشراف المستقبل، واتخاذ قرارات استراتيجية فعالة تضمن تحقيق رؤية المنظمة وأهدافها بعيدة المدى.'}">
+                القدرة على تحليل المعطيات، واستشراف المستقبل، واتخاذ قرارات استراتيجية فعالة تضمن تحقيق رؤية المنظمة وأهدافها بعيدة المدى.
+            </p>
+        </div>
+
+        <!-- 3. Visual Score Scale Bar (Strict Fixed Table Layout) -->
+        <table style="width: 100%; table-layout: fixed; border-collapse: collapse; border: none; margin-top: 14px; margin-bottom: 22px;">
+            <colgroup>
+                <col style="width: 45%;" />
+                <col style="width: 55%;" />
+            </colgroup>
+            <!-- Brown Header Row -->
+            <tr>
+                <!-- 1st in DOM (Left Side 45%): Scale 1-5 -->
+                <td style="width: 45%; background-color: #8a5a44; padding: 7px 10px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; vertical-align: middle;">
+                    <table style="width: 100%; table-layout: fixed; border-collapse: collapse; text-align: center; color: white; font-weight: bold; font-size: 11.5px; border: none;">
+                        <colgroup>
+                            <col style="width: 20%;" />
+                            <col style="width: 20%;" />
+                            <col style="width: 20%;" />
+                            <col style="width: 20%;" />
+                            <col style="width: 20%;" />
+                        </colgroup>
+                        <tr>
+                            <!-- Physical Left-to-Right: 5 -> 4 -> 3 -> 2 -> 1 -->
+                            <td style="width: 20%; border: none; color: #ffffff; padding: 0;">5</td>
+                            <td style="width: 20%; border: none; color: #ffffff; padding: 0;">4</td>
+                            <td style="width: 20%; border: none; color: #ffffff; padding: 0;">3</td>
+                            <td style="width: 20%; border: none; color: #ffffff; padding: 0;">2</td>
+                            <td style="width: 20%; border: none; color: #ffffff; padding: 0;">1</td>
+                        </tr>
+                    </table>
+                </td>
+                <!-- 2nd in DOM (Right Side 55%): Title -->
+                <td style="width: 55%; background-color: #8a5a44; padding: 7px 16px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; text-align: right; color: white; font-weight: bold; font-size: 12px; vertical-align: middle;">
+                    القدرات أو الكفاءات السلوكية
+                </td>
+            </tr>
+            <!-- Spacer -->
+            <tr><td colspan="2" style="height: 10px; border: none;"></td></tr>
+            <!-- Score Data Row -->
+            <tr>
+                <!-- Left Side 45%: Slider (Direct Global Variable Binding) -->
+                <td style="width: 45%; vertical-align: middle; padding: 10px 10px; position: relative; border: none;">
+                    <div style="position: relative; width: 100%; height: 16px;">
+                        <!-- Track Line starts under 5 (left: 10%) and ends under 1 (right: 10%) -->
+                        <div style="position: absolute; top: 50%; left: 10%; right: 10%; height: 1.5px; background-color: #e2e8f0; z-index: 1;"></div>
+                        <!-- Marker with Direct Math -->
+                        <div th:style="'position: absolute; top: 50%; width: 24px; height: 16px; margin-top: -8px; margin-right: -12px; z-index: 2; text-align: center; right: ' + (10 + (((${strategicScore != null ? strategicScore : (competencyScore != null ? competencyScore : 3)}) - 1) * 20)) + '%;'">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; z-index: 1; border-radius: 2px;"
+                                 th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'"></div>
+                            <div style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; z-index: 2; text-align: center;"
+                                 th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#1e3a4c')}) + ';'">
+                                <svg viewBox="0 0 24 24" style="width: 9px; height: 9px; margin: 3.5px auto; display: block;">
+                                    <circle cx="12" cy="7" r="4" fill="#ffffff" />
+                                    <path d="M4 20 C4 15.5 7.5 13 12 13 C16.5 13 20 15.5 20 20 Z" fill="#ffffff" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </td>
-            <!-- Right Side 55%: Trait Name & Colored Pill -->
-            <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
-                <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
-                      th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#c87d46')}) + ';'"></span>
-                <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي'}">التفكير الاستراتيجي</span>
-            </td>
-        </tr>
-    </table>
-
-    <!-- 4. Detailed Table Section -->
-    <div class="match-subheader">
-        تطابق الكفاءات السلوكية القيادية و المهارات مع تحليل سمات شخصية وقدرات <span class="candidate-id-span" th:text="${candidateId != null ? candidateId : 'PCIV126371'}">PCIV126371</span> العامة:
-    </div>
-
-    <!-- 4-Column Table (Supporting 2 or 3 Dynamic Rows) -->
-    <table class="detail-table">
-        <thead>
-            <tr>
-                <th class="col-rec" style="border-top-left-radius: 4px;">توصيات التطوير</th>
-                <th class="col-result">نتيجة المرشح</th>
-                <th class="col-req">متطلبات الكفاءات</th>
-                <th class="col-level" style="border-top-right-radius: 4px; text-align: center;">المستوى</th>
-            </tr>
-        </thead>
-                                <tbody>
-            <!-- Row 1: Dynamic Indicator 1 -->
-            <tr th:if="${req1 != null and #strings.length(#strings.trim(req1)) > 5}">
-                <td><span th:text="${rec1}"></span></td>
-                <td><span th:text="${result1}"></span></td>
-                <td><span th:text="${req1}"></span></td>
-                <td class="td-level-cell">
-                    <span class="level-status-pill" th:style="'background-color: ' + (${color1 != null ? color1 : indicator1Color}) + ';'"></span>
                 </td>
-            </tr>
-
-            <!-- Row 2: Dynamic Indicator 2 -->
-            <tr th:if="${req2 != null and #strings.length(#strings.trim(req2)) > 5}">
-                <td><span th:text="${rec2}"></span></td>
-                <td><span th:text="${result2}"></span></td>
-                <td><span th:text="${req2}"></span></td>
-                <td class="td-level-cell">
-                    <span class="level-status-pill" th:style="'background-color: ' + (${color2 != null ? color2 : indicator2Color}) + ';'"></span>
-                </td>
-            </tr>
-
-            <!-- Row 3: Dynamic Indicator 3 -->
-            <tr th:if="${req3 != null and #strings.length(#strings.trim(req3)) > 5}">
-                <td><span th:text="${rec3}"></span></td>
-                <td><span th:text="${result3}"></span></td>
-                <td><span th:text="${req3}"></span></td>
-                <td class="td-level-cell">
-                    <span class="level-status-pill" th:style="'background-color: ' + (${color3 != null ? color3 : indicator3Color}) + ';'"></span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- 5. Modern Bottom Footer Banner -->
-    <!-- 3. Modern Bottom Footer Banner -->
-    <div class="bottom-banner-container">
-        <table style="width: 100%; border-collapse: collapse; height: 26px; border: none;">
-            <tr>
-                <td style="background-color: #7a4b3a; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
-                    Executive Leadership Platform
+                <!-- Right Side 55%: Trait Name &amp; Colored Pill -->
+                <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
+                    <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
+                          th:styleappend="'background-color: ' + (${strategicColor != null ? strategicColor : (competencyColor != null ? competencyColor : '#c87d46')}) + ';'"></span>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle != null ? competencyTitle : 'التفكير الاستراتيجي'}">التفكير الاستراتيجي</span>
                 </td>
             </tr>
         </table>
-        <div class="banner-copyright">
-            &#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
+
+        <!-- 4. Detailed Table Section -->
+        <div class="match-subheader">
+            تطابق الكفاءات السلوكية القيادية و المهارات مع تحليل سمات شخصية وقدرات <span class="candidate-id-span" th:text="${candidateId != null ? candidateId : 'CAN-98234'}">CAN-98234</span> العامة:
         </div>
-    </div>
+
+        <!-- 4-Column Table with Fully Dynamic Indicator Colors -->
+        <table class="detail-table">
+            <thead>
+                <tr>
+                    <th class="col-rec" style="border-top-left-radius: 4px;">توصيات التطوير</th>
+                    <th class="col-result">نتيجة المرشح</th>
+                    <th class="col-req">متطلبات الكفاءات</th>
+                    <th class="col-level" style="border-top-right-radius: 4px; text-align: center;">المستوى</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Row 1: Dynamic Indicator 1 -->
+                <tr th:if="${req1 != null and #strings.length(#strings.trim(req1)) > 5}">
+                    <td><span th:text="${rec1}"></span></td>
+                    <td><span th:text="${result1}"></span></td>
+                    <td><span th:text="${req1}"></span></td>
+                    <td class="td-level-cell">
+                        <span class="level-status-pill" th:style="'background-color: ' + (${color1 != null ? color1 : indicator1Color}) + ';'"></span>
+                    </td>
+                </tr>
+
+                <!-- Row 2: Dynamic Indicator 2 -->
+                <tr th:if="${req2 != null and #strings.length(#strings.trim(req2)) > 5}">
+                    <td><span th:text="${rec2}"></span></td>
+                    <td><span th:text="${result2}"></span></td>
+                    <td><span th:text="${req2}"></span></td>
+                    <td class="td-level-cell">
+                        <span class="level-status-pill" th:style="'background-color: ' + (${color2 != null ? color2 : indicator2Color}) + ';'"></span>
+                    </td>
+                </tr>
+
+                <!-- Row 3: Dynamic Indicator 3 -->
+                <tr th:if="${req3 != null and #strings.length(#strings.trim(req3)) > 5}">
+                    <td><span th:text="${rec3}"></span></td>
+                    <td><span th:text="${result3}"></span></td>
+                    <td><span th:text="${req3}"></span></td>
+                    <td class="td-level-cell">
+                        <span class="level-status-pill" th:style="'background-color: ' + (${color3 != null ? color3 : indicator3Color}) + ';'"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 5. Modern Bottom Footer Banner -->
+        <div class="bottom-banner-container">
+            <table style="width: 100%; border-collapse: collapse; height: 26px; border: none;">
+                <tr>
+                    <td style="background-color: #7a4b3a; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
+                        Executive Leadership Platform
+                    </td>
+                </tr>
+            </table>
+            <div class="banner-copyright">
+                &amp;#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
+            </div>
+        </div>
     </div>
 </body>
 </html>

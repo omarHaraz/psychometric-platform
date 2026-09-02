@@ -51,23 +51,23 @@ public class ReportContextDto implements Serializable {
     // =========================================================================
     // Page 4: Results Summary – Personality Traits 1–10 (page4.html / page-4-summary-traits.html)
     // =========================================================================
-    private Integer reservedScore = 6;
-    private String reservedText = "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة التحفظ.";
+    private Integer reservedScore;
+    private String reservedText;
 
-    private Integer emotionalityScore = 5;
-    private String emotionalityText = "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة الانفعالية.";
+    private Integer emotionalityScore;
+    private String emotionalityText;
 
-    private Integer hostilityScore = 6;
-    private String hostilityText = "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة العدائية.";
+    private Integer hostilityScore;
+    private String hostilityText;
 
-    private Integer impulsivityScore = 6;
-    private String impulsivityText = "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة الاندفاعية.";
+    private Integer impulsivityScore;
+    private String impulsivityText;
 
-    private Integer rigidityScore = 6;
-    private String rigidityText = "متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة الصرامة.";
+    private Integer rigidityScore;
+    private String rigidityText;
 
-    private Integer unconventionalityScore = 7;
-    private String unconventionalityText = "تشير هذه النتيجة إلى متوسط إلى مرتفع احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة اللامألوفية.";
+    private Integer unconventionalityScore;
+    private String unconventionalityText;
 
     // =========================================================================
     // Page 5: Results Summary – Competencies & General Abilities (page5.html / page-5-summary-competencies.html)

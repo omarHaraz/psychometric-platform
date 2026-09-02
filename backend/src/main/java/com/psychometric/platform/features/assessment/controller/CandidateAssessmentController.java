@@ -66,8 +66,9 @@ public class CandidateAssessmentController {
 
     @PostMapping("/battery-sessions/{id}/submit")
     public ResponseEntity<AssessmentAttempt> submitSession(@PathVariable Long id,
+                                                           @RequestBody(required = false) HeartbeatRequest request,
                                                            @AuthenticationPrincipal String username) {
-        return ResponseEntity.ok(sessionService.submitSession(id, username));
+        return ResponseEntity.ok(sessionService.submitSession(id, request, username));
     }
 
     @GetMapping("/{token}/score")

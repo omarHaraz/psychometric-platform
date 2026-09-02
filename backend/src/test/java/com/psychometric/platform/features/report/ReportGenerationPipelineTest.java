@@ -103,7 +103,14 @@ public class ReportGenerationPipelineTest {
 
         try (PDDocument doc = PDDocument.load(pdfBytes)) {
             int pageCount = doc.getNumberOfPages();
-            assertEquals(15, pageCount, "PDF must have exactly 15 pages");
+            assertEquals(14, pageCount, "PDF must have exactly 14 pages");
+
+            // Render Page 5 (index 4) for visual inspection
+            org.apache.pdfbox.rendering.PDFRenderer renderer = new org.apache.pdfbox.rendering.PDFRenderer(doc);
+            java.awt.image.BufferedImage img = renderer.renderImageWithDPI(4, 150);
+            java.io.File outImg = new java.io.File("C:/Users/Logo/.gemini/antigravity/brain/117627c9-dbc7-4aff-b37d-4deddc3f231e/page_5_verified.png");
+            javax.imageio.ImageIO.write(img, "PNG", outImg);
+            System.out.println("Saved Page 5 visual inspection artifact: " + outImg.getAbsolutePath());
         }
         
         System.out.println("Pipeline Test Completed Successfully");

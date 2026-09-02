@@ -10,7 +10,7 @@
            ========================================================================== */
         @page {
             size: A4 portrait;
-            margin: 12mm 15mm 22mm 15mm;
+            margin: 0;
         }
 
         * {
@@ -28,15 +28,32 @@
             direction: rtl;
             text-align: right;
             font-size: 11px;
-            line-height: 1.6;
+            line-height: 1.65;
+        }
+
+        /* 0. Main Page 2 Uniform 10px Boundary Wrapper */
+        .page2-wrapper {
+            padding: 10px;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            position: relative;
         }
 
         /* 1. Page Main Header */
+        .page-header-box {
+            width: 100%;
+            border-bottom: 2px solid #1e3a4c;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+            background: transparent;
+        }
+
         .main-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             color: #1e3a4c;
-            margin: 0 0 6px 0;
+            margin: 0;
             line-height: 1.2;
         }
 
@@ -62,37 +79,38 @@
             border: none;
             height: 1.5px;
             background-color: #1e3a4c;
-            margin: 3px 0 8px 0;
+            margin: 4px 0 10px 0;
         }
 
         p.text-content {
-            font-size: 10.5px;
+            font-size: 11px;
             color: #334155;
             text-align: justify;
-            margin: 0 0 10px 0;
-            line-height: 1.65;
+            margin: 0 0 14px 0;
+            line-height: 1.7;
             direction: rtl;
         }
 
         /* Scale Indicator UI Elements */
         .scale-label {
-            font-size: 9px;
+            font-size: 10.5px;
             color: #475569;
             font-weight: 600;
             text-align: center;
-            line-height: 1.25;
+            line-height: 1.3;
             display: block;
+            margin-bottom: 6px;
         }
 
         .scale-circle {
-            width: 22px;
-            height: 22px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background-color: #e2e8f0;
             color: #64748b;
-            font-size: 10px;
+            font-size: 12.5px;
             font-weight: 700;
-            line-height: 22px;
+            line-height: 32px;
             text-align: center;
             margin: 0 auto;
             display: block;
@@ -100,9 +118,9 @@
 
         /* Competency Match Pill Indicators */
         .color-pill {
-            width: 28px;
-            height: 20px;
-            border-radius: 5px;
+            width: 38px;
+            height: 24px;
+            border-radius: 6px;
             margin: 0 auto;
             display: block;
         }
@@ -114,19 +132,21 @@
         /* Impression Management Table */
         .score-cell-box {
             width: 100%;
-            height: 24px;
-            line-height: 24px;
+            height: 36px;
+            line-height: 36px;
             background-color: #f1f5f9;
             border-radius: 4px;
             text-align: center;
             font-weight: 700;
             color: #0f172a;
+            font-size: 13px;
             border: 1px solid #cbd5e1;
         }
 
         .risk-badge {
             font-weight: 700;
             color: #475569;
+            font-size: 11.5px;
             text-align: center;
             display: block;
         }
@@ -138,7 +158,7 @@
             left: 0;
             right: 0;
             width: 100%;
-            padding: 0 15mm 8mm 15mm;
+            padding: 0 10px 10px 10px;
             box-sizing: border-box;
         }
 
@@ -153,48 +173,48 @@
     </style>
 </head>
 <body>
-    <div th:fragment="body">
+    <div th:fragment="body" class="page2-wrapper">
         <!-- 1. Page Header (Bulletproof Layout) -->
-        <div style="width: 100%; border-bottom: 2px solid #1e3a4c; padding-bottom: 12px; margin-bottom: 16px; background: transparent;">
+        <div class="page-header-box">
             <table style="width: 100%; border-collapse: collapse; border: none; background: transparent;">
                 <tr>
                     <!-- Left: Page Number -->
                     <td style="text-align: left; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 12px; background: transparent; display: inline-block;">صفحة 2</span>
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px; background: transparent; display: inline-block;">صفحة 2</span>
                     </td>
                     <!-- Right: Main Title -->
                     <td style="text-align: right; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <h1 style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 24px; font-weight: 800; color: #1e3a4c; line-height: 1.2; background: transparent;">المقدمة</h1>
+                        <h1 class="main-title">المقدمة</h1>
                     </td>
                 </tr>
             </table>
         </div>
 
         <!-- Section 1: Evaluation Intro -->
-        <div style="text-align: right; margin-top: 4px; margin-bottom: 2px;">
+        <div style="text-align: right; margin-top: 10px; margin-bottom: 6px;">
             <span class="icon-circle" style="margin-left: 6px;"></span>
             <span class="section-title">التقييم</span>
         </div>
         <hr class="section-divider" />
-        <p class="text-content">
+        <p class="text-content" style="margin-bottom: 26px; line-height: 1.75;">
             يلخص هذا التقرير النتائج باستخدام إطار الكفاءات ويستند في استخلاص النتائج إلى أدلة من تقييم الشخصية والقدرات العامة.
         </p>
 
         <!-- Section 2: Personal Potential Indicator (Reversed DOM: Left Scale 48% FIRST, Right Text 52% SECOND) -->
-        <div style="text-align: right; margin-top: 8px; margin-bottom: 2px;">
+        <div style="text-align: right; margin-top: 18px; margin-bottom: 6px;">
             <span class="icon-circle" style="margin-left: 6px;"></span>
             <span class="section-title">مؤشر الإمكانيات الشخصية</span>
         </div>
         <hr class="section-divider" />
 
-        <table style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed; margin-bottom: 14px;">
+        <table style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed; margin-bottom: 30px;">
             <tr>
                 <!-- 1st in HTML: Rendered on LEFT (48% Width: Scale Table with Hard Spacer) -->
                 <td style="width: 48%; vertical-align: top; border-top: 1.5px solid #94a3b8; border-left: none; border-right: none; border-bottom: none;">
                     <!-- HARD SPACER TO FORCE VERTICAL CLEARANCE -->
-                    <div style="height: 35px; width: 100%;"></div>
+                    <div style="height: 38px; width: 100%;"></div>
 
-                    <div style="font-size: 11px; font-weight: bold; margin-bottom: 12px; color: #1e3a4c; text-align: center;">
+                    <div style="font-size: 11.5px; font-weight: bold; margin-bottom: 14px; color: #1e3a4c; text-align: center;">
                         النطاقات
                     </div>
 
@@ -224,19 +244,19 @@
                         </tr>
                         <!-- Circles row: Reversed DOM order 1 -> 2 -> 3 -> 4 -> 5 -->
                         <tr>
-                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 4px; border: none;">
+                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 6px; border: none;">
                                 <div class="scale-circle">1</div>
                             </td>
-                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 4px; border: none;">
+                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 6px; border: none;">
                                 <div class="scale-circle">2</div>
                             </td>
-                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 4px; border: none;">
+                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 6px; border: none;">
                                 <div class="scale-circle">3</div>
                             </td>
-                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 4px; border: none;">
+                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 6px; border: none;">
                                 <div class="scale-circle">4</div>
                             </td>
-                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 4px; border: none;">
+                            <td style="width: 20%; text-align: center; vertical-align: top; padding-top: 6px; border: none;">
                                 <div class="scale-circle">5</div>
                             </td>
                         </tr>
@@ -245,7 +265,7 @@
 
                 <!-- 2nd in HTML: Rendered on RIGHT (52% Width: Text Explanation) -->
                 <td style="width: 52%; vertical-align: top; padding-right: 14px; text-align: justify; direction: rtl; border: none;">
-                    <p class="text-content">
+                    <p class="text-content" style="line-height: 1.8;">
                         تعتمد إمكانيات المرشح على تحليل السمات الشخصية وقدراته العامة ويتم وصف إمكانياته من خلال استخدام مقياس مكون من 5 نقاط والذي يعرض في الجداول البيانية باستخدام رمز بداخله شخص كدليل إرشادي، تشير الدرجات من 1 إلى 2 إلى جوانب تطوير محتملة حيث لا تتطابق المهارات السلوكية مع تحليل شخصية المرشح أو قدراته، بينما تشير الدرجة 3 إلى تطابق جزئي، وتشير الدرجات من 4 إلى 5 إلى جوانب قوة محتملة حيث تتطابق المهارات السلوكية مع تحليل شخصية المرشح أو قدراته.
                     </p>
                 </td>
@@ -253,20 +273,20 @@
         </table>
 
         <!-- Section 3: Competency Match (Reversed DOM: Left Cards 48% FIRST, Right Text 52% SECOND) -->
-        <div style="text-align: right; margin-top: 8px; margin-bottom: 2px;">
+        <div style="text-align: right; margin-top: 18px; margin-bottom: 6px;">
             <span class="icon-circle" style="margin-left: 6px;"></span>
             <span class="section-title">تطابق الكفاءات السلوكية مع تحليل شخصية المرشح وقدراته العامة</span>
         </div>
         <hr class="section-divider" />
 
-        <table style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed; margin-bottom: 14px;">
+        <table style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed; margin-bottom: 30px;">
             <tr>
                 <!-- 1st in HTML: Rendered on LEFT (48% Width: 3 Cards with Hard Spacer) -->
                 <td style="width: 48%; vertical-align: top; border-top: 1.5px solid #94a3b8; border-left: none; border-right: none; border-bottom: none;">
                     <!-- HARD SPACER TO FORCE VERTICAL CLEARANCE -->
-                    <div style="height: 35px; width: 100%;"></div>
+                    <div style="height: 38px; width: 100%;"></div>
 
-                    <div style="font-size: 11px; font-weight: bold; margin-bottom: 12px; color: #1e3a4c; text-align: center;">
+                    <div style="font-size: 11.5px; font-weight: bold; margin-bottom: 14px; color: #1e3a4c; text-align: center;">
                         النطاقات
                     </div>
 
@@ -274,21 +294,21 @@
                         <!-- Reversed DOM order: Red -> Yellow -> Green -->
                         <tr>
                             <!-- عامل تطوير (Red) -->
-                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 3px; border: none;">
-                                <div style="font-size: 10px; font-weight: 700; color: #1e3a4c; margin-bottom: 4px;">عامل تطوير</div>
-                                <div style="font-size: 8.5px; color: #475569; line-height: 1.3; min-height: 32px; margin-bottom: 6px;">لا تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
+                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 4px; border: none;">
+                                <div style="font-size: 11px; font-weight: 700; color: #1e3a4c; margin-bottom: 6px;">عامل تطوير</div>
+                                <div style="font-size: 9.5px; color: #475569; line-height: 1.45; min-height: 44px; margin-bottom: 10px;">لا تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
                                 <div class="color-pill pill-red"></div>
                             </td>
                             <!-- عامل حياد (Yellow) -->
-                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 3px; border: none;">
-                                <div style="font-size: 10px; font-weight: 700; color: #1e3a4c; margin-bottom: 4px;">عامل حياد</div>
-                                <div style="font-size: 8.5px; color: #475569; line-height: 1.3; min-height: 32px; margin-bottom: 6px;">تتطابق متطلبات الكفاءة جزئياً مع شخصية أو قدرات المرشح</div>
+                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 4px; border: none;">
+                                <div style="font-size: 11px; font-weight: 700; color: #1e3a4c; margin-bottom: 6px;">عامل حياد</div>
+                                <div style="font-size: 9.5px; color: #475569; line-height: 1.45; min-height: 44px; margin-bottom: 10px;">تتطابق متطلبات الكفاءة جزئياً مع شخصية أو قدرات المرشح</div>
                                 <div class="color-pill pill-yellow"></div>
                             </td>
                             <!-- عامل قوة (Green) -->
-                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 3px; border: none;">
-                                <div style="font-size: 10px; font-weight: 700; color: #1e3a4c; margin-bottom: 4px;">عامل قوة</div>
-                                <div style="font-size: 8.5px; color: #475569; line-height: 1.3; min-height: 32px; margin-bottom: 6px;">تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
+                            <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 4px; border: none;">
+                                <div style="font-size: 11px; font-weight: 700; color: #1e3a4c; margin-bottom: 6px;">عامل قوة</div>
+                                <div style="font-size: 9.5px; color: #475569; line-height: 1.45; min-height: 44px; margin-bottom: 10px;">تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
                                 <div class="color-pill pill-green"></div>
                             </td>
                         </tr>
@@ -297,7 +317,7 @@
 
                 <!-- 2nd in HTML: Rendered on RIGHT (52% Width: Text Explanation) -->
                 <td style="width: 52%; vertical-align: top; padding-right: 14px; text-align: justify; direction: rtl; border: none;">
-                    <p class="text-content">
+                    <p class="text-content" style="line-height: 1.8;">
                         تتم مقارنة قدرات المرشحين وشخصياتهم بمتطلبات الكفاءات السلوكية. نستخدم أوصاف المستويات المذكورة في الشكل المقابل لمعرفة مدى تطابق نتائج <span th:text="${candidateId}">CAN-98234</span> مع الكفاءات السلوكية.
                     </p>
                 </td>
@@ -305,69 +325,69 @@
         </table>
 
         <!-- Section 4: Impression Management Table (Reversed DOM: التفسير 45% -> الخطر 15% -> الدرجة 15% -> المقياس 25%) -->
-        <div style="text-align: right; margin-top: 8px; margin-bottom: 2px;">
+        <div style="text-align: right; margin-top: 18px; margin-bottom: 6px;">
             <span class="icon-circle" style="margin-left: 6px;"></span>
             <span class="section-title">إدارة الانطباعات</span>
         </div>
         <hr class="section-divider" />
-        <p class="text-content">
+        <p class="text-content" style="margin-bottom: 18px; line-height: 1.75;">
             في بعض السياقات، قد يحاول المجيبون على الاختبارات تشويه نتائجهم. وتستكشف المقاييس التالية خطر التشويه في هذه النتائج.
         </p>
 
-        <table style="width: 100%; border-collapse: collapse; text-align: right; table-layout: fixed; margin-top: 6px; margin-bottom: 16px;">
+        <table style="width: 100%; border-collapse: collapse; text-align: right; table-layout: fixed; margin-top: 10px; margin-bottom: 24px;">
             <thead>
                 <tr>
                     <!-- 1st in HTML (Left): التفسير (45%) -->
-                    <th style="width: 45%; text-align: right; padding: 8px 6px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 11px;">التفسير</th>
+                    <th style="width: 45%; text-align: right; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 12px;">التفسير</th>
                     <!-- 2nd in HTML: الخطر (15%) -->
-                    <th style="width: 15%; text-align: center; padding: 8px 6px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 11px;">الخطر</th>
+                    <th style="width: 15%; text-align: center; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 12px;">الخطر</th>
                     <!-- 3rd in HTML: الدرجة (15%) -->
-                    <th style="width: 15%; text-align: center; padding: 8px 6px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 11px;">الدرجة</th>
+                    <th style="width: 15%; text-align: center; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 12px;">الدرجة</th>
                     <!-- 4th in HTML (Right): المقياس (25%) -->
-                    <th style="width: 25%; text-align: right; padding: 8px 6px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 11px;">المقياس</th>
+                    <th style="width: 25%; text-align: right; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 12px;">المقياس</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Row 1: Social Desirability -->
-                <tr>
+                <tr style="height: 78px;">
                     <!-- 1st in HTML (Left): التفسير -->
-                    <td style="width: 45%; text-align: right; padding: 10px 6px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; line-height: 1.45; color: #334155;">
+                    <td style="width: 45%; text-align: right; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; line-height: 1.65; color: #334155; font-size: 11px;">
                         <span th:text="${socialInterpretation}"></span>
                     </td>
                     <!-- 2nd in HTML: الخطر -->
-                    <td style="width: 15%; text-align: center; padding: 10px 6px; border-bottom: 1px solid #e2e8f0; vertical-align: middle;">
+                    <td style="width: 15%; text-align: center; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle;">
                         <span class="risk-badge" th:text="${socialRisk}">متوسط</span>
                     </td>
                     <!-- 3rd in HTML: الدرجة -->
-                    <td style="width: 15%; text-align: center; padding: 10px 6px; border-bottom: 1px solid #e2e8f0; vertical-align: middle;">
+                    <td style="width: 15%; text-align: center; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle;">
                         <div class="score-cell-box">
                             <span th:text="${socialScore}">5</span>
                         </div>
                     </td>
                     <!-- 4th in HTML (Right): المقياس -->
-                    <td style="width: 25%; text-align: right; padding: 10px 6px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #1e3a4c; vertical-align: middle;">
+                    <td style="width: 25%; text-align: right; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #1e3a4c; vertical-align: middle; font-size: 12px;">
                         مؤشر التظاهر الاجتماعي
                     </td>
                 </tr>
 
                 <!-- Row 2: Central Tendency -->
-                <tr>
+                <tr style="height: 78px;">
                     <!-- 1st in HTML (Left): التفسير -->
-                    <td style="width: 45%; text-align: right; padding: 10px 6px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; line-height: 1.45; color: #334155;">
+                    <td style="width: 45%; text-align: right; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; line-height: 1.65; color: #334155; font-size: 11px;">
                         <span th:text="${centralInterpretation}"></span>
                     </td>
                     <!-- 2nd in HTML: الخطر -->
-                    <td style="width: 15%; text-align: center; padding: 10px 6px; border-bottom: 1px solid #e2e8f0; vertical-align: middle;">
+                    <td style="width: 15%; text-align: center; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle;">
                         <span class="risk-badge" th:text="${centralRisk}">منخفض</span>
                     </td>
                     <!-- 3rd in HTML: الدرجة -->
-                    <td style="width: 15%; text-align: center; padding: 10px 6px; border-bottom: 1px solid #e2e8f0; vertical-align: middle;">
+                    <td style="width: 15%; text-align: center; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle;">
                         <div class="score-cell-box">
                             <span th:text="${centralScore}">2</span>
                         </div>
                     </td>
                     <!-- 4th in HTML (Right): المقياس -->
-                    <td style="width: 25%; text-align: right; padding: 10px 6px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #1e3a4c; vertical-align: middle;">
+                    <td style="width: 25%; text-align: right; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #1e3a4c; vertical-align: middle; font-size: 12px;">
                         مؤشر وسطية الإجابة
                     </td>
                 </tr>
@@ -384,7 +404,7 @@
                 </tr>
             </table>
             <div class="banner-copyright">
-                &#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
+                &amp;#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
             </div>
         </div>
     </div>

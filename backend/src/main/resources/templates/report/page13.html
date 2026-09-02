@@ -10,7 +10,7 @@
            ========================================================================== */
         @page {
             size: A4 portrait;
-            margin: 8mm 15mm 20mm 15mm;
+            margin: 0;
         }
 
         * {
@@ -31,44 +31,22 @@
             line-height: 1.5;
         }
 
-        /* 1. Top Running Banner &amp; Framing Header */
-        .top-running-banner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        /* 0. Main Page 10px Boundary Wrapper */
+        .page13-wrapper {
+            padding: 10px;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
             position: relative;
-            margin-bottom: 12px;
-            padding-bottom: 4px;
         }
 
-        .banner-left-wrap {
-            display: flex;
-            align-items: center;
-        }
-
-        .page-num-polygon-badge {
-            background-color: #1a4331;
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: 800;
-            font-family: 'Inter', 'Arial', sans-serif;
-            padding: 3px 18px 3px 12px;
-            clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 32px;
-            height: 22px;
-            line-height: 22px;
-        }
-
-        .running-report-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: #334155;
-            direction: rtl;
-            margin-right: auto;
-            padding-right: 4px;
+        /* 1. Page Main Header */
+        .page-header-box {
+            width: 100%;
+            border-bottom: 2px solid #1e3a4c;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+            background: transparent;
         }
 
         .candidate-id-span {
@@ -77,15 +55,6 @@
             color: #1e3a4c;
         }
 
-        .top-accent-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: #8a5a44;
-            z-index: 1;
-        }
 
         /* 2. Competency Header Section */
         .competency-header-block {
@@ -326,14 +295,18 @@
         }
 
         table.detail-table td {
-            padding: 10px 10px;
+            padding: 18px 10px;
             vertical-align: top;
             border: none;
             border-bottom: 1px solid #e2e8f0;
-            line-height: 1.55;
+            line-height: 1.65;
             color: #334155;
             box-sizing: border-box;
             text-align: justify;
+        }
+
+        table.detail-table tr {
+            height: 96px;
         }
 
         table.detail-table tr:last-child td {
@@ -342,15 +315,14 @@
 
         td.td-level-cell {
             text-align: center;
-            vertical-align: middle;
-            padding: 8px 4px !important;
+            vertical-align: middle !important;
+            padding: 12px 4px !important;
         }
 
-        /* Dynamic Indicator Status Pill */
         .level-status-pill {
-            width: 18px;
-            height: 28px;
-            border-radius: 5px;
+            width: 20px;
+            height: 32px;
+            border-radius: 6px;
             display: inline-block;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
@@ -362,43 +334,48 @@
             left: 0;
             right: 0;
             width: 100%;
-            padding: 0 15mm 6mm 15mm;
+            padding: 0 10px 10px 10px;
             box-sizing: border-box;
         }
 
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
         .banner-copyright {
-            font-size: 8px;
+            font-size: 8.5px;
             color: #64748b;
             font-family: 'Inter', 'Arial', sans-serif;
             direction: ltr;
             text-align: center;
-            margin-top: 3px;
+            margin-top: 4px;
         }
     </style>
 </head>
 <body>
-    <div th:fragment="body">
-<div class="competency-header-block">
-        <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'التحليل والتخطيط المنهجي'}">التحليل والتخطيط المنهجي</h2>
-        <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'القدرة على تفكيك المشكلات المعقدة والاعتماد على البيانات المنطقية لبناء خطط عمل دقيقة ومنهجية قابلة للتنفيذ.'}">
-            القدرة على تفكيك المشكلات المعقدة والاعتماد على البيانات المنطقية لبناء خطط عمل دقيقة ومنهجية قابلة للتنفيذ.
-        </p>
-    </div>
+    <div th:fragment="body" class="page13-wrapper">
+        <!-- Page Header with Left-Corner Page Number -->
+        <div class="page-header-box">
+            <table style="width: 100%; border-collapse: collapse; border: none; background: transparent;">
+                <tr>
+                    <td style="text-align: left; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px;" th:text="'صفحة ' + (${pageNum != null ? pageNum : 13})">صفحة 13</span>
+                    </td>
+                    <td style="text-align: right; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-size: 12px; font-weight: 700; color: #1e3a4c;">
+                            تقرير الكفاءات للقادة | <span style="font-family: 'Inter', 'Arial', sans-serif;" th:text="${candidateId != null ? candidateId : 'CAN-98234'}">CAN-98234</span>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Competency Header Block -->
+        <div class="competency-header-block">
+            <h2 class="competency-title" th:text="${competencyTitle != null ? competencyTitle : 'التحليل والتخطيط المنهجي'}">التحليل والتخطيط المنهجي</h2>
+            <p class="competency-desc" th:text="${competencyDesc != null ? competencyDesc : 'القدرة على تفكيك المشكلات المعقدة والاعتماد على البيانات المنطقية لبناء خطط عمل دقيقة ومنهجية قابلة للتنفيذ.'}">
+                القدرة على تفكيك المشكلات المعقدة والاعتماد على البيانات المنطقية لبناء خطط عمل دقيقة ومنهجية قابلة للتنفيذ.
+            </p>
+        </div>
 
     <!-- 3. Visual Score Scale Bar (Strict Fixed Table Layout) -->
-    <table style="width: 100%; table-layout: fixed; border-collapse: collapse; border: none; margin-top: 12px; margin-bottom: 12px;">
+    <table style="width: 100%; table-layout: fixed; border-collapse: collapse; border: none; margin-top: 14px; margin-bottom: 22px;">
         <colgroup>
             <col style="width: 45%;" />
             <col style="width: 55%;" />
@@ -453,7 +430,7 @@
                     </div>
                 </div>
             </td>
-            <!-- Right Side 55%: Trait Name & Colored Pill -->
+            <!-- Right Side 55%: Trait Name &amp; Colored Pill -->
             <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
                 <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
                       th:styleappend="'background-color: ' + (${analysisColor != null ? analysisColor : (competencyColor != null ? competencyColor : '#c87d46')}) + ';'"></span>
@@ -521,7 +498,7 @@
             </tr>
         </table>
         <div class="banner-copyright">
-            &#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
+            &amp;#169; <span th:text="${#dates != null ? #dates.year(#dates.createNow()) : '2026'}">2026</span> Assessment Platform
         </div>
     </div>
     </div>

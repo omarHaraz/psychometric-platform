@@ -10,6 +10,7 @@ import com.psychometric.platform.features.report.dto.ReportContextDto.Competency
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -105,8 +106,24 @@ public class LeadershipReportGeneratorService {
      */
     @Cacheable(value = "leadershipReports", key = "#rawScore != null && #rawScore.attemptToken != null ? #rawScore.attemptToken : (#rawScore != null && #rawScore.id != null ? #rawScore.id : 'default')", unless = "#result == null")
     public ReportContextDto generateReport(AssessmentScoreResponseDto rawScore) {
+        // Step 1: Strict Battery-Level Authorization Gate
         if (rawScore == null) {
-            return ReportContextDto.createDefaultReport("PCIV126371");
+            throw new AccessDeniedException("لا تملك الصلاحية لإصدار التقرير: لم تقم باستكمال جميع بطاريات الاختبار.");
+        }
+
+        boolean isPersonalityEmpty = rawScore.getPersonalityScore() == null || rawScore.getPersonalityScore() <= 0.0;
+        boolean isDerailersEmpty = rawScore.getDerailersEffectiveScorePct() == null || rawScore.getDerailersEffectiveScorePct() <= 0.0;
+        boolean isGcatEmpty = rawScore.getGcatScore() == null || rawScore.getGcatScore() <= 0.0;
+
+        if (isPersonalityEmpty || isDerailersEmpty || isGcatEmpty) {
+            throw new AccessDeniedException("لا تملك الصلاحية لإصدار التقرير: لم تقم باستكمال جميع بطاريات الاختبار.");
+        }
+
+        if (rawScore.getTraitScores() == null 
+                || rawScore.getTraitScores().isEmpty() 
+                || rawScore.getCompositeScore() == null 
+                || rawScore.getCompositeScore() <= 0.0) {
+            throw new AccessDeniedException("لا تملك الصلاحية لإصدار التقرير: لم تقم باستكمال جميع بطاريات الاختبار.");
         }
 
         log.info("Generating Leadership Assessment Report for candidate: {}", rawScore.getCandidateName());
@@ -125,7 +142,7 @@ public class LeadershipReportGeneratorService {
         report.setEvaluationPurpose("تقرير الكفاءات للقادة: تطوير");
 
         // Page 1: Composite Score
-        double compositePct = rawScore.getCompositeScore() != null ? rawScore.getCompositeScore() : 88.5;
+        double compositePct = rawScore.getCompositeScore() != null ? rawScore.getCompositeScore() : 0.0;
         report.setResultScore(String.format(Locale.US, "%.1f", compositePct));
 
         // 2. Normalize Page 2: Impression Management & Validity
@@ -162,7 +179,7 @@ public class LeadershipReportGeneratorService {
         // =========================================================================
         // Step 3: Hard-Log Lifecycle Trace for Score & Color Integrity
         // =========================================================================
-        double initRaw = findTraitScorePct(traitMap, rawScore.getTraitScores(), "INITIATIVE", 2, 50.0);
+        double initRaw = findTraitScorePct(traitMap, rawScore.getTraitScores(), "INITIATIVE", 2, 0.0);
         var page7Dto = report.getCompetencyPages().get(7);
         log.info("================================================================================");
         log.info("[LIFECYCLE TRACE] ReportContextDto audit for attempt token: {}", candidateId);
@@ -185,20 +202,20 @@ public class LeadershipReportGeneratorService {
 
     private void normalizeImpressionManagement(AssessmentScoreResponseDto raw, ReportContextDto report) {
         // Social Desirability: 0..100% -> 1..10 scale
-        double sdRisk = raw.getSocialDesirabilityRiskPct() != null ? raw.getSocialDesirabilityRiskPct() : 50.0;
+        double sdRisk = raw.getSocialDesirabilityRiskPct() != null ? raw.getSocialDesirabilityRiskPct() : 0.0;
         int social10 = scaleTo10(sdRisk);
         report.setSocialScore(social10);
         report.setSocialRisk(social10 <= 3 ? "منخفض" : (social10 <= 7 ? "متوسط" : "مرتفع"));
 
         // Central Tendency: 0..100% -> 1..10 scale
-        double ctRate = raw.getCentralTendencyRatePct() != null ? raw.getCentralTendencyRatePct() : 20.0;
+        double ctRate = raw.getCentralTendencyRatePct() != null ? raw.getCentralTendencyRatePct() : 0.0;
         int central10 = scaleTo10(ctRate);
         report.setCentralScore(central10);
         report.setCentralRisk(central10 <= 3 ? "منخفض" : (central10 <= 7 ? "متوسط" : "مرتفع"));
     }
 
     private void normalizePersonalityDerailers(AssessmentScoreResponseDto raw, ReportContextDto report) {
-        // Extract derailer category scores or use defaults
+        // Extract derailer category scores (Proximity to ideal behavior: 100% = Perfect Alignment -> Inverted Risk: 1/10)
         Map<String, Double> categoryScoreMap = new HashMap<>();
         if (raw.getDerailerCategoryScores() != null) {
             for (var cs : raw.getDerailerCategoryScores()) {
@@ -208,12 +225,22 @@ public class LeadershipReportGeneratorService {
             }
         }
 
-        report.setReservedScore(scaleTo10(categoryScoreMap.getOrDefault("التحفظ", 60.0)));
-        report.setEmotionalityScore(scaleTo10(categoryScoreMap.getOrDefault("الانفعالية", 50.0)));
-        report.setHostilityScore(scaleTo10(categoryScoreMap.getOrDefault("العدائية", 60.0)));
-        report.setImpulsivityScore(scaleTo10(categoryScoreMap.getOrDefault("الاندفاعية", 60.0)));
-        report.setRigidityScore(scaleTo10(categoryScoreMap.getOrDefault("الصرامة", 60.0)));
-        report.setUnconventionalityScore(scaleTo10(categoryScoreMap.getOrDefault("اللامألوفية", 70.0)));
+        Double rawReserved = categoryScoreMap.get("التحفظ");
+        Double rawEmotionality = categoryScoreMap.get("الانفعالية");
+        Double rawHostility = categoryScoreMap.get("العدائية");
+        Double rawImpulsivity = categoryScoreMap.get("الاندفاعية");
+        Double rawRigidity = categoryScoreMap.get("الصرامة");
+        Double rawUnconventionality = categoryScoreMap.get("اللامألوفية");
+
+        log.info("[DERAILER SCORING AUDIT] Candidate: {} | Raw Ideal Pct: Reserved={}%, Emotionality={}%, Hostility={}%, Impulsivity={}%, Rigidity={}%, Unconventionality={}%",
+                report.getCandidateName(), rawReserved, rawEmotionality, rawHostility, rawImpulsivity, rawRigidity, rawUnconventionality);
+
+        report.setReservedScore(scaleTo10Derailer(rawReserved != null ? rawReserved : 100.0));
+        report.setEmotionalityScore(scaleTo10Derailer(rawEmotionality != null ? rawEmotionality : 100.0));
+        report.setHostilityScore(scaleTo10Derailer(rawHostility != null ? rawHostility : 100.0));
+        report.setImpulsivityScore(scaleTo10Derailer(rawImpulsivity != null ? rawImpulsivity : 100.0));
+        report.setRigidityScore(scaleTo10Derailer(rawRigidity != null ? rawRigidity : 100.0));
+        report.setUnconventionalityScore(scaleTo10Derailer(rawUnconventionality != null ? rawUnconventionality : 100.0));
     }
 
     private Double findTraitScorePct(Map<String, Double> traitMap, List<AssessmentScoreResponseDto.TraitScoreDto> traitScores, String code, int displayOrder, double fallbackDefault) {
@@ -250,41 +277,41 @@ public class LeadershipReportGeneratorService {
         }
 
         // 1. Overall Score
-        double compositePct = raw.getCompositeScore() != null ? raw.getCompositeScore() : 50.0;
+        double compositePct = raw.getCompositeScore() != null ? raw.getCompositeScore() : 0.0;
         int overall5 = scaleTo5(compositePct);
         report.setOverallScore(overall5);
         report.setOverallColor(getTierColor(scaleTo5Double(compositePct)));
 
         // 2. Behavioral Competencies (Continuous Double Scale 1.0–5.0)
-        double comm = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "COMMUNICATION_AND_INFLUENCE", 1, 50.0));
+        double comm = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "COMMUNICATION_AND_INFLUENCE", 1, 0.0));
         report.setCommScore(comm);
         report.setCommColor(getTierColor(comm));
 
-        double init = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INITIATIVE", 2, 50.0));
+        double init = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INITIATIVE", 2, 0.0));
         report.setInitiativeScore(init);
         report.setInitiativeColor(getTierColor(init));
 
-        double dec = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "DECISION_MAKING_AND_RESPONSIBILITY", 3, 50.0));
+        double dec = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "DECISION_MAKING_AND_RESPONSIBILITY", 3, 0.0));
         report.setDecisionScore(dec);
         report.setDecisionColor(getTierColor(dec));
 
-        double lead = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INSPIRING_LEADERSHIP", 4, 50.0));
+        double lead = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INSPIRING_LEADERSHIP", 4, 0.0));
         report.setLeadershipScore(lead);
         report.setLeadershipColor(getTierColor(lead));
 
-        double strat = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "STRATEGIC_THINKING", 5, 50.0));
+        double strat = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "STRATEGIC_THINKING", 5, 0.0));
         report.setStrategicScore(strat);
         report.setStrategicColor(getTierColor(strat));
 
-        double skills = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SKILL_DEVELOPMENT", 6, 50.0));
+        double skills = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SKILL_DEVELOPMENT", 6, 0.0));
         report.setSkillsScore(skills);
         report.setSkillsColor(getTierColor(skills));
 
-        double adapt = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "ADAPTABILITY", 7, 50.0));
+        double adapt = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "ADAPTABILITY", 7, 0.0));
         report.setAdaptabilityScore(adapt);
         report.setAdaptabilityColor(getTierColor(adapt));
 
-        double plan = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SYSTEMATIC_ANALYSIS_AND_PLANNING", 8, 50.0));
+        double plan = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SYSTEMATIC_ANALYSIS_AND_PLANNING", 8, 0.0));
         report.setAnalysisScore(plan);
         report.setAnalysisColor(getTierColor(plan));
 
@@ -298,15 +325,15 @@ public class LeadershipReportGeneratorService {
             }
         }
 
-        double abs = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.ABSTRACT, 50.0));
+        double abs = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.ABSTRACT, 0.0));
         report.setAbstractScore(abs);
         report.setAbstractColor(getTierColor(abs));
 
-        double num = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.NUMERICAL, 50.0));
+        double num = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.NUMERICAL, 0.0));
         report.setNumericalScore(num);
         report.setNumericalColor(getTierColor(num));
 
-        double verb = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.VERBAL, 50.0));
+        double verb = scaleTo5Double(gcatMap.getOrDefault(GcatSubtestCode.VERBAL, 0.0));
         report.setVerbalScore(verb);
         report.setVerbalColor(getTierColor(verb));
         report.setGeneralAbilitiesColor(getTierColor((abs + num + verb) / 3.0));
@@ -381,7 +408,7 @@ public class LeadershipReportGeneratorService {
         dto.setCandidateId(report.getCandidateId());
         
         int expectedDisplayOrder = pageNum - 5;
-        double dScore = scaleTo5Double(findTraitScorePct(traitMap, traitScores, competencyCode, expectedDisplayOrder, 50.0));
+        double dScore = scaleTo5Double(findTraitScorePct(traitMap, traitScores, competencyCode, expectedDisplayOrder, 0.0));
         dto.setCompetencyScore(dScore);
         dto.setCompetencyColor(competencyColor);
 
@@ -556,16 +583,29 @@ public class LeadershipReportGeneratorService {
      * Converts a 0..100 percentage score to an integer 1..10 scale.
      */
     public static int scaleTo10(Double scorePct) {
-        if (scorePct == null) return 5;
+        if (scorePct == null) return 1;
         int scaled = (int) Math.round((Math.max(0.0, Math.min(100.0, scorePct)) / 100.0) * 9.0) + 1;
         return Math.max(1, Math.min(10, scaled));
+    }
+
+    /**
+     * Converts a 0..100% ideal alignment score to a 1..10 Derailer Risk scale (inverted polarity).
+     * High ideal score (e.g. 100%) -> Low Risk (1/10)
+     * Low ideal score (e.g. 0%)    -> High Risk (10/10)
+     * Formula: 11 - (round(scorePct/100 * 9.0) + 1)
+     */
+    public static int scaleTo10Derailer(Double idealScorePct) {
+        if (idealScorePct == null) return 1;
+        int baseScore = (int) Math.round((Math.max(0.0, Math.min(100.0, idealScorePct)) / 100.0) * 9.0) + 1;
+        int riskScore = 11 - baseScore;
+        return Math.max(1, Math.min(10, riskScore));
     }
 
     /**
      * Converts a 0..100 percentage score to a continuous Double 1..5 scale (2 decimal places).
      */
     public static double scaleTo5Double(Double scorePct) {
-        if (scorePct == null) return 3.0;
+        if (scorePct == null) return 1.0;
         double scaled = (Math.max(0.0, Math.min(100.0, scorePct)) / 100.0) * 4.0 + 1.0;
         return Math.round(scaled * 100.0) / 100.0;
     }
@@ -574,7 +614,7 @@ public class LeadershipReportGeneratorService {
      * Converts a 0..100 percentage score to an integer 1..5 scale.
      */
     public static int scaleTo5(Double scorePct) {
-        if (scorePct == null) return 3;
+        if (scorePct == null) return 1;
         int scaled = (int) Math.round((Math.max(0.0, Math.min(100.0, scorePct)) / 100.0) * 4.0) + 1;
         return Math.max(1, Math.min(5, scaled));
     }

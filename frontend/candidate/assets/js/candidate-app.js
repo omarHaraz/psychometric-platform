@@ -826,6 +826,18 @@ async function fetchAndRenderBatteryItems(session) {
         responsesMap = {};
         itemStartTimes = {};
 
+        // For SJT, pre-populate default order so accepting default without swapping is safely recorded
+        if (session.sequenceOrder === 1 || (session.batteryType && session.batteryType.toUpperCase() === 'SJT')) {
+            activeItems.forEach(item => {
+                if (item.options && Array.isArray(item.options)) {
+                    responsesMap[item.id] = {
+                        rankingOrder: item.options.map(o => o.optionKey),
+                        responseTimeMs: 0
+                    };
+                }
+            });
+        }
+
         // Setup battery header
         const meta = BATTERY_METADATA[session.sequenceOrder] || BATTERY_METADATA[0];
         document.getElementById("activeBatteryBadge").textContent = meta.badge;
@@ -1204,15 +1216,30 @@ async function submitActiveBattery(isAutoTimeout = false) {
     if (countdownTimerInterval) clearInterval(countdownTimerInterval);
     if (heartbeatInterval) clearInterval(heartbeatInterval);
 
+    // CRUCIAL: Immediately flush current responses before submit
+    await sendHeartbeat();
+
     const autoAdvanceOverlay = document.getElementById("overlay-auto-advance");
     if (!isAutoTimeout && autoAdvanceOverlay) {
         autoAdvanceOverlay.classList.remove("hidden");
     }
 
+    const payloadList = Object.keys(responsesMap).map(itemId => ({
+        itemId: Number(itemId),
+        selectedLikert: responsesMap[itemId].selectedLikert || null,
+        rankingOrder: responsesMap[itemId].rankingOrder || null,
+        selectedOption: responsesMap[itemId].selectedOption || null,
+        responseTimeMs: responsesMap[itemId].responseTimeMs || 0
+    }));
+
     try {
         const res = await fetch(`${API_BASE}/api/attempts/battery-sessions/${activeSession.id}/submit`, {
             method: "POST",
-            headers: getAuthHeader()
+            headers: {
+                ...getAuthHeader(),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ responses: payloadList })
         });
 
         if (!res.ok) throw new Error("Failed to submit battery");

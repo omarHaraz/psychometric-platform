@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تنبيه: الاختبار غير مكتمل | منصة التقييم القيادي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f1f5f9;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 16px;
+            direction: rtl;
+            text-align: right;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-bar {
+            background: linear-gradient(135deg, #1e3a4c 0%, #0f172a 100%);
+            padding: 32px 28px 28px 28px;
+            color: #ffffff;
+            text-align: center;
+            position: relative;
+        }
+
+        .icon-circle {
+            width: 68px;
+            height: 68px;
+            background: rgba(217, 119, 54, 0.15);
+            border: 2px solid rgba(217, 119, 54, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px auto;
+            color: #f59e0b;
+            font-size: 30px;
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(245, 158, 11, 0.18);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            color: #fef08a;
+            padding: 4px 14px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .header-subtitle {
+            font-size: 13.5px;
+            color: #94a3b8;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .content-body {
+            padding: 28px;
+        }
+
+        .reason-box {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-right: 4px solid #d97706;
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+            color: #92400e;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .reason-box-title {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #78350f;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 12px;
+        }
+
+        .battery-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .battery-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .battery-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .battery-icon {
+            width: 36px;
+            height: 36px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #1e3a4c;
+        }
+
+        .battery-name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .battery-desc {
+            font-size: 11.5px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .battery-status {
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: #fee2e2;
+            color: #dc2626;
+            white-space: nowrap;
+        }
+
+        .admin-notice-box {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-right: 4px solid #0284c7;
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .admin-notice-icon {
+            font-size: 20px;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .admin-notice-title {
+            font-weight: 700;
+            font-size: 13.5px;
+            color: #0369a1;
+            margin-bottom: 4px;
+        }
+
+        .admin-notice-text {
+            font-size: 12.5px;
+            color: #0c4a6e;
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 22px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11.5px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header-bar">
+        <div class="pill-badge">
+            <span>⚠️</span> تنبيه معايير التقييم
+        </div>
+        <div class="icon-circle">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="M12 8v4"></path>
+                <path d="M12 16h.01"></path>
+            </svg>
+        </div>
+        <h1 class="header-title">تعذر إصدار التقرير القيادي</h1>
+        <p class="header-subtitle">
+            لم يتم استكمال جميع بطاريات التقييم المطلوبة لإصدار التقرير النهائي.
+        </p>
+    </div>
+
+    <!-- Body Content -->
+    <div class="content-body">
+        <!-- Reason Box -->
+        <div class="reason-box">
+            <div class="reason-box-title">
+                <span>📌</span> سبب حجب التقرير:
+            </div>
+            <p th:text="${errorMessage != null ? errorMessage : 'لا تملك الصلاحية لإصدار التقرير: لم تقم باستكمال جميع بطاريات الاختبار.'}">
+                لا تملك الصلاحية لإصدار التقرير: لم تقم باستكمال جميع بطاريات الاختبار.
+            </p>
+        </div>
+
+        <div class="section-title">البطاريات الإلزامية المطلوبة للتقييم:</div>
+
+        <!-- Battery Status Cards -->
+        <div class="battery-list">
+            <!-- 1. Personality -->
+            <div class="battery-item">
+                <div class="battery-info">
+                    <div class="battery-icon">📋</div>
+                    <div>
+                        <div class="battery-name">1. بطارية الكفاءات والسمات القيادية (PQ10)</div>
+                        <div class="battery-desc">قياس السمات السلوكية ومؤشرات القيادة والسمات المعرقلة.</div>
+                    </div>
+                </div>
+                <div class="battery-status">مطلوبة</div>
+            </div>
+
+            <!-- 2. Derailers -->
+            <div class="battery-item">
+                <div class="battery-info">
+                    <div class="battery-icon">⚡</div>
+                    <div>
+                        <div class="battery-name">2. بطارية محاذير السلوك والسمات المعرقلة (Derailers)</div>
+                        <div class="battery-desc">قياس الأنماط السلوكية السلبية والمخاطر المحتملة تحت ضغوط العمل.</div>
+                    </div>
+                </div>
+                <div class="battery-status">مطلوبة</div>
+            </div>
+
+            <!-- 3. GCAT Cognitive -->
+            <div class="battery-item">
+                <div class="battery-info">
+                    <div class="battery-icon">🧠</div>
+                    <div>
+                        <div class="battery-name">3. اختبار القدرات المعرفية والعقلية (GCAT)</div>
+                        <div class="battery-desc">قياس الاستدلال المنطقي والتحليلي، والقدرات اللفظية والعددية.</div>
+                    </div>
+                </div>
+                <div class="battery-status">مطلوبة</div>
+            </div>
+        </div>
+
+        <!-- Guidance Note (Contact Admin for Retake Opportunity) -->
+        <div class="admin-notice-box">
+            <div class="admin-notice-icon">💡</div>
+            <div class="admin-notice-text">
+                <div class="admin-notice-title">توجيه للمرشح:</div>
+                <p>
+                    في حال فاتك استكمال أي من بطاريات التقييم أو انتهت صلاحية الجلسة، يُرجى <strong>التواصل مع مسؤول النظام (Admin)</strong> أو إدارة التقييم لتنسيق منحك فرصة جديدة لإعادة أو استكمال الاختبار.
+                </p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <span>↩️</span> الرجوع للخلف
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="footer-note">
+    منصة التقييم السيكومتري والقيادي &copy; 2026 جميع الحقوق محفوظة
+</div>
+
+</body>
+</html>

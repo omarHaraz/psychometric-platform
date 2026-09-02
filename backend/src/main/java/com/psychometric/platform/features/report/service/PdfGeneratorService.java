@@ -71,6 +71,11 @@ public class PdfGeneratorService {
             // 1. Process Thymeleaf Master Report Template into HTML String
             String htmlContent = generateHtmlReport(reportDto);
 
+            // 2. Sanitize HTML → XHTML: OpenHTMLtoPDF parses as strict XML.
+            //    Any bare '&' in rendered content (e.g. from DB data) must be &amp;
+            //    Replace & that is NOT already part of a named/numeric entity reference.
+            htmlContent = htmlContent.replaceAll("&(?!(amp|lt|gt|quot|apos|#\\d+|#x[0-9a-fA-F]+);)", "&amp;");
+
             // 2. Build PDF using OpenHTMLtoPDF with RTL text support & Unicode Bidirectional shaping
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 PdfRendererBuilder builder = new PdfRendererBuilder();

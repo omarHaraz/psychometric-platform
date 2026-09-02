@@ -190,7 +190,35 @@ public class AssessmentSessionService {
 
     @Transactional
     public AssessmentAttempt submitSession(Long sessionId, String username) {
+        return submitSession(sessionId, null, username);
+    }
+
+    @Transactional
+    public AssessmentAttempt submitSession(Long sessionId, HeartbeatRequest request, String username) {
         BatterySession session = validateSessionAction(sessionId, username);
+
+        // If direct responses were passed in the submit payload, persist them immediately
+        if (request != null && request.getResponses() != null && !request.getResponses().isEmpty()) {
+            try {
+                String respKey = "battery_session:" + sessionId + ":responses";
+                String json = objectMapper.writeValueAsString(request.getResponses());
+                redisTemplate.opsForValue().set(respKey, json, 300, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                // fall back to saving directly
+                for (HeartbeatRequest.ResponseDto dto : request.getResponses()) {
+                    CandidateResponse cr = new CandidateResponse();
+                    cr.setBatterySession(session);
+                    cr.setItemId(dto.getItemId());
+                    cr.setSelectedLikert(dto.getSelectedLikert());
+                    cr.setRankingOrder(dto.getRankingOrder());
+                    cr.setSelectedOption(dto.getSelectedOption());
+                    cr.setResponseTimeMs(dto.getResponseTimeMs());
+                    cr.setSubmittedAt(Instant.now());
+                    responseRepo.save(cr);
+                }
+            }
+        }
+
         long remaining = getRemainingTimeSeconds(session);
         if (remaining <= 0) {
             return autoSubmitSession(session);

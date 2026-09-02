@@ -229,4 +229,9 @@ public class AssessmentScoreResponseDto {
     public void setDerailerCategoryScores(List<DerailerCategoryScoreDto> derailerCategoryScores) { this.derailerCategoryScores = derailerCategoryScores; }
     public List<GcatSubtestScoreDto> getGcatSubtestScores() { return gcatSubtestScores; }
     public void setGcatSubtestScores(List<GcatSubtestScoreDto> gcatSubtestScores) { this.gcatSubtestScores = gcatSubtestScores; }
+
+    public Double getPersonalityScore() { return personalityScorePct; }
+    public Double getSjtScore() { return sjtScorePct; }
+    public Double getGcatScore() { return cognitiveScorePct; }
+    public Double getCognitiveScore() { return cognitiveScorePct; }
 }

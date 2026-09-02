@@ -312,11 +312,13 @@ public class AssessmentScoringService {
 
             double raw = 0.0;
             for (Long itemId : traitItemIds) {
-                int answer = answerMap.getOrDefault(itemId, 3);
-                int target = targetMap.getOrDefault(itemId, 5);
-                int distance = Math.abs(answer - target);
-                int points = 4 - distance;
-                raw += points;
+                if (answerMap.containsKey(itemId)) {
+                    int answer = answerMap.get(itemId);
+                    int target = targetMap.getOrDefault(itemId, 5);
+                    int distance = Math.abs(answer - target);
+                    int points = 4 - distance;
+                    raw += points;
+                }
             }
 
             totalPoints += raw;
@@ -334,8 +336,10 @@ public class AssessmentScoringService {
         double sdSum = 0.0;
         int sdCount = sdSampledIds.isEmpty() ? 4 : sdSampledIds.size();
         for (Long itemId : sdSampledIds) {
-            int answer = answerMap.getOrDefault(itemId, 1);
-            sdSum += (answer - 1);
+            if (answerMap.containsKey(itemId)) {
+                int answer = answerMap.get(itemId);
+                sdSum += (answer - 1);
+            }
         }
         double sdRiskPct = (sdSum / (sdCount * 4.0)) * 100.0;
         result.sdRiskPct = Math.min(100.0, Math.max(0.0, sdRiskPct));
@@ -474,27 +478,29 @@ public class AssessmentScoringService {
         double totalPoints = 0.0;
 
         for (Long itemId : sampledIds) {
-            int answer = answerMap.getOrDefault(itemId, 3);
-            int target = targetMap.getOrDefault(itemId, 1);
-            int distance = Math.abs(answer - target);
-            int points = 4 - distance;
+            if (answerMap.containsKey(itemId)) {
+                int answer = answerMap.get(itemId);
+                int target = targetMap.getOrDefault(itemId, 1);
+                int distance = Math.abs(answer - target);
+                int points = 4 - distance;
 
-            totalPoints += points;
+                totalPoints += points;
 
-            Long catId = itemCategoryMap.get(itemId);
-            if (catId != null) {
-                catPointsSum.put(catId, catPointsSum.getOrDefault(catId, 0.0) + points);
-                catItemCounts.put(catId, catItemCounts.getOrDefault(catId, 0) + 1);
+                Long catId = itemCategoryMap.get(itemId);
+                if (catId != null) {
+                    catPointsSum.put(catId, catPointsSum.getOrDefault(catId, 0.0) + points);
+                    catItemCounts.put(catId, catItemCounts.getOrDefault(catId, 0) + 1);
+                }
             }
         }
 
         int totalItems = sampledIds.isEmpty() ? 60 : sampledIds.size();
-        result.overallPct = (totalPoints / (totalItems * 4.0)) * 100.0;
+        result.overallPct = (totalItems > 0) ? (totalPoints / (totalItems * 4.0)) * 100.0 : 0.0;
 
         for (DerailerCategory cat : allCategories) {
             double raw = catPointsSum.getOrDefault(cat.getId(), 0.0);
             int n = catItemCounts.getOrDefault(cat.getId(), 10);
-            double pct = (n > 0) ? (raw / (n * 4.0)) * 100.0 : 0.0;
+            double pct = (n > 0 && catPointsSum.containsKey(cat.getId())) ? (raw / (n * 4.0)) * 100.0 : 0.0;
             result.categoryScores.add(new DerailerCategoryScore(null, cat, round2(raw), round2(pct)));
         }
 
