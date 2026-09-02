@@ -109,7 +109,7 @@
                 <span id="headerCandidateNameRight" class="text-sm font-bold text-slate-700">Candidate Name</span>
                 <div class="w-px h-5 bg-slate-200 mx-1"></div>
                 <button id="logoutBtn" class="text-slate-400 hover:text-red-600 transition-colors flex items-center gap-1.5 group" title="Sign Out">
-                    <span class="text-[11px] font-bold uppercase tracking-wider hidden sm:block group-hover:text-red-600">Log Out</span>
+                    <span id="logoutBtnText" class="text-[11px] font-bold uppercase tracking-wider hidden sm:block group-hover:text-red-600">تسجيل الخروج</span>
                     <span class="material-symbols-outlined text-[20px]">logout</span>
                 </button>
             </div>
@@ -118,218 +118,211 @@
     </header>
 
     <!-- MAIN APP CONTAINER -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-grow w-full flex flex-col md:flex-row items-start gap-6">
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-grow flex flex-col md:flex-row gap-8 w-full">
         
-        <aside id="dashboardSidebar" class="w-full md:w-1/4 flex flex-col gap-5 shrink-0 hidden">
+        <!-- SIDEBAR (Dynamic Profile, Progress & Battery Overview) -->
+        <aside id="mainSidebar" class="w-full md:w-1/3 flex flex-col gap-6 shrink-0">
+            
+            <!-- User Profile Card -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-lg">
+                        <span class="material-symbols-outlined text-2xl">account_circle</span>
+                    </div>
+                    <div>
+                        <h2 id="sidebarCandidateName" class="font-bold text-on-surface text-base">Candidate Name</h2>
+                        <p id="sidebarCandidateEmail" class="text-xs text-on-surface-variant font-mono">candidate@domain.com</p>
+                    </div>
+                </div>
+            </div>
 
-                    
-                    <!-- Candidate Profile Card -->
-                    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
-                        <div class="flex items-center gap-3.5 mb-4">
-                            <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-primary shrink-0">
-                                <span class="material-symbols-outlined text-[24px]">person</span>
-                            </div>
-                            <div>
-                                <h2 id="sidebarCandidateName" class="text-base font-bold text-on-surface">Candidate Name</h2>
-                                <p id="sidebarCandidateEmail" class="text-xs text-on-surface-variant">candidate@example.com</p>
-                            </div>
+            <!-- Support / Help Card -->
+            <div id="supportSection" class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2 text-slate-600">
+                    <span class="material-symbols-outlined text-base">headset_mic</span>
+                    <span>الدعم الفني</span>
+                </div>
+                <button onclick="window.showCustomModal({title: 'الدعم الفني', message: 'support@arabexperts.com\nPhone: +966 11 000 0000', icon: 'support_agent'})" class="text-xs font-semibold text-primary border border-primary bg-white rounded-lg px-3.5 py-1.5 hover:bg-primary hover:text-white transition-colors">
+                    تواصل معنا
+                </button>
+            </div>
+
+            <!-- Language Switcher Card -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 flex justify-between items-center">
+                <span class="text-xs font-medium text-on-surface-variant">Language / لغة</span>
+                <button id="rtlToggle" class="text-primary font-semibold text-xs px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                    Switch to English
+                </button>
+            </div>
+
+        </aside>
+
+        <aside id="testSidebar" class="w-full md:w-1/4 flex flex-col gap-2 shrink-0 hidden bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined">psychology</span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm text-on-surface">نظرة عامة على التقدم</h3>
+                    <p id="sidebarProgressText" class="text-xs text-on-surface-variant">الجزء 1 من 4</p>
+                </div>
+            </div>
+            <nav id="batteryNavList" class="flex flex-col gap-1">
+                <!-- Generated by JS -->
+            </nav>
+        </aside>
+
+        <!-- RIGHT CONTENT AREA -->
+        <div id="mainContentArea" class="flex-grow flex flex-col gap-6 min-w-0">
+            <!-- Loading State -->
+            <div id="view-loading" class="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                <div class="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <p class="text-sm font-medium text-on-surface-variant">جاري مزامنة جلسة التقييم...</p>
+            </div>
+
+            <!-- 1. VIEW: NO ACTIVE ASSESSMENT ASSIGNED (Empty state) -->
+            <div id="view-empty" class="hidden text-center py-16 max-w-lg mx-auto bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+                <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-3xl">assignment_late</span>
+                </div>
+                <h2 class="text-xl font-bold text-on-surface mb-2">لا يوجد اختبار نشط مخصص</h2>
+                <p class="text-sm text-on-surface-variant mb-6">
+                    لم يتم تعيين جلسة تقييم سيكومتري لحسابك حالياً. يرجى مراجعة مسؤول الموارد البشرية.
+                </p>
+            </div>
+
+            <!-- 2. VIEW: ONBOARDING / ASSESSMENT OVERVIEW SCREEN -->
+            <div id="view-onboarding" class="hidden space-y-6 w-full">
+                <!-- Assessment Hero Card -->
+                <section class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-100">
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold text-primary uppercase tracking-wider bg-emerald-50 px-2.5 py-1 rounded-md border border-primary/20">تقييم الكفاءات القيادية</span>
+                            <h1 id="onboardingAssessmentTitle" class="text-2xl sm:text-3xl font-extrabold text-on-surface tracking-tight">تقييم القيادة التنفيذية</h1>
+                            <p class="text-xs text-on-surface-variant">التقييم السيكومتري الشامل للكفاءات القيادية والقدرات المعرفية</p>
                         </div>
-                        <a href="javascript:void(0)" class="inline-flex items-center gap-1.5 text-primary text-xs font-semibold hover:underline">
-                            <span class="material-symbols-outlined text-[16px]">edit</span>
-                            <span>Update Profile</span>
-                        </a>
+                        <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-700 font-mono text-xs">
+                            <span class="material-symbols-outlined text-base text-slate-500">schedule</span>
+                            <span id="onboardingTotalTime">90 دقيقة</span>
+                        </div>
                     </div>
 
-                    <!-- Technical Support Card -->
-                    <div id="supportSection" class="bg-slate-50 border border-slate-200 rounded-xl p-5">
-                        <div class="flex items-start gap-3">
-                            <span class="material-symbols-outlined text-slate-600 mt-0.5">headset_mic</span>
-                            <div>
-                                <h3 class="text-sm font-bold text-on-surface mb-1">Technical Support</h3>
-                                <p class="text-xs text-on-surface-variant mb-3 leading-relaxed">Experiencing technical issues? Contact testing support for assistance.</p>
-                                <button onclick="window.showCustomModal({title: 'Technical Support', message: 'support@arabexperts.com\nPhone: +966 11 000 0000', icon: 'support_agent'})" class="text-xs font-semibold text-primary border border-primary bg-white rounded-lg px-3.5 py-1.5 hover:bg-primary hover:text-white transition-colors">
-                                    Contact Support
-                                </button>
-                            </div>
-                        </div>
+                    <!-- Warning / Integrity Block -->
+                    <div id="warningBlock" class="bg-slate-50 border-r-4 border-r-[#131b2e] p-4 flex items-start gap-3 rounded-l text-xs text-on-surface-variant leading-relaxed">
+                        <span class="material-symbols-outlined text-[#131b2e] text-lg shrink-0 mt-0.5">lock</span>
+                        <p>
+                            <strong class="text-on-surface">قاعدة نزاهة التقييم:</strong> يجب إكمال هذا التقييم في جلسة متواصلة واحدة. بمجرد البدء، لا يمكن إيقاف المؤقت أو العودة إلى الأقسام السابقة. تأكد من تخصيص 90 دقيقة دون مقاطعة.
+                        </p>
                     </div>
 
-                    <!-- Language Switcher Card -->
-                    <div class="bg-white border border-slate-200 rounded-xl p-4 flex justify-between items-center">
-                        <span class="text-xs font-medium text-on-surface-variant">Language / لغة</span>
-                        <button id="rtlToggle" class="text-primary font-semibold text-xs px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
-                            Switch to English
+                    <!-- 4 Battery Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        
+                        <!-- Battery 0: PQ10 -->
+                        <div id="card-battery-0" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-primary">01 &bull; اختبار الشخصية</span>
+                                <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-primary border border-primary/20">جاهز</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500">140 سؤالاً &bull; 40 دقيقة &bull; مقياس ليكرت</p>
+                        </div>
+
+                        <!-- Battery 1: SJT -->
+                        <div id="card-battery-1" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-700">02 &bull; اختبار الحكم على المواقف</span>
+                                <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">مغلق</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500">16 سؤالاً &bull; 45 دقيقة &bull; ترتيب الخيارات (4)</p>
+                        </div>
+
+                        <!-- Battery 2: Derailers -->
+                        <div id="card-battery-2" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-700">03 &bull; اختبار السلوكيات المعطلة</span>
+                                <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">مغلق</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500">60 سؤالاً &bull; 20 دقيقة &bull; مقياس ليكرت</p>
+                        </div>
+
+                        <!-- Battery 3: GCAT -->
+                        <div id="card-battery-3" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-700">04 &bull; اختبار القدرات المعرفية</span>
+                                <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">مغلق</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500">42 سؤالاً &bull; 20 دقيقة &bull; اختيار من متعدد</p>
+                        </div>
+
+                    </div>
+
+                    <!-- Start Button -->
+                    <div class="pt-2">
+                        <button id="startAssessmentBtn" class="w-full sm:w-auto bg-[#00685f] hover:bg-[#005049] text-white font-bold text-xs px-6 py-3 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2">
+                            <span>ابدأ التقييم</span>
+                            <span class="material-symbols-outlined text-base">arrow_back</span>
                         </button>
                     </div>
-
-                </aside>
-
-<aside id="testSidebar" class="w-full md:w-1/4 flex flex-col gap-2 shrink-0 hidden bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-            <span class="material-symbols-outlined">psychology</span>
-        </div>
-        <div>
-            <h3 class="font-bold text-sm text-on-surface">Progress Overview</h3>
-            <p id="sidebarProgressText" class="text-xs text-on-surface-variant">Part 1 of 4</p>
-        </div>
-    </div>
-    <nav id="batteryNavList" class="flex flex-col gap-1">
-        <!-- Generated by JS -->
-    </nav>
-</aside>
-
-<!-- RIGHT CONTENT AREA -->
-<div id="mainContentArea" class="flex-grow flex flex-col gap-6 min-w-0">
-<!-- Loading State -->
-        <div id="view-loading" class="flex flex-col items-center justify-center py-20 text-center space-y-4">
-            <div class="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-sm font-medium text-on-surface-variant">Synchronizing Assessment Session...</p>
-        </div>
-
-        <!-- 1. VIEW: NO ACTIVE ASSESSMENT ASSIGNED (Empty state) -->
-        <div id="view-empty" class="hidden text-center py-16 max-w-lg mx-auto bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
-            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-outlined text-3xl">assignment_late</span>
+                </section>
             </div>
-            <h2 class="text-xl font-bold text-on-surface mb-2">No Active Assessment Assigned</h2>
-            <p class="text-sm text-on-surface-variant mb-6">
-                You do not currently have any pending psychometric evaluations. Please contact your administrator to assign a test to your profile.
-            </p>
-            
-        </div>
 
-        <!-- 2. VIEW: CANDIDATE DASHBOARD PORTAL VIEW (Active Assessment) -->
-        <div id="view-pending-portal" class="hidden w-full">
-            <section class="bg-white rounded-xl shadow-xs border-t-4 border-t-[#00685f] border-x border-b border-slate-200 p-6 space-y-5">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-bold text-on-surface">Executive Leadership Aptitude</h1>
-                        <div class="flex items-center gap-4 text-xs text-on-surface-variant mt-1">
-                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">format_list_bulleted</span> 4 Parts</span>
-                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> Approx. 90 mins</span>
-                        </div>
-                    </div>
-                    <span id="attemptStatusBadge" class="bg-emerald-50 text-primary border border-primary/20 px-2.5 py-1 rounded text-xs font-bold">
-                        Status: Pending
-                    </span>
+            <!-- 3. VIEW: PRE-BATTERY INSTRUCTIONS -->
+            <div id="view-instructions" class="hidden max-w-2xl mx-auto w-full bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="text-center space-y-2 pb-4 border-b border-slate-100">
+                    <span id="instPartNumber" class="text-xs font-bold text-primary uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-primary/20">الجزء 1 من 4</span>
+                    <h2 id="instBatteryTitle" class="text-2xl font-bold text-on-surface">اختبار الشخصية</h2>
+                    <p id="instBatteryArabicTitle" class="hidden text-sm text-on-surface-variant arabic-text"></p>
                 </div>
 
-                <!-- Warning / Integrity Block -->
-                <div id="warningBlock" class="bg-slate-50 border-l-4 border-l-[#131b2e] p-4 flex items-start gap-3 rounded-r text-xs text-on-surface-variant leading-relaxed">
-                    <span class="material-symbols-outlined text-[#131b2e] text-lg shrink-0 mt-0.5">lock</span>
-                    <p>
-                        <strong class="text-on-surface">Assessment Integrity Rule:</strong> This assessment must be completed in a single continuous sitting. Once started, you cannot pause the timer or return to previous sections. Ensure you have 90 minutes of uninterrupted time.
+                <!-- Intermission Timer (Hidden by default) -->
+                <div id="instIntermissionBlock" class="hidden bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center space-y-2">
+                    <div class="flex items-center justify-center gap-2 text-primary">
+                        <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                        <span id="instIntermissionTitle" class="font-bold text-sm">تم تسليم الجزء السابق بنجاح</span>
+                    </div>
+                    <p class="text-xs text-emerald-800">
+                        <span id="instIntermissionMsg">استراحة قصيرة. يمكنك بدء الجزء التالي فوراً، أو سيبدأ تلقائياً خلال</span>
+                        <strong id="instIntermissionSecs">60</strong>
+                        <span id="instIntermissionUnit"> ثانية...</span>
                     </p>
-                </div>
-
-                <!-- 4 Battery Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                    
-                    <!-- Battery 0: PQ10 -->
-                    <div id="card-battery-0" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-primary">01 &bull; Personality (PQ10)</span>
-                            <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-primary border border-primary/20">READY</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500">140 items &bull; 40 mins &bull; Likert</p>
+                    <div class="w-full bg-emerald-200/50 h-1.5 rounded-full overflow-hidden mt-2">
+                        <div id="instIntermissionBar" class="bg-primary h-full transition-all duration-[1000ms] ease-linear" style="width: 100%;"></div>
                     </div>
+                </div>
 
-                    <!-- Battery 1: SJT -->
-                    <div id="card-battery-1" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-slate-700">02 &bull; SJT Ranking</span>
-                            <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500">16 scenarios &bull; 45 mins &bull; Ranking</p>
+                <!-- Key Info Box -->
+                <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl text-center border border-slate-100">
+                    <div>
+                        <span id="lblTotalItems" class="block text-[11px] text-slate-500 uppercase font-semibold">عدد الأسئلة</span>
+                        <strong id="instItemCount" class="text-base text-slate-800">140 سؤالاً</strong>
                     </div>
-
-                    <!-- Battery 2: Derailers -->
-                    <div id="card-battery-2" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-slate-700">03 &bull; Derailers & Drivers</span>
-                            <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500">60 items &bull; 20 mins &bull; Likert</p>
+                    <div>
+                        <span id="lblTimeAllowed" class="block text-[11px] text-slate-500 uppercase font-semibold">الوقت المسموح</span>
+                        <strong id="instTimeLimit" class="text-base text-slate-800">40 دقيقة</strong>
                     </div>
-
-                    <!-- Battery 3: GCAT -->
-                    <div id="card-battery-3" class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 space-y-1.5">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-slate-700">04 &bull; Cognitive (GCAT)</span>
-                            <span class="battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-500 border border-slate-200">LOCKED</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500">42 questions &bull; 20 mins &bull; MCQ</p>
+                    <div>
+                        <span id="lblType" class="block text-[11px] text-slate-500 uppercase font-semibold">نوع الأسئلة</span>
+                        <strong id="instFormatType" class="text-base text-slate-800">مقياس ليكرت</strong>
                     </div>
-
                 </div>
 
-                <!-- Start Button -->
-                <div class="pt-2">
-                    <button id="startAssessmentBtn" class="w-full sm:w-auto bg-[#00685f] hover:bg-[#005049] text-white font-bold text-xs px-6 py-3 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2">
-                        <span>Start Assessment</span>
-                        <span class="material-symbols-outlined text-base">arrow_forward</span>
-                    </button>
+                <!-- Instructions List -->
+                <div id="instContainer" class="space-y-3 text-xs text-on-surface-variant leading-relaxed text-right" dir="rtl">
+                    <h4 id="instHeading" class="font-bold text-on-surface text-sm">تعليمات هامة:</h4>
+                    <ul id="instBulletList" class="space-y-2 list-disc pr-5 pl-0 text-right">
+                        <li>اقرأ كل سؤال بعناية وأجب بناءً على حكمك الفطري والمباشر.</li>
+                        <li>لا توجد إجابات "صحيحة" أو "خاطئة" في تقييم الشخصية؛ بل يتم تقييم مدى اتساق الإجابات.</li>
+                        <li>وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.</li>
+                        <li>يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي.</li>
+                    </ul>
                 </div>
-            </section>
-        </div>
 
-        <!-- 3. VIEW: PRE-BATTERY INSTRUCTIONS -->
-        <div id="view-instructions" class="hidden max-w-2xl mx-auto w-full bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
-            <div class="text-center space-y-2 pb-4 border-b border-slate-100">
-                <span id="instPartNumber" class="text-xs font-bold text-primary uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-primary/20">Part 1 of 4</span>
-                <h2 id="instBatteryTitle" class="text-2xl font-bold text-on-surface">Personality Evaluation (PQ10)</h2>
-                <p id="instBatteryArabicTitle" class="text-sm text-on-surface-variant arabic-text">تقييم الشخصية</p>
+                <!-- Start Action Button -->
+                <button id="beginBatteryBtn" class="w-full py-3.5 bg-primary hover:bg-primary-container text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                    <span id="beginBatteryBtnText">أفهم ذلك • ابدأ البطارية</span>
+                    <span class="material-symbols-outlined text-lg">play_arrow</span>
+                </button>
             </div>
-
-            <!-- Intermission Timer (Hidden by default) -->
-            <div id="instIntermissionBlock" class="hidden bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center space-y-2">
-                <div class="flex items-center justify-center gap-2 text-primary">
-                    <span class="material-symbols-outlined text-[20px]">check_circle</span>
-                    <span class="font-bold text-sm">Previous Part Submitted Successfully</span>
-                </div>
-                <p class="text-xs text-emerald-800">
-                    <span>Taking a brief break. You can start the next part immediately, or it will begin automatically in</span>
-                    <strong id="instIntermissionSecs">60</strong>
-                    <span>s...</span>
-                </p>
-                <div class="w-full bg-emerald-200/50 h-1.5 rounded-full overflow-hidden mt-2">
-                    <div id="instIntermissionBar" class="bg-primary h-full transition-all duration-[1000ms] ease-linear" style="width: 100%;"></div>
-                </div>
-            </div>
-
-            <!-- Key Info Box -->
-            <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl text-center border border-slate-100">
-                <div>
-                    <span class="block text-[11px] text-slate-500 uppercase font-semibold">Total Items</span>
-                    <strong id="instItemCount" class="text-base text-slate-800">140</strong>
-                </div>
-                <div>
-                    <span class="block text-[11px] text-slate-500 uppercase font-semibold">Time Allowed</span>
-                    <strong id="instTimeLimit" class="text-base text-slate-800">40 Minutes</strong>
-                </div>
-                <div>
-                    <span class="block text-[11px] text-slate-500 uppercase font-semibold">Type</span>
-                    <strong id="instFormatType" class="text-base text-slate-800">Likert Scale</strong>
-                </div>
-            </div>
-
-            <!-- Instructions List -->
-            <div class="space-y-3 text-xs text-on-surface-variant leading-relaxed">
-                <h4 class="font-bold text-on-surface text-sm">Important Instructions:</h4>
-                <ul class="space-y-2 list-disc pl-5">
-                    <li>Read each item carefully and respond with your immediate, natural judgment.</li>
-                    <li>There are no "right" or "wrong" personality answers; consistency is evaluated.</li>
-                    <li>The test timer is strictly enforced by the server. Once started, it cannot be paused.</li>
-                    <li>Your answers auto-save continuously in real time.</li>
-                </ul>
-            </div>
-
-            <!-- Start Action Button -->
-            <button id="beginBatteryBtn" class="w-full py-3.5 bg-primary hover:bg-primary-container text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
-                <span>I Understand &bull; Begin Battery</span>
-                <span class="material-symbols-outlined text-lg">play_arrow</span>
-            </button>
         </div>
 
         <!-- 4. VIEW: ACTIVE TEST SCREEN -->

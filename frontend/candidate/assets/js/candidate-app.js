@@ -304,6 +304,7 @@ function updateNavigationDirection() {
     const prevBtn = document.getElementById("prevQuestionBtn");
     const nextBtn = document.getElementById("nextQuestionBtn");
     const startBtn = document.getElementById("startAssessmentBtn");
+    const logoutBtnText = document.getElementById("logoutBtnText");
 
     if (prevBtn) {
         if (isRtl) {
@@ -323,9 +324,17 @@ function updateNavigationDirection() {
 
     if (startBtn) {
         const icon = startBtn.querySelector(".material-symbols-outlined");
+        const span = startBtn.querySelector("span:not(.material-symbols-outlined)");
         if (icon) {
             icon.textContent = isRtl ? "arrow_back" : "arrow_forward";
         }
+        if (span) {
+            span.textContent = isRtl ? "ابدأ التقييم" : "Start Assessment";
+        }
+    }
+
+    if (logoutBtnText) {
+        logoutBtnText.textContent = isRtl ? "تسجيل الخروج" : "Log Out";
     }
 }
 
@@ -371,63 +380,103 @@ let remainingSeconds = 0;
 // Battery definitions metadata
 const BATTERY_METADATA = [
     {
-        name: "Personality (PQ10)",
+        name: "Personality Evaluation (PQ10)",
         nameAr: "اختبار الشخصية",
         part: "Part 1 of 4",
+        partAr: "الجزء 1 من 4",
         badge: "PQ10",
         itemsCount: 140,
+        itemCountAr: "140 سؤالاً",
         timeLimit: "40 Minutes",
+        timeLimitAr: "40 دقيقة",
         format: "Likert Scale",
+        formatAr: "مقياس ليكرت",
         instructions: [
-            "Read each leadership statement carefully and choose the option that best reflects your natural behavior.",
-            "There are no right or wrong personality answers; consistency and authenticity are evaluated.",
-            "The 40-minute timer is server-monitored and cannot be paused.",
-            "Responses are continuously buffered and auto-saved in real time."
+            "Read each item carefully and respond with your immediate, natural judgment.",
+            "There are no 'right' or 'wrong' personality answers; consistency is evaluated.",
+            "The test timer is strictly enforced by the server. Once started, it cannot be paused.",
+            "Your answers auto-save continuously in real time."
+        ],
+        instructionsAr: [
+            "اقرأ كل سؤال بعناية وأجب بناءً على حكمك الفطري والمباشر.",
+            "لا توجد إجابات \"صحيحة\" أو \"خاطئة\" في تقييم الشخصية؛ بل يتم تقييم مدى اتساق الإجابات.",
+            "وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.",
+            "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي."
         ]
     },
     {
         name: "Situational Judgment (SJT)",
         nameAr: "اختبار الحكم على المواقف",
         part: "Part 2 of 4",
+        partAr: "الجزء 2 من 4",
         badge: "SJT",
         itemsCount: 16,
+        itemCountAr: "16 سؤالاً",
         timeLimit: "45 Minutes",
+        timeLimitAr: "45 دقيقة",
         format: "4-Option Ranking",
+        formatAr: "ترتيب الخيارات (4)",
         instructions: [
             "You will be presented with real-world executive scenarios and workplace challenges.",
             "Order the 4 available actions from Most Effective (Rank 1) to Least Effective (Rank 4).",
             "Use the up/down arrows to adjust the relative ranking of each proposed response.",
             "You have 45 minutes to complete all 16 scenarios."
+        ],
+        instructionsAr: [
+            "اقرأ كل موقف قيادي بعناية وأجب بناءً على حكمك الفطري والمباشر.",
+            "رتّب الإجراءات الأربعة المقترحة من الأكثر فعالية (الترتيب 1) إلى الأقل فعالية (الترتيب 4).",
+            "وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.",
+            "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي."
         ]
     },
     {
         name: "Derailers & Drivers",
         nameAr: "اختبار السلوكيات المعطلة",
         part: "Part 3 of 4",
+        partAr: "الجزء 3 من 4",
         badge: "DERAILERS",
         itemsCount: 60,
+        itemCountAr: "60 سؤالاً",
         timeLimit: "20 Minutes",
+        timeLimitAr: "20 دقيقة",
         format: "Likert Scale",
+        formatAr: "مقياس ليكرت",
         instructions: [
             "This section assesses behavior tendencies under pressure, stress, and heavy workloads.",
             "Indicate your level of agreement with each workplace scenario statement.",
             "Be frank and transparent in your self-assessment.",
             "You have 20 minutes for this 60-item battery."
+        ],
+        instructionsAr: [
+            "اقرأ كل سؤال بعناية وأجب بناءً على حكمك الفطري والمباشر.",
+            "لا توجد إجابات \"صحيحة\" أو \"خاطئة\" في تقييم السلوكيات؛ بل يتم تقييم مدى اتساق الإجابات.",
+            "وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.",
+            "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي."
         ]
     },
     {
         name: "Cognitive Abilities (GCAT)",
         nameAr: "اختبار القدرات المعرفية",
         part: "Part 4 of 4",
+        partAr: "الجزء 4 من 4",
         badge: "GCAT",
         itemsCount: 42,
+        itemCountAr: "42 سؤالاً",
         timeLimit: "20 Min Strict",
+        timeLimitAr: "20 دقيقة (محدد بدقة)",
         format: "Multiple Choice (MCQ)",
+        formatAr: "اختيار من متعدد (MCQ)",
         instructions: [
             "Evaluates Verbal, Numerical, and Abstract pattern reasoning aptitude.",
             "Each question has one single correct answer option.",
             "This battery has a STRICT 20-minute time cutoff enforced by the server.",
             "Work as quickly and accurately as possible."
+        ],
+        instructionsAr: [
+            "اقرأ كل مسألة بدقة وحدد الإجابة المنطقية الصحيحة.",
+            "يحتوي كل سؤال على خيار صحيح واحد فقط.",
+            "وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.",
+            "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي."
         ]
     }
 ];
@@ -790,14 +839,78 @@ function openPreBatteryInstructions(batteryIndex, isIntermission = false) {
         intermissionTimerInterval = null;
     }
 
+    const isArabic = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
     const meta = BATTERY_METADATA[batteryIndex] || BATTERY_METADATA[0];
 
-    document.getElementById("instPartNumber").textContent = meta.part;
-    document.getElementById("instBatteryTitle").textContent = meta.name;
-    document.getElementById("instBatteryArabicTitle").textContent = meta.nameAr;
-    document.getElementById("instItemCount").textContent = `${meta.itemsCount} Items`;
-    document.getElementById("instTimeLimit").textContent = meta.timeLimit;
-    document.getElementById("instFormatType").textContent = meta.format;
+    const instPartEl = document.getElementById("instPartNumber");
+    if (instPartEl) instPartEl.textContent = isArabic ? (meta.partAr || meta.part) : meta.part;
+
+    const instTitleEl = document.getElementById("instBatteryTitle");
+    if (instTitleEl) instTitleEl.textContent = isArabic ? (meta.nameAr || meta.name) : meta.name;
+
+    const instArabicTitleEl = document.getElementById("instBatteryArabicTitle");
+    if (instArabicTitleEl) {
+        if (isArabic) {
+            instArabicTitleEl.classList.add("hidden");
+        } else {
+            instArabicTitleEl.classList.remove("hidden");
+            instArabicTitleEl.textContent = meta.nameAr || "";
+        }
+    }
+
+    const instItemCountEl = document.getElementById("instItemCount");
+    if (instItemCountEl) instItemCountEl.textContent = isArabic ? (meta.itemCountAr || `${meta.itemsCount} سؤالاً`) : `${meta.itemsCount} Items`;
+
+    const instTimeLimitEl = document.getElementById("instTimeLimit");
+    if (instTimeLimitEl) instTimeLimitEl.textContent = isArabic ? (meta.timeLimitAr || meta.timeLimit) : meta.timeLimit;
+
+    const instFormatTypeEl = document.getElementById("instFormatType");
+    if (instFormatTypeEl) instFormatTypeEl.textContent = isArabic ? (meta.formatAr || meta.format) : meta.format;
+
+    const lblTotalItems = document.getElementById("lblTotalItems");
+    if (lblTotalItems) lblTotalItems.textContent = isArabic ? "عدد الأسئلة" : "TOTAL ITEMS";
+
+    const lblTimeAllowed = document.getElementById("lblTimeAllowed");
+    if (lblTimeAllowed) lblTimeAllowed.textContent = isArabic ? "الوقت المسموح" : "TIME ALLOWED";
+
+    const lblType = document.getElementById("lblType");
+    if (lblType) lblType.textContent = isArabic ? "نوع الأسئلة" : "TYPE";
+
+    const instHeading = document.getElementById("instHeading");
+    if (instHeading) instHeading.textContent = isArabic ? "تعليمات هامة:" : "Important Instructions:";
+
+    const instContainer = document.getElementById("instContainer");
+    if (instContainer) {
+        if (isArabic) {
+            instContainer.setAttribute("dir", "rtl");
+            instContainer.style.textAlign = "right";
+            instContainer.style.direction = "rtl";
+        } else {
+            instContainer.setAttribute("dir", "ltr");
+            instContainer.style.textAlign = "left";
+            instContainer.style.direction = "ltr";
+        }
+    }
+
+    const listEl = document.getElementById("instBulletList");
+    if (listEl) {
+        const bullets = isArabic ? (meta.instructionsAr || meta.instructions) : meta.instructions;
+        listEl.innerHTML = bullets.map(b => `<li>${b}</li>`).join("");
+        if (isArabic) {
+            listEl.className = "space-y-2 list-disc pr-5 pl-0 text-right";
+            listEl.setAttribute("dir", "rtl");
+            listEl.style.direction = "rtl";
+            listEl.style.textAlign = "right";
+        } else {
+            listEl.className = "space-y-2 list-disc pl-5 pr-0 text-left";
+            listEl.setAttribute("dir", "ltr");
+            listEl.style.direction = "ltr";
+            listEl.style.textAlign = "left";
+        }
+    }
+
+    const beginBtnText = document.getElementById("beginBatteryBtnText");
+    if (beginBtnText) beginBtnText.textContent = isArabic ? "أفهم ذلك • ابدأ البطارية" : "I Understand • Begin Battery";
 
     const intermissionBlock = document.getElementById("instIntermissionBlock");
     const intermissionSecs = document.getElementById("instIntermissionSecs");
