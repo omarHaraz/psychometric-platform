@@ -81,64 +81,6 @@
             text-align: right !important;
             unicode-bidi: isolate;
         }
-
-        /* 1. Master CSS Grid Layout (3-Column Native RTL Grid) */
-        .dashboard-master-grid {
-            display: grid !important;
-            /* Adjusted column widths to prevent squishing the center content */
-            grid-template-columns: 260px minmax(500px, 1fr) 260px !important;
-            gap: 1.5rem !important;
-            align-items: start !important;
-            width: 100% !important;
-            max-width: 1536px !important;
-            margin: 0 auto !important;
-            padding: 2rem 1.5rem !important;
-            box-sizing: border-box !important;
-        }
-
-        /* Lowered breakpoint to 1024px so standard laptops keep the 3 columns */
-        @media (max-width: 1024px) {
-            .dashboard-master-grid {
-                grid-template-columns: 1fr !important;
-            }
-        }
-
-        /* 2. Content Core (Middle Column) Vertical Flexbox */
-        .content-core {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 2rem !important;
-            width: 100% !important;
-            min-width: 0 !important;
-            position: relative !important;
-            height: auto !important;
-        }
-
-        /* 3. Standard Block Elements */
-        .card-active-assessment,
-        .card-assessment-history,
-        .assessment-card,
-        .history-card {
-            width: 100% !important;
-            max-width: 100% !important;
-            height: auto !important;
-            position: relative !important;
-            box-sizing: border-box !important;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* 4. When the right Progress Sidebar is hidden, let the center column expand */
-        #testSidebar.hidden ~ #mainContentArea,
-        #mainLayoutWrapper > #mainContentArea:first-of-type {
-            /* Grid handles this natively — hidden elements vacate their track */
-        }
-        /* Ensure hidden grid children leave no ghost space */
-        #testSidebar.hidden {
-            display: none !important;
-        }
     </style>
 </head>
 <body class="bg-[#F8FAFC] text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary/20">
@@ -168,11 +110,11 @@
         </div>
     </header>
 
-    <!-- MAIN APP CONTAINER (CSS GRID) -->
-    <main id="mainLayoutWrapper" class="dashboard-master-grid" dir="rtl">
+    <!-- MAIN APP CONTAINER -->
+    <main id="mainLayoutWrapper" class="main-layout-wrapper w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-grow flex flex-col md:flex-row gap-6 items-start justify-between">
         
-        <!-- COLUMN 1: PROGRESS TRACKER (Renders on the RIGHT in RTL) -->
-        <aside id="testSidebar" class="sidebar-progress bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <!-- 1. RIGHT COLUMN (in RTL) / LEFT COLUMN (in LTR): PROGRESS TRACKER -->
+        <aside id="testSidebar" class="sidebar-progress w-full md:w-64 lg:w-72 shrink-0 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
             <div class="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
                 <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                     <span class="material-symbols-outlined text-2xl">psychology</span>
@@ -187,27 +129,27 @@
             </nav>
         </aside>
 
-        <!-- COLUMN 2: MAIN CONTENT AREA (Renders in the CENTER) -->
-        <div id="mainContentArea" class="content-core">
+        <!-- 2. MIDDLE COLUMN: MAIN ASSESSMENT AREA -->
+        <div id="mainContentArea" class="main-assessment-content flex-1 min-w-0 flex flex-col gap-6 w-full" style="flex-grow: 1; max-width: 850px;">
             <!-- Loading State -->
-            <div id="view-loading" class="assessment-card card-active-assessment flex flex-col items-center justify-center py-20 text-center space-y-4 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+            <div id="view-loading" class="flex flex-col items-center justify-center py-20 text-center space-y-4">
                 <div class="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
                 <p class="text-sm font-medium text-on-surface-variant">جاري مزامنة جلسة التقييم...</p>
             </div>
 
             <!-- 1. VIEW: NO ACTIVE ASSESSMENT ASSIGNED (Empty state) -->
-            <div id="view-empty" class="assessment-card card-active-assessment hidden text-center py-12 w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+            <div id="view-empty" class="hidden text-center py-16 max-w-lg mx-auto bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
                 <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-3xl">assignment_late</span>
                 </div>
                 <h2 class="text-xl font-bold text-on-surface mb-2">لا يوجد اختبار نشط مخصص</h2>
-                <p class="text-sm text-on-surface-variant max-w-md mx-auto">
+                <p class="text-sm text-on-surface-variant mb-6">
                     لم يتم تعيين جلسة تقييم سيكومتري لحسابك حالياً. يرجى مراجعة مسؤول الموارد البشرية.
                 </p>
             </div>
 
             <!-- 2. VIEW: ONBOARDING / ASSESSMENT OVERVIEW SCREEN -->
-            <div id="view-onboarding" class="assessment-card hidden space-y-6 w-full">
+            <div id="view-onboarding" class="hidden space-y-6 w-full">
                 <!-- Assessment Hero Card -->
                 <section class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-100">
@@ -282,7 +224,7 @@
             </div>
 
             <!-- 3. VIEW: PRE-BATTERY INSTRUCTIONS -->
-            <div id="view-instructions" class="assessment-card hidden max-w-2xl mx-auto w-full bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+            <div id="view-instructions" class="hidden max-w-2xl mx-auto w-full bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
                 <div class="text-center space-y-2 pb-4 border-b border-slate-100">
                     <span id="instPartNumber" class="text-xs font-bold text-primary uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-primary/20">الجزء 1 من 4</span>
                     <h2 id="instBatteryTitle" class="text-2xl font-bold text-on-surface">اختبار الشخصية</h2>
@@ -339,8 +281,8 @@
                 </button>
             </div>
 
-            <!-- 4. VIEW: ACTIVE TEST SCREEN -->
-            <div id="view-active-test" class="assessment-card hidden space-y-6 w-full">
+        <!-- 4. VIEW: ACTIVE TEST SCREEN -->
+        <div id="view-active-test" class="hidden space-y-6 w-full">
             
             <!-- Battery Header with Live Timer & Progress -->
             <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -391,8 +333,8 @@
             </div>
         </div>
 
-            <!-- 5. VIEW: FINAL ASSESSMENT COMPLETE -->
-            <div id="view-complete" class="assessment-card hidden w-full bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+        <!-- 5. VIEW: FINAL ASSESSMENT COMPLETE -->
+        <div id="view-complete" class="hidden w-full bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
             <div class="text-center space-y-2">
                 <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-xs">
                     <span class="material-symbols-outlined text-3xl">verified</span>
@@ -530,8 +472,8 @@
             </div>
         </div>
 
-        <!-- Assessment History Section -->
-        <section id="historySection" class="history-card bg-white border border-slate-200 rounded-xl p-6 shadow-xs mt-6 space-y-4 w-full">
+        <!-- Assessment History Card (Under Central Card) -->
+        <section id="historySection" class="bg-white border border-slate-200 rounded-xl p-6 space-y-4 w-full shadow-xs">
             <div class="flex justify-between items-center pb-2 border-b border-slate-100">
                 <div>
                     <h2 class="text-base font-bold text-on-surface">Assessment History</h2>
