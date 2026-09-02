@@ -289,6 +289,10 @@ function translateNode(node, toLang) {
         }
     } else if (node.nodeType === Node.ELEMENT_NODE) {
         if (node.tagName !== "SCRIPT" && node.tagName !== "STYLE") {
+            // Bypass i18n for survey question & answer contents (keep strictly in Arabic & RTL)
+            if (node.id === "questionBody" || node.classList?.contains("survey-content") || node.classList?.contains("survey-options-container")) {
+                return;
+            }
             for (let child of node.childNodes) {
                 translateNode(child, toLang);
             }
@@ -1042,40 +1046,28 @@ function recordItemTime(idx) {
 // 1. Likert Scale Question Renderer (PQ10 & Derailers)
 function renderLikertQuestion(item, container) {
     const currentVal = responsesMap[item.id]?.selectedLikert || null;
-    const isRtl = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
+    const isGlobalRtl = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
 
-    // In Arabic (RTL): options flow from Right to Left:
-    // 1st box on the far right = "موافق بشدة" (5 - Strongly Agree)
-    // 2nd box = "موافق" (4 - Agree)
-    // 3rd box = "محايد" (3 - Neutral)
-    // 4th box = "غير موافق" (2 - Disagree)
-    // 5th box on the far left = "غير موافق بشدة" (1 - Strongly Disagree)
-    // In English (LTR): options flow from Left to Right:
-    // 1st box on the far left = "Strongly Disagree" (1)
-    // 5th box on the far right = "Strongly Agree" (5)
-    const scaleLabels = isRtl ? [
-        { val: 5, labelEn: "Strongly Agree", labelAr: "موافق بشدة" },
-        { val: 4, labelEn: "Agree", labelAr: "موافق" },
-        { val: 3, labelEn: "Neutral", labelAr: "محايد" },
-        { val: 2, labelEn: "Disagree", labelAr: "غير موافق" },
-        { val: 1, labelEn: "Strongly Disagree", labelAr: "غير موافق بشدة" }
-    ] : [
-        { val: 1, labelEn: "Strongly Disagree", labelAr: "غير موافق بشدة" },
-        { val: 2, labelEn: "Disagree", labelAr: "غير موافق" },
-        { val: 3, labelEn: "Neutral", labelAr: "محايد" },
-        { val: 4, labelEn: "Agree", labelAr: "موافق" },
-        { val: 5, labelEn: "Strongly Agree", labelAr: "موافق بشدة" }
+    // Survey content is strictly locked in Arabic & RTL:
+    // Highest positive option ("موافق بشدة" - 5) is placed on the far right (1st column in RTL),
+    // down to lowest option ("غير موافق بشدة" - 1) on the far left (5th column in RTL).
+    const scaleLabels = [
+        { val: 5, labelAr: "موافق بشدة" },
+        { val: 4, labelAr: "موافق" },
+        { val: 3, labelAr: "محايد" },
+        { val: 2, labelAr: "غير موافق" },
+        { val: 1, labelAr: "غير موافق بشدة" }
     ];
 
     let html = `
-        <div class="space-y-4">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isRtl ? 'العبارة' : 'Statement'} ${currentItemIndex + 1}</span>
-            <h2 class="text-xl sm:text-2xl font-bold text-on-surface leading-relaxed arabic-text">
-                ${isRtl ? (item.statementAr || item.statementEn || "") : (item.statementEn || item.statementAr || "")}
+        <div class="space-y-4 survey-content" dir="rtl" style="direction: rtl; text-align: right;">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isGlobalRtl ? 'العبارة' : 'Statement'} ${currentItemIndex + 1}</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-on-surface leading-relaxed arabic-text" dir="rtl" style="direction: rtl; text-align: right;">
+                ${item.statementAr || item.statement || ""}
             </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-4 likert-scale-container" dir="${isRtl ? 'rtl' : 'ltr'}">
+        <div class="survey-options-container grid grid-cols-1 sm:grid-cols-5 gap-3 pt-4" dir="rtl" style="direction: rtl;">
     `;
 
     scaleLabels.forEach(s => {
@@ -1084,13 +1076,15 @@ function renderLikertQuestion(item, container) {
             <button type="button" class="likert-btn ${isActive ? 'active' : ''} flex flex-col items-center justify-center p-4 border border-slate-300 rounded-xl transition-all text-center gap-2 cursor-pointer bg-white hover:border-primary/50" data-value="${s.val}">
                 <span class="w-6 h-6 rounded-full border-2 border-slate-400 flex items-center justify-center indicator"></span>
                 <span class="text-xs font-bold text-slate-800 arabic-text">${s.labelAr}</span>
-                <span class="text-[10px] text-slate-500">${s.labelEn}</span>
             </button>
         `;
     });
 
     html += `</div>`;
     container.innerHTML = html;
+    container.setAttribute("dir", "rtl");
+    container.style.direction = "rtl";
+    container.style.textAlign = "right";
 
     // Attach Likert Click Handlers
     container.querySelectorAll(".likert-btn").forEach(btn => {
@@ -1108,6 +1102,7 @@ function renderLikertQuestion(item, container) {
 // 2. SJT Ranking Question Renderer
 function renderSjtRankingQuestion(item, container) {
     let options = item.options || [];
+    const isGlobalRtl = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
     
     // Check if we already have a saved ranking order for this item
     const savedOrder = responsesMap[item.id]?.rankingOrder;
@@ -1116,19 +1111,19 @@ function renderSjtRankingQuestion(item, container) {
     }
 
     let html = `
-        <div class="space-y-3">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Scenario ${currentItemIndex + 1} &bull; ${item.itemCode || ""}</span>
-            <h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text">${item.titleAr || ""}</h2>
-            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 leading-relaxed arabic-text">
+        <div class="space-y-3 survey-content" dir="rtl" style="direction: rtl; text-align: right;">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isGlobalRtl ? 'الموقف' : 'Scenario'} ${currentItemIndex + 1} &bull; ${item.itemCode || ""}</span>
+            <h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${item.titleAr || ""}</h2>
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 leading-relaxed arabic-text" dir="rtl">
                 ${item.narrativeAr || ""}
             </div>
             ${item.scenarioImageUrl ? `<img src="${item.scenarioImageUrl}" class="max-h-60 rounded-xl object-contain mx-auto my-2 border border-slate-200">` : ''}
         </div>
 
-        <div class="space-y-2 pt-2">
-            <div class="flex justify-between items-center px-2 text-xs font-bold text-slate-500">
-                <span class="text-emerald-700 flex items-center gap-1"><span class="material-symbols-outlined text-sm">north</span> Most Effective Action (Rank 1)</span>
-                <span class="text-slate-400">Order actions using arrows</span>
+        <div class="space-y-2 pt-2 survey-options-container" dir="rtl" style="direction: rtl;">
+            <div class="flex justify-between items-center px-2 text-xs font-bold text-slate-500" dir="rtl">
+                <span class="text-emerald-700 flex items-center gap-1"><span class="material-symbols-outlined text-sm">north</span> الإجراء الأكثر فعالية (الترتيب 1)</span>
+                <span class="text-slate-400">رتب الإجراءات باستخدام الأسهم</span>
             </div>
 
             <div id="sjtOptionsList" class="space-y-2.5">
@@ -1136,12 +1131,12 @@ function renderSjtRankingQuestion(item, container) {
 
     options.forEach((opt, idx) => {
         html += `
-            <div class="sjt-option-card flex items-center justify-between p-3.5 bg-white border border-slate-200 rounded-xl shadow-xs hover:border-slate-300 transition-all gap-3" data-key="${opt.optionKey}">
+            <div class="sjt-option-card flex items-center justify-between p-3.5 bg-white border border-slate-200 rounded-xl shadow-xs hover:border-slate-300 transition-all gap-3" data-key="${opt.optionKey}" dir="rtl">
                 <div class="flex items-center gap-3">
                     <span class="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0">
                         ${idx + 1}
                     </span>
-                    <p class="text-xs sm:text-sm text-slate-800 arabic-text leading-relaxed">${opt.statementAr}</p>
+                    <p class="text-xs sm:text-sm text-slate-800 arabic-text leading-relaxed text-right">${opt.statementAr}</p>
                 </div>
                 <div class="flex flex-col gap-1 shrink-0">
                     <button type="button" class="move-up-btn p-1 text-slate-400 hover:text-primary rounded hover:bg-slate-100 disabled:opacity-20" ${idx === 0 ? 'disabled' : ''}>
@@ -1157,14 +1152,17 @@ function renderSjtRankingQuestion(item, container) {
 
     html += `
             </div>
-            <div class="text-right px-2 text-xs font-bold text-red-600 flex items-center justify-end gap-1">
-                <span>Least Effective Action (Rank 4)</span>
+            <div class="text-left px-2 text-xs font-bold text-red-600 flex items-center justify-start gap-1" dir="rtl">
+                <span>الإجراء الأقل فعالية (الترتيب ${options.length})</span>
                 <span class="material-symbols-outlined text-sm">south</span>
             </div>
         </div>
     `;
 
     container.innerHTML = html;
+    container.setAttribute("dir", "rtl");
+    container.style.direction = "rtl";
+    container.style.textAlign = "right";
 
     // Save initial ranking order if not set
     if (!responsesMap[item.id]) responsesMap[item.id] = {};
@@ -1200,12 +1198,13 @@ function renderSjtRankingQuestion(item, container) {
 function renderGcatMcqQuestion(item, container) {
     const currentVal = responsesMap[item.id]?.selectedOption || null;
     const options = item.options || [];
+    const isGlobalRtl = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
 
     let html = `
-        <div class="space-y-3">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Question ${currentItemIndex + 1} &bull; ${item.itemCode || ""}</span>
-            <h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text">${item.titleAr || ""}</h2>
-            ${item.promptTextAr ? `<p class="text-sm text-slate-700 arabic-text leading-relaxed">${item.promptTextAr}</p>` : ''}
+        <div class="space-y-3 survey-content" dir="rtl" style="direction: rtl; text-align: right;">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isGlobalRtl ? 'السؤال' : 'Question'} ${currentItemIndex + 1} &bull; ${item.itemCode || ""}</span>
+            <h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${item.titleAr || ""}</h2>
+            ${item.promptTextAr ? `<p class="text-sm text-slate-700 arabic-text leading-relaxed text-right" dir="rtl">${item.promptTextAr}</p>` : ''}
             
             ${item.questionImageUrl ? `
                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
@@ -1214,13 +1213,13 @@ function renderGcatMcqQuestion(item, container) {
             ` : ''}
         </div>
 
-        <div class="space-y-2.5 pt-2">
+        <div class="space-y-2.5 pt-2 survey-options-container" dir="rtl" style="direction: rtl;">
     `;
 
     options.forEach(opt => {
         const isSelected = (currentVal === opt.optionKey);
         html += `
-            <label class="gcat-option-label flex items-center justify-between p-3.5 border ${isSelected ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-slate-200 bg-white hover:border-slate-300'} rounded-xl cursor-pointer transition-all gap-3">
+            <label class="gcat-option-label flex items-center justify-between p-3.5 border ${isSelected ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-slate-200 bg-white hover:border-slate-300'} rounded-xl cursor-pointer transition-all gap-3" dir="rtl">
                 <div class="flex items-center gap-3">
                     <div class="w-6 h-6 rounded-full border-2 ${isSelected ? 'border-primary' : 'border-slate-400'} flex items-center justify-center shrink-0">
                         <div class="w-3 h-3 rounded-full bg-primary ${isSelected ? 'opacity-100' : 'opacity-0'}"></div>
@@ -1228,7 +1227,7 @@ function renderGcatMcqQuestion(item, container) {
                     <span class="w-6 h-6 rounded-md bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0">
                         ${opt.optionKey}
                     </span>
-                    <span class="text-xs sm:text-sm text-slate-800 arabic-text">${opt.textAr || ""}</span>
+                    <span class="text-xs sm:text-sm text-slate-800 arabic-text text-right">${opt.textAr || ""}</span>
                 </div>
                 ${opt.imageUrl ? `<img src="${opt.imageUrl}" class="h-10 object-contain rounded border border-slate-100">` : ''}
                 <input type="radio" name="gcat_option" value="${opt.optionKey}" ${isSelected ? 'checked' : ''} class="sr-only">
@@ -1238,6 +1237,9 @@ function renderGcatMcqQuestion(item, container) {
 
     html += `</div>`;
     container.innerHTML = html;
+    container.setAttribute("dir", "rtl");
+    container.style.direction = "rtl";
+    container.style.textAlign = "right";
 
     // Option change handlers
     container.querySelectorAll("input[name='gcat_option']").forEach(radio => {

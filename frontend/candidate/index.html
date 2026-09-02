@@ -75,6 +75,12 @@
             0%, 100% { color: #ba1a1a; background-color: #ffdad6; }
             50% { color: #ffffff; background-color: #ba1a1a; }
         }
+
+        .survey-content, .survey-options-container, #questionBody {
+            direction: rtl !important;
+            text-align: right !important;
+            unicode-bidi: isolate;
+        }
     </style>
 </head>
 <body class="bg-[#F8FAFC] text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary/20">
@@ -355,7 +361,7 @@
             <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-8 min-h-[380px] flex flex-col justify-between">
                 
                 <!-- Dynamic Question Body -->
-                <div id="questionBody" class="space-y-6">
+                <div id="questionBody" class="space-y-6 survey-content" dir="rtl" style="direction: rtl; text-align: right;">
                     <!-- Dynamic Content Inserted by JS -->
                 </div>
 
