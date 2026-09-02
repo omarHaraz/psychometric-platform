@@ -436,7 +436,23 @@ const BATTERY_METADATA = [
 function initCandidateApp() {
     checkAuth();
     initEventListeners();
+    
+    // Enforce Arabic RTL by default
+    const htmlEl = document.documentElement;
+    htmlEl.setAttribute("dir", "rtl");
+    htmlEl.setAttribute("lang", "ar");
+    const rtlToggle = document.getElementById("rtlToggle");
+    if (rtlToggle) {
+        rtlToggle.textContent = "Switch to English";
+    }
+    const warningBlock = document.getElementById("warningBlock");
+    if (warningBlock) {
+        warningBlock.classList.remove("border-l-4", "border-l-[#131b2e]", "rounded-r");
+        warningBlock.classList.add("border-r-4", "border-r-[#131b2e]", "rounded-l");
+    }
+    applyTranslation("ar");
     updateNavigationDirection();
+
     loadAssessmentState();
     loadAssessmentHistory();
 }
