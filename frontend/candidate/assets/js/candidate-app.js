@@ -1351,12 +1351,27 @@ function renderGcatMcqQuestion(item, container) {
     const currentVal = responsesMap[item.id]?.selectedOption || null;
     const options = item.options || [];
     const isGlobalRtl = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
+    const isAbstract = (item.itemCode && item.itemCode.startsWith("GCAT-ABS")) || 
+                       (item.subtestCode === "ABSTRACT") || 
+                       (item.subtest_dimension === "ABSTRACT");
+
+    let questionHeadingHtml = "";
+    if (isAbstract) {
+        // For Abstract questions, hide generic pattern titles (e.g. "دورتان تعملان معاً") 
+        // and promote the instruction statement as the primary bold heading
+        const promptText = item.promptTextAr || "اختر الشكل الذي يكمل النمط وفق القاعدة الأكثر اتساقاً.";
+        questionHeadingHtml = `<h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${promptText}</h2>`;
+    } else {
+        questionHeadingHtml = `
+            ${item.titleAr ? `<h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${item.titleAr}</h2>` : ''}
+            ${item.promptTextAr ? `<p class="text-sm text-slate-700 arabic-text leading-relaxed text-right" dir="rtl">${item.promptTextAr}</p>` : ''}
+        `;
+    }
 
     let html = `
         <div class="space-y-3 survey-content" dir="rtl" style="direction: rtl; text-align: right;">
             <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isGlobalRtl ? 'السؤال' : 'Question'} ${currentItemIndex + 1} &bull; ${item.itemCode || ""}</span>
-            <h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${item.titleAr || ""}</h2>
-            ${item.promptTextAr ? `<p class="text-sm text-slate-700 arabic-text leading-relaxed text-right" dir="rtl">${item.promptTextAr}</p>` : ''}
+            ${questionHeadingHtml}
             
             ${item.questionImageUrl ? `
                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
