@@ -54,7 +54,18 @@ public class PdfGeneratorService {
             throw new IllegalArgumentException("ReportContextDto cannot be null");
         }
 
-        log.info("Generating PDF report for candidate: {} ({})", reportDto.getCandidateId(), reportDto.getCandidateName());
+        var page7 = reportDto.getCompetencyPages() != null ? reportDto.getCompetencyPages().get(7) : null;
+        log.info("================================================================================");
+        log.info("[PDF PIPELINE AUDIT] Generating PDF report for candidate: {} ({})", reportDto.getCandidateId(), reportDto.getCandidateName());
+        log.info("[PDF PIPELINE AUDIT] Competency: INITIATIVE | Scaled Double (1-5): {} | Master Color (initiativeColor): {} | Page 7 Color: {} | Row1 Color: {} | Row2 Color: {} | Row3 Color: {}",
+                reportDto.getInitiativeScore(),
+                reportDto.getInitiativeColor(),
+                page7 != null ? page7.getCompetencyColor() : "N/A",
+                page7 != null ? page7.getIndicator1Color() : "N/A",
+                page7 != null ? page7.getIndicator2Color() : "N/A",
+                page7 != null ? page7.getIndicator3Color() : "N/A"
+        );
+        log.info("================================================================================");
 
         try {
             // 1. Process Thymeleaf Master Report Template into HTML String

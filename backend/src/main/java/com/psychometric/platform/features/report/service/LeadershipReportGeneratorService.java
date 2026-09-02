@@ -159,6 +159,23 @@ public class LeadershipReportGeneratorService {
         // Populate Static Narratives for Page 2, 4, and 14
         populateStaticNarratives(rawScore, report);
 
+        // =========================================================================
+        // Step 3: Hard-Log Lifecycle Trace for Score & Color Integrity
+        // =========================================================================
+        double initRaw = findTraitScorePct(traitMap, rawScore.getTraitScores(), "INITIATIVE", 2, 50.0);
+        var page7Dto = report.getCompetencyPages().get(7);
+        log.info("================================================================================");
+        log.info("[LIFECYCLE TRACE] ReportContextDto audit for attempt token: {}", candidateId);
+        log.info("[LIFECYCLE TRACE] Competency: INITIATIVE | Raw Score: {}% | Scaled Double (1-5): {} | Master Color: {} | Row1 Color: {} | Row2 Color: {} | Row3 Color: {}",
+                String.format(Locale.US, "%.2f", initRaw),
+                report.getInitiativeScore(),
+                report.getInitiativeColor(),
+                page7Dto != null ? page7Dto.getIndicator1Color() : "N/A",
+                page7Dto != null ? page7Dto.getIndicator2Color() : "N/A",
+                page7Dto != null ? page7Dto.getIndicator3Color() : "N/A"
+        );
+        log.info("================================================================================");
+
         return report;
     }
 
