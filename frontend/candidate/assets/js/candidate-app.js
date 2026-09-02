@@ -1354,30 +1354,81 @@ function renderGcatMcqQuestion(item, container) {
     const isAbstract = (item.itemCode && item.itemCode.startsWith("GCAT-ABS")) || 
                        (item.subtestCode === "ABSTRACT") || 
                        (item.subtest_dimension === "ABSTRACT");
+    const isNumerical = (item.itemCode && item.itemCode.startsWith("GCAT-NUM")) || 
+                        (item.subtestCode === "NUMERICAL") || 
+                        (item.subtest_dimension === "NUMERICAL");
 
-    let questionHeadingHtml = "";
+    let questionBodyHtml = "";
+
     if (isAbstract) {
-        // For Abstract questions, hide generic pattern titles (e.g. "دورتان تعملان معاً") 
-        // and promote the instruction statement as the primary bold heading
+        // Abstract: Hide generic pattern title, promote instruction prompt as primary bold heading
         const promptText = item.promptTextAr || "اختر الشكل الذي يكمل النمط وفق القاعدة الأكثر اتساقاً.";
-        questionHeadingHtml = `<h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${promptText}</h2>`;
-    } else {
-        questionHeadingHtml = `
-            ${item.titleAr ? `<h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${item.titleAr}</h2>` : ''}
-            ${item.promptTextAr ? `<p class="text-sm text-slate-700 arabic-text leading-relaxed text-right" dir="rtl">${item.promptTextAr}</p>` : ''}
-        `;
-    }
-
-    let html = `
-        <div class="space-y-3 survey-content" dir="rtl" style="direction: rtl; text-align: right;">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isGlobalRtl ? 'السؤال' : 'Question'} ${currentItemIndex + 1} &bull; ${item.itemCode || ""}</span>
-            ${questionHeadingHtml}
-            
+        questionBodyHtml = `
+            <h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${promptText}</h2>
             ${item.questionImageUrl ? `
                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
                     <img src="${item.questionImageUrl}" alt="Pattern Diagram" class="max-h-64 rounded-lg object-contain mx-auto">
                 </div>
             ` : ''}
+        `;
+    } else if (isNumerical) {
+        // Numerical: Hide generic title (e.g., "الطلب على الصلب وإنتاجه")
+        if (item.questionImageUrl) {
+            // Table/Chart based question:
+            // Parse promptTextAr into Scenario Description and Specific Question (المطلوب)
+            const rawPrompt = (item.promptTextAr || "").trim();
+            const paragraphs = rawPrompt.split(/\n\s*\n|\n/).map(p => p.trim()).filter(Boolean);
+
+            let scenarioText = "";
+            let questionText = "";
+
+            if (paragraphs.length >= 2) {
+                scenarioText = paragraphs[0];
+                questionText = paragraphs.slice(1).join(" ");
+            } else if (paragraphs.length === 1) {
+                if (paragraphs[0].includes("؟") || paragraphs[0].includes("?")) {
+                    questionText = paragraphs[0];
+                } else {
+                    scenarioText = paragraphs[0];
+                }
+            }
+
+            questionBodyHtml = `
+                ${scenarioText ? `<p class="text-sm sm:text-base text-slate-700 arabic-text leading-relaxed text-right" dir="rtl">${scenarioText}</p>` : ''}
+                
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                    <img src="${item.questionImageUrl}" alt="Data Table / Chart" class="max-h-64 rounded-lg object-contain mx-auto">
+                </div>
+
+                ${questionText ? `
+                    <div class="p-4 bg-primary/5 rounded-xl border border-primary/20">
+                        <p class="text-base sm:text-lg font-bold text-slate-900 arabic-text leading-snug text-right" dir="rtl">${questionText}</p>
+                    </div>
+                ` : ''}
+            `;
+        } else {
+            // Text-based Numerical Question (e.g. sequences, arithmetic problems)
+            questionBodyHtml = `
+                <h2 class="text-lg sm:text-xl font-bold text-on-surface leading-snug arabic-text whitespace-pre-line text-right" dir="rtl">${item.promptTextAr || ""}</h2>
+            `;
+        }
+    } else {
+        // Verbal / General Questions:
+        questionBodyHtml = `
+            ${item.titleAr ? `<h2 class="text-lg sm:text-xl font-bold text-on-surface leading-tight arabic-text" dir="rtl">${item.titleAr}</h2>` : ''}
+            ${item.promptTextAr ? `<p class="text-sm text-slate-700 arabic-text leading-relaxed text-right" dir="rtl">${item.promptTextAr}</p>` : ''}
+            ${item.questionImageUrl ? `
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                    <img src="${item.questionImageUrl}" alt="Diagram" class="max-h-64 rounded-lg object-contain mx-auto">
+                </div>
+            ` : ''}
+        `;
+    }
+
+    let html = `
+        <div class="space-y-4 survey-content" dir="rtl" style="direction: rtl; text-align: right;">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${isGlobalRtl ? 'السؤال' : 'Question'} ${currentItemIndex + 1} &bull; ${item.itemCode || ""}</span>
+            ${questionBodyHtml}
         </div>
 
         <div class="space-y-2.5 pt-2 survey-options-container" dir="rtl" style="direction: rtl;">
