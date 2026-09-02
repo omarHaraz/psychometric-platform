@@ -22,13 +22,24 @@ public class Page5DynamicColorTest {
 
     @Test
     public void testGetTierColorLogic() {
+        // High Tier (Green >= 4.0 up to 5.0)
         assertEquals("#388e3c", LeadershipReportGeneratorService.getTierColor(5.0));
+        assertEquals("#388e3c", LeadershipReportGeneratorService.getTierColor(4.5));
         assertEquals("#388e3c", LeadershipReportGeneratorService.getTierColor(4.0));
-        assertEquals("#388e3c", LeadershipReportGeneratorService.getTierColor(4.2));
+
+        // Moderate Tier (Orange >= 3.0 and < 4.0)
         assertEquals("#d97736", LeadershipReportGeneratorService.getTierColor(3.99));
+        assertEquals("#d97736", LeadershipReportGeneratorService.getTierColor(3.9));
+        assertEquals("#d97736", LeadershipReportGeneratorService.getTierColor(3.6));
+        assertEquals("#d97736", LeadershipReportGeneratorService.getTierColor(3.4));
         assertEquals("#d97736", LeadershipReportGeneratorService.getTierColor(3.0));
+
+        // Low Tier (Red < 3.0)
         assertEquals("#d32f2f", LeadershipReportGeneratorService.getTierColor(2.99));
+        assertEquals("#d32f2f", LeadershipReportGeneratorService.getTierColor(2.9));
         assertEquals("#d32f2f", LeadershipReportGeneratorService.getTierColor(1.0));
+
+        // Fallback
         assertEquals("#1e3a4c", LeadershipReportGeneratorService.getTierColor(null));
     }
 

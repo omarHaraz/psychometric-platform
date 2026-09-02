@@ -33,10 +33,10 @@ public class LeadershipReportGeneratorService {
 
     private static final Logger log = LoggerFactory.getLogger(LeadershipReportGeneratorService.class);
 
-    // Color Palette Constants
-    public static final String COLOR_GREEN = "#558b6e";
-    public static final String COLOR_ORANGE = "#d98a44";
-    public static final String COLOR_RED = "#d9776c";
+    // Standardized 3-tier Color Palette Constants
+    public static final String COLOR_GREEN = "#388e3c";
+    public static final String COLOR_ORANGE = "#d97736";
+    public static final String COLOR_RED = "#d32f2f";
 
     // Hardcoded Executive Leadership Role Benchmarks (1–5 scale)
     private static final Map<String, Integer> ROLE_BENCHMARKS = Map.ofEntries(
