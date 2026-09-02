@@ -32,6 +32,18 @@ public class PdfGeneratorService {
     }
 
     /**
+     * Renders the master Thymeleaf report template into an HTML string.
+     */
+    public String generateHtmlReport(ReportContextDto reportDto) {
+        if (reportDto == null) {
+            throw new IllegalArgumentException("ReportContextDto cannot be null");
+        }
+        Context context = reportDto.toThymeleafContext();
+        context.setLocale(new Locale("ar"));
+        return templateEngine.process("report/master-report", context);
+    }
+
+    /**
      * Generates a complete 15-page PDF document byte array from a populated {@link ReportContextDto}.
      *
      * @param reportDto the fully populated report context data model
@@ -46,18 +58,7 @@ public class PdfGeneratorService {
 
         try {
             // 1. Process Thymeleaf Master Report Template into HTML String
-            Context context = reportDto.toThymeleafContext();
-            context.setLocale(new Locale("ar"));
-
-            log.info("[PDF-RENDER-DEBUG] Candidate ID: {}", reportDto.getCandidateId());
-            log.info("[PDF-RENDER-DEBUG] commScore: {}, commColor: {}", context.getVariable("commScore"), context.getVariable("commColor"));
-            log.info("[PDF-RENDER-DEBUG] initiativeScore: {}, initiativeColor: {}", context.getVariable("initiativeScore"), context.getVariable("initiativeColor"));
-            log.info("[PDF-RENDER-DEBUG] decisionScore: {}, leadershipScore: {}", context.getVariable("decisionScore"), context.getVariable("leadershipScore"));
-            log.info("[PDF-RENDER-DEBUG] abstractScore: {}, numericalScore: {}, verbalScore: {}", 
-                    context.getVariable("abstractScore"), context.getVariable("numericalScore"), context.getVariable("verbalScore"));
-            System.out.println(">>> [PDF-RENDER] commScore=" + context.getVariable("commScore") + ", initiativeScore=" + context.getVariable("initiativeScore") + ", candidate=" + reportDto.getCandidateName());
-
-            String htmlContent = templateEngine.process("report/master-report", context);
+            String htmlContent = generateHtmlReport(reportDto);
 
             // 2. Build PDF using OpenHTMLtoPDF with RTL text support & Unicode Bidirectional shaping
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {

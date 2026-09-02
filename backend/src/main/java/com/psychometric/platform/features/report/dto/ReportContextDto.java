@@ -10,7 +10,6 @@ import java.util.*;
 /**
  * Comprehensive master Data Transfer Object (Context Variable Dictionary)
  * for the entire 15-page Leadership Assessment Report.
- *
  * All Thymeleaf templates under {@code src/main/resources/templates/report/} bind
  * directly to the standardized variable names defined in this DTO.
  */

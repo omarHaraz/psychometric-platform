@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 /**
  * LeadershipReportGeneratorService
@@ -56,26 +54,23 @@ public class LeadershipReportGeneratorService {
     );
 
     private final ObjectMapper objectMapper;
-    private final AiReportClient aiClient;
     private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
     private final org.springframework.cache.CacheManager cacheManager;
 
     @org.springframework.beans.factory.annotation.Autowired
     public LeadershipReportGeneratorService(
             ObjectMapper objectMapper,
-            Optional<AiReportClient> aiClient,
             @org.springframework.beans.factory.annotation.Autowired(required = false) org.springframework.jdbc.core.JdbcTemplate jdbcTemplate,
             @org.springframework.beans.factory.annotation.Autowired(required = false) org.springframework.cache.CacheManager cacheManager
     ) {
         this.objectMapper = objectMapper.copy()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        this.aiClient = aiClient.orElseGet(DefaultMockAiClient::new);
         this.jdbcTemplate = jdbcTemplate;
         this.cacheManager = cacheManager;
     }
 
-    public LeadershipReportGeneratorService(ObjectMapper objectMapper, Optional<AiReportClient> aiClient) {
-        this(objectMapper, aiClient, null, null);
+    public LeadershipReportGeneratorService(ObjectMapper objectMapper) {
+        this(objectMapper, null, null);
     }
 
     /**
@@ -91,12 +86,7 @@ public class LeadershipReportGeneratorService {
                 reportCache.evict(attemptToken);
             }
 
-            List<String> aiCaches = List.of(
-                    "aiImpressionCache",
-                    "aiDerailersCache",
-                    "aiCompetencyPageCache",
-                    "aiGrowPlanCache"
-            );
+            List<String> aiCaches = List.of();
             for (String cName : aiCaches) {
                 org.springframework.cache.Cache c = cacheManager.getCache(cName);
                 if (c != null) {
@@ -104,39 +94,6 @@ public class LeadershipReportGeneratorService {
                 }
             }
         }
-    }
-
-    /**
-     * Dedicated method for Page 2: Impression Management AI narrative generation.
-     */
-    public ImpressionResponseDto generateImpressionManagementNarratives(String attemptToken, AssessmentScoreResponseDto rawScore) {
-        if (rawScore == null) {
-            return aiClient.generateImpressionNarratives(new ImpressionPayload(5, "متوسط", 2, "منخفض"));
-        }
-        ReportContextDto tempReport = new ReportContextDto();
-        normalizeImpressionManagement(rawScore, tempReport);
-        ImpressionPayload payload = new ImpressionPayload(
-                tempReport.getSocialScore(), tempReport.getSocialRisk(),
-                tempReport.getCentralScore(), tempReport.getCentralRisk()
-        );
-        return aiClient.generateImpressionNarratives(payload);
-    }
-
-    /**
-     * Dedicated method for Page 4: Personality Derailers AI narrative generation.
-     */
-    public DerailersResponseDto generateDerailersNarratives(String attemptToken, AssessmentScoreResponseDto rawScore) {
-        if (rawScore == null) {
-            return aiClient.generateDerailersNarratives(new DerailersPayload(6, 5, 6, 6, 6, 7));
-        }
-        ReportContextDto tempReport = new ReportContextDto();
-        normalizePersonalityDerailers(rawScore, tempReport);
-        DerailersPayload payload = new DerailersPayload(
-                tempReport.getReservedScore(), tempReport.getEmotionalityScore(),
-                tempReport.getHostilityScore(), tempReport.getImpulsivityScore(),
-                tempReport.getRigidityScore(), tempReport.getUnconventionalityScore()
-        );
-        return aiClient.generateDerailersNarratives(payload);
     }
 
     /**
@@ -180,151 +137,27 @@ public class LeadershipReportGeneratorService {
         // 4. Normalize Page 5: Competencies & Cognitive Abilities (1–5 scale + Color indicators)
         normalizeCompetenciesAndCognitive(rawScore, report);
 
-        // 5. Initialize Detailed Competency Pages Structure (Pages 7–14)
-        initializeDetailedCompetencyPages(rawScore, report);
-
-        // 6. Build Modular Candidate Context Payloads
-        ImpressionPayload impressionPayload = new ImpressionPayload(
-                report.getSocialScore(), report.getSocialRisk(),
-                report.getCentralScore(), report.getCentralRisk()
-        );
-
-        DerailersPayload derailersPayload = new DerailersPayload(
-                report.getReservedScore(), report.getEmotionalityScore(),
-                report.getHostilityScore(), report.getImpulsivityScore(),
-                report.getRigidityScore(), report.getUnconventionalityScore()
-        );
-
-        String personalityContext = extractPersonalityContext(report);
-
-        Map<Integer, CompetencyPagePayload> compPayloads = new LinkedHashMap<>();
-        for (int p = 7; p <= 14; p++) {
-            CompetencyDetailDto cDto = report.getCompetencyPage(p);
-            List<String> subReqs = new ArrayList<>();
-            if (cDto.getReq1() != null) subReqs.add(cDto.getReq1());
-            if (cDto.getReq2() != null) subReqs.add(cDto.getReq2());
-            if (p != 11 && cDto.getReq3() != null) subReqs.add(cDto.getReq3());
-
-            String qaData = extractItemQaForCompetency(candidateId, p, cDto.getCompetencyTitle());
-
-            compPayloads.put(p, new CompetencyPagePayload(
-                    p,
-                    cDto.getCompetencyTitle(),
-                    cDto.getCompetencyScore(),
-                    personalityContext,
-                    subReqs,
-                    qaData
-            ));
+        // 5. Populate Competency Data Statically (Pages 7-14)
+        Map<String, Double> traitMap = new HashMap<>();
+        if (rawScore.getTraitScores() != null) {
+            for (var ts : rawScore.getTraitScores()) {
+                if (ts.getTraitCode() != null && ts.getScorePct() != null) {
+                    traitMap.put(ts.getTraitCode().trim(), ts.getScorePct());
+                }
+            }
         }
 
-        String topStrengths = extractTopStrengths(report);
-        String devAreas = extractDevelopmentAreas(report);
-        GrowPlanPayload growPayload = new GrowPlanPayload(
-                report.getCandidateName(),
-                topStrengths,
-                devAreas,
-                personalityContext
-        );
+        populateCompetencyData(report, 7, "COMMUNICATION_AND_INFLUENCE", traitMap, rawScore.getTraitScores(), report.getCommColor());
+        populateCompetencyData(report, 8, "INITIATIVE", traitMap, rawScore.getTraitScores(), report.getInitiativeColor());
+        populateCompetencyData(report, 9, "DECISION_MAKING_AND_RESPONSIBILITY", traitMap, rawScore.getTraitScores(), report.getDecisionColor());
+        populateCompetencyData(report, 10, "INSPIRING_LEADERSHIP", traitMap, rawScore.getTraitScores(), report.getLeadershipColor());
+        populateCompetencyData(report, 11, "STRATEGIC_THINKING", traitMap, rawScore.getTraitScores(), report.getStrategicColor());
+        populateCompetencyData(report, 12, "SKILL_DEVELOPMENT", traitMap, rawScore.getTraitScores(), report.getSkillsColor());
+        populateCompetencyData(report, 13, "ADAPTABILITY", traitMap, rawScore.getTraitScores(), report.getAdaptabilityColor());
+        populateCompetencyData(report, 14, "SYSTEMATIC_ANALYSIS_AND_PLANNING", traitMap, rawScore.getTraitScores(), report.getAnalysisColor());
 
-        // 7. Invoke AI Engine Concurrently for All Sections
-        try {
-            CompletableFuture<ImpressionResponseDto> cfImpression = CompletableFuture.supplyAsync(
-                    () -> aiClient.generateImpressionNarratives(impressionPayload)
-            );
-
-            CompletableFuture<DerailersResponseDto> cfDerailers = CompletableFuture.supplyAsync(
-                    () -> aiClient.generateDerailersNarratives(derailersPayload)
-            );
-
-            Map<Integer, CompletableFuture<CompetencyPageResponseDto>> cfCompPages = new LinkedHashMap<>();
-            for (int p = 7; p <= 14; p++) {
-                final int pageNum = p;
-                cfCompPages.put(pageNum, CompletableFuture.supplyAsync(
-                        () -> aiClient.generateCompetencyPageNarratives(compPayloads.get(pageNum))
-                ));
-            }
-
-            CompletableFuture<GrowPlanResponseDto> cfGrow = CompletableFuture.supplyAsync(
-                    () -> aiClient.generateGrowPlanNarratives(growPayload)
-            );
-
-            List<CompletableFuture<?>> allFutures = new ArrayList<>();
-            allFutures.add(cfImpression);
-            allFutures.add(cfDerailers);
-            allFutures.addAll(cfCompPages.values());
-            allFutures.add(cfGrow);
-
-            CompletableFuture.allOf(allFutures.toArray(new CompletableFuture[0]))
-                    .get(60, TimeUnit.SECONDS);
-
-            // 8. Merge AI Narratives into the Report Context
-            ImpressionResponseDto impResp = cfImpression.get();
-            if (impResp != null) {
-                if (impResp.socialInterpretation != null && !impResp.socialInterpretation.isBlank()) {
-                    report.setSocialInterpretation(impResp.socialInterpretation);
-                }
-                if (impResp.centralInterpretation != null && !impResp.centralInterpretation.isBlank()) {
-                    report.setCentralInterpretation(impResp.centralInterpretation);
-                }
-            }
-
-            DerailersResponseDto derResp = cfDerailers.get();
-            if (derResp != null) {
-                if (derResp.reservedText != null) report.setReservedText(derResp.reservedText);
-                if (derResp.emotionalityText != null) report.setEmotionalityText(derResp.emotionalityText);
-                if (derResp.hostilityText != null) report.setHostilityText(derResp.hostilityText);
-                if (derResp.impulsivityText != null) report.setImpulsivityText(derResp.impulsivityText);
-                if (derResp.rigidityText != null) report.setRigidityText(derResp.rigidityText);
-                if (derResp.unconventionalityText != null) report.setUnconventionalityText(derResp.unconventionalityText);
-            }
-
-            for (int p = 7; p <= 14; p++) {
-                CompetencyPageResponseDto cpResp = cfCompPages.get(p).get();
-                if (cpResp != null) {
-                    CompetencyDetailDto cDto = report.getCompetencyPage(p);
-                    if (cDto != null) {
-                        String r1 = CompetencyDetailDto.cleanOrNull(cpResp.result1);
-                        String rc1 = CompetencyDetailDto.cleanOrNull(cpResp.rec1);
-                        String r2 = CompetencyDetailDto.cleanOrNull(cpResp.result2);
-                        String rc2 = CompetencyDetailDto.cleanOrNull(cpResp.rec2);
-
-                        if (cpResp.req1 != null && CompetencyDetailDto.cleanOrNull(cpResp.req1) != null) {
-                            cDto.setReq1(CompetencyDetailDto.cleanOrNull(cpResp.req1));
-                        }
-                        if (cpResp.req2 != null && CompetencyDetailDto.cleanOrNull(cpResp.req2) != null) {
-                            cDto.setReq2(CompetencyDetailDto.cleanOrNull(cpResp.req2));
-                        }
-
-                        cDto.setResult1(r1);
-                        cDto.setRec1(rc1);
-                        cDto.setResult2(r2);
-                        cDto.setRec2(rc2);
-
-                        if (p != 11) {
-                            if (cpResp.req3 != null && CompetencyDetailDto.cleanOrNull(cpResp.req3) != null) {
-                                cDto.setReq3(CompetencyDetailDto.cleanOrNull(cpResp.req3));
-                            }
-                            String r3 = CompetencyDetailDto.cleanOrNull(cpResp.result3);
-                            String rc3 = CompetencyDetailDto.cleanOrNull(cpResp.rec3);
-                            cDto.setResult3(r3);
-                            cDto.setRec3(rc3);
-                        }
-                    }
-                }
-            }
-
-            GrowPlanResponseDto growResp = cfGrow.get();
-            if (growResp != null) {
-                if (CompetencyDetailDto.cleanOrNull(growResp.growGoalText) != null) report.setGrowGoalText(CompetencyDetailDto.cleanOrNull(growResp.growGoalText));
-                if (CompetencyDetailDto.cleanOrNull(growResp.growRealityText) != null) report.setGrowRealityText(CompetencyDetailDto.cleanOrNull(growResp.growRealityText));
-                if (CompetencyDetailDto.cleanOrNull(growResp.growOptionsText) != null) report.setGrowOptionsText(CompetencyDetailDto.cleanOrNull(growResp.growOptionsText));
-                if (CompetencyDetailDto.cleanOrNull(growResp.growWillText) != null) report.setGrowWillText(CompetencyDetailDto.cleanOrNull(growResp.growWillText));
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to generate/merge AI narratives. Applying fallback standard narratives: {}", e.getMessage(), e);
-            applyFallbackNarratives(report);
-        }
+        // Populate Static Narratives for Page 2, 4, and 15
+        populateStaticNarratives(rawScore, report);
 
         return report;
     }
@@ -461,241 +294,33 @@ public class LeadershipReportGeneratorService {
         report.setGeneralAbilitiesColor(determineColor((int) Math.round((abs + num + verb) / 3.0), 4));
     }
 
-    private void initializeDetailedCompetencyPages(AssessmentScoreResponseDto raw, ReportContextDto report) {
-        Map<String, Double> traitMap = new HashMap<>();
-        if (raw.getTraitScores() != null) {
-            for (var ts : raw.getTraitScores()) {
-                if (ts.getTraitCode() != null && ts.getScorePct() != null) {
-                    traitMap.put(ts.getTraitCode().trim(), ts.getScorePct());
-                }
-            }
-        }
 
-        for (int p = 7; p <= 14; p++) {
-            CompetencyDetailDto defaultDto = ReportContextDto.getDefaultCompetencyPage(p, report.getCandidateId());
+    private void populateStaticNarratives(AssessmentScoreResponseDto raw, ReportContextDto report) {
+        // Page 2
+        report.setSocialInterpretation(report.getSocialScore() > 7 
+            ? "تشير الدرجة إلى ميل ملحوظ لإظهار صورة إيجابية مثالية (خطر مرتفع). يُنصح بمراعاة ذلك عند تفسير نتائج التقييم الأخرى."
+            : "من المرجح أنه أجاب بصدق وموضوعية دون تزييف مفرط للصورة الإيجابية (خطر " + report.getSocialRisk() + "). لا توجد مؤشرات مقلقة.");
+        report.setCentralInterpretation(report.getCentralScore() > 7
+            ? "لوحظ ميل مرتفع لاختيار الإجابات الوسطية وتجنب إبداء مواقف واضحة وحاسمة (خطر مرتفع)."
+            : "أظهر المرشح وضوحاً وحسماً في تحديد مواقفه دون اللجوء المفرط للإجابات المحايدة (خطر " + report.getCentralRisk() + ").");
 
-            // Sync with backend calculated continuous Double score & color
-            switch (p) {
-                case 7 -> {
-                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "COMMUNICATION_AND_INFLUENCE", 1, 50.0));
-                    defaultDto.setCompetencyScore(dScore);
-                    defaultDto.setCompetencyColor(report.getCommColor());
-                }
-                case 8 -> {
-                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INITIATIVE", 2, 50.0));
-                    defaultDto.setCompetencyScore(dScore);
-                    defaultDto.setCompetencyColor(report.getInitiativeColor());
-                }
-                case 9 -> {
-                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "DECISION_MAKING_AND_RESPONSIBILITY", 3, 50.0));
-                    defaultDto.setCompetencyScore(dScore);
-                    defaultDto.setCompetencyColor(report.getDecisionColor());
-                }
-                case 10 -> {
-                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "INSPIRING_LEADERSHIP", 4, 50.0));
-                    defaultDto.setCompetencyScore(dScore);
-                    defaultDto.setCompetencyColor(report.getLeadershipColor());
-                }
-                case 11 -> {
-                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "STRATEGIC_THINKING", 5, 50.0));
-                    defaultDto.setCompetencyScore(dScore);
-                    defaultDto.setCompetencyColor(report.getStrategicColor());
-                }
-                case 12 -> {
-                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SKILL_DEVELOPMENT", 6, 50.0));
-                    defaultDto.setCompetencyScore(dScore);
-                    defaultDto.setCompetencyColor(report.getSkillsColor());
-                }
-                case 13 -> {
-                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "ADAPTABILITY", 7, 50.0));
-                    defaultDto.setCompetencyScore(dScore);
-                    defaultDto.setCompetencyColor(report.getAdaptabilityColor());
-                }
-                case 14 -> {
-                    double dScore = scaleTo5Double(findTraitScorePct(traitMap, raw.getTraitScores(), "SYSTEMATIC_ANALYSIS_AND_PLANNING", 8, 50.0));
-                    defaultDto.setCompetencyScore(dScore);
-                    defaultDto.setCompetencyColor(report.getAnalysisColor());
-                }
-            }
-            report.getCompetencyPages().put(p, defaultDto);
-        }
-    }
+        // Page 4
+        report.setReservedText("تشير نتيجة (" + report.getReservedScore() + "/10) إلى احتمالية التحفظ والانغلاق تحت الضغط، مما قد يؤثر على التواصل مع الفريق.");
+        report.setEmotionalityText("تشير نتيجة (" + report.getEmotionalityScore() + "/10) إلى درجة التحكم الانفعالي، مع الحاجة للمحافظة على الثبات في المواقف الحرجة.");
+        report.setHostilityText("تشير نتيجة (" + report.getHostilityScore() + "/10) إلى مستوى التنافسية وإمكانية إظهار حدة في التعامل عند النزاعات الحادة.");
+        report.setImpulsivityText("تشير نتيجة (" + report.getImpulsivityScore() + "/10) إلى سرعة اتخاذ الإجراءات مع احتمالية التسرع قبل استكمال دراسة البدائل تحت وطأة الوقت.");
+        report.setRigidityText("تشير نتيجة (" + report.getRigidityScore() + "/10) إلى التمسك بالقواعد والإجراءات المعمول بها مع حاجة لمرونة إضافية عند تغير الظروف.");
+        report.setUnconventionalityText("تشير نتيجة (" + report.getUnconventionalityScore() + "/10) إلى الميل لتبني أساليب غير تقليدية ومبتكرة في معالجة التحديات القيادية.");
 
-    // =========================================================================
-    // STEP 3: Prompt Building & AI Payload Construction
-    // =========================================================================
-
-    public record ImpressionPayload(
-            int socialScore,
-            String socialRisk,
-            int centralScore,
-            String centralRisk
-    ) {}
-
-    public record DerailersPayload(
-            int reserved,
-            int emotionality,
-            int hostility,
-            int impulsivity,
-            int rigidity,
-            int unconventionality
-    ) {}
-
-    public record CompetencyPagePayload(
-            int pageNum,
-            String competencyTitle,
-            double score,
-            String personalityContext,
-            List<String> subIndicatorReqs,
-            String questionsAndAnswers
-    ) {}
-
-    public record GrowPlanPayload(
-            String candidateName,
-            String topStrengths,
-            String developmentAreas,
-            String prominentDerailers
-    ) {}
-
-    public record AiPromptPayload(
-            String candidateId,
-            String candidateName,
-            Map<String, Object> normalizedScores,
-            Map<String, Integer> roleBenchmarks,
-            List<String> competencyNames,
-            String instructions
-    ) {}
-
-    public String extractItemQaForCompetency(String attemptToken, int pageNum, String competencyTitle) {
-        if (jdbcTemplate != null && attemptToken != null && !attemptToken.isBlank()) {
-            try {
-                String sql = """
-                        SELECT pi.statement_ar, cr.selected_likert
-                        FROM candidate_responses cr
-                        JOIN battery_sessions bs ON cr.session_id = bs.id
-                        JOIN assessment_attempts aa ON bs.attempt_id = aa.id
-                        JOIN personality_items pi ON cr.item_id = pi.id
-                        JOIN personality_item_competencies pic ON pi.id = pic.item_id
-                        JOIN competencies c ON pic.competency_id = c.id
-                        WHERE aa.attempt_token = ? 
-                          AND (c.name_ar = ? OR c.name_ar LIKE ? OR c.code = ?)
-                        ORDER BY cr.id ASC
-                        """;
-                String traitCode = getTraitCodeForPage(pageNum);
-                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, attemptToken, competencyTitle, "%" + competencyTitle + "%", traitCode);
-
-                if (!rows.isEmpty()) {
-                    StringBuilder sb = new StringBuilder();
-                    int qNum = 1;
-                    for (Map<String, Object> row : rows) {
-                        String statement = (String) row.get("statement_ar");
-                        Number likertNum = (Number) row.get("selected_likert");
-                        int likert = likertNum != null ? likertNum.intValue() : 3;
-                        String likertLabel = formatLikert(likert);
-                        sb.append(String.format("السؤال %d: [%s] - إجابة المرشح: [%s]\n", qNum++, statement, likertLabel));
-                    }
-                    return sb.toString().trim();
-                }
-            } catch (Exception e) {
-                log.warn("Could not query candidate item responses for {} ({}). Using structured fallback Q&A data.", competencyTitle, e.getMessage());
-            }
-        }
-
-        return getFallbackItemQa(pageNum);
-    }
-
-    public static String getTraitCodeForPage(int pageNum) {
-        return switch (pageNum) {
-            case 7 -> "COMMUNICATION_AND_INFLUENCE";
-            case 8 -> "INITIATIVE";
-            case 9 -> "DECISION_MAKING_AND_RESPONSIBILITY";
-            case 10 -> "INSPIRING_LEADERSHIP";
-            case 11 -> "STRATEGIC_THINKING";
-            case 12 -> "SKILL_DEVELOPMENT";
-            case 13 -> "ADAPTABILITY";
-            case 14 -> "SYSTEMATIC_ANALYSIS_AND_PLANNING";
-            default -> "";
-        };
-    }
-
-    public static String formatLikert(int likert) {
-        return switch (likert) {
-            case 5 -> "أوافق بشدة / 5";
-            case 4 -> "أوافق / 4";
-            case 3 -> "محايد / 3";
-            case 2 -> "لا أوافق / 2";
-            case 1 -> "لا أوافق بشدة / 1";
-            default -> String.valueOf(likert);
-        };
-    }
-
-    public static String getFallbackItemQa(int pageNum) {
-        return switch (pageNum) {
-            case 7 -> """
-                    السؤال 1: [أحرص على توضيح أفكاري بأسلوب مقنع ومناسب لكافة أطراف النقاش] - إجابة المرشح: [أوافق / 4]
-                    السؤال 2: [أستمع بانتباه لوجهات نظر الآخرين قبل تقديم استنتاجاتي] - إجابة المرشح: [أوافق بشدة / 5]
-                    السؤال 3: [أنجح في بناء تحالفات عمل وتوجيه الآراء نحو تحقيق الأهداف المشتركة] - إجابة المرشح: [محايد / 3]
-                    """.trim();
-            case 8 -> """
-                    السؤال 1: [أسعى لاقتناص الفرص التطويرية دون انتظار التوجيه المباشر] - إجابة المرشح: [أوافق / 4]
-                    السؤال 2: [أتحرك بسرعة لمعالجة التحديات والمستجدات غير المتوقعة في بيئة العمل] - إجابة المرشح: [لا أوافق / 2]
-                    السؤال 3: [أقدم مقترحات مبتكرة لتحسين إجراءات وكفاءة العمل بصفة مستمرة] - إجابة المرشح: [أوافق / 4]
-                    """.trim();
-            case 9 -> """
-                    السؤال 1: [أعتمد على التحليل المنطقي والبيانات الموثوقة عند المفاضلة بين الخيارات] - إجابة المرشح: [أوافق / 4]
-                    السؤال 2: [أحسم القرارات الصعبة في الأوقات الحرجة دون تردد مفرط] - إجابة المرشح: [محايد / 3]
-                    السؤال 3: [أتحمل المسؤولية الكاملة عن تبعات ونتائج القرارات التي أتخذها] - إجابة المرشح: [أوافق بشدة / 5]
-                    """.trim();
-            case 10 -> """
-                    السؤال 1: [أحفز أعضاء الفريق وأوجههم نحو تحقيق رؤية وأهداف طموحة] - إجابة المرشح: [أوافق بشدة / 5]
-                    السؤال 2: [أبني بيئة عمل قائمة على الثقة والتمكين والتقدير المتبادل] - إجابة المرشح: [أوافق / 4]
-                    السؤال 3: [أمثل نموذجاً يحتذى به في الالتزام المهني والنزاهة القيادية] - إجابة المرشح: [أوافق بشدة / 5]
-                    """.trim();
-            case 11 -> """
-                    السؤال 1: [أستشرف التوجهات والفرص المستقبلية وأربطها بخطط العمل الحالية] - إجابة المرشح: [لا أوافق / 2]
-                    السؤال 2: [أحلل الصورة الشاملة والتأثيرات طويلة المدى للقرارات المؤسسية] - إجابة المرشح: [محايد / 3]
-                    """.trim();
-            case 12 -> """
-                    السؤال 1: [أحدد الاحتياجات التدريبية لأعضاء الفريق وأوفر لهم فرص التعلم المستمر] - إجابة المرشح: [أوافق / 4]
-                    السؤال 2: [أحرص على تطوير قدراتي الذاتية ومواكبة أفضل الممارسات في مجالي] - إجابة المرشح: [أوافق بشدة / 5]
-                    السؤال 3: [أقدم تغذية راجعة بناءة وتوجيهاً فعالاً لتمكين الآخرين من النمو] - إجابة المرشح: [أوافق / 4]
-                    """.trim();
-            case 13 -> """
-                    السؤال 1: [أتقبل التغييرات الهيكلية والمهنية بمرونة وإيجابية عالية] - إجابة المرشح: [أوافق / 4]
-                    السؤال 2: [أعدل أسلوب عملي واستراتيجياتي لتلائم متطلبات الظروف المستجدة] - إجابة المرشح: [أوافق / 4]
-                    السؤال 3: [أحافظ على الفاعلية والأداء المتميز تحت الضغوط وبيئات العمل المتغيرة] - إجابة المرشح: [محايد / 3]
-                    """.trim();
-            case 14 -> """
-                    السؤال 1: [أضع خطط عمل مفصلة ومحددة بمؤشرات قياس وجداول زمنية دقيقة] - إجابة المرشح: [أوافق بشدة / 5]
-                    السؤال 2: [أحلل المشكلات المعقدة وأفككها إلى عناصر قابلة للحل والتنفيذ] - إجابة المرشح: [أوافق / 4]
-                    السؤال 3: [أتابع سير العمل وأجري التعديلات التصحيحية بناءً على مؤشرات الإنجاز] - إجابة المرشح: [أوافق بشدة / 5]
-                    """.trim();
-            default -> "";
-        };
-    }
-
-    private String extractPersonalityContext(ReportContextDto report) {
-        Map<String, Integer> derailers = new LinkedHashMap<>();
-        derailers.put("التحفظ", report.getReservedScore());
-        derailers.put("الانفعالية", report.getEmotionalityScore());
-        derailers.put("العدائية", report.getHostilityScore());
-        derailers.put("الاندفاعية", report.getImpulsivityScore());
-        derailers.put("الصرامة", report.getRigidityScore());
-        derailers.put("اللامألوفية", report.getUnconventionalityScore());
-
-        var sorted = derailers.entrySet().stream()
-                .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
-                .toList();
-
-        var highest = sorted.get(0);
-        var secondHighest = sorted.get(1);
-        return String.format(Locale.US, "السمات الشخصية الأبرز للمرشح: %s (%d/10) و%s (%d/10)",
-                highest.getKey(), highest.getValue(),
-                secondHighest.getKey(), secondHighest.getValue());
+        // Page 15
+        report.setGrowGoalText("تعزيز فاعلية التخطيط الاستراتيجي وتوسيع نطاق المبادرة والتحليل في إدارة العمليات القيادية.");
+        report.setGrowRealityText("يمتلك القائد نقاط قوة متميزة في " + extractTopStrengths(report) + "، بينما تتطلب مجالات " + extractDevelopmentAreas(report) + " دعماً وتطويراً مستمراً.");
+        report.setGrowOptionsText("المشاركة في برامج القيادة الاستراتيجية المتقدمة ومحاكاة إدارة الأزمات والعمليات المشتركة.");
+        report.setGrowWillText("تطبيق خطة تدريبية ومراجعة دورية للتقدم كل 3 أشهر مع القيادة العليا المباشرة.");
     }
 
     private String extractTopStrengths(ReportContextDto report) {
-        Map<String, Double> compScores = new LinkedHashMap<>();
+        Map<String, Double> compScores = new java.util.LinkedHashMap<>();
         compScores.put("التواصل والتأثير الفعال", report.getCommScore());
         compScores.put("المبادرة", report.getInitiativeScore());
         compScores.put("اتخاذ القرار وتحمل المسؤولية", report.getDecisionScore());
@@ -708,13 +333,13 @@ public class LeadershipReportGeneratorService {
         return compScores.entrySet().stream()
                 .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
                 .limit(2)
-                .map(e -> String.format(Locale.US, "%s (%.1f/5)", e.getKey(), e.getValue()))
+                .map(e -> String.format(java.util.Locale.US, "%s (%.1f/5)", e.getKey(), e.getValue()))
                 .reduce((a, b) -> a + "، " + b)
                 .orElse("التحليل والتخطيط المنهجي");
     }
 
     private String extractDevelopmentAreas(ReportContextDto report) {
-        Map<String, Double> compScores = new LinkedHashMap<>();
+        Map<String, Double> compScores = new java.util.LinkedHashMap<>();
         compScores.put("التواصل والتأثير الفعال", report.getCommScore());
         compScores.put("المبادرة", report.getInitiativeScore());
         compScores.put("اتخاذ القرار وتحمل المسؤولية", report.getDecisionScore());
@@ -725,125 +350,192 @@ public class LeadershipReportGeneratorService {
         compScores.put("التحليل والتخطيط المنهجي", report.getAnalysisScore());
 
         return compScores.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
+                .sorted(java.util.Map.Entry.comparingByValue())
                 .limit(2)
-                .map(e -> String.format(Locale.US, "%s (%.1f/5)", e.getKey(), e.getValue()))
+                .map(e -> String.format(java.util.Locale.US, "%s (%.1f/5)", e.getKey(), e.getValue()))
                 .reduce((a, b) -> a + "، " + b)
                 .orElse("التفكير الاستراتيجي");
     }
 
-    // =========================================================================
-    // STEP 4 & 5: Deserialization & Response DTOs
-    // =========================================================================
+    private void populateCompetencyData(ReportContextDto report, int pageNum, String competencyCode, Map<String, Double> traitMap, List<AssessmentScoreResponseDto.TraitScoreDto> traitScores, String competencyColor) {
+        CompetencyDetailDto dto = new CompetencyDetailDto();
+        dto.setPageNum(pageNum);
+        dto.setCandidateId(report.getCandidateId());
+        
+        int expectedDisplayOrder = pageNum - 6;
+        double dScore = scaleTo5Double(findTraitScorePct(traitMap, traitScores, competencyCode, expectedDisplayOrder, 50.0));
+        dto.setCompetencyScore(dScore);
+        dto.setCompetencyColor(competencyColor);
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class ImpressionResponseDto {
-        public String socialInterpretation;
-        public String centralInterpretation;
+        String colorIndicator = dScore >= 4.0 ? "#388e3c" : (dScore >= 3.0 ? "#d97736" : "#d32f2f");
+        dto.setIndicator1Color(colorIndicator);
+        dto.setIndicator2Color(colorIndicator);
+        dto.setIndicator3Color(colorIndicator);
 
-        public ImpressionResponseDto() {}
-        public ImpressionResponseDto(String socialInterpretation, String centralInterpretation) {
-            this.socialInterpretation = socialInterpretation;
-            this.centralInterpretation = centralInterpretation;
+        switch (competencyCode) {
+            case "COMMUNICATION_AND_INFLUENCE":
+                dto.setCompetencyTitle("التواصل والتأثير الفعال");
+                dto.setCompetencyDesc("قدرة القائد على نقل الأفكار والمعلومات بوضوح وإقناع، والتأثير الإيجابي في الآخرين، وبناء علاقات عمل قوية تدعم تحقيق أهداف المنظمة.");
+                
+                dto.setReq1("نقل الرسائل المعقدة بوضوح وشفافية.");
+                if (dScore >= 4.0) { dto.setResult1("مهارات استثنائية في تبسيط المعلومات."); dto.setRec1("قيادة العروض الاستراتيجية."); }
+                else if (dScore >= 3.0) { dto.setResult1("ينقل المعلومات جيداً في المواقف المعتادة."); dto.setRec1("التدرب على صياغة الرسائل المعقدة."); }
+                else { dto.setResult1("يواجه صعوبة في إيصال أفكاره بوضوح."); dto.setRec1("برامج تدريبية في التواصل الفعال."); }
+
+                dto.setReq2("الاستماع النشط لاستيعاب وجهات النظر.");
+                if (dScore >= 4.0) { dto.setResult2("قدرة عالية على الاستماع وفهم الدوافع."); dto.setRec2("إدارة النزاعات المعقدة."); }
+                else if (dScore >= 3.0) { dto.setResult2("يستمع جيداً لكنه قد يتسرع في الحلول."); dto.setRec2("ممارسة الاستماع التأملي."); }
+                else { dto.setResult2("يميل للمقاطعة والتركيز على الرد."); dto.setRec2("تطبيق تمارين الوعي الذاتي."); }
+
+                dto.setReq3("إقناع الآخرين والتفاوض الدبلوماسي.");
+                if (dScore >= 4.0) { dto.setResult3("مفاوض بارع يبني توافقاً بسلاسة."); dto.setRec3("تمثيل المؤسسة في شراكات استراتيجية."); }
+                else if (dScore >= 3.0) { dto.setResult3("يقنع بالبيانات لكنه يواجه صعوبة مع المقاومة."); dto.setRec3("تطوير استراتيجيات التفاوض."); }
+                else { dto.setResult3("يفتقر للمرونة ويميل لفرض الرأي."); dto.setRec3("ورش عمل في الإقناع الدبلوماسي."); }
+                break;
+
+            case "INITIATIVE":
+                dto.setCompetencyTitle("المبادرة");
+                dto.setCompetencyDesc("قدرة القائد على التحرك من تلقاء نفسه دون انتظار الأوامر، عبر اقتراح الأفكار واتخاذ الإجراءات المناسبة في الوقت المناسب لتحسين العمل وحل المشكلات وتحقيق الأهداف بسرعة وفعالية.");
+
+                dto.setReq1("الاستباقية في تحديد وحل المشكلات.");
+                if (dScore >= 4.0) { dto.setResult1("يتنبأ بالمشكلات ويعالجها قبل تفاقمها."); dto.setRec1("قيادة فرق الابتكار الاستباقي."); }
+                else if (dScore >= 3.0) { dto.setResult1("يحل المشكلات عند ظهورها بفاعلية."); dto.setRec1("تطوير التفكير الاستباقي."); }
+                else { dto.setResult1("ينتظر التوجيهات للتعامل مع التحديات."); dto.setRec1("تحفيز الاستقلالية في العمل."); }
+
+                dto.setReq2("تجاوز الأهداف وتحمل المخاطر المحسوبة.");
+                if (dScore >= 4.0) { dto.setResult2("يتخطى الأهداف باستمرار ويدير المخاطر ببراعة."); dto.setRec2("إدارة مشاريع عالية المخاطر."); }
+                else if (dScore >= 3.0) { dto.setResult2("يحقق الأهداف المطلوبة بدقة والتزام."); dto.setRec2("تشجيع الخروج عن المألوف."); }
+                else { dto.setResult2("يكتفي بالحد الأدنى ويتجنب المخاطرة."); dto.setRec2("بناء الثقة لتحمل مسؤوليات أكبر."); }
+
+                dto.setReq3("استغلال الفرص دون توجيه مباشر.");
+                if (dScore >= 4.0) { dto.setResult3("يقتنص الفرص ويحولها لنجاحات مؤسسية."); dto.setRec3("المشاركة في التخطيط التوسعي."); }
+                else if (dScore >= 3.0) { dto.setResult3("يستغل الفرص الواضحة والمباشرة."); dto.setRec3("التدرب على رصد الفرص الخفية."); }
+                else { dto.setResult3("يفوت الفرص لتردده في اتخاذ الخطوة الأولى."); dto.setRec3("تعزيز الجرأة المهنية."); }
+                break;
+
+            case "DECISION_MAKING_AND_RESPONSIBILITY":
+                dto.setCompetencyTitle("اتخاذ القرار وتحمل المسؤولية");
+                dto.setCompetencyDesc("القدرة على جمع وتحليل المعلومات لتقييم الخيارات المتاحة واستنتاج حلول عملية، واتخاذ القرارات في الوقت المناسب مع تحمل المسؤولية الكاملة عن نتائجها.");
+
+                dto.setReq1("جمع وتحليل البيانات قبل اتخاذ القرار.");
+                if (dScore >= 4.0) { dto.setResult1("يحلل المعطيات بعمق ويتخذ قرارات مبنية على أدلة."); dto.setRec1("تصميم أنظمة دعم القرار."); }
+                else if (dScore >= 3.0) { dto.setResult1("يعتمد على البيانات المتاحة بحدود معقولة."); dto.setRec1("توسيع نطاق مصادر المعلومات."); }
+                else { dto.setResult1("يتخذ قرارات متسرعة دون تحليل كافٍ."); dto.setRec1("التدريب على التحليل الإحصائي المبسط."); }
+
+                dto.setReq2("الحسم في المواقف المعقدة والحرجة.");
+                if (dScore >= 4.0) { dto.setResult2("سريع وحاسم في الأزمات بثقة عالية."); dto.setRec2("إدارة غرف الأزمات."); }
+                else if (dScore >= 3.0) { dto.setResult2("يتخذ قرارات جيدة لكنه يتردد تحت الضغط."); dto.setRec2("محاكاة سيناريوهات الأزمات."); }
+                else { dto.setResult2("يتجنب اتخاذ القرارات في المواقف الصعبة."); dto.setRec2("برامج بناء الثقة القيادية."); }
+
+                dto.setReq3("تحمل التبعات والمساءلة الكاملة.");
+                if (dScore >= 4.0) { dto.setResult3("يتحمل المسؤولية كاملة عن نتائج فريقه."); dto.setRec3("تولي قيادة إدارات متعثرة."); }
+                else if (dScore >= 3.0) { dto.setResult3("يتحمل المسؤولية في المواقف المعتادة."); dto.setRec3("تعزيز ثقافة الشفافية المطلقة."); }
+                else { dto.setResult3("يميل لإلقاء اللوم على الظروف أو الآخرين."); dto.setRec3("جلسات توجيه حول أخلاقيات القيادة."); }
+                break;
+
+            case "INSPIRING_LEADERSHIP":
+                dto.setCompetencyTitle("القيادة الملهمة");
+                dto.setCompetencyDesc("القدرة على إلهام وتوجيه الآخرين نحو تحقيق الرؤية المشتركة، من خلال بناء الثقة، وتحفيز الأداء، وتمكين الأفراد، وخلق بيئة عمل تشجع على التميز والابتكار.");
+
+                dto.setReq1("بناء الثقة وتمكين أعضاء الفريق.");
+                if (dScore >= 4.0) { dto.setResult1("يخلق بيئة عمل قائمة على الثقة والتمكين."); dto.setRec1("إعداد برامج تطوير القادة."); }
+                else if (dScore >= 3.0) { dto.setResult1("يفوض المهام لكن يحتفظ بالرقابة الدقيقة."); dto.setRec1("منح استقلالية أكبر للفريق."); }
+                else { dto.setResult1("يمركز الصلاحيات ويقلل من ثقة فريقه."); dto.setRec1("التدريب على التفويض الفعال."); }
+
+                dto.setReq2("تحفيز الآخرين نحو الرؤية المشتركة.");
+                if (dScore >= 4.0) { dto.setResult2("يلهم فريقه لتحقيق مستويات أداء استثنائية."); dto.setRec2("قيادة مبادرات التغيير المؤسسي."); }
+                else if (dScore >= 3.0) { dto.setResult2("يحفز فريقه بشكل روتيني عبر الحوافز التقليدية."); dto.setRec2("تطوير أساليب تحفيز معنوية."); }
+                else { dto.setResult2("يفتقر لأساليب التحفيز مما يؤدي لانخفاض الروح المعنوية."); dto.setRec2("تطوير مهارات الذكاء العاطفي."); }
+
+                dto.setReq3("تقديم الدعم والتوجيه المستمر.");
+                if (dScore >= 4.0) { dto.setResult3("موجه بارع يساهم في بناء صف ثانٍ من القادة."); dto.setRec3("تأسيس برنامج إرشاد داخلي."); }
+                else if (dScore >= 3.0) { dto.setResult3("يقدم توجيهاً عند الطلب فقط."); dto.setRec3("جدولة جلسات توجيه دورية."); }
+                else { dto.setResult3("يتجاهل دور التوجيه ويركز على التنفيذ فقط."); dto.setRec3("برامج إعداد الموجهين."); }
+                break;
+
+            case "STRATEGIC_THINKING":
+                dto.setCompetencyTitle("التفكير الاستراتيجي");
+                dto.setCompetencyDesc("القدرة على استيعاب الصورة الكلية والتوجهات المستقبلية، وتحليل البيئة الداخلية والخارجية لصياغة رؤى استراتيجية تدعم تحقيق الأهداف طويلة المدى للمنظمة.");
+
+                dto.setReq1("فهم الصورة الكلية وتحليل البيئة المحيطة.");
+                if (dScore >= 4.0) { dto.setResult1("يمتلك رؤية شمولية ويربط الأحداث ببراعة."); dto.setRec1("صياغة الاستراتيجيات المؤسسية."); }
+                else if (dScore >= 3.0) { dto.setResult1("يفهم التوجهات العامة دون الغوص في الروابط المعقدة."); dto.setRec1("التدريب على النماذج الاستراتيجية."); }
+                else { dto.setResult1("يغرق في التفاصيل التشغيلية ويفقد الصورة الكبرى."); dto.setRec1("التركيز على مهارات التفكير التجريدي."); }
+
+                dto.setReq2("استشراف التحديات والفرص المستقبلية.");
+                if (dScore >= 4.0) { dto.setResult2("يتوقع التحولات المستقبلية ويستعد لها."); dto.setRec2("إدارة لجان المخاطر الاستراتيجية."); }
+                else if (dScore >= 3.0) { dto.setResult2("يتجاوب مع المتغيرات بخطط قصيرة المدى."); dto.setRec2("تطوير مهارات التخطيط بعيد المدى."); }
+                else { dto.setResult2("يتفاجأ بالتغيرات ويفتقر للرؤية الاستباقية."); dto.setRec2("الورش التفاعلية لاستشراف المستقبل."); }
+
+                dto.setReq3("مواءمة الخطط مع رسالة المنظمة.");
+                if (dScore >= 4.0) { dto.setResult3("يضمن انسجام كافة المبادرات مع الأهداف العليا."); dto.setRec3("الإشراف على محافظ المشاريع الاستراتيجية."); }
+                else if (dScore >= 3.0) { dto.setResult3("يوائم الأهداف الأساسية بفاعلية مقبولة."); dto.setRec3("مراجعة مؤشرات الأداء الاستراتيجية."); }
+                else { dto.setResult3("ينفذ خططاً تتعارض أحياناً مع التوجه العام."); dto.setRec3("تحديث الفهم للرؤية المؤسسية."); }
+                break;
+
+            case "SKILL_DEVELOPMENT":
+                dto.setCompetencyTitle("تطوير المهارات");
+                dto.setCompetencyDesc("القدرة على تحديد الاحتياجات التدريبية لنفسه وللآخرين، والسعي المستمر لاكتساب معارف ومهارات جديدة، وتوفير التوجيه والدعم لرفع مستوى الكفاءة والأداء العام.");
+
+                dto.setReq1("تحديد فجوات الأداء والوعي بالقدرات.");
+                if (dScore >= 4.0) { dto.setResult1("وعي ذاتي عالٍ وسعي دائم للتميز."); dto.setRec1("مشاركة تجارب النجاح مع القيادات."); }
+                else if (dScore >= 3.0) { dto.setResult1("يدرك قدراته بشكل عام ويسعى للتطوير عند الحاجة."); dto.setRec1("تصميم خطة تطوير شخصية سنوية."); }
+                else { dto.setResult1("يبالغ في تقدير قدراته ويتجاهل فجوات الأداء."); dto.setRec1("تقييم 360 درجة لزيادة الوعي."); }
+
+                dto.setReq2("توجيه الزملاء ونقل الخبرات.");
+                if (dScore >= 4.0) { dto.setResult2("يشارك المعرفة بسخاء ويبني قدرات فريقه."); dto.setRec2("قيادة مجتمعات الممارسة الداخلية."); }
+                else if (dScore >= 3.0) { dto.setResult2("يشارك المعلومات المباشرة المتعلقة بالعمل."); dto.setRec2("تشجيع توثيق الدروس المستفادة."); }
+                else { dto.setResult2("يحتفظ بالمعلومات لنفسه كمصدر للقوة."); dto.setRec2("ربط تقييم الأداء بنقل المعرفة."); }
+
+                dto.setReq3("مواكبة المتغيرات والتعلم المستمر.");
+                if (dScore >= 4.0) { dto.setResult3("يتبنى عقلية التعلم المستمر ويواكب أحدث الممارسات."); dto.setRec3("تمثيل المؤسسة في مؤتمرات تخصصية."); }
+                else if (dScore >= 3.0) { dto.setResult3("يتعلم مهارات جديدة عندما يتطلب العمل ذلك."); dto.setRec3("توسيع نطاق القراءة والاطلاع التخصصي."); }
+                else { dto.setResult3("يقاوم تعلم مهارات جديدة ويعتمد على خبراته القديمة."); dto.setRec3("التكليف بمهام تتطلب تقنيات حديثة."); }
+                break;
+
+            case "ADAPTABILITY":
+                dto.setCompetencyTitle("القدرة على التكيف");
+                dto.setCompetencyDesc("القدرة على التعامل بمرونة وإيجابية مع التغييرات والمواقف الغامضة أو الضاغطة، وتعديل خطط العمل لتتناسب مع متطلبات البيئة المتغيرة، دون المساس بجودة الأداء.");
+
+                dto.setReq1("المرونة في التعامل مع المتغيرات والمفاجآت.");
+                if (dScore >= 4.0) { dto.setResult1("يتكيف بسرعة فائقة مع التغيرات ويحولها لصالحه."); dto.setRec1("قيادة الفِرَق في بيئات عالية التقلب."); }
+                else if (dScore >= 3.0) { dto.setResult1("يتقبل التغيير بعد فترة قصيرة من التكيف."); dto.setRec1("المشاركة في مشاريع رشيقة (Agile)."); }
+                else { dto.setResult1("يقاوم التغيير بشدة ويتمسك بالروتين."); dto.setRec1("التدريب على إدارة التغيير."); }
+
+                dto.setReq2("العمل بفاعلية تحت الضغط والغموض.");
+                if (dScore >= 4.0) { dto.setResult2("يحافظ على هدوئه وإنتاجيته في أقصى درجات الضغط."); dto.setRec2("تولي مهام إنقاذ المشاريع المتعثرة."); }
+                else if (dScore >= 3.0) { dto.setResult2("يدير الضغوط المعتادة بكفاءة، لكنه يتوتر في الأزمات."); dto.setRec2("تمارين إدارة الإجهاد والمرونة النفسية."); }
+                else { dto.setResult2("ينهار أداؤه سريعاً عند مواجهة الغموض أو الضغط."); dto.setRec2("توفير بيئة عمل مستقرة وتوجيه مستمر."); }
+
+                dto.setReq3("تبني التغيير المؤسسي وقيادة الآخرين نحوه.");
+                if (dScore >= 4.0) { dto.setResult3("عرّاب للتغيير يقود فريقه بسلاسة نحو الرؤية الجديدة."); dto.setRec3("إدارة برامج التحول المؤسسي."); }
+                else if (dScore >= 3.0) { dto.setResult3("يدعم التغيير لكنه لا يأخذ دور المبادرة في قيادته."); dto.setRec3("تولي دور سفير التغيير في إدارته."); }
+                else { dto.setResult3("يبث السلبية تجاه المبادرات الجديدة."); dto.setRec3("جلسات توجيه حول أهمية المواكبة الاستراتيجية."); }
+                break;
+
+            case "SYSTEMATIC_ANALYSIS_AND_PLANNING":
+                dto.setCompetencyTitle("التحليل والتخطيط المنهجي");
+                dto.setCompetencyDesc("القدرة على دراسة المشكلات بعمق، ووضع خطط عمل مفصلة وممنهجة تتضمن ترتيب الأولويات وتوزيع الموارد بكفاءة، مع متابعة التنفيذ لضمان تحقيق الأهداف المحددة بدقة.");
+
+                dto.setReq1("تحليل المشكلات المعقدة وتقسيمها منطقياً.");
+                if (dScore >= 4.0) { dto.setResult1("يحلل جذور المشكلات بأسلوب علمي ومنهجي دقيق."); dto.setRec1("قيادة لجان التحقيق في التحديات المؤسسية."); }
+                else if (dScore >= 3.0) { dto.setResult1("يحلل المشكلات السطحية جيداً."); dto.setRec1("التدرب على أدوات تحليل السبب الجذري."); }
+                else { dto.setResult1("يعالج الأعراض ويتجاهل الأسباب الحقيقية."); dto.setRec1("التدريب على التفكير المنطقي."); }
+
+                dto.setReq2("وضع خطط تنفيذية دقيقة وقابلة للقياس.");
+                if (dScore >= 4.0) { dto.setResult2("يصمم خططاً محكمة تراعي أدق تفاصيل التنفيذ."); dto.setRec2("إدارة مكاتب المشاريع (PMO)."); }
+                else if (dScore >= 3.0) { dto.setResult2("يضع خططاً جيدة تنقصها أحياناً بعض التفاصيل الدقيقة."); dto.setRec2("استخدام برمجيات إدارة المشاريع المتقدمة."); }
+                else { dto.setResult2("يعمل بعشوائية ويفتقر للتخطيط المسبق."); dto.setRec2("دورة مكثفة في إدارة المشاريع الأساسية."); }
+
+                dto.setReq3("تحديد الأولويات وتخصيص الموارد بكفاءة.");
+                if (dScore >= 4.0) { dto.setResult3("يدير الموارد ببراعة ويحقق أقصى عائد بأقل تكلفة."); dto.setRec3("الإشراف على الميزانيات التشغيلية الكبرى."); }
+                else if (dScore >= 3.0) { dto.setResult3("يخصص الموارد بشكل مقبول مع بعض الهدر."); dto.setRec3("التدريب على إدارة الموارد الرشيقة."); }
+                else { dto.setResult3("يستنزف الموارد ويواجه صعوبة في ترتيب الأولويات."); dto.setRec3("تطبيق مصفوفات إدارة الوقت والأولويات."); }
+                break;
         }
+
+        report.getCompetencyPages().put(pageNum, dto);
     }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class DerailersResponseDto {
-        public String reservedText;
-        public String emotionalityText;
-        public String hostilityText;
-        public String impulsivityText;
-        public String rigidityText;
-        public String unconventionalityText;
-
-        public DerailersResponseDto() {}
-        public DerailersResponseDto(String reservedText, String emotionalityText, String hostilityText, String impulsivityText, String rigidityText, String unconventionalityText) {
-            this.reservedText = reservedText;
-            this.emotionalityText = emotionalityText;
-            this.hostilityText = hostilityText;
-            this.impulsivityText = impulsivityText;
-            this.rigidityText = rigidityText;
-            this.unconventionalityText = unconventionalityText;
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class CompetencyPageResponseDto {
-        public String req1;
-        public String result1;
-        public String rec1;
-        public String req2;
-        public String result2;
-        public String rec2;
-        public String req3;
-        public String result3;
-        public String rec3;
-
-        public CompetencyPageResponseDto() {}
-        public CompetencyPageResponseDto(String req1, String result1, String rec1, String req2, String result2, String rec2, String req3, String result3, String rec3) {
-            this.req1 = req1;
-            this.result1 = result1;
-            this.rec1 = rec1;
-            this.req2 = req2;
-            this.result2 = result2;
-            this.rec2 = rec2;
-            this.req3 = req3;
-            this.result3 = result3;
-            this.rec3 = rec3;
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class GrowPlanResponseDto {
-        public String growGoalText;
-        public String growRealityText;
-        public String growOptionsText;
-        public String growWillText;
-
-        public GrowPlanResponseDto() {}
-        public GrowPlanResponseDto(String growGoalText, String growRealityText, String growOptionsText, String growWillText) {
-            this.growGoalText = growGoalText;
-            this.growRealityText = growRealityText;
-            this.growOptionsText = growOptionsText;
-            this.growWillText = growWillText;
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class AiNarrativeResponseDto {
-        public String socialInterpretation;
-        public String centralInterpretation;
-
-        public String reservedText;
-        public String emotionalityText;
-        public String hostilityText;
-        public String impulsivityText;
-        public String rigidityText;
-        public String unconventionalityText;
-
-        public Map<String, PageNarrativeDto> competencyNarratives = new HashMap<>();
-
-        public String growGoalText;
-        public String growRealityText;
-        public String growOptionsText;
-        public String growWillText;
-
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class PageNarrativeDto {
-            public String result1;
-            public String rec1;
-            public String result2;
-            public String rec2;
-            public String result3;
-            public String rec3;
-        }
-    }
-
-    private void applyFallbackNarratives(ReportContextDto report) {
-        log.info("Applied standardized psychometric fallback narratives.");
-    }
-
     // =========================================================================
     // Scale Normalization & Color Determination Helpers
     // =========================================================================
@@ -895,83 +587,4 @@ public class LeadershipReportGeneratorService {
     }
 
     // =========================================================================
-    // AI Client Interface & Mock Implementation
-    // =========================================================================
-
-    public interface AiReportClient {
-        ImpressionResponseDto generateImpressionNarratives(ImpressionPayload payload);
-        DerailersResponseDto generateDerailersNarratives(DerailersPayload payload);
-        CompetencyPageResponseDto generateCompetencyPageNarratives(CompetencyPagePayload payload);
-        GrowPlanResponseDto generateGrowPlanNarratives(GrowPlanPayload payload);
-
-        default String generateNarrativesJson(AiPromptPayload payload) {
-            return "";
-        }
-    }
-
-    public static class DefaultMockAiClient implements AiReportClient {
-
-        @Override
-        public ImpressionResponseDto generateImpressionNarratives(ImpressionPayload payload) {
-            String socialText = payload.socialScore() > 7 
-                    ? "تشير الدرجة إلى ميل ملحوظ لإظهار صورة إيجابية مثالية (خطر مرتفع). يُنصح بمراعاة ذلك عند تفسير نتائج التقييم الأخرى."
-                    : "من المرجح أنه أجاب بصدق وموضوعية دون تزييف مفرط للصورة الإيجابية (خطر " + payload.socialRisk() + "). لا توجد مؤشرات مقلقة.";
-            String centralText = payload.centralScore() > 7
-                    ? "لوحظ ميل مرتفع لاختيار الإجابات الوسطية وتجنب إبداء مواقف واضحة وحاسمة (خطر مرتفع)."
-                    : "أظهر المرشح وضوحاً وحسماً في تحديد مواقفه دون اللجوء المفرط للإجابات المحايدة (خطر " + payload.centralRisk() + ").";
-            return new ImpressionResponseDto(socialText, centralText);
-        }
-
-        @Override
-        public DerailersResponseDto generateDerailersNarratives(DerailersPayload payload) {
-            return new DerailersResponseDto(
-                    "تشير نتيجة (" + payload.reserved() + "/10) إلى احتمالية التحفظ والانغلاق تحت الضغط، مما قد يؤثر على التواصل مع الفريق.",
-                    "تشير نتيجة (" + payload.emotionality() + "/10) إلى درجة التحكم الانفعالي، مع الحاجة للمحافظة على الثبات في المواقف الحرجة.",
-                    "تشير نتيجة (" + payload.hostility() + "/10) إلى مستوى التنافسية وإمكانية إظهار حدة في التعامل عند النزاعات الحادة.",
-                    "تشير نتيجة (" + payload.impulsivity() + "/10) إلى سرعة اتخاذ الإجراءات مع احتمالية التسرع قبل استكمال دراسة البدائل تحت وطأة الوقت.",
-                    "تشير نتيجة (" + payload.rigidity() + "/10) إلى التمسك بالقواعد والإجراءات المعمول بها مع حاجة لمرونة إضافية عند تغير الظروف.",
-                    "تشير نتيجة (" + payload.unconventionality() + "/10) إلى الميل لتبني أساليب غير تقليدية ومبتكرة في معالجة التحديات القيادية."
-            );
-        }
-
-        @Override
-        public CompetencyPageResponseDto generateCompetencyPageNarratives(CompetencyPagePayload payload) {
-            CompetencyDetailDto defaultDto = ReportContextDto.getDefaultCompetencyPage(payload.pageNum(), "PCIV126371");
-            return new CompetencyPageResponseDto(
-                    defaultDto.getReq1(), defaultDto.getResult1(), defaultDto.getRec1(),
-                    defaultDto.getReq2(), defaultDto.getResult2(), defaultDto.getRec2(),
-                    defaultDto.getReq3(), defaultDto.getResult3(), defaultDto.getRec3()
-            );
-        }
-
-        @Override
-        public GrowPlanResponseDto generateGrowPlanNarratives(GrowPlanPayload payload) {
-            return new GrowPlanResponseDto(
-                    "تعزيز فاعلية التخطيط الاستراتيجي وتوسيع نطاق المبادرة والتحليل في إدارة العمليات القيادية.",
-                    "يمتلك القائد نقاط قوة متميزة في " + payload.topStrengths() + "، بينما تتطلب مجالات " + payload.developmentAreas() + " دعماً وتطويراً مستمراً.",
-                    "المشاركة في برامج القيادة الاستراتيجية المتقدمة ومحاكاة إدارة الأزمات والعمليات المشتركة.",
-                    "تطبيق خطة تدريبية ومراجعة دورية للتقدم كل 3 أشهر مع القيادة العليا المباشرة."
-            );
-        }
-
-        @Override
-        public String generateNarrativesJson(AiPromptPayload payload) {
-            return """
-            {
-              "socialInterpretation": "من المرجح أنه أجاب بصدق من دون إظهار صورة إيجابية بشدة.",
-              "centralInterpretation": "من المرجح أنه أجاب بصراحة بدون رغبة في إخفاء شخصيته الحقيقية.",
-              "reservedText": "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة التحفظ.",
-              "emotionalityText": "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة الانفعالية.",
-              "hostilityText": "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة العدائية.",
-              "impulsivityText": "تشير هذه النتيجة إلى متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة الاندفاعية.",
-              "rigidityText": "متوسط احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة الصرامة.",
-              "unconventionalityText": "تشير هذه النتيجة إلى متوسط إلى مرتفع احتمال إظهار سلوكيات مُقيّدة مرتبطة بسمة اللامألوفية.",
-              "growGoalText": "تعزيز فاعلية التخطيط الاستراتيجي وتوسيع نطاق المبادرة والتحليل في إدارة العمليات.",
-              "growRealityText": "يمتلك القائد قدرة ممتازة على التنظيم والتحليل، مع حاجة لصقل مهارات استشراف المستقبل والتفكير المجرد.",
-              "growOptionsText": "المشاركة في برامج متقدمة في القيادة الاستراتيجية ومحاكاة إدارة الأزمات والعمليات المشتركة.",
-              "growWillText": "تطبيق خطة تدريبية ومراجعة دورية للتقدم كل 3 أشهر مع القادة المباشرين."
-            }
-            """;
-        }
-    }
 }
