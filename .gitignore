@@ -1,8 +1,8 @@
-﻿# Ignore everything in the root
+# Ignore everything in the root
 /*
 
 # Whitelist the required directories
-!/frontend/
+!/docs/
 !/backend/
 
 # Whitelist the .gitignore file itself
