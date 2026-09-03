@@ -131,8 +131,8 @@
                 <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-3xl">assignment_late</span>
                 </div>
-                <h2 class="text-xl font-bold text-on-surface mb-2">لا يوجد اختبار نشط مخصص</h2>
-                <p class="text-sm text-on-surface-variant mb-6">
+                <h2 id="emptyStateTitle" class="text-xl font-bold text-on-surface mb-2">لا يوجد اختبار نشط مخصص</h2>
+                <p id="emptyStateDesc" class="text-sm text-on-surface-variant mb-6">
                     لم يتم تعيين جلسة تقييم سيكومتري لحسابك حالياً. يرجى مراجعة مسؤول الموارد البشرية.
                 </p>
             </div>
@@ -498,7 +498,7 @@
                     <span class="material-symbols-outlined text-base">headset_mic</span>
                     <span id="lblSupportTitle">الدعم الفني</span>
                 </div>
-                <button onclick="window.showCustomModal({title: 'الدعم الفني', message: 'support@arabexperts.com\nPhone: +966 11 000 0000', icon: 'support_agent'})" class="text-xs font-semibold text-primary border border-primary bg-white rounded-lg px-3.5 py-1.5 hover:bg-primary hover:text-white transition-colors shadow-2xs">
+                <button id="btnSupportContact" onclick="window.showCustomModal({title: 'الدعم الفني', message: 'support@arabexperts.com\nPhone: +966 11 000 0000', icon: 'support_agent'})" class="text-xs font-semibold text-primary border border-primary bg-white rounded-lg px-3.5 py-1.5 hover:bg-primary hover:text-white transition-colors shadow-2xs">
                     تواصل معنا
                 </button>
             </div>

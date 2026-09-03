@@ -97,12 +97,13 @@ const i18nDict = {
     "Update Profile": "تحديث الملف الشخصي",
     "Technical Support": "الدعم الفني",
     "Experiencing technical issues? Contact testing support for assistance.": "هل تواجه مشاكل فنية؟ اتصل بدعم الاختبار للحصول على المساعدة.",
-    "Contact Support": "اتصل بالدعم",
+    "Contact Support": "تواصل معنا",
     "Language / لغة": "Language / لغة",
     "Switch to Arabic": "التبديل إلى العربية",
     "Switch to English": "التبديل إلى الإنجليزية",
-    "No Active Assessment Assigned": "لم يتم تعيين تقييم نشط",
-    "You do not currently have any pending psychometric evaluations. Please contact your administrator to assign a test to your profile.": "ليس لديك حاليًا أي تقييمات نفسية معلقة. يرجى الاتصال بالمسؤول لتعيين اختبار لملفك الشخصي.",
+    "No Active Assessment Assigned": "لا يوجد اختبار نشط مخصص",
+    "No psychometric assessment session is currently assigned to your account. Please check with your HR administrator.": "لم يتم تعيين جلسة تقييم سيكومتري لحسابك حالياً. يرجى مراجعة مسؤول الموارد البشرية.",
+    "You do not currently have any pending psychometric evaluations. Please contact your administrator to assign a test to your profile.": "لم يتم تعيين جلسة تقييم سيكومتري لحسابك حالياً. يرجى مراجعة مسؤول الموارد البشرية.",
     "Executive Leadership Aptitude": "كفاءة القيادة التنفيذية",
     "4 Parts": "4 أجزاء",
     "Approx. 90 mins": "حوالي 90 دقيقة",
@@ -284,15 +285,34 @@ for (const [en, ar] of Object.entries(i18nDict)) {
     reverseI18nDict[ar] = en;
 }
 
+// Ensure exact aliases for empty state & utility cards in reverse dictionary
+reverseI18nDict["لا يوجد اختبار نشط مخصص"] = "No Active Assessment Assigned";
+reverseI18nDict["لم يتم تعيين تقييم نشط"] = "No Active Assessment Assigned";
+reverseI18nDict["لم يتم تعيين جلسة تقييم سيكومتري لحسابك حالياً. يرجى مراجعة مسؤول الموارد البشرية."] = "No psychometric assessment session is currently assigned to your account. Please check with your HR administrator.";
+reverseI18nDict["ليس لديك حاليًا أي تقييمات نفسية معلقة. يرجى الاتصال بالمسؤول لتعيين اختبار لملفك الشخصي."] = "No psychometric assessment session is currently assigned to your account. Please check with your HR administrator.";
+reverseI18nDict["تواصل معنا"] = "Contact Support";
+reverseI18nDict["اتصل بالدعم"] = "Contact Support";
+reverseI18nDict["الدعم الفني"] = "Technical Support";
+
 function translateNode(node, toLang) {
     if (node.nodeType === Node.TEXT_NODE) {
-        let text = node.textContent.trim();
+        let rawText = node.textContent;
+        let text = rawText.trim();
+        let normalized = text.replace(/\s+/g, " ");
         if (text) {
             // Find matches in the dictionary
-            if (toLang === "ar" && i18nDict[text]) {
-                node.textContent = node.textContent.replace(text, i18nDict[text]);
-            } else if (toLang === "en" && reverseI18nDict[text]) {
-                node.textContent = node.textContent.replace(text, reverseI18nDict[text]);
+            if (toLang === "ar") {
+                if (i18nDict[text]) {
+                    node.textContent = rawText.replace(text, i18nDict[text]);
+                } else if (i18nDict[normalized]) {
+                    node.textContent = rawText.replace(text, i18nDict[normalized]);
+                }
+            } else if (toLang === "en") {
+                if (reverseI18nDict[text]) {
+                    node.textContent = rawText.replace(text, reverseI18nDict[text]);
+                } else if (reverseI18nDict[normalized]) {
+                    node.textContent = rawText.replace(text, reverseI18nDict[normalized]);
+                }
             } else if (text.includes(" • ")) {
                  // Try partial match for batteries
                  let parts = text.split(" • ");
@@ -385,6 +405,31 @@ function applyTranslation(lang) {
     } else {
         document.body.style.fontFamily = "";
     }
+
+    // Explicitly update Empty State Card elements
+    const emptyTitle = document.getElementById("emptyStateTitle");
+    const emptyDesc = document.getElementById("emptyStateDesc");
+    if (emptyTitle) {
+        emptyTitle.textContent = (lang === "ar") 
+            ? "لا يوجد اختبار نشط مخصص" 
+            : "No Active Assessment Assigned";
+    }
+    if (emptyDesc) {
+        emptyDesc.textContent = (lang === "ar")
+            ? "لم يتم تعيين جلسة تقييم سيكومتري لحسابك حالياً. يرجى مراجعة مسؤول الموارد البشرية."
+            : "No psychometric assessment session is currently assigned to your account. Please check with your HR administrator.";
+    }
+
+    const btnSupport = document.getElementById("btnSupportContact");
+    if (btnSupport) {
+        btnSupport.textContent = (lang === "ar") ? "تواصل معنا" : "Contact Support";
+    }
+
+    const lblSupport = document.getElementById("lblSupportTitle");
+    if (lblSupport) {
+        lblSupport.textContent = (lang === "ar") ? "الدعم الفني" : "Technical Support";
+    }
+
     updateNavigationDirection();
 }
 
@@ -396,7 +441,7 @@ function applyCurrentTranslation() {
     if (isArabic) {
         applyTranslation("ar");
     } else {
-        updateNavigationDirection();
+        applyTranslation("en");
     }
 }
 
@@ -663,9 +708,7 @@ function initEventListeners() {
             if (activeItems && activeItems.length > 0 && activeSession) {
                 renderCurrentQuestion();
             }
-            if (currentAttempt) {
-                updateTestSidebar(currentAttempt);
-            }
+            updateTestSidebar(currentAttempt);
         });
     }
 
