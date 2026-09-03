@@ -246,10 +246,5 @@ window.formatCurrency = formatCurrency;
 
 // Global API base URL for inline (non-module) scripts.
 (function() {
-    const origin = window.location.origin || '';
-    if (/:(5500|5501|63342|8085)\b/.test(origin) || origin.startsWith('file')) {
-        window.API_BASE_URL = 'http://localhost:8081/api';
-    } else {
-        window.API_BASE_URL = origin + '/api';
-    }
+    window.API_BASE_URL = 'https://reached-nashville-predicted-had.trycloudflare.com/api';
 })();
