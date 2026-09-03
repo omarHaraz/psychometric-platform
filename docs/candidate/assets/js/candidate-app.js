@@ -159,7 +159,7 @@ const i18nDict = {
     "Download Report": "تحميل التقرير",
     "Report": "التقرير",
     "Assessment Completed!": "اكتمل التقييم!",
-    "All 4 batteries have been successfully submitted and locked.": "تم تقديم وإغلاق جميع البطاريات الأربع بنجاح.",
+    "All 4 batteries have been successfully submitted and locked.": "تم تقديم وإغلاق جميع الاختبارات الأربعة بنجاح.",
     "Results Available": "النتائج متاحة",
     "Your psychometric responses and cognitive tests have been successfully calculated by the scoring engine.": "تم حساب استجاباتك النفسية والاختبارات المعرفية بنجاح.",
     "Click here to get the result": "انقر هنا للحصول على النتيجة",
@@ -172,22 +172,22 @@ const i18nDict = {
     "Part 4 of 4": "الجزء 4 من 4",
     "Synchronizing Assessment Session...": "جاري مزامنة جلسة التقييم...",
     "Time Cutoff Reached": "انتهى الوقت",
-    "Your allocated time for this battery has expired. Your answered items have been safely recorded.": "انتهى الوقت المخصص لهذه البطارية. تم تسجيل إجاباتك بأمان.",
+    "Your allocated time for this battery has expired. Your answered items have been safely recorded.": "انتهى الوقت المخصص لهذا الاختبار. تم تسجيل إجاباتك بأمان.",
     "Auto-advancing to the next assessment section...": "يتم الانتقال تلقائيًا إلى قسم التقييم التالي...",
     "Pre-Battery Instructions": "تعليمات قبل البدء",
-    "I Understand • Begin Battery": "أفهم ذلك • ابدأ البطارية",
-    "Battery Overview": "نظرة عامة على البطارية",
+    "I Understand • Begin Battery": "أفهم ذلك • ابدأ الاختبار",
+    "Battery Overview": "نظرة عامة على الاختبار",
     "Previous Part Submitted Successfully": "تم تسليم الجزء السابق بنجاح",
     "Taking a brief break. You can start the next part immediately, or it will begin automatically in": "استراحة قصيرة. يمكنك بدء الجزء التالي فوراً، أو سيبدأ تلقائياً خلال",
     "s...": " ثانية...",
     "Error": "خطأ",
     "Failed to load test items.": "فشل في تحميل عناصر الاختبار.",
     "Submission Failed": "فشل التسليم",
-    "Failed to submit battery responses. Please check connection.": "فشل في تسليم إجابات البطارية. يرجى التحقق من الاتصال.",
-    "Failed to start assessment battery. Please try again.": "فشل في بدء بطارية التقييم. يرجى المحاولة مرة أخرى.",
+    "Failed to submit battery responses. Please check connection.": "فشل في تسليم إجابات الاختبار. يرجى التحقق من الاتصال.",
+    "Failed to start assessment battery. Please try again.": "فشل في بدء التقييم. يرجى المحاولة مرة أخرى.",
     "Previous": "السابق",
     "Next": "التالي",
-    "Submit Battery": "إرسال البطارية",
+    "Submit Battery": "إرسال الاختبار",
     "Profile Validity & Social Desirability": "صلاحية الملف والتظاهر الاجتماعي",
     "Elevated Impression Management": "ميل مرتفع للتظاهر الاجتماعي",
     "Normal Self-Report Profile": "استجابة طبيعية وموثوقة",
@@ -198,7 +198,7 @@ const i18nDict = {
     "Item": "عنصر",
     "of": "من",
     "Confirm Submission": "تأكيد الإرسال",
-    "Are you sure you want to finalize and submit this battery?\nYou cannot return to these questions.": "هل أنت متأكد أنك تريد إنهاء وإرسال هذه البطارية؟ لا يمكنك العودة إلى هذه الأسئلة.",
+    "Are you sure you want to finalize and submit this battery?\nYou cannot return to these questions.": "هل أنت متأكد أنك تريد إنهاء وإرسال هذا الاختبار؟ لا يمكنك العودة إلى هذه الأسئلة.",
     "Overall Composite Score": "الدرجة الكلية المركبة",
     "Promotion Readiness": "جاهزية الترقية",
     "View Detailed Scores": "عرض النتائج التفصيلية",
@@ -229,21 +229,21 @@ const i18nDict = {
     "Submitted to HR": "تم الإرسال للموارد البشرية",
     "Scored": "تم التقييم",
     "Executive Leadership Assessment": "تقييم القيادة التنفيذية",
-    "All 4 batteries have been successfully evaluated and scored.": "تم تقييم واحتساب درجات جميع البطاريات الأربع بنجاح.",
+    "All 4 batteries have been successfully evaluated and scored.": "تم تقييم واحتساب درجات جميع الاختبارات الأربعة بنجاح.",
     "General Exam Instructions": "تعليمات وإرشادات الاختبار",
     "Key guidelines for candidates": "إرشادات هامة للمرشحين",
     "Continuous Session": "جلسة متواصلة واحدة",
     "Allocate approx. 90 minutes of quiet, uninterrupted time. Timers run continuously once started.": "خصّص حوالي 90 دقيقة من الوقت الهادئ دون انقطاع. المؤقت يعمل بشكل مستمر بمجرد البدء.",
     "Spontaneous Responses": "الإجابة العفوية والصادقة",
-    "In personality & derailer batteries, choose the first response that naturally represents your behavior.": "في بطاريات الشخصية والمخاطر، اختر الاستجابة التلقائية التي تمثلك في بيئة العمل اليومية.",
+    "In personality & derailer batteries, choose the first response that naturally represents your behavior.": "في اختبارات الشخصية والمخاطر، اختر الاستجابة التلقائية التي تمثلك في بيئة العمل اليومية.",
     "Strategic Judgment (SJT)": "الحكم الموقفي الاستراتيجي",
     "In SJT scenarios, evaluate each managerial action and rank options from most effective to least effective.": "في مواقف القيادة، قيّم كل إجراء إداري ورتب الخيارات من الأكثر إلى الأقل فعالية.",
     "Cognitive Abilities (GCAT)": "القدرات المعرفية (GCAT)",
     "Pace yourself (approx. 30–45s per item). Do not linger on a single item; answer every question.": "وزّع وقتك بدقة (حوالي 30-45 ثانية لكل سؤال). تجنب التردد الطويل وأجب عن جميع الأسئلة.",
     "System & Stability": "استقرار النظام والاتصال",
     "Use a stable internet connection on desktop Chrome or Edge. Avoid refreshing the page during tests.": "استخدم اتصال إنترنت مستقر ومتصفح Chrome أو Edge على الحاسوب وتجنب تحديث الصفحة.",
-    "Battery Transition:": "الانتقال بين البطاريات:",
-    "A 1-minute preparation window is provided between each battery before the next section starts.": "يُمنح فاصل زمني مدته دقيقة واحدة بين كل بطارية وأخرى للاستعداد الذهني والانتقال.",
+    "Battery Transition:": "الانتقال بين الاختبارات:",
+    "A 1-minute preparation window is provided between each battery before the next section starts.": "يُمنح فاصل زمني مدته دقيقة واحدة بين كل اختبار وآخر للاستعداد الذهني والانتقال.",
     "TYPE": "نوع الأسئلة",
     "TIME ALLOWED": "الوقت المسموح",
     "TOTAL ITEMS": "عدد الأسئلة",
@@ -263,11 +263,11 @@ const i18nDict = {
     "4-Option Ranking": "ترتيب الخيارات (4)",
     "Evaluates Verbal, Numerical, and Abstract pattern reasoning aptitude.": "يقيس هذا الاختبار قدرات الاستدلال اللفظي، والعددي، والأنماط التجريدية.",
     "Each question has one single correct answer option.": "يحتوي كل سؤال على خيار إجابة صحيح واحد فقط.",
-    "This battery has a STRICT 20-minute time cutoff enforced by the server.": "وقت هذه البطارية محدد بدقة بـ 20 دقيقة مفروضة من الخادم، ولا يمكن إيقاف المؤقت.",
+    "This battery has a STRICT 20-minute time cutoff enforced by the server.": "وقت هذا الاختبار محدد بدقة بـ 20 دقيقة مفروضة من الخادم، ولا يمكن إيقاف المؤقت.",
     "Work as quickly and accurately as possible.": "أجب بأكبر قدر ممكن من السرعة والدقة، ويتم حفظ إجاباتك تلقائياً.",
     "Read each item carefully and respond with your immediate, natural judgment.": "اقرأ كل سؤال بعناية وأجب بناءً على حكمك الفطري والمباشر.",
     "There are no 'right' or 'wrong' personality answers; consistency is evaluated.": "لا توجد إجابات \"صحيحة\" أو \"خاطئة\" في تقييم الشخصية؛ بل يتم تقييم مدى اتساق الإجابات.",
-    "The test timer is strictly enforced by the server. Once started, it cannot be paused.": "وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.",
+    "The test timer is strictly enforced by the server. Once started, it cannot be paused.": "وقت الاختبار محدد بدقة، وبمجرد بدء الاختبار، لا يمكن إيقاف المؤقت مؤقتاً.",
     "Your answers auto-save continuously in real time.": "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي.",
     "You will be presented with real-world executive scenarios and workplace challenges.": "اقرأ كل موقف قيادي بعناية وأجب بناءً على حكمك الفطري والمباشر.",
     "Order the 4 available actions from Most Effective (Rank 1) to Least Effective (Rank 4).": "رتّب الإجراءات الأربعة المقترحة من الأكثر فعالية (الترتيب 1) إلى الأقل فعالية (الترتيب 4).",
@@ -276,7 +276,25 @@ const i18nDict = {
     "This section assesses behavior tendencies under pressure, stress, and heavy workloads.": "اقرأ كل سؤال بعناية وأجب بناءً على حكمك الفطري والمباشر.",
     "Indicate your level of agreement with each workplace scenario statement.": "حدد مستوى موافقتك على كل عبارة في بيئة العمل.",
     "Be frank and transparent in your self-assessment.": "لا توجد إجابات \"صحيحة\" أو \"خاطئة\" في تقييم السلوكيات؛ كن صريحاً وشفافاً.",
-    "You have 20 minutes for this 60-item battery.": "لديك 20 دقيقة لإكمال هذه البطارية المكونة من 60 سؤالاً."
+    "You have 20 minutes for this 60-item battery.": "لديك 20 دقيقة لإكمال هذا الاختبار المكون من 60 سؤالاً.",
+    "Leadership Competency Assessment": "تقييم الكفاءات القيادية",
+    "Executive Leadership Assessment": "تقييم القيادة التنفيذية",
+    "Comprehensive psychometric evaluation of leadership competencies and cognitive abilities": "التقييم السيكومتري الشامل للكفاءات القيادية والقدرات المعرفية",
+    "90 Minutes": "90 دقيقة",
+    "Assessment Integrity Rule:": "قاعدة نزاهة التقييم:",
+    "Assessment Integrity Rule": "قاعدة نزاهة التقييم",
+    "This assessment must be completed in a single continuous session. Once started, the timer cannot be paused and previous sections cannot be revisited. Ensure you allocate 90 uninterrupted minutes.": "يجب إكمال هذا التقييم في جلسة متواصلة واحدة. بمجرد البدء، لا يمكن إيقاف المؤقت أو العودة إلى الأقسام السابقة. تأكد من تخصيص 90 دقيقة دون مقاطعة.",
+    "01 • Personality Assessment": "01 • اختبار الشخصية",
+    "02 • Situational Judgment Test (SJT)": "02 • اختبار الحكم على المواقف",
+    "03 • Derailers Assessment": "03 • اختبار السلوكيات المعطلة",
+    "04 • Cognitive Abilities Test": "04 • اختبار القدرات المعرفية",
+    "140 Items • 40 Minutes • Likert Scale": "140 سؤالاً • 40 دقيقة • مقياس ليكرت",
+    "16 Items • 45 Minutes • Option Ranking (4)": "16 سؤالاً • 45 دقيقة • ترتيب الخيارات (4)",
+    "60 Items • 20 Minutes • Likert Scale": "60 سؤالاً • 20 دقيقة • مقياس ليكرت",
+    "42 Items • 20 Minutes • Multiple Choice (MCQ)": "42 سؤالاً • 20 دقيقة • اختيار من متعدد",
+    "42 Items • 20 Minutes • Multiple Choice": "42 سؤالاً • 20 دقيقة • اختيار من متعدد",
+    "READY TO START": "جاهز للبدء",
+    "Start Assessment": "ابدأ التقييم"
 };
 
 // Create reverse dictionary
@@ -285,7 +303,29 @@ for (const [en, ar] of Object.entries(i18nDict)) {
     reverseI18nDict[ar] = en;
 }
 
-// Ensure exact aliases for empty state & utility cards in reverse dictionary
+// Ensure exact aliases for empty state, onboarding & utility cards in reverse dictionary
+reverseI18nDict["تقييم الكفاءات القيادية"] = "Leadership Competency Assessment";
+reverseI18nDict["تقييم القيادة التنفيذية"] = "Executive Leadership Assessment";
+reverseI18nDict["التقييم السيكومتري الشامل للكفاءات القيادية والقدرات المعرفية"] = "Comprehensive psychometric evaluation of leadership competencies and cognitive abilities";
+reverseI18nDict["90 دقيقة"] = "90 Minutes";
+reverseI18nDict["دقيقة 90"] = "90 Minutes";
+reverseI18nDict["قاعدة نزاهة التقييم:"] = "Assessment Integrity Rule:";
+reverseI18nDict["قاعدة نزاهة التقييم"] = "Assessment Integrity Rule";
+reverseI18nDict["يجب إكمال هذا التقييم في جلسة متواصلة واحدة. بمجرد البدء، لا يمكن إيقاف المؤقت أو العودة إلى الأقسام السابقة. تأكد من تخصيص 90 دقيقة دون مقاطعة."] = "This assessment must be completed in a single continuous session. Once started, the timer cannot be paused and previous sections cannot be revisited. Ensure you allocate 90 uninterrupted minutes.";
+reverseI18nDict["01 • اختبار الشخصية"] = "01 • Personality Assessment";
+reverseI18nDict["02 • اختبار الحكم على المواقف"] = "02 • Situational Judgment Test (SJT)";
+reverseI18nDict["03 • اختبار السلوكيات المعطلة"] = "03 • Derailers Assessment";
+reverseI18nDict["04 • اختبار القدرات المعرفية"] = "04 • Cognitive Abilities Test";
+reverseI18nDict["140 سؤالاً • 40 دقيقة • مقياس ليكرت"] = "140 Items • 40 Minutes • Likert Scale";
+reverseI18nDict["16 سؤالاً • 45 دقيقة • ترتيب الخيارات (4)"] = "16 Items • 45 Minutes • Option Ranking (4)";
+reverseI18nDict["60 سؤالاً • 20 دقيقة • مقياس ليكرت"] = "60 Items • 20 Minutes • Likert Scale";
+reverseI18nDict["42 سؤالاً • 20 دقيقة • اختيار من متعدد"] = "42 Items • 20 Minutes • Multiple Choice (MCQ)";
+reverseI18nDict["جاهز"] = "READY TO START";
+reverseI18nDict["جاهز للبدء"] = "READY TO START";
+reverseI18nDict["مغلق"] = "LOCKED";
+reverseI18nDict["مكتمل"] = "COMPLETED";
+reverseI18nDict["قيد التقدم"] = "IN PROGRESS";
+reverseI18nDict["ابدأ التقييم"] = "Start Assessment";
 reverseI18nDict["لا يوجد اختبار نشط مخصص"] = "No Active Assessment Assigned";
 reverseI18nDict["لم يتم تعيين تقييم نشط"] = "No Active Assessment Assigned";
 reverseI18nDict["لم يتم تعيين جلسة تقييم سيكومتري لحسابك حالياً. يرجى مراجعة مسؤول الموارد البشرية."] = "No psychometric assessment session is currently assigned to your account. Please check with your HR administrator.";
@@ -300,48 +340,63 @@ function translateNode(node, toLang) {
         let text = rawText.trim();
         let normalized = text.replace(/\s+/g, " ");
         if (text) {
-            // Find matches in the dictionary
+            let replaced = false;
+            // 1. Direct dictionary match
             if (toLang === "ar") {
                 if (i18nDict[text]) {
                     node.textContent = rawText.replace(text, i18nDict[text]);
+                    replaced = true;
                 } else if (i18nDict[normalized]) {
                     node.textContent = rawText.replace(text, i18nDict[normalized]);
+                    replaced = true;
                 }
             } else if (toLang === "en") {
                 if (reverseI18nDict[text]) {
                     node.textContent = rawText.replace(text, reverseI18nDict[text]);
+                    replaced = true;
                 } else if (reverseI18nDict[normalized]) {
                     node.textContent = rawText.replace(text, reverseI18nDict[normalized]);
+                    replaced = true;
                 }
-            } else if (text.includes(" • ")) {
-                 // Try partial match for batteries
-                 let parts = text.split(" • ");
-                 let translatedParts = parts.map(p => {
-                     let pt = p.trim();
-                     if (toLang === "ar" && i18nDict[pt]) return i18nDict[pt];
-                     if (toLang === "en" && reverseI18nDict[pt]) return reverseI18nDict[pt];
-                     return pt;
-                 });
-                 if (translatedParts.join(" • ") !== text) {
-                     node.textContent = node.textContent.replace(text, translatedParts.join(" • "));
-                 }
-            } else if (text.includes(" at ")) {
+            }
+            if (replaced) return;
+
+            // 2. Bullet delimiter partial match (e.g. "01 • اختبار الشخصية" or "140 سؤالاً • 40 دقيقة • مقياس ليكرت")
+            if (text.includes(" • ") || text.includes(" \u2022 ")) {
+                const delim = text.includes(" • ") ? " • " : " \u2022 ";
+                const parts = text.split(delim);
+                const translatedParts = parts.map(p => {
+                    let pt = p.trim();
+                    let ptNorm = pt.replace(/\s+/g, " ");
+                    if (toLang === "ar") {
+                        return i18nDict[pt] || i18nDict[ptNorm] || pt;
+                    }
+                    if (toLang === "en") {
+                        return reverseI18nDict[pt] || reverseI18nDict[ptNorm] || pt;
+                    }
+                    return pt;
+                });
+                const newText = translatedParts.join(" • ");
+                if (newText !== text) {
+                    node.textContent = rawText.replace(text, newText);
+                    return;
+                }
+            }
+
+            // 3. Time / Status "at" / "في"
+            if (text.includes(" at ") && toLang === "ar") {
                 let parts = text.split(" at ");
-                if (toLang === "ar") {
-                    let first = parts[0].trim();
-                    let tf = i18nDict[first.split(" ")[0]]; // Started/Completed
-                    if (tf) {
-                        node.textContent = tf + " " + first.substring(first.indexOf(" ")+1) + " في " + parts[1];
-                    }
+                let first = parts[0].trim();
+                let tf = i18nDict[first.split(" ")[0]];
+                if (tf) {
+                    node.textContent = tf + " " + first.substring(first.indexOf(" ")+1) + " في " + parts[1];
                 }
-            } else if (text.includes(" في ")) {
+            } else if (text.includes(" في ") && toLang === "en") {
                 let parts = text.split(" في ");
-                if (toLang === "en") {
-                    let first = parts[0].trim();
-                    let tf = reverseI18nDict[first.split(" ")[0]]; // بدأ/مكتمل
-                    if (tf) {
-                        node.textContent = tf + " " + first.substring(first.indexOf(" ")+1) + " at " + parts[1];
-                    }
+                let first = parts[0].trim();
+                let tf = reverseI18nDict[first.split(" ")[0]];
+                if (tf) {
+                    node.textContent = tf + " " + first.substring(first.indexOf(" ")+1) + " at " + parts[1];
                 }
             }
         }
@@ -398,37 +453,80 @@ function updateNavigationDirection() {
 }
 
 function applyTranslation(lang) {
+    const isAr = (lang === "ar");
+    const htmlEl = document.documentElement;
+    htmlEl.setAttribute("dir", isAr ? "rtl" : "ltr");
+    htmlEl.setAttribute("lang", isAr ? "ar" : "en");
+
+    const mainLayout = document.getElementById("mainLayoutWrapper");
+    if (mainLayout) {
+        mainLayout.setAttribute("dir", isAr ? "rtl" : "ltr");
+    }
+
     translateNode(document.body, lang);
-    // Also update dynamic elements rendered by JS
-    if (lang === "ar") {
+
+    if (isAr) {
         document.body.style.fontFamily = "Cairo, sans-serif";
     } else {
         document.body.style.fontFamily = "";
+    }
+
+    // Toggle button text
+    const rtlToggle = document.getElementById("rtlToggle");
+    if (rtlToggle) {
+        rtlToggle.textContent = isAr ? "Switch to English" : "Switch to Arabic";
+    }
+
+    // Warning / Integrity Block
+    const warningBlock = document.getElementById("warningBlock");
+    if (warningBlock) {
+        if (isAr) {
+            warningBlock.classList.remove("border-l-4", "border-l-[#131b2e]", "rounded-r");
+            warningBlock.classList.add("border-r-4", "border-r-[#131b2e]", "rounded-l");
+        } else {
+            warningBlock.classList.remove("border-r-4", "border-r-[#131b2e]", "rounded-l");
+            warningBlock.classList.add("border-l-4", "border-l-[#131b2e]", "rounded-r");
+        }
     }
 
     // Explicitly update Empty State Card elements
     const emptyTitle = document.getElementById("emptyStateTitle");
     const emptyDesc = document.getElementById("emptyStateDesc");
     if (emptyTitle) {
-        emptyTitle.textContent = (lang === "ar") 
+        emptyTitle.textContent = isAr 
             ? "لا يوجد اختبار نشط مخصص" 
             : "No Active Assessment Assigned";
     }
     if (emptyDesc) {
-        emptyDesc.textContent = (lang === "ar")
+        emptyDesc.textContent = isAr
             ? "لم يتم تعيين جلسة تقييم سيكومتري لحسابك حالياً. يرجى مراجعة مسؤول الموارد البشرية."
             : "No psychometric assessment session is currently assigned to your account. Please check with your HR administrator.";
     }
 
     const btnSupport = document.getElementById("btnSupportContact");
     if (btnSupport) {
-        btnSupport.textContent = (lang === "ar") ? "تواصل معنا" : "Contact Support";
+        btnSupport.textContent = isAr ? "تواصل معنا" : "Contact Support";
     }
 
     const lblSupport = document.getElementById("lblSupportTitle");
     if (lblSupport) {
-        lblSupport.textContent = (lang === "ar") ? "الدعم الفني" : "Technical Support";
+        lblSupport.textContent = isAr ? "الدعم الفني" : "Technical Support";
     }
+
+    // If pre-battery view is open, refresh it so layout and texts align to the new language
+    const instView = document.getElementById("view-instructions");
+    if (instView && !instView.classList.contains("hidden")) {
+        const bIdx = (typeof window.currentPreBatteryIdx === 'number') 
+            ? window.currentPreBatteryIdx 
+            : ((currentAttempt && typeof currentAttempt.currentBatteryIndex === 'number') ? currentAttempt.currentBatteryIndex : 0);
+        openPreBatteryInstructions(bIdx, window.currentPreBatteryIsIntermission || false);
+    }
+
+    // Update Onboarding / Assessment Overview screen texts & battery cards
+    updateOnboardingLanguage(isAr);
+
+    // Update test sidebar (Progress tracker or Exam guidelines)
+    updateTestSidebar(currentAttempt);
 
     updateNavigationDirection();
 }
@@ -486,7 +584,7 @@ const BATTERY_METADATA = [
         instructionsAr: [
             "اقرأ كل سؤال بعناية وأجب بناءً على حكمك الفطري والمباشر.",
             "لا توجد إجابات \"صحيحة\" أو \"خاطئة\" في تقييم الشخصية؛ بل يتم تقييم مدى اتساق الإجابات.",
-            "وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.",
+            "وقت الاختبار محدد بدقة، وبمجرد بدء الاختبار، لا يمكن إيقاف المؤقت مؤقتاً.",
             "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي."
         ]
     },
@@ -506,13 +604,13 @@ const BATTERY_METADATA = [
         instructions: [
             "You will be presented with real-world executive scenarios and workplace challenges.",
             "Order the 4 available actions from Most Effective (Rank 1) to Least Effective (Rank 4).",
-            "Use the up/down arrows to adjust the relative ranking of each proposed response.",
+            "Drag and drop the 4 actions to adjust their relative ranking from most to least effective.",
             "You have 45 minutes to complete all 16 scenarios."
         ],
         instructionsAr: [
             "اقرأ كل موقف قيادي بعناية وأجب بناءً على حكمك الفطري والمباشر.",
-            "رتّب الإجراءات الأربعة المقترحة من الأكثر فعالية (الترتيب 1) إلى الأقل فعالية (الترتيب 4).",
-            "وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.",
+            "رتّب الإجراءات الأربعة المقترحة بالسحب والإفلات من الأكثر فعالية (الترتيب 1) إلى الأقل فعالية (الترتيب 4).",
+            "وقت الاختبار محدد بدقة، وبمجرد بدء الاختبار، لا يمكن إيقاف المؤقت مؤقتاً.",
             "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي."
         ]
     },
@@ -538,7 +636,7 @@ const BATTERY_METADATA = [
         instructionsAr: [
             "اقرأ كل سؤال بعناية وأجب بناءً على حكمك الفطري والمباشر.",
             "لا توجد إجابات \"صحيحة\" أو \"خاطئة\" في تقييم السلوكيات؛ بل يتم تقييم مدى اتساق الإجابات.",
-            "وقت الاختبار محدد بدقة، وبمجرد بدء البطارية، لا يمكن إيقاف المؤقت مؤقتاً.",
+            "وقت الاختبار محدد بدقة، وبمجرد بدء الاختبار، لا يمكن إيقاف المؤقت مؤقتاً.",
             "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي."
         ]
     },
@@ -564,7 +662,7 @@ const BATTERY_METADATA = [
         instructionsAr: [
             "يقيس هذا الاختبار قدرات الاستدلال اللفظي، والعددي، والأنماط التجريدية.",
             "يحتوي كل سؤال على خيار إجابة صحيح واحد فقط.",
-            "وقت هذه البطارية محدد بدقة بـ 20 دقيقة مفروضة من الخادم، ولا يمكن إيقاف المؤقت.",
+            "وقت هذا الاختبار محدد بدقة بـ 20 دقيقة مفروضة من الخادم، ولا يمكن إيقاف المؤقت.",
             "أجب بأكبر قدر ممكن من السرعة والدقة، ويتم حفظ إجاباتك تلقائياً."
         ]
     }
@@ -686,29 +784,11 @@ function initEventListeners() {
         rtlToggle.addEventListener("click", () => {
             const htmlEl = document.documentElement;
             const currentDir = htmlEl.getAttribute("dir") || "ltr";
-            const warningBlock = document.getElementById("warningBlock");
-            if (currentDir === "ltr") {
-                htmlEl.setAttribute("dir", "rtl");
-                rtlToggle.textContent = "Switch to English";
-                applyTranslation("ar");
-                if (warningBlock) {
-                    warningBlock.classList.remove("border-l-4", "border-l-[#131b2e]", "rounded-r");
-                    warningBlock.classList.add("border-r-4", "border-r-[#131b2e]", "rounded-l");
-                }
-            } else {
-                htmlEl.setAttribute("dir", "ltr");
-                rtlToggle.textContent = "Switch to Arabic";
-                applyTranslation("en");
-                if (warningBlock) {
-                    warningBlock.classList.remove("border-r-4", "border-r-[#131b2e]", "rounded-l");
-                    warningBlock.classList.add("border-l-4", "border-l-[#131b2e]", "rounded-r");
-                }
-            }
-            updateNavigationDirection();
+            const targetLang = (currentDir === "ltr") ? "ar" : "en";
+            applyTranslation(targetLang);
             if (activeItems && activeItems.length > 0 && activeSession) {
                 renderCurrentQuestion();
             }
-            updateTestSidebar(currentAttempt);
         });
     }
 
@@ -752,7 +832,7 @@ function initEventListeners() {
         submitBtn.addEventListener("click", () => {
             const isArabic = document.documentElement.getAttribute("dir") === "rtl";
             const titleStr = isArabic ? "تأكيد الإرسال" : "Confirm Submission";
-            const msgStr = isArabic ? "هل أنت متأكد أنك تريد إنهاء وإرسال هذه البطارية؟ لا يمكنك العودة إلى هذه الأسئلة." : "Are you sure you want to finalize and submit this battery?\nYou cannot return to these questions.";
+            const msgStr = isArabic ? "هل أنت متأكد أنك تريد إنهاء وإرسال هذا الاختبار؟ لا يمكنك العودة إلى هذه الأسئلة." : "Are you sure you want to finalize and submit this battery?\nYou cannot return to these questions.";
             
             window.showCustomModal({
                 title: titleStr,
@@ -906,27 +986,96 @@ function showPendingPortal(attempt) {
     applyCurrentTranslation();
 }
 
+function updateOnboardingLanguage(isAr) {
+    const obBadge = document.getElementById("onboardingBadge");
+    if (obBadge) obBadge.textContent = isAr ? "تقييم الكفاءات القيادية" : "Leadership Competency Assessment";
+
+    const obTitle = document.getElementById("onboardingAssessmentTitle");
+    if (obTitle) obTitle.textContent = isAr ? "تقييم القيادة التنفيذية" : "Executive Leadership Assessment";
+
+    const obSub = document.getElementById("onboardingSubtitle");
+    if (obSub) obSub.textContent = isAr ? "التقييم السيكومتري الشامل للكفاءات القيادية والقدرات المعرفية" : "Comprehensive psychometric evaluation of leadership competencies and cognitive abilities";
+
+    const obTime = document.getElementById("onboardingTotalTime");
+    if (obTime) obTime.textContent = isAr ? "90 دقيقة" : "90 Minutes";
+
+    const warnTitle = document.getElementById("warningBlockTitle");
+    if (warnTitle) warnTitle.textContent = isAr ? "قاعدة نزاهة التقييم:" : "Assessment Integrity Rule:";
+
+    const warnDesc = document.getElementById("warningBlockDesc");
+    if (warnDesc) warnDesc.textContent = isAr 
+        ? "يجب إكمال هذا التقييم في جلسة متواصلة واحدة. بمجرد البدء، لا يمكن إيقاف المؤقت أو العودة إلى الأقسام السابقة. تأكد من تخصيص 90 دقيقة دون مقاطعة."
+        : "This assessment must be completed in a single continuous session. Once started, the timer cannot be paused and previous sections cannot be revisited. Ensure you allocate 90 uninterrupted minutes.";
+
+    const startBtn = document.getElementById("startAssessmentBtn");
+    if (startBtn) {
+        const textSpan = startBtn.querySelector("span:not(.material-symbols-outlined)");
+        const iconSpan = startBtn.querySelector(".material-symbols-outlined");
+        if (textSpan) textSpan.textContent = isAr ? "ابدأ التقييم" : "Start Assessment";
+        if (iconSpan) iconSpan.textContent = isAr ? "arrow_back" : "arrow_forward";
+    }
+
+    updateBatteryCardStates(currentAttempt);
+}
+
 function updateBatteryCardStates(attempt) {
-    const currentIndex = attempt.currentBatteryIndex || 0;
+    const isArabic = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
+    const currentIndex = (attempt && typeof attempt.currentBatteryIndex === 'number') ? attempt.currentBatteryIndex : 0;
     
+    const cardData = [
+        {
+            titleEn: "01 • Personality Assessment",
+            titleAr: "01 • اختبار الشخصية",
+            descEn: "140 Items • 40 Minutes • Likert Scale",
+            descAr: "140 سؤالاً • 40 دقيقة • مقياس ليكرت"
+        },
+        {
+            titleEn: "02 • Situational Judgment Test (SJT)",
+            titleAr: "02 • اختبار الحكم على المواقف",
+            descEn: "16 Items • 45 Minutes • Option Ranking (4)",
+            descAr: "16 سؤالاً • 45 دقيقة • ترتيب الخيارات (4)"
+        },
+        {
+            titleEn: "03 • Derailers Assessment",
+            titleAr: "03 • اختبار السلوكيات المعطلة",
+            descEn: "60 Items • 20 Minutes • Likert Scale",
+            descAr: "60 سؤالاً • 20 دقيقة • مقياس ليكرت"
+        },
+        {
+            titleEn: "04 • Cognitive Abilities Test",
+            titleAr: "04 • اختبار القدرات المعرفية",
+            descEn: "42 Items • 20 Minutes • Multiple Choice (MCQ)",
+            descAr: "42 سؤالاً • 20 دقيقة • اختيار من متعدد"
+        }
+    ];
+
     for (let i = 0; i < 4; i++) {
         const card = document.getElementById(`card-battery-${i}`);
         if (!card) continue;
         
+        const titleEl = document.getElementById(`card-title-${i}`);
+        if (titleEl) titleEl.textContent = isArabic ? cardData[i].titleAr : cardData[i].titleEn;
+
+        const descEl = document.getElementById(`card-desc-${i}`);
+        if (descEl) descEl.textContent = isArabic ? cardData[i].descAr : cardData[i].descEn;
+
         const badge = card.querySelector(".battery-badge");
         if (i < currentIndex) {
             if (badge) {
-                badge.textContent = "COMPLETED";
+                badge.textContent = isArabic ? "مكتمل" : "COMPLETED";
                 badge.className = "battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500";
             }
         } else if (i === currentIndex) {
             if (badge) {
-                badge.textContent = attempt.state === "INIT" ? "READY TO START" : "IN PROGRESS";
+                const isInit = !attempt || attempt.state === "INIT";
+                badge.textContent = isArabic 
+                    ? (isInit ? "جاهز للبدء" : "قيد التقدم")
+                    : (isInit ? "READY TO START" : "IN PROGRESS");
                 badge.className = "battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-primary border border-primary/20";
             }
         } else {
             if (badge) {
-                badge.textContent = "LOCKED";
+                badge.textContent = isArabic ? "مغلق" : "LOCKED";
                 badge.className = "battery-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-400";
             }
         }
@@ -935,6 +1084,9 @@ function updateBatteryCardStates(attempt) {
 
 // Pre-Battery Instructions Screen
 function openPreBatteryInstructions(batteryIndex, isIntermission = false) {
+    window.currentPreBatteryIdx = batteryIndex;
+    window.currentPreBatteryIsIntermission = isIntermission;
+
     if (intermissionTimerInterval) {
         clearInterval(intermissionTimerInterval);
         intermissionTimerInterval = null;
@@ -979,40 +1131,31 @@ function openPreBatteryInstructions(batteryIndex, isIntermission = false) {
     if (lblType) lblType.textContent = isArabic ? "نوع الأسئلة" : "TYPE";
 
     const instHeading = document.getElementById("instHeading");
-    if (instHeading) instHeading.textContent = isArabic ? "تعليمات هامة:" : "Important Instructions:";
+    if (instHeading) {
+        instHeading.textContent = isArabic ? "تعليمات هامة:" : "Important Instructions:";
+        instHeading.style.textAlign = isArabic ? "right" : "left";
+    }
 
     const instContainer = document.getElementById("instContainer");
     if (instContainer) {
-        if (isArabic) {
-            instContainer.setAttribute("dir", "rtl");
-            instContainer.style.textAlign = "right";
-            instContainer.style.direction = "rtl";
-        } else {
-            instContainer.setAttribute("dir", "ltr");
-            instContainer.style.textAlign = "left";
-            instContainer.style.direction = "ltr";
-        }
+        instContainer.setAttribute("dir", isArabic ? "rtl" : "ltr");
+        instContainer.style.direction = isArabic ? "rtl" : "ltr";
+        instContainer.style.textAlign = isArabic ? "right" : "left";
+        instContainer.className = `space-y-3 text-xs text-on-surface-variant leading-relaxed ${isArabic ? "text-right" : "text-left"}`;
     }
 
     const listEl = document.getElementById("instBulletList");
     if (listEl) {
         const bullets = isArabic ? (meta.instructionsAr || meta.instructions) : meta.instructions;
         listEl.innerHTML = bullets.map(b => `<li>${b}</li>`).join("");
-        if (isArabic) {
-            listEl.className = "space-y-2 list-disc pr-5 pl-0 text-right";
-            listEl.setAttribute("dir", "rtl");
-            listEl.style.direction = "rtl";
-            listEl.style.textAlign = "right";
-        } else {
-            listEl.className = "space-y-2 list-disc pl-5 pr-0 text-left";
-            listEl.setAttribute("dir", "ltr");
-            listEl.style.direction = "ltr";
-            listEl.style.textAlign = "left";
-        }
+        listEl.setAttribute("dir", isArabic ? "rtl" : "ltr");
+        listEl.style.direction = isArabic ? "rtl" : "ltr";
+        listEl.style.textAlign = isArabic ? "right" : "left";
+        listEl.className = `space-y-2 list-disc ${isArabic ? "pr-5 pl-0 text-right" : "pl-5 pr-0 text-left"}`;
     }
 
     const beginBtnText = document.getElementById("beginBatteryBtnText");
-    if (beginBtnText) beginBtnText.textContent = isArabic ? "أفهم ذلك • ابدأ البطارية" : "I Understand • Begin Battery";
+    if (beginBtnText) beginBtnText.textContent = isArabic ? "أفهم ذلك • ابدأ الاختبار" : "I Understand • Begin Test";
 
     const intermissionBlock = document.getElementById("instIntermissionBlock");
     const intermissionSecs = document.getElementById("instIntermissionSecs");
@@ -1379,8 +1522,8 @@ function renderSjtRankingQuestion(item, container) {
 
         <div class="space-y-2 pt-2 survey-options-container" dir="rtl" style="direction: rtl;">
             <div class="flex justify-between items-center px-2 text-xs font-bold text-slate-500" dir="rtl">
-                <span class="text-emerald-700 flex items-center gap-1"><span class="material-symbols-outlined text-sm">north</span> الإجراء الأكثر فعالية (الترتيب 1)</span>
-                <span class="text-slate-400">رتب الإجراءات باستخدام الأسهم</span>
+                <span class="text-emerald-700 flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">north</span> ${isGlobalRtl ? 'الإجراء الأكثر فعالية (الترتيب 1)' : 'Most Effective Action (Rank 1)'}</span>
+                <span class="text-slate-400 flex items-center gap-1"><span class="material-symbols-outlined text-sm">drag_indicator</span> ${isGlobalRtl ? 'اسحب الإجراءات لإعادة ترتيبها' : 'Drag to reorder actions'}</span>
             </div>
 
             <div id="sjtOptionsList" class="space-y-2.5">
@@ -1388,20 +1531,15 @@ function renderSjtRankingQuestion(item, container) {
 
     options.forEach((opt, idx) => {
         html += `
-            <div class="sjt-option-card flex items-center justify-between p-3.5 bg-white border border-slate-200 rounded-xl shadow-xs hover:border-slate-300 transition-all gap-3" data-key="${opt.optionKey}" dir="rtl">
-                <div class="flex items-center gap-3">
+            <div class="sjt-option-card flex items-center justify-between p-3.5 bg-white border border-slate-200 rounded-xl shadow-xs hover:border-slate-300 hover:shadow-sm transition-all gap-3 cursor-grab active:cursor-grabbing select-none" draggable="true" data-index="${idx}" data-key="${opt.optionKey}" dir="rtl">
+                <div class="flex items-center gap-3 min-w-0 flex-1 pointer-events-none">
                     <span class="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0">
                         ${idx + 1}
                     </span>
-                    <p class="text-xs sm:text-sm text-slate-800 arabic-text leading-relaxed text-right">${opt.statementAr}</p>
+                    <p class="text-xs sm:text-sm text-slate-800 arabic-text leading-relaxed text-right flex-1 select-none pointer-events-none">${opt.statementAr}</p>
                 </div>
-                <div class="flex flex-col gap-1 shrink-0">
-                    <button type="button" class="move-up-btn p-1 text-slate-400 hover:text-primary rounded hover:bg-slate-100 disabled:opacity-20" ${idx === 0 ? 'disabled' : ''}>
-                        <span class="material-symbols-outlined text-base">expand_less</span>
-                    </button>
-                    <button type="button" class="move-down-btn p-1 text-slate-400 hover:text-primary rounded hover:bg-slate-100 disabled:opacity-20" ${idx === options.length - 1 ? 'disabled' : ''}>
-                        <span class="material-symbols-outlined text-base">expand_more</span>
-                    </button>
+                <div class="p-1 text-slate-400 hover:text-primary flex items-center justify-center shrink-0 pointer-events-none" title="${isGlobalRtl ? 'اسحب لإعادة الترتيب' : 'Drag to reorder'}">
+                    <span class="material-symbols-outlined text-xl">drag_indicator</span>
                 </div>
             </div>
         `;
@@ -1410,7 +1548,7 @@ function renderSjtRankingQuestion(item, container) {
     html += `
             </div>
             <div class="text-left px-2 text-xs font-bold text-red-600 flex items-center justify-start gap-1" dir="rtl">
-                <span>الإجراء الأقل فعالية (الترتيب ${options.length})</span>
+                <span>${isGlobalRtl ? `الإجراء الأقل فعالية (الترتيب ${options.length})` : `Least Effective Action (Rank ${options.length})`}</span>
                 <span class="material-symbols-outlined text-sm">south</span>
             </div>
         </div>
@@ -1425,28 +1563,86 @@ function renderSjtRankingQuestion(item, container) {
     if (!responsesMap[item.id]) responsesMap[item.id] = {};
     responsesMap[item.id].rankingOrder = options.map(o => o.optionKey);
 
-    // Reorder Handlers
-    container.querySelectorAll(".move-up-btn").forEach((btn, idx) => {
-        btn.addEventListener("click", () => {
-            if (idx > 0) {
-                const temp = options[idx];
-                options[idx] = options[idx - 1];
-                options[idx - 1] = temp;
+    // Setup Drag & Drop Handlers (Desktop + Touch Devices)
+    const cards = container.querySelectorAll(".sjt-option-card");
+    let draggedIndex = null;
+    let touchStartIndex = null;
+    let currentHoveredCard = null;
+
+    cards.forEach(card => {
+        // --- Desktop HTML5 Drag & Drop ---
+        card.addEventListener("dragstart", (e) => {
+            draggedIndex = parseInt(card.getAttribute("data-index"), 10);
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", draggedIndex);
+            setTimeout(() => {
+                card.classList.add("opacity-40", "border-dashed", "border-primary", "bg-primary/5");
+            }, 0);
+        });
+
+        card.addEventListener("dragend", () => {
+            card.classList.remove("opacity-40", "border-dashed", "border-primary", "bg-primary/5");
+            cards.forEach(c => c.classList.remove("border-primary", "ring-2", "ring-primary/20", "bg-emerald-50/50"));
+            draggedIndex = null;
+        });
+
+        card.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            card.classList.add("border-primary", "ring-2", "ring-primary/20", "bg-emerald-50/50");
+        });
+
+        card.addEventListener("dragleave", () => {
+            card.classList.remove("border-primary", "ring-2", "ring-primary/20", "bg-emerald-50/50");
+        });
+
+        card.addEventListener("drop", (e) => {
+            e.preventDefault();
+            card.classList.remove("border-primary", "ring-2", "ring-primary/20", "bg-emerald-50/50");
+            const targetIndex = parseInt(card.getAttribute("data-index"), 10);
+            if (draggedIndex !== null && draggedIndex !== targetIndex) {
+                const [movedItem] = options.splice(draggedIndex, 1);
+                options.splice(targetIndex, 0, movedItem);
                 responsesMap[item.id].rankingOrder = options.map(o => o.optionKey);
                 renderSjtRankingQuestion(item, container);
             }
         });
-    });
 
-    container.querySelectorAll(".move-down-btn").forEach((btn, idx) => {
-        btn.addEventListener("click", () => {
-            if (idx < options.length - 1) {
-                const temp = options[idx];
-                options[idx] = options[idx + 1];
-                options[idx + 1] = temp;
-                responsesMap[item.id].rankingOrder = options.map(o => o.optionKey);
-                renderSjtRankingQuestion(item, container);
+        // --- Touch / Mobile Drag & Drop ---
+        card.addEventListener("touchstart", () => {
+            touchStartIndex = parseInt(card.getAttribute("data-index"), 10);
+            card.classList.add("opacity-50", "border-primary", "bg-primary/5");
+        }, { passive: true });
+
+        card.addEventListener("touchmove", (e) => {
+            const touch = e.touches[0];
+            const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+            const targetCard = elem ? elem.closest(".sjt-option-card") : null;
+
+            cards.forEach(c => {
+                if (c === targetCard && c !== card) {
+                    c.classList.add("border-primary", "ring-2", "ring-primary/20", "bg-emerald-50/50");
+                } else if (c !== card) {
+                    c.classList.remove("border-primary", "ring-2", "ring-primary/20", "bg-emerald-50/50");
+                }
+            });
+            currentHoveredCard = targetCard;
+        }, { passive: true });
+
+        card.addEventListener("touchend", () => {
+            card.classList.remove("opacity-50", "border-primary", "bg-primary/5");
+            cards.forEach(c => c.classList.remove("border-primary", "ring-2", "ring-primary/20", "bg-emerald-50/50"));
+            if (currentHoveredCard && touchStartIndex !== null) {
+                const targetIndex = parseInt(currentHoveredCard.getAttribute("data-index"), 10);
+                if (touchStartIndex !== targetIndex) {
+                    const [movedItem] = options.splice(touchStartIndex, 1);
+                    options.splice(targetIndex, 0, movedItem);
+                    responsesMap[item.id].rankingOrder = options.map(o => o.optionKey);
+                    renderSjtRankingQuestion(item, container);
+                }
             }
+            touchStartIndex = null;
+            currentHoveredCard = null;
         });
     });
 }
@@ -2526,7 +2722,7 @@ function updateTestSidebar(attempt) {
                         ${isArabic ? "الإجابة العفوية والصادقة" : "Spontaneous Responses"}
                     </h4>
                     <p class="text-[11px] text-slate-500 leading-relaxed">
-                        ${isArabic ? "في بطاريات الشخصية والمخاطر، اختر الاستجابة التلقائية التي تمثلك في بيئة العمل اليومية." : "In personality & derailer batteries, choose the first response that naturally represents your behavior."}
+                        ${isArabic ? "في اختبارات الشخصية والمخاطر، اختر الاستجابة التلقائية التي تمثلك في بيئة العمل اليومية." : "In personality & derailer batteries, choose the first response that naturally represents your behavior."}
                     </p>
                 </div>
                 <div class="space-y-1.5 border-t border-slate-100 pt-3">
