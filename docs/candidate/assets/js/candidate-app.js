@@ -936,6 +936,23 @@ async function loadAssessmentState() {
             }
         }
 
+        // If no pending attempt exists, check history for the latest completed assessment
+        if (!attempt) {
+            try {
+                const hRes = await fetch(`${API_BASE}/api/attempts/me/history`, {
+                    headers: getAuthHeader()
+                });
+                if (hRes.ok && hRes.status === 200) {
+                    const history = await hRes.json().catch(() => null);
+                    if (Array.isArray(history) && history.length > 0) {
+                        attempt = history[0];
+                    }
+                }
+            } catch (hErr) {
+                console.debug("No history attempts found.");
+            }
+        }
+
         if (!attempt) {
             updateTestSidebar(null); // Force the sidebar into the empty state
             showView("view-empty");
@@ -1826,14 +1843,15 @@ async function submitActiveBattery(isAutoTimeout = false) {
         setTimeout(() => {
             if (autoAdvanceOverlay) autoAdvanceOverlay.classList.add("hidden");
             const timeoutOverlay = document.getElementById("overlay-timeout");
-            if (timeoutOverlay) timeoutOverlay.classList.add("hidden");
-
             if (updatedAttempt.state === "ALL_SUBMITTED" || updatedAttempt.state === "SCORED") {
-                showView("view-complete");
+                // Refresh page with attempt token to reload state and display full assessment results
+                const token = updatedAttempt.attemptToken;
+                const targetUrl = window.location.pathname + (token ? `?token=${encodeURIComponent(token)}` : "");
+                window.location.href = targetUrl;
             } else {
                 openPreBatteryInstructions(updatedAttempt.currentBatteryIndex, true);
             }
-        }, 2000);
+        }, 1500);
 
     } catch (err) {
         console.error("Error submitting battery session:", err);
@@ -1844,6 +1862,7 @@ async function submitActiveBattery(isAutoTimeout = false) {
 
 async function showCompletedAssessmentView(attempt) {
     showView("view-complete");
+    updateTestSidebar(attempt);
     
     try {
         const token = attempt.attemptToken;
