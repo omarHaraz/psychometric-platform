@@ -246,5 +246,5 @@ window.formatCurrency = formatCurrency;
 
 // Global API base URL for inline (non-module) scripts.
 (function() {
-    window.API_BASE_URL = 'https://lucky-gathering-cooked-privilege.trycloudflare.com/api';
+    window.API_BASE_URL = 'https://battle-barrier-jewelry-artificial.trycloudflare.com/api';
 })();
