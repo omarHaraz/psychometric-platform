@@ -8,10 +8,7 @@
         /* ==========================================================================
            PDF &amp; Print Optimization (Flying Saucer, OpenPDF, wkhtmltopdf compatible)
            ========================================================================== */
-        @page {
-            size: A4 portrait;
-            margin: 0;
-        }
+        /* page overridden by master */
 
         * {
             box-sizing: border-box;
@@ -24,7 +21,7 @@
             padding: 0;
             font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Tahoma', 'Arial', sans-serif;
             background-color: #ffffff;
-            color: #1e293b;
+            color: #404041;
             direction: rtl;
             text-align: right;
             font-size: 10px;
@@ -44,7 +41,7 @@
         /* 1. Page Main Header */
         .page-header-box {
             width: 100%;
-            border-bottom: 2px solid #1e3a4c;
+            border-bottom: 2px solid #2A3686;
             padding-bottom: 8px;
             margin-bottom: 14px;
             background: transparent;
@@ -53,7 +50,7 @@
         .candidate-id-span {
             font-family: 'Inter', 'Arial', sans-serif;
             font-weight: 700;
-            color: #1e3a4c;
+            color: #2A3686;
         }
 
         /* 2. Page Title &amp; Intro Section */
@@ -109,7 +106,7 @@
             min-height: 85px;
             padding: 8px 10px;
             font-size: 9.5px;
-            color: #1e293b;
+            color: #404041;
             line-height: 1.55;
             box-sizing: border-box;
             background-color: #f8fafc;
@@ -145,10 +142,10 @@
             <table style="width: 100%; border-collapse: collapse; border: none; background: transparent;">
                 <tr>
                     <td style="text-align: left; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px;" th:text="'صفحة ' + (${pageNum != null ? pageNum : 14})">صفحة 14</span>
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #2A3686; font-size: 11px;" th:text="'صفحة ' + (${pageNum != null ? pageNum : 14})">صفحة 14</span>
                     </td>
                     <td style="text-align: right; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-size: 12px; font-weight: 700; color: #1e3a4c;">
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-size: 12px; font-weight: 700; color: #2A3686;">
                             تقرير الكفاءات للقادة: تطوير | <span style="font-family: 'Inter', 'Arial', sans-serif;" th:text="${candidateId != null ? candidateId : 'CAN-98234'}">CAN-98234</span>
                         </span>
                     </td>
@@ -216,7 +213,7 @@
     <div class="bottom-banner-container">
         <table style="width: 100%; border-collapse: collapse; height: 26px; border: none;">
             <tr>
-                <td style="background-color: #7a4b3a; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
+                <td style="background-color: #2A3686; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
                     Executive Leadership Platform
                 </td>
             </tr>

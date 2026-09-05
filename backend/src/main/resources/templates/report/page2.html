@@ -8,10 +8,7 @@
         /* ==========================================================================
            PDF and Print Optimization (Strict OpenHTMLtoPDF and Flying Saucer Compatible)
            ========================================================================== */
-        @page {
-            size: A4 portrait;
-            margin: 0;
-        }
+        /* page overridden by master */
 
         * {
             box-sizing: border-box;
@@ -24,7 +21,7 @@
             padding: 0;
             font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Arial', sans-serif;
             background-color: #ffffff;
-            color: #1e293b;
+            color: #404041;
             direction: rtl;
             text-align: right;
             font-size: 11px;
@@ -43,7 +40,7 @@
         /* 1. Page Main Header */
         .page-header-box {
             width: 100%;
-            border-bottom: 2px solid #1e3a4c;
+            border-bottom: 2px solid #2A3686;
             padding-bottom: 10px;
             margin-bottom: 18px;
             background: transparent;
@@ -52,7 +49,7 @@
         .main-title {
             font-size: 24px;
             font-weight: 800;
-            color: #1e3a4c;
+            color: #2A3686;
             margin: 0;
             line-height: 1.2;
         }
@@ -62,7 +59,7 @@
             width: 9px;
             height: 9px;
             border-radius: 50%;
-            background-color: #1e3a4c;
+            background-color: #2A3686;
             display: inline-block;
             vertical-align: middle;
         }
@@ -70,7 +67,7 @@
         .section-title {
             font-size: 13.5px;
             font-weight: 700;
-            color: #1e3a4c;
+            color: #2A3686;
             margin: 0;
             display: inline-block;
         }
@@ -78,7 +75,7 @@
         .section-divider {
             border: none;
             height: 1.5px;
-            background-color: #1e3a4c;
+            background-color: #2A3686;
             margin: 4px 0 10px 0;
         }
 
@@ -180,7 +177,7 @@
                 <tr>
                     <!-- Left: Page Number -->
                     <td style="text-align: left; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px; background: transparent; display: inline-block;">صفحة 2</span>
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #2A3686; font-size: 11px; background: transparent; display: inline-block;">صفحة 2</span>
                     </td>
                     <!-- Right: Main Title -->
                     <td style="text-align: right; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
@@ -214,7 +211,7 @@
                     <!-- HARD SPACER TO FORCE VERTICAL CLEARANCE -->
                     <div style="height: 38px; width: 100%;"></div>
 
-                    <div style="font-size: 11.5px; font-weight: bold; margin-bottom: 14px; color: #1e3a4c; text-align: center;">
+                    <div style="font-size: 11.5px; font-weight: bold; margin-bottom: 14px; color: #2A3686; text-align: center;">
                         النطاقات
                     </div>
 
@@ -286,7 +283,7 @@
                     <!-- HARD SPACER TO FORCE VERTICAL CLEARANCE -->
                     <div style="height: 38px; width: 100%;"></div>
 
-                    <div style="font-size: 11.5px; font-weight: bold; margin-bottom: 14px; color: #1e3a4c; text-align: center;">
+                    <div style="font-size: 11.5px; font-weight: bold; margin-bottom: 14px; color: #2A3686; text-align: center;">
                         النطاقات
                     </div>
 
@@ -295,19 +292,19 @@
                         <tr>
                             <!-- عامل تطوير (Red) -->
                             <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 4px; border: none;">
-                                <div style="font-size: 11px; font-weight: 700; color: #1e3a4c; margin-bottom: 6px;">عامل تطوير</div>
+                                <div style="font-size: 11px; font-weight: 700; color: #2A3686; margin-bottom: 6px;">عامل تطوير</div>
                                 <div style="font-size: 9.5px; color: #475569; line-height: 1.45; min-height: 44px; margin-bottom: 10px;">لا تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
                                 <div class="color-pill pill-red"></div>
                             </td>
                             <!-- عامل حياد (Yellow) -->
                             <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 4px; border: none;">
-                                <div style="font-size: 11px; font-weight: 700; color: #1e3a4c; margin-bottom: 6px;">عامل حياد</div>
+                                <div style="font-size: 11px; font-weight: 700; color: #2A3686; margin-bottom: 6px;">عامل حياد</div>
                                 <div style="font-size: 9.5px; color: #475569; line-height: 1.45; min-height: 44px; margin-bottom: 10px;">تتطابق متطلبات الكفاءة جزئياً مع شخصية أو قدرات المرشح</div>
                                 <div class="color-pill pill-yellow"></div>
                             </td>
                             <!-- عامل قوة (Green) -->
                             <td style="width: 33.33%; vertical-align: top; text-align: center; padding: 0 4px; border: none;">
-                                <div style="font-size: 11px; font-weight: 700; color: #1e3a4c; margin-bottom: 6px;">عامل قوة</div>
+                                <div style="font-size: 11px; font-weight: 700; color: #2A3686; margin-bottom: 6px;">عامل قوة</div>
                                 <div style="font-size: 9.5px; color: #475569; line-height: 1.45; min-height: 44px; margin-bottom: 10px;">تتطابق متطلبات الكفاءة مع شخصية أو قدرات المرشح</div>
                                 <div class="color-pill pill-green"></div>
                             </td>
@@ -338,13 +335,13 @@
             <thead>
                 <tr>
                     <!-- 1st in HTML (Left): التفسير (45%) -->
-                    <th style="width: 45%; text-align: right; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 12px;">التفسير</th>
+                    <th style="width: 45%; text-align: right; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #2A3686; font-weight: 700; font-size: 12px;">التفسير</th>
                     <!-- 2nd in HTML: الخطر (15%) -->
-                    <th style="width: 15%; text-align: center; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 12px;">الخطر</th>
+                    <th style="width: 15%; text-align: center; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #2A3686; font-weight: 700; font-size: 12px;">الخطر</th>
                     <!-- 3rd in HTML: الدرجة (15%) -->
-                    <th style="width: 15%; text-align: center; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 12px;">الدرجة</th>
+                    <th style="width: 15%; text-align: center; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #2A3686; font-weight: 700; font-size: 12px;">الدرجة</th>
                     <!-- 4th in HTML (Right): المقياس (25%) -->
-                    <th style="width: 25%; text-align: right; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #7a4b3a; font-weight: 700; font-size: 12px;">المقياس</th>
+                    <th style="width: 25%; text-align: right; padding: 12px 10px; border-bottom: 1.5px solid #cbd5e1; color: #2A3686; font-weight: 700; font-size: 12px;">المقياس</th>
                 </tr>
             </thead>
             <tbody>
@@ -365,7 +362,7 @@
                         </div>
                     </td>
                     <!-- 4th in HTML (Right): المقياس -->
-                    <td style="width: 25%; text-align: right; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #1e3a4c; vertical-align: middle; font-size: 12px;">
+                    <td style="width: 25%; text-align: right; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #2A3686; vertical-align: middle; font-size: 12px;">
                         مؤشر التظاهر الاجتماعي
                     </td>
                 </tr>
@@ -387,7 +384,7 @@
                         </div>
                     </td>
                     <!-- 4th in HTML (Right): المقياس -->
-                    <td style="width: 25%; text-align: right; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #1e3a4c; vertical-align: middle; font-size: 12px;">
+                    <td style="width: 25%; text-align: right; padding: 18px 10px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #2A3686; vertical-align: middle; font-size: 12px;">
                         مؤشر وسطية الإجابة
                     </td>
                 </tr>
@@ -398,7 +395,7 @@
         <div class="bottom-banner-container">
             <table style="width: 100%; border-collapse: collapse; height: 26px; border: none;">
                 <tr>
-                    <td style="background-color: #7a4b3a; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
+                    <td style="background-color: #2A3686; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
                         Executive Leadership Platform
                     </td>
                 </tr>

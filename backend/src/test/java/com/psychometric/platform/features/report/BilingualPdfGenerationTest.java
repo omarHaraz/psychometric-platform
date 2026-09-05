@@ -98,6 +98,11 @@ public class BilingualPdfGenerationTest {
         assertNotNull(pdfBytes);
         assertTrue(pdfBytes.length > 50000, "Arabic PDF must be > 50KB");
 
+        File outFileAr = new File("C:/Users/Logo/.gemini/antigravity/brain/117627c9-dbc7-4aff-b37d-4deddc3f231e/scratch/report_arabic_test.pdf");
+        try (FileOutputStream fos = new FileOutputStream(outFileAr)) {
+            fos.write(pdfBytes);
+        }
+
         try (PDDocument doc = PDDocument.load(pdfBytes)) {
             assertEquals(14, doc.getNumberOfPages(), "Report must have 14 pages");
         }
@@ -135,5 +140,32 @@ public class BilingualPdfGenerationTest {
             fos.write(pdfBytes);
         }
         System.out.println("English (LTR) PDF verified successfully! Size: " + pdfBytes.length + " bytes. Saved to: " + outFile.getAbsolutePath());
+    }
+
+    @Test
+    @DisplayName("Test Arabic Failing Candidate (< 70%) Result")
+    public void testArabicFailingCandidatePdfGeneration() throws Exception {
+        LeadershipReportGeneratorService genService = new LeadershipReportGeneratorService(objectMapper);
+        PdfGeneratorService pdfService = new PdfGeneratorService(templateEngine);
+
+        AssessmentScoreResponseDto failScore = createSampleScoreDto();
+        failScore.setCompositeScore(31.8);
+        failScore.setPercentile(1);
+
+        ReportContextDto reportContext = genService.generateReport(failScore);
+        assertEquals("عدم اجتياز (Fail)", reportContext.getReadinessLabel());
+        assertEquals("#b91c1c", reportContext.getReadinessColor());
+
+        byte[] pdfBytes = pdfService.generatePdfReport(reportContext, "ar");
+        assertNotNull(pdfBytes);
+
+        File outFileAr = new File("C:/Users/Logo/.gemini/antigravity/brain/117627c9-dbc7-4aff-b37d-4deddc3f231e/scratch/report_arabic_fail_test.pdf");
+        try (FileOutputStream fos = new FileOutputStream(outFileAr)) {
+            fos.write(pdfBytes);
+        }
+
+        try (PDDocument doc = PDDocument.load(pdfBytes)) {
+            assertEquals(14, doc.getNumberOfPages(), "Report must have 14 pages");
+        }
     }
 }

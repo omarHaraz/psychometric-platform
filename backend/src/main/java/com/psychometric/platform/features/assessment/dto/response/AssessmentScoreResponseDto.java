@@ -4,11 +4,14 @@ import com.psychometric.platform.features.assessment.domain.enums.ReadinessBand;
 import com.psychometric.platform.features.assessment.domain.model.AssessmentScore;
 import com.psychometric.platform.features.itembank.gcat.entity.GcatSubtestCode;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AssessmentScoreResponseDto {
+public class AssessmentScoreResponseDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Long id;
     private String attemptToken;
@@ -38,7 +41,8 @@ public class AssessmentScoreResponseDto {
     private List<DerailerCategoryScoreDto> derailerCategoryScores = new ArrayList<>();
     private List<GcatSubtestScoreDto> gcatSubtestScores = new ArrayList<>();
 
-    public static class TraitScoreDto {
+    public static class TraitScoreDto implements Serializable {
+        private static final long serialVersionUID = 1L;
         private String traitCode;
         private String nameAr;
         private Integer displayOrder;
@@ -67,7 +71,8 @@ public class AssessmentScoreResponseDto {
         public void setScorePct(Double scorePct) { this.scorePct = scorePct; }
     }
 
-    public static class DerailerCategoryScoreDto {
+    public static class DerailerCategoryScoreDto implements Serializable {
+        private static final long serialVersionUID = 1L;
         private Long categoryId;
         private String nameAr;
         private Integer displayOrder;
@@ -96,7 +101,8 @@ public class AssessmentScoreResponseDto {
         public void setScorePct(Double scorePct) { this.scorePct = scorePct; }
     }
 
-    public static class GcatSubtestScoreDto {
+    public static class GcatSubtestScoreDto implements Serializable {
+        private static final long serialVersionUID = 1L;
         private GcatSubtestCode subtest;
         private Integer correctCount;
         private Integer totalCount = 14;

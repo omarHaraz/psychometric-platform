@@ -246,5 +246,12 @@ window.formatCurrency = formatCurrency;
 
 // Global API base URL for inline (non-module) scripts.
 (function() {
-    window.API_BASE_URL = 'https://battle-barrier-jewelry-artificial.trycloudflare.com/api';
+    const isLocal = (
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.protocol === 'file:'
+    );
+    window.API_BASE_URL = isLocal 
+        ? 'http://localhost:8081/api' 
+        : 'https://battle-barrier-jewelry-artificial.trycloudflare.com/api';
 })();

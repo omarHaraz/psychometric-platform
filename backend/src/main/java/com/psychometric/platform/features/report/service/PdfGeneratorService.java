@@ -52,7 +52,24 @@ public class PdfGeneratorService {
         context.setLocale(new Locale(normalizedLang));
         context.setVariable("lang", normalizedLang);
         context.setVariable("dir", dir);
+        context.setVariable("currentDate", reportDto.getReportDate() != null ? reportDto.getReportDate() : java.time.LocalDate.now().toString());
+        String logoB64 = getLogoBase64();
+        if (logoB64 != null) {
+            context.setVariable("companyLogoBase64", logoB64);
+        }
         return templateEngine.process("report/master-report", context);
+    }
+
+    private String getLogoBase64() {
+        try (var is = getClass().getResourceAsStream("/static/assets/images/logo.png")) {
+            if (is != null) {
+                byte[] bytes = is.readAllBytes();
+                return "data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(bytes);
+            }
+        } catch (Exception e) {
+            log.warn("Could not load logo for PDF header/footer: {}", e.getMessage());
+        }
+        return null;
     }
 
     /**
@@ -101,7 +118,15 @@ public class PdfGeneratorService {
                 builder.useUnicodeBidiReorderer(new ICUBidiReorderer());
                 builder.defaultTextDirection(isRtl ? PdfRendererBuilder.TextDirection.RTL : PdfRendererBuilder.TextDirection.LTR);
                 
-                builder.withHtmlContent(htmlContent, "");
+                String baseUri = "";
+                try {
+                    var staticUrl = getClass().getResource("/static/");
+                    if (staticUrl != null) {
+                        baseUri = staticUrl.toExternalForm();
+                    }
+                } catch (Exception ignored) {}
+
+                builder.withHtmlContent(htmlContent, baseUri);
                 builder.toStream(outputStream);
                 builder.run();
 

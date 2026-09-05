@@ -5,10 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title th:text="${competencyTitle != null ? competencyTitle : 'Competency'} + ' - Report'">Competency - Report</title>
     <style th:fragment="style">
-        @page {
-            size: A4 portrait;
-            margin: 8mm 15mm 20mm 15mm;
-        }
+        /* page overridden by master */
 
         * {
             box-sizing: border-box;
@@ -21,7 +18,7 @@
             padding: 0;
             font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Arial', sans-serif;
             background-color: #ffffff;
-            color: #1e293b;
+            color: #404041;
             font-size: 10.5px;
             line-height: 1.5;
         }
@@ -44,7 +41,7 @@
         .competency-title {
             font-size: 20px;
             font-weight: 800;
-            color: #1e293b;
+            color: #404041;
             margin: 0 0 4px 0;
         }
 
@@ -66,7 +63,7 @@
         }
 
         table.detail-table th {
-            background-color: #1a4331;
+            background-color: #2A3686;
             color: #ffffff;
             font-weight: 700;
             font-size: 10.5px;
@@ -150,7 +147,7 @@
                 <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: left; border: none;">
                     <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-right: 10px;" 
                           th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#388e3c'}) + ';'"></span>
-                    <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle}">Competency Title</span>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #404041; vertical-align: middle;" th:text="${competencyTitle}">Competency Title</span>
                 </td>
                 <td style="width: 45%; vertical-align: middle; padding: 10px 10px; position: relative; border: none;">
                     <div style="position: relative; width: 100%; height: 16px;">
@@ -214,48 +211,96 @@
                 <td style="width: 55%; vertical-align: middle; padding: 4px 16px; text-align: right; border: none;">
                     <span style="display: inline-block; width: 14px; height: 19px; border-radius: 4px; vertical-align: middle; margin-left: 10px;" 
                           th:styleappend="'background-color: ' + (${competencyColor != null ? competencyColor : '#388e3c'}) + ';'"></span>
-                    <span style="font-size: 11.5px; font-weight: 700; color: #1e293b; vertical-align: middle;" th:text="${competencyTitle}">التواصل والتأثير الفعال</span>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #404041; vertical-align: middle;" th:text="${competencyTitle}">التواصل والتأثير الفعال</span>
                 </td>
             </tr>
         </table>
 
-        <!-- 4. Detailed Match Table -->
-        <table class="detail-table">
+        <!-- 4. Detailed Match Table (RTL Version) -->
+        <table th:if="${dir == 'rtl' || dir == null}" class="detail-table" dir="rtl" style="width: 100%; direction: rtl; text-align: right;">
             <thead>
-            <tr>
-                <th class="col-level" style="width: 8%; text-align: center;" th:text="#{report.detail.score_label}">المستوى</th>
-                <th class="col-req" style="width: 29%;" th:text="#{report.detail.requirements}">متطلبات الكفاءة</th>
-                <th class="col-result" style="width: 31%;" th:text="#{report.detail.observations}">الملاحظات والنتائج</th>
-                <th class="col-rec" style="width: 32%;" th:text="#{report.detail.recommendations}">التوصيات وخطة التطوير</th>
+            <tr style="background-color: #2A3686; color: white;">
+                <!-- 1. Physical Left (Visually 4th column in RTL) -->
+                <th class="col-rec" style="padding: 10px; text-align: right; width: 30%;">التوصيات وخطة التطوير المقترحة</th>
+
+                <!-- 2. Physical Center-Left (Visually 3rd column in RTL) -->
+                <th class="col-result" style="padding: 10px; text-align: right; width: 30%;">الملاحظات السلوكية والنتائج</th>
+
+                <!-- 3. Physical Center-Right (Visually 2nd column in RTL) -->
+                <th class="col-req" style="padding: 10px; text-align: right; width: 30%;">متطلبات الكفاءة في المنصب القيادي</th>
+
+                <!-- 4. Physical Far Right (Visually 1st column in RTL) -->
+                <th class="col-level" style="padding: 10px; text-align: center; width: 10%;">الدرجة المحققة</th>
             </tr>
             </thead>
             <tbody>
             <!-- Indicator 1 -->
             <tr th:if="${req1 != null}">
-                <td class="td-level-cell">
+                <td style="text-align: right;" th:text="${rec1}">التوصيات المقترحة للتطوير</td>
+                <td style="text-align: right;" th:text="${result1}">الملاحظات السلوكية للمؤشر الأول</td>
+                <td style="text-align: right;" th:text="${req1}">متطلبات المؤشر الأول</td>
+                <td class="td-level-cell" style="text-align: center;">
                     <span class="level-status-pill" th:styleappend="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#388e3c'}) + ';'"></span>
                 </td>
-                <td th:text="${req1}">متطلبات المؤشر الأول</td>
-                <td th:text="${result1}">الملاحظات السلوكية للمؤشر الأول</td>
-                <td th:text="${rec1}">التوصيات المقترحة للتطوير</td>
             </tr>
             <!-- Indicator 2 -->
             <tr th:if="${req2 != null}">
-                <td class="td-level-cell">
+                <td style="text-align: right;" th:text="${rec2}">التوصيات المقترحة للتطوير</td>
+                <td style="text-align: right;" th:text="${result2}">الملاحظات السلوكية للمؤشر الثاني</td>
+                <td style="text-align: right;" th:text="${req2}">متطلبات المؤشر الثاني</td>
+                <td class="td-level-cell" style="text-align: center;">
                     <span class="level-status-pill" th:styleappend="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d97736'}) + ';'"></span>
                 </td>
-                <td th:text="${req2}">متطلبات المؤشر الثاني</td>
-                <td th:text="${result2}">الملاحظات السلوكية للمؤشر الثاني</td>
-                <td th:text="${rec2}">التوصيات المقترحة للتطوير</td>
             </tr>
             <!-- Indicator 3 -->
             <tr th:if="${req3 != null}">
-                <td class="td-level-cell">
+                <td style="text-align: right;" th:text="${rec3}">التوصيات المقترحة للتطوير</td>
+                <td style="text-align: right;" th:text="${result3}">الملاحظات السلوكية للمؤشر الثالث</td>
+                <td style="text-align: right;" th:text="${req3}">متطلبات المؤشر الثالث</td>
+                <td class="td-level-cell" style="text-align: center;">
                     <span class="level-status-pill" th:styleappend="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#d32f2f'}) + ';'"></span>
                 </td>
-                <td th:text="${req3}">متطلبات المؤشر الثالث</td>
-                <td th:text="${result3}">الملاحظات السلوكية للمؤشر الثالث</td>
-                <td th:text="${rec3}">التوصيات المقترحة للتطوير</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- 4. Detailed Match Table (LTR Version for English) -->
+        <table th:if="${dir == 'en' || dir == 'ltr'}" class="detail-table" dir="ltr" style="width: 100%; direction: ltr; text-align: left;">
+            <thead>
+            <tr style="background-color: #2A3686; color: white;">
+                <th class="col-level" style="padding: 10px; text-align: center; width: 10%;" th:text="#{report.detail.score_label}">Score</th>
+                <th class="col-req" style="padding: 10px; text-align: left; width: 30%;" th:text="#{report.detail.requirements}">Competency Requirements</th>
+                <th class="col-result" style="padding: 10px; text-align: left; width: 30%;" th:text="#{report.detail.observations}">Observations &amp; Results</th>
+                <th class="col-rec" style="padding: 10px; text-align: left; width: 30%;" th:text="#{report.detail.recommendations}">Recommendations &amp; Development</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Indicator 1 -->
+            <tr th:if="${req1 != null}">
+                <td class="td-level-cell" style="text-align: center;">
+                    <span class="level-status-pill" th:styleappend="'background-color: ' + (${indicator1Color != null ? indicator1Color : '#388e3c'}) + ';'"></span>
+                </td>
+                <td style="text-align: left;" th:text="${req1}">Indicator 1 requirements</td>
+                <td style="text-align: left;" th:text="${result1}">Indicator 1 observations</td>
+                <td style="text-align: left;" th:text="${rec1}">Development recommendations</td>
+            </tr>
+            <!-- Indicator 2 -->
+            <tr th:if="${req2 != null}">
+                <td class="td-level-cell" style="text-align: center;">
+                    <span class="level-status-pill" th:styleappend="'background-color: ' + (${indicator2Color != null ? indicator2Color : '#d97736'}) + ';'"></span>
+                </td>
+                <td style="text-align: left;" th:text="${req2}">Indicator 2 requirements</td>
+                <td style="text-align: left;" th:text="${result2}">Indicator 2 observations</td>
+                <td style="text-align: left;" th:text="${rec2}">Development recommendations</td>
+            </tr>
+            <!-- Indicator 3 -->
+            <tr th:if="${req3 != null}">
+                <td class="td-level-cell" style="text-align: center;">
+                    <span class="level-status-pill" th:styleappend="'background-color: ' + (${indicator3Color != null ? indicator3Color : '#d32f2f'}) + ';'"></span>
+                </td>
+                <td style="text-align: left;" th:text="${req3}">Indicator 3 requirements</td>
+                <td style="text-align: left;" th:text="${result3}">Indicator 3 observations</td>
+                <td style="text-align: left;" th:text="${rec3}">Development recommendations</td>
             </tr>
             </tbody>
         </table>
@@ -264,7 +309,7 @@
         <div class="bottom-banner-container">
             <table style="width: 100%; border-collapse: collapse; height: 26px; border: none;">
                 <tr>
-                    <td style="background-color: #7a4b3a; color: #ffffff; text-align: center; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none;" th:text="#{report.common.footer}">
+                    <td style="background-color: #2A3686; color: #ffffff; text-align: center; font-size: 9.5px; font-weight: 600; vertical-align: middle; border: none;" th:text="#{report.common.footer}">
                         Executive Leadership Platform • All Rights Reserved © 2026
                     </td>
                 </tr>

@@ -38,8 +38,9 @@ public class CandidateDebugReportTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @org.springframework.transaction.annotation.Transactional
     public void debugCandidateScore() throws Exception {
-        String token = "4a52866d-2f84-4b2f-abcd-d284fa1f23d8";
+        String token = "3decab79-2199-4e86-a68c-201f67bc2d9d";
         System.out.println("===============================================================");
         System.out.println("=== DEBUGGING CANDIDATE/ATTEMPT TOKEN: " + token + " ===");
         System.out.println("===============================================================");
@@ -76,7 +77,10 @@ public class CandidateDebugReportTest {
             System.out.println("\n=== AssessmentScoreResponseDto JSON ===");
             System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rawScoreDto));
 
+            reportGeneratorService.clearCandidateCaches(token);
             ReportContextDto reportContextDto = reportGeneratorService.generateReport(rawScoreDto);
+            System.out.println("DEBUG: reportContextDto.getReadinessLabel() = " + reportContextDto.getReadinessLabel());
+            System.out.println("DEBUG: reportContextDto.getReadinessColor() = " + reportContextDto.getReadinessColor());
             System.out.println("\n=== Generated ReportContextDto Page 5 Variables ===");
             System.out.println("  commScore = " + reportContextDto.getCommScore() + ", commColor = " + reportContextDto.getCommColor());
             System.out.println("  initiativeScore = " + reportContextDto.getInitiativeScore() + ", initiativeColor = " + reportContextDto.getInitiativeColor());

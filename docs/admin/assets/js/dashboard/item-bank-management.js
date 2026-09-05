@@ -129,6 +129,67 @@ function setupEventListeners() {
         }
     });
 
+    // Main Image Remove Listeners and Manual Input Sync
+    const clearGcatMainImage = () => {
+        const fileIn = document.getElementById("gcatImageFileInput");
+        if (fileIn) fileIn.value = "";
+        const urlIn = document.getElementById("gcatImageUrl");
+        if (urlIn) urlIn.value = "";
+        const pubIn = document.getElementById("gcatImagePublicId");
+        if (pubIn) pubIn.value = "";
+        const container = document.getElementById("gcatImagePreviewContainer");
+        if (container) container.classList.add("d-none");
+        const prev = document.getElementById("gcatImagePreview");
+        if (prev) prev.src = "";
+        if (typeof AdminUI !== "undefined" && AdminUI.showToast) {
+            AdminUI.showToast("تم إزالة الصورة (Image removed)", "info");
+        }
+    };
+    document.getElementById("gcatRemoveImageBtn")?.addEventListener("click", clearGcatMainImage);
+    document.getElementById("gcatRemoveImagePreviewBtn")?.addEventListener("click", clearGcatMainImage);
+
+    document.getElementById("gcatImageUrl")?.addEventListener("input", (e) => {
+        const val = e.target.value.trim();
+        const container = document.getElementById("gcatImagePreviewContainer");
+        const prev = document.getElementById("gcatImagePreview");
+        if (val) {
+            if (prev) prev.src = val;
+            if (container) container.classList.remove("d-none");
+        } else {
+            if (prev) prev.src = "";
+            if (container) container.classList.add("d-none");
+        }
+    });
+
+    const clearSjtMainImage = () => {
+        const fileIn = document.getElementById("sjtImageFileInput");
+        if (fileIn) fileIn.value = "";
+        const urlIn = document.getElementById("sjtImageUrl");
+        if (urlIn) urlIn.value = "";
+        const container = document.getElementById("sjtImagePreviewContainer");
+        if (container) container.classList.add("d-none");
+        const prev = document.getElementById("sjtImagePreview");
+        if (prev) prev.src = "";
+        if (typeof AdminUI !== "undefined" && AdminUI.showToast) {
+            AdminUI.showToast("تم إزالة الصورة (Image removed)", "info");
+        }
+    };
+    document.getElementById("sjtRemoveImageBtn")?.addEventListener("click", clearSjtMainImage);
+    document.getElementById("sjtRemoveImagePreviewBtn")?.addEventListener("click", clearSjtMainImage);
+
+    document.getElementById("sjtImageUrl")?.addEventListener("input", (e) => {
+        const val = e.target.value.trim();
+        const container = document.getElementById("sjtImagePreviewContainer");
+        const prev = document.getElementById("sjtImagePreview");
+        if (val) {
+            if (prev) prev.src = val;
+            if (container) container.classList.remove("d-none");
+        } else {
+            if (prev) prev.src = "";
+            if (container) container.classList.add("d-none");
+        }
+    });
+
     // Option Image Upload Listeners (A - E) for GCAT
     document.querySelectorAll(".gcat-opt-upload-btn").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -887,6 +948,10 @@ function openEditModal(id) {
         document.getElementById("gcatPatternTypeAr").value = item.patternTypeAr || "";
         document.getElementById("gcatPromptTextAr").value = item.promptTextAr || "";
         document.getElementById("gcatImageUrl").value = item.questionImageUrl || "";
+        const gcatPubIn = document.getElementById("gcatImagePublicId");
+        if (gcatPubIn) gcatPubIn.value = item.questionImagePublicId || "";
+        const gcatFileIn = document.getElementById("gcatImageFileInput");
+        if (gcatFileIn) gcatFileIn.value = "";
         document.getElementById("gcatObservationAr").value = item.observationAr || "";
         document.getElementById("gcatRuleAr").value = item.ruleAr || "";
         document.getElementById("gcatApplicationAr").value = item.applicationAr || "";
@@ -938,6 +1003,8 @@ function openEditModal(id) {
         document.getElementById("sjtCommonMistakeAr").value = item.commonMistakeAr || "";
         document.getElementById("sjtCoachingNoteAr").value = item.coachingNoteAr || "";
         document.getElementById("sjtImageUrl").value = item.scenarioImageUrl || "";
+        const sjtFileIn = document.getElementById("sjtImageFileInput");
+        if (sjtFileIn) sjtFileIn.value = "";
 
         const previewContainer = document.getElementById("sjtImagePreviewContainer");
         const previewImg = document.getElementById("sjtImagePreview");

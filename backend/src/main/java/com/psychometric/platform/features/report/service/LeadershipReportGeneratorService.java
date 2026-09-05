@@ -141,9 +141,17 @@ public class LeadershipReportGeneratorService {
         report.setReportDate(reportDate);
         report.setEvaluationPurpose("تقرير الكفاءات للقادة: تطوير");
 
-        // Page 1: Composite Score
+        // Page 1: Composite Score & Executive Scorecard (Two-Option Pass/Fail Result)
         double compositePct = rawScore.getCompositeScore() != null ? rawScore.getCompositeScore() : 0.0;
         report.setResultScore(String.format(Locale.US, "%.1f", compositePct));
+        report.setScore(rawScore);
+        if (compositePct >= 70.0) {
+            report.setReadinessLabel("اجتياز (Pass)");
+            report.setReadinessColor("#166534");
+        } else {
+            report.setReadinessLabel("عدم اجتياز (Fail)");
+            report.setReadinessColor("#b91c1c");
+        }
 
         // 2. Normalize Page 2: Impression Management & Validity
         normalizeImpressionManagement(rawScore, report);

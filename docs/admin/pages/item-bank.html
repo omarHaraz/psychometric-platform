@@ -455,9 +455,20 @@
                   <i class="material-symbols-rounded text-sm align-middle">cloud_upload</i> Upload to CDN
                 </button>
               </div>
-              <input type="url" class="form-control px-3 border" id="gcatImageUrl" placeholder="https://res.cloudinary.com/... (auto-filled on upload)">
+              <div class="input-group mb-2">
+                <input type="url" class="form-control px-3 border" id="gcatImageUrl" placeholder="https://res.cloudinary.com/... (auto-filled on upload)">
+                <button class="btn btn-outline-danger mb-0" type="button" id="gcatRemoveImageBtn" title="حذف الصورة">
+                  <i class="material-symbols-rounded text-sm align-middle">delete</i> حذف الصورة (Remove Image)
+                </button>
+              </div>
               <input type="hidden" id="gcatImagePublicId">
-              <div id="gcatImagePreviewContainer" class="mt-2 text-center p-2 border border-radius-md bg-light d-none">
+              <div id="gcatImagePreviewContainer" class="mt-2 text-center p-2 border border-radius-md bg-light d-none position-relative">
+                <div class="d-flex justify-content-between align-items-center mb-1 px-1">
+                  <span class="text-xs font-weight-bold text-secondary">Asset Preview (معاينة الصورة)</span>
+                  <button type="button" class="btn btn-xs btn-outline-danger mb-0" id="gcatRemoveImagePreviewBtn" title="حذف الصورة">
+                    <i class="material-symbols-rounded text-xs align-middle">delete</i> حذف الصورة
+                  </button>
+                </div>
                 <img id="gcatImagePreview" src="" alt="GCAT Asset Preview" class="img-fluid border-radius-md shadow-sm" style="max-height: 180px;">
               </div>
             </div>
@@ -715,8 +726,19 @@
                   <i class="material-symbols-rounded text-sm align-middle">cloud_upload</i> Upload to CDN
                 </button>
               </div>
-              <input type="url" class="form-control px-3 border" id="sjtImageUrl" placeholder="https://res.cloudinary.com/... (auto-filled on upload)">
-              <div id="sjtImagePreviewContainer" class="mt-2 text-center p-2 border border-radius-md bg-light d-none">
+              <div class="input-group mb-2">
+                <input type="url" class="form-control px-3 border" id="sjtImageUrl" placeholder="https://res.cloudinary.com/... (auto-filled on upload)">
+                <button class="btn btn-outline-danger mb-0" type="button" id="sjtRemoveImageBtn" title="حذف الصورة">
+                  <i class="material-symbols-rounded text-sm align-middle">delete</i> حذف الصورة (Remove Image)
+                </button>
+              </div>
+              <div id="sjtImagePreviewContainer" class="mt-2 text-center p-2 border border-radius-md bg-light d-none position-relative">
+                <div class="d-flex justify-content-between align-items-center mb-1 px-1">
+                  <span class="text-xs font-weight-bold text-secondary">Scenario Preview (معاينة الصورة)</span>
+                  <button type="button" class="btn btn-xs btn-outline-danger mb-0" id="sjtRemoveImagePreviewBtn" title="حذف الصورة">
+                    <i class="material-symbols-rounded text-xs align-middle">delete</i> حذف الصورة
+                  </button>
+                </div>
                 <img id="sjtImagePreview" src="" alt="SJT Scenario Preview" class="img-fluid border-radius-md shadow-sm" style="max-height: 180px;">
               </div>
             </div>

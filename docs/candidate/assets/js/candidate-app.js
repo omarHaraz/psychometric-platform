@@ -11,10 +11,23 @@ window.showCustomModal = function(options) {
     
     if (!overlay) return;
     
+    if (options.maxWidth) {
+        card.classList.remove("max-w-sm", "max-w-md", "max-w-lg");
+        card.classList.add(options.maxWidth);
+    } else {
+        card.classList.remove("max-w-md", "max-w-lg");
+        card.classList.add("max-w-sm");
+    }
+
     titleEl.textContent = options.title || "Information";
     
-    // Support newlines in message
-    messageEl.innerHTML = (options.message || "").replace(/\n/g, '<br>');
+    // Support rich HTML or plain text with newlines
+    const rawMsg = options.htmlContent || options.message || "";
+    if (options.htmlContent || (typeof rawMsg === "string" && rawMsg.trim().startsWith("<"))) {
+        messageEl.innerHTML = rawMsg;
+    } else {
+        messageEl.innerHTML = rawMsg.replace(/\n/g, '<br>');
+    }
     
     iconEl.textContent = options.icon || "info";
     
@@ -402,8 +415,8 @@ function translateNode(node, toLang) {
         }
     } else if (node.nodeType === Node.ELEMENT_NODE) {
         if (node.tagName !== "SCRIPT" && node.tagName !== "STYLE") {
-            // Bypass i18n for survey question & answer contents (keep strictly in Arabic & RTL)
-            if (node.id === "questionBody" || node.classList?.contains("survey-content") || node.classList?.contains("survey-options-container")) {
+            // Bypass i18n for survey question & answer contents and modal message
+            if (node.id === "questionBody" || node.id === "customModalMessage" || node.classList?.contains("survey-content") || node.classList?.contains("survey-options-container")) {
                 return;
             }
             for (let child of node.childNodes) {
@@ -528,6 +541,8 @@ function applyTranslation(lang) {
     // Update test sidebar (Progress tracker or Exam guidelines)
     updateTestSidebar(currentAttempt);
 
+    renderQuizPagination();
+
     updateNavigationDirection();
 }
 
@@ -554,6 +569,7 @@ let activeSession = null;
 let activeItems = [];
 let currentItemIndex = 0;
 let responsesMap = {};
+let questionReachedState = {};
 let itemStartTimes = {};
 let countdownTimerInterval = null;
 let heartbeatInterval = null;
@@ -830,15 +846,101 @@ function initEventListeners() {
     const submitBtn = document.getElementById("submitBatteryBtn");
     if (submitBtn) {
         submitBtn.addEventListener("click", () => {
-            const isArabic = document.documentElement.getAttribute("dir") === "rtl";
+            const isArabic = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
+            const total = activeItems ? activeItems.length : 0;
+
+            const answeredQuestions = [];
+            const passedQuestions = [];
+
+            if (activeItems && activeItems.length > 0) {
+                activeItems.forEach((item, idx) => {
+                    const qNum = idx + 1;
+                    if (isQuestionSolved(idx)) {
+                        answeredQuestions.push(qNum);
+                    } else {
+                        passedQuestions.push(qNum);
+                    }
+                });
+            }
+
             const titleStr = isArabic ? "تأكيد الإرسال" : "Confirm Submission";
-            const msgStr = isArabic ? "هل أنت متأكد أنك تريد إنهاء وإرسال هذا الاختبار؟ لا يمكنك العودة إلى هذه الأسئلة." : "Are you sure you want to finalize and submit this battery?\nYou cannot return to these questions.";
+            
+            const promptText = isArabic 
+                ? "هل أنت متأكد أنك تريد إنهاء وإرسال هذا الاختبار؟ لا يمكنك العودة إلى هذه الأسئلة بعد الإرسال."
+                : "Are you sure you want to finalize and submit this battery? You cannot return to these questions after submitting.";
+
+            const answeredLabel = isArabic ? "الأسئلة المجاب عنها" : "Answered Questions";
+            const passedLabel = isArabic ? "الأسئلة التي تم تجاوزها" : "Passed / Skipped Questions";
+            const ofTotal = isArabic ? `من إجمالي ${total}` : `of ${total} total`;
+            const clickToJumpNotice = isArabic ? "انقر على رقم السؤال للعودة إليه" : "Click question number to go to it";
+            const allAnsweredNotice = isArabic 
+                ? `رائع! لقد قمت بالإجابة على جميع الأسئلة (${total} من ${total})` 
+                : `Great! You have answered all questions (${total} of ${total}).`;
+            const noneAnsweredNotice = isArabic ? "لم تتم الإجابة على أي سؤال بعد." : "No questions answered yet.";
+
+            const msgHtml = `
+                <div class="space-y-3.5 ${isArabic ? 'text-right' : 'text-left'}" dir="${isArabic ? 'rtl' : 'ltr'}">
+                    <p class="text-xs text-slate-600 text-center font-medium">
+                        ${promptText}
+                    </p>
+
+                    <!-- Summary Cards -->
+                    <div class="grid grid-cols-2 gap-2.5 text-center">
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 shadow-2xs">
+                            <span class="text-[11px] font-bold text-emerald-800 block">${answeredLabel}</span>
+                            <span class="text-2xl font-black text-emerald-700 block my-0.5">${answeredQuestions.length}</span>
+                            <span class="text-[10px] text-emerald-600 font-medium block">${ofTotal}</span>
+                        </div>
+                        <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 shadow-2xs">
+                            <span class="text-[11px] font-bold text-rose-800 block">${passedLabel}</span>
+                            <span class="text-2xl font-black text-rose-700 block my-0.5">${passedQuestions.length}</span>
+                            <span class="text-[10px] text-rose-600 font-medium block">${ofTotal}</span>
+                        </div>
+                    </div>
+
+                    <!-- Passed Questions Breakdown -->
+                    ${passedQuestions.length > 0 ? `
+                        <div class="space-y-2 bg-rose-50/50 border border-rose-200 rounded-xl p-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs font-bold text-rose-800 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm text-rose-600">error</span>
+                                    ${passedLabel} (${passedQuestions.length}):
+                                </span>
+                                <span class="text-[10px] text-slate-500 font-medium">${clickToJumpNotice}</span>
+                            </div>
+                            <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 max-h-36 overflow-y-auto p-1.5 bg-white/80 rounded-lg border border-rose-200">
+                                ${passedQuestions.map(q => `<button type="button" class="jump-to-q h-8 flex items-center justify-center rounded-lg text-xs font-bold bg-rose-50 border border-rose-300 text-rose-700 hover:bg-rose-600 hover:text-white transition-all shadow-2xs cursor-pointer active:scale-95" data-target="${q - 1}" title="${isArabic ? 'الانتقال إلى السؤال' : 'Go to question'} ${q}">${q}</button>`).join("")}
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-700 flex items-center justify-center gap-1.5">
+                            <span class="material-symbols-outlined text-base">check_circle</span>
+                            ${allAnsweredNotice}
+                        </div>
+                    `}
+
+                    <!-- Answered Questions Breakdown -->
+                    <div class="space-y-2 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold text-slate-800 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm text-slate-600">check_circle</span>
+                                ${answeredLabel} (${answeredQuestions.length}):
+                            </span>
+                            <span class="text-[10px] text-slate-500 font-medium">${clickToJumpNotice}</span>
+                        </div>
+                        <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 max-h-36 overflow-y-auto p-1.5 bg-white/80 rounded-lg border border-slate-200">
+                            ${answeredQuestions.length > 0 ? answeredQuestions.map(q => `<button type="button" class="jump-to-q h-8 flex items-center justify-center rounded-lg text-xs font-bold bg-slate-50 border border-slate-300 text-slate-800 hover:bg-black hover:text-white transition-all shadow-2xs cursor-pointer active:scale-95" data-target="${q - 1}" title="${isArabic ? 'الانتقال إلى السؤال' : 'Go to question'} ${q}">${q}</button>`).join("") : `<div class="col-span-full text-center py-2 text-xs text-slate-400">${noneAnsweredNotice}</div>`}
+                        </div>
+                    </div>
+                </div>
+            `;
             
             window.showCustomModal({
                 title: titleStr,
-                message: msgStr,
-                type: "warning",
-                icon: "publish",
+                htmlContent: msgHtml,
+                type: passedQuestions.length > 0 ? "warning" : "success",
+                icon: passedQuestions.length > 0 ? "assignment_late" : "task_alt",
+                maxWidth: "max-w-lg",
                 buttons: [
                     { text: "Cancel", style: "secondary" },
                     { text: "Submit", style: "primary", onClick: () => {
@@ -847,6 +949,21 @@ function initEventListeners() {
                     }}
                 ]
             });
+
+            // Attach jump-to-question click listeners
+            setTimeout(() => {
+                document.querySelectorAll("#customModalMessage .jump-to-q").forEach(btn => {
+                    btn.onclick = () => {
+                        const targetIdx = parseInt(btn.getAttribute("data-target"), 10);
+                        if (!isNaN(targetIdx) && targetIdx >= 0 && targetIdx < activeItems.length) {
+                            closeCustomModal();
+                            recordItemTime(currentItemIndex);
+                            currentItemIndex = targetIdx;
+                            renderCurrentQuestion();
+                        }
+                    };
+                });
+            }, 50);
         });
     }
 }
@@ -1261,10 +1378,14 @@ async function fetchAndRenderBatteryItems(session) {
         activeItems = await res.json();
         currentItemIndex = 0;
         responsesMap = {};
+        questionReachedState = {};
         itemStartTimes = {};
 
         // For SJT, pre-populate default order so accepting default without swapping is safely recorded
         if (session.sequenceOrder === 1 || (session.batteryType && session.batteryType.toUpperCase() === 'SJT')) {
+            if (activeItems.length > 0) {
+                questionReachedState[activeItems[0].id] = true;
+            }
             activeItems.forEach(item => {
                 if (item.options && Array.isArray(item.options)) {
                     responsesMap[item.id] = {
@@ -1384,6 +1505,195 @@ function handleTimeCutoff() {
     }, 2500);
 }
 
+// Pagination Bar Helper Functions & State Evaluation
+function getPaginationRange(current, total, siblingCount = 1) {
+    if (total <= 7) {
+        return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    const leftSiblingIndex = Math.max(current - siblingCount, 1);
+    const rightSiblingIndex = Math.min(current + siblingCount, total);
+
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < total - 2;
+
+    const firstPageIndex = 1;
+    const lastPageIndex = total;
+
+    // Case 1: No left dots, but right dots
+    if (!shouldShowLeftDots && shouldShowRightDots) {
+        const leftItemCount = 3 + 2 * siblingCount;
+        const leftRange = Array.from({ length: leftItemCount }, (_, i) => i + 1);
+        return [...leftRange, "...", lastPageIndex];
+    }
+
+    // Case 2: No right dots, but left dots
+    if (shouldShowLeftDots && !shouldShowRightDots) {
+        const rightItemCount = 3 + 2 * siblingCount;
+        const rightRange = Array.from({ length: rightItemCount }, (_, i) => total - rightItemCount + 1 + i);
+        return [firstPageIndex, "...", ...rightRange];
+    }
+
+    // Case 3: Both left and right dots
+    if (shouldShowLeftDots && shouldShowRightDots) {
+        const middleRange = Array.from({ length: rightSiblingIndex - leftSiblingIndex + 1 }, (_, i) => leftSiblingIndex + i);
+        return [firstPageIndex, "...", ...middleRange, "...", lastPageIndex];
+    }
+
+    return Array.from({ length: total }, (_, i) => i + 1);
+}
+
+function isQuestionSolved(idx) {
+    if (!activeItems || idx < 0 || idx >= activeItems.length) return false;
+    const item = activeItems[idx];
+    if (!item) return false;
+
+    const sequenceIdx = (activeSession && activeSession.sequenceOrder !== undefined) 
+        ? activeSession.sequenceOrder 
+        : 0;
+    const batteryType = (activeSession && activeSession.batteryType) 
+        || (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : sequenceIdx === 2 ? "DERAILERS" : "GCAT");
+
+    if (batteryType === "SJT") {
+        // Special Rule for the 'Sittions' (Situations) Section:
+        // Because proceeding or moving to the next question automatically submits the layout
+        // (even in its default state), the Situations question is always considered 'solved/attempted'
+        // the moment the user reaches or passes it.
+        // Therefore, as soon as the user reaches or leaves the Situations question,
+        // its number must immediately update to Black (solved), never staying red.
+        if (questionReachedState[item.id]) {
+            return true;
+        }
+        if (idx === currentItemIndex) {
+            questionReachedState[item.id] = true;
+            return true;
+        }
+        return false;
+    }
+
+    // For Likert Scale batteries (PQ10 & Derailers)
+    if (batteryType === "PQ10" || batteryType === "DERAILERS") {
+        const resp = responsesMap[item.id];
+        return resp && typeof resp.selectedLikert === 'number';
+    }
+
+    // For Cognitive (GCAT) MCQ
+    if (batteryType === "GCAT") {
+        const resp = responsesMap[item.id];
+        return resp && typeof resp.selectedOption === 'string' && resp.selectedOption.trim() !== "";
+    }
+
+    return false;
+}
+
+function renderQuizPagination() {
+    const bar = document.getElementById("quizPaginationBar");
+    if (!bar || !activeItems || activeItems.length === 0) return;
+
+    const total = activeItems.length;
+    const current = currentItemIndex + 1;
+    const isArabic = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
+
+    const prevText = isArabic ? "السابق" : "Previous";
+    const nextText = isArabic ? "التالي" : "Next";
+
+    const isFirst = (currentItemIndex === 0);
+    const isLast = (currentItemIndex === total - 1);
+
+    const pages = getPaginationRange(current, total, 1);
+
+    let html = `
+        <button type="button" 
+                class="pagination-prev px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-100 border-r border-slate-300 flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-30 disabled:pointer-events-none select-none" 
+                ${isFirst ? 'disabled' : ''}
+                title="${prevText}">
+            <span class="font-bold text-xs">&lt;</span> <span>${prevText}</span>
+        </button>
+    `;
+
+    pages.forEach(p => {
+        if (p === "...") {
+            html += `
+                <span class="px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-bold text-slate-400 border-r border-slate-300 bg-slate-50 flex items-center justify-center select-none">...</span>
+            `;
+        } else {
+            const idx = p - 1;
+            const solved = isQuestionSolved(idx);
+            const isCurrent = (idx === currentItemIndex);
+
+            // Color Coding Rules:
+            // Red: The question has not been answered or not reached yet (Red number text).
+            // Black: The question has been solved / attempted / completed (Black number text).
+            const textColor = solved 
+                ? "text-black font-bold" 
+                : "text-red-600 font-bold";
+
+            const bgClass = isCurrent 
+                ? "bg-slate-100 font-black ring-2 ring-inset ring-primary/40 z-10" 
+                : "bg-white hover:bg-slate-50";
+
+            html += `
+                <button type="button" 
+                        class="pagination-page min-w-[36px] sm:min-w-[42px] h-9 sm:h-10 px-2 text-xs sm:text-sm flex items-center justify-center cursor-pointer transition-all select-none border-r border-slate-300 ${bgClass} ${textColor}" 
+                        data-page="${p}"
+                        title="${isArabic ? 'السؤال' : 'Question'} ${p}: ${solved ? (isArabic ? 'مكتمل' : 'Completed') : (isArabic ? 'غير مكتمل' : 'Unanswered')}">
+                    ${p}
+                </button>
+            `;
+        }
+    });
+
+    html += `
+        <button type="button" 
+                class="pagination-next px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-100 flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-30 disabled:pointer-events-none select-none" 
+                ${isLast ? 'disabled' : ''}
+                title="${nextText}">
+            <span>${nextText}</span> <span class="font-bold text-xs">&gt;</span>
+        </button>
+    `;
+
+    bar.innerHTML = html;
+
+    // Previous Button Action
+    const prevBtn = bar.querySelector(".pagination-prev");
+    if (prevBtn) {
+        prevBtn.onclick = () => {
+            if (currentItemIndex > 0) {
+                recordItemTime(currentItemIndex);
+                currentItemIndex--;
+                renderCurrentQuestion();
+            }
+        };
+    }
+
+    // Next Button Action
+    const nextBtn = bar.querySelector(".pagination-next");
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            if (currentItemIndex < activeItems.length - 1) {
+                recordItemTime(currentItemIndex);
+                currentItemIndex++;
+                renderCurrentQuestion();
+            }
+        };
+    }
+
+    // Page Number Jump Actions
+    bar.querySelectorAll(".pagination-page").forEach(btn => {
+        btn.onclick = () => {
+            const page = parseInt(btn.getAttribute("data-page"), 10);
+            if (!isNaN(page)) {
+                const targetIdx = page - 1;
+                if (targetIdx !== currentItemIndex && targetIdx >= 0 && targetIdx < activeItems.length) {
+                    recordItemTime(currentItemIndex);
+                    currentItemIndex = targetIdx;
+                    renderCurrentQuestion();
+                }
+            }
+        };
+    });
+}
+
 // Render Questions
 function renderCurrentQuestion() {
     if (!activeItems || activeItems.length === 0) return;
@@ -1435,6 +1745,10 @@ function renderCurrentQuestion() {
     const sequenceIdx = (activeSession && activeSession.sequenceOrder !== undefined) ? activeSession.sequenceOrder : currentItemIndex;
     const batteryType = (activeSession && activeSession.batteryType) || (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : sequenceIdx === 2 ? "DERAILERS" : "GCAT");
 
+    if (batteryType === "SJT") {
+        questionReachedState[item.id] = true;
+    }
+
     if (batteryType === "PQ10" || batteryType === "DERAILERS") {
         renderLikertQuestion(item, container);
     } else if (batteryType === "SJT") {
@@ -1445,6 +1759,7 @@ function renderCurrentQuestion() {
         console.error("Unknown battery type, falling back to Likert.", batteryType);
         renderLikertQuestion(item, container);
     }
+    renderQuizPagination();
     applyCurrentTranslation();
 }
 
@@ -1512,6 +1827,7 @@ function renderLikertQuestion(item, container) {
 
             container.querySelectorAll(".likert-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
+            renderQuizPagination();
         });
     });
 }
@@ -1622,6 +1938,7 @@ function renderSjtRankingQuestion(item, container) {
                 options.splice(targetIndex, 0, movedItem);
                 responsesMap[item.id].rankingOrder = options.map(o => o.optionKey);
                 renderSjtRankingQuestion(item, container);
+                renderQuizPagination();
             }
         });
 
@@ -1656,6 +1973,7 @@ function renderSjtRankingQuestion(item, container) {
                     options.splice(targetIndex, 0, movedItem);
                     responsesMap[item.id].rankingOrder = options.map(o => o.optionKey);
                     renderSjtRankingQuestion(item, container);
+                    renderQuizPagination();
                 }
             }
             touchStartIndex = null;
@@ -1800,6 +2118,8 @@ function renderGcatMcqQuestion(item, container) {
             if (dot) dot.classList.replace("opacity-0", "opacity-100");
             const ring = selectedLabel.querySelector(".rounded-full.border-2");
             if (ring) { ring.classList.remove("border-slate-400"); ring.classList.add("border-primary"); }
+
+            renderQuizPagination();
         });
     });
 }
@@ -2429,14 +2749,26 @@ function renderScoreModalContent(score, token) {
 }
 
 window.downloadReport = function(event, token) {
+    if (!token) return;
+    if (window._isDownloadingReport) {
+        return;
+    }
+    window._isDownloadingReport = true;
+
     const btn = event ? event.currentTarget : null;
     const originalHtml = btn ? btn.innerHTML : "";
     if (btn) {
+        btn.style.pointerEvents = "none";
         btn.innerHTML = `<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span><span>Downloading...</span>`;
-        setTimeout(() => {
-            if (btn) btn.innerHTML = originalHtml;
-        }, 3500);
     }
+
+    setTimeout(() => {
+        window._isDownloadingReport = false;
+        if (btn) {
+            btn.style.pointerEvents = "auto";
+            btn.innerHTML = originalHtml;
+        }
+    }, 3500);
 
     // Direct binary stream endpoint - fully compatible with IDM and standard browsers
     const downloadUrl = `${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/pdf`;
@@ -2466,6 +2798,7 @@ function generatePrintableReportWindow(score, token) {
     const readiness = getReadinessInfo(score.readinessBand);
     const candidateName = score.candidateName || currentUser.name || "Candidate";
     const dateStr = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+    const logoUrl = new URL("../auth/assets/images/logo.png", window.location.href).href;
 
     let traitRows = (score.traitScores || []).map(t => {
         const maxPts = 68.0; // 17 items * 4 pts max
@@ -2473,7 +2806,7 @@ function generatePrintableReportWindow(score, token) {
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${t.nameAr || t.traitCode}</td>
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-family: monospace; font-size: 11px;">${t.traitCode}</td>
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">${t.rawScore} / ${maxPts}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #0f766e;">${t.scorePct}%</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #2A3686;">${t.scorePct}%</td>
         </tr>`;
     }).join("");
 
@@ -2481,7 +2814,7 @@ function generatePrintableReportWindow(score, token) {
     const sdRiskVal = score.socialDesirabilityRiskPct || 0;
     traitRows += `
         <tr style="background: ${isSdElevatedRow ? '#fef3c7' : '#f8fafc'}; font-style: italic;">
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: ${isSdElevatedRow ? '#92400e' : '#0f766e'};">
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: ${isSdElevatedRow ? '#92400e' : '#2A3686'};">
                 مقياس التظاهر الاجتماعي (التظاهر الاجتماعي)
             </td>
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-family: monospace; font-size: 11px;">SOCIAL_DESIRABILITY</td>
@@ -2528,7 +2861,7 @@ function generatePrintableReportWindow(score, token) {
                 <!-- Social Desirability Box -->
                 <div style="background: #fff; border: 1px solid ${isSdElevated ? '#fcd34d' : '#e2e8f0'}; border-radius: 6px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="font-size: 12px; font-weight: bold; color: ${isSdElevated ? '#92400e' : '#1e293b'};">
+                        <div style="font-size: 12px; font-weight: bold; color: ${isSdElevated ? '#92400e' : '#404041'};">
                             ${isSdElevated ? 'Social Desirability: Elevated' : 'Social Desirability: Normal'}
                         </div>
                         <div style="font-size: 10px; color: ${isSdElevated ? '#b45309' : '#64748b'}; margin-top: 2px;">
@@ -2543,7 +2876,7 @@ function generatePrintableReportWindow(score, token) {
                 <!-- Central Tendency Box -->
                 <div style="background: #fff; border: 1px solid ${isCtElevated ? '#fcd34d' : '#e2e8f0'}; border-radius: 6px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="font-size: 12px; font-weight: bold; color: ${isCtElevated ? '#92400e' : '#1e293b'};">
+                        <div style="font-size: 12px; font-weight: bold; color: ${isCtElevated ? '#92400e' : '#404041'};">
                             ${isCtElevated ? 'Central Tendency: Elevated' : 'Central Tendency: Balanced'}
                         </div>
                         <div style="font-size: 10px; color: ${isCtElevated ? '#b45309' : '#64748b'}; margin-top: 2px;">
@@ -2565,125 +2898,203 @@ function generatePrintableReportWindow(score, token) {
     <meta charset="utf-8">
     <title>Executive Assessment Report - ${candidateName}</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1e293b; margin: 0; padding: 30px; line-height: 1.5; background: #fff; }
-        .header { border-bottom: 2px solid #00685f; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .title { font-size: 22px; font-weight: bold; color: #00685f; }
+        @page {
+            margin: 25px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #404041;
+            margin: 0;
+            padding: 60px 25px 70px 25px;
+            background: #fff;
+            line-height: 1.5;
+            box-sizing: border-box;
+        }
+        /* Fixed Top Bar */
+        .print-header-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 35px;
+            background-color: #2A3686; /* Logo Blue */
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        /* Fixed Bottom Bar */
+        .print-footer-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            border-top: 3px solid #2A3686; /* Logo Blue */
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 11px;
+            color: #64748b;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        .print-footer-bar img {
+            height: 30px;
+            object-fit: contain;
+        }
+        .report-content {
+            /* Wraps the main body content */
+        }
+        .header { border-bottom: 2px solid #2A3686; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .title { font-size: 22px; font-weight: bold; color: #2A3686; }
         .subtitle { font-size: 12px; color: #64748b; margin-top: 4px; }
         .hero { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 25px; }
-        .score-val { font-size: 36px; font-weight: 800; color: #00685f; }
+        .score-val { font-size: 36px; font-weight: 800; color: #2A3686; }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: bold; }
         .battery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 25px; }
         .battery-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; text-align: center; }
-        .battery-score { font-size: 20px; font-weight: bold; color: #1e293b; margin-top: 4px; }
+        .battery-score { font-size: 20px; font-weight: bold; color: #404041; margin-top: 4px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; font-size: 12px; }
-        th { background: #f1f5f9; padding: 8px; text-align: left; font-weight: bold; color: #475569; border-bottom: 2px solid #cbd5e1; }
-        h3 { font-size: 15px; color: #0f172a; margin-top: 20px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
-        @media print { body { padding: 0; } .no-print { display: none; } }
+        th { background: #f1f5f9; padding: 8px; text-align: left; font-weight: bold; color: #404041; border-bottom: 2px solid #cbd5e1; }
+        h3 { font-size: 15px; color: #2A3686; margin-top: 20px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+        @media print {
+            body {
+                padding-top: 60px;
+                padding-bottom: 70px;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .hero, table, tr, h3, .battery-grid {
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="no-print" style="margin-bottom: 20px; display: flex; justify-content: flex-end; gap: 10px;">
-        <button onclick="window.print()" style="background: #00685f; color: white; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer;">Print / Save as PDF</button>
-        <button onclick="window.close()" style="background: #e2e8f0; color: #334155; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer;">Close</button>
+        <button onclick="window.print()" style="background: #2A3686; color: white; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer;">Print / Save as PDF</button>
+        <button onclick="window.close()" style="background: #e2e8f0; color: #404041; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer;">Close</button>
     </div>
 
-    <div class="header">
-        <div>
-            <div class="title">Executive Leadership Assessment Dossier</div>
-            <div class="subtitle">Candidate: <strong>${candidateName}</strong> &bull; Evaluation Date: ${dateStr} &bull; Token: ${token}</div>
-        </div>
-        <div style="text-align: right; font-size: 11px; color: #64748b;">Psychometric Evaluation Platform</div>
+    <!-- REPEATING TOP BAR -->
+    <div class="print-header-bar">
+        <span>Executive Assessment Dossier</span>
+        <span>Candidate ID / Token: ${token}</span>
     </div>
 
-    <div class="hero">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+    <!-- REPEATING BOTTOM BAR -->
+    <div class="print-footer-bar">
+        <span>Generated on: ${dateStr}</span>
+        <img src="${logoUrl}" alt="Arab Experts Institute Logo" onerror="this.style.display='none'" />
+    </div>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="report-content">
+        <div class="header">
             <div>
-                <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b;">Overall Composite Score</div>
-                <div class="score-val">${score.compositeScore}% <span style="font-size: 13px; font-weight: normal; color: #64748b;">(Percentile: P${score.percentile})</span></div>
-                ${score.cappedPenaltyPct && score.cappedPenaltyPct > 0 ? `
-                    <div style="margin-top: 5px; font-size: 11px; color: #b45309; font-weight: bold;">
-                        ⚠️ Validity Adjustment: -${score.cappedPenaltyPct}% (Raw Composite: ${score.rawCompositeScore}% &bull; Final: ${score.compositeScore}%)
-                    </div>
-                ` : ''}
+                <div class="title">Executive Leadership Assessment Dossier</div>
+                <div class="subtitle">Candidate: <strong>${candidateName}</strong> &bull; Evaluation Date: ${dateStr} &bull; Token: ${token}</div>
             </div>
-            <div style="text-align: right;">
-                <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b; margin-bottom: 4px;">Promotion Readiness</div>
-                <span class="badge" style="background: #dcfce7; color: #166534; border: 1px solid #86efac;">${readiness.labelEn} / ${readiness.labelAr}</span>
+            <div style="text-align: right; font-size: 11px; color: #64748b;">Psychometric Evaluation Platform</div>
+        </div>
+
+        <div class="hero">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b;">Overall Composite Score</div>
+                    <div class="score-val">${score.compositeScore}% <span style="font-size: 13px; font-weight: normal; color: #64748b;">(Percentile: P${score.percentile})</span></div>
+                    ${score.cappedPenaltyPct && score.cappedPenaltyPct > 0 ? `
+                        <div style="margin-top: 5px; font-size: 11px; color: #b45309; font-weight: bold;">
+                            ⚠️ Validity Adjustment: -${score.cappedPenaltyPct}% (Raw Composite: ${score.rawCompositeScore}% &bull; Final: ${score.compositeScore}%)
+                        </div>
+                    ` : ''}
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b; margin-bottom: 4px;">Promotion Readiness</div>
+                    <span class="badge" style="background: #dcfce7; color: #166534; border: 1px solid #86efac;">${readiness.labelEn} / ${readiness.labelAr}</span>
+                </div>
+            </div>
+            <div style="margin-top: 12px; font-size: 12px; color: #404041;">${readiness.descEn}</div>
+        </div>
+
+        ${validityBanner}
+
+        <div class="battery-grid">
+            <div class="battery-card">
+                <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">01 &bull; Personality (PQ10)</div>
+                <div class="battery-score">${score.personalityScorePct}%</div>
+                <div style="font-size: 10px; color: #94a3b8;">140 Items (28%)</div>
+            </div>
+            <div class="battery-card">
+                <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">02 &bull; Judgment (SJT)</div>
+                <div class="battery-score">${score.sjtScorePct}%</div>
+                <div style="font-size: 10px; color: #94a3b8;">16 Scenarios (22%)</div>
+            </div>
+            <div class="battery-card">
+                <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">03 &bull; Derailers</div>
+                <div class="battery-score">${score.derailersEffectiveScorePct}%</div>
+                <div style="font-size: 10px; color: #94a3b8;">60 Items (20%)</div>
+            </div>
+            <div class="battery-card">
+                <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">04 &bull; Cognitive (GCAT)</div>
+                <div class="battery-score">${score.cognitiveScorePct}%</div>
+                <div style="font-size: 10px; color: #94a3b8;">42 Items (30%)</div>
             </div>
         </div>
-        <div style="margin-top: 12px; font-size: 12px; color: #475569;">${readiness.descEn}</div>
-    </div>
 
-    ${validityBanner}
+        <h3>1. Personality Dimensions (PQ10 8 Core Competency Traits)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Trait Name</th>
+                    <th>Trait Code</th>
+                    <th style="text-align: center;">Raw Points</th>
+                    <th style="text-align: right;">Score %</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${traitRows}
+            </tbody>
+        </table>
 
-    <div class="battery-grid">
-        <div class="battery-card">
-            <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">01 &bull; Personality (PQ10)</div>
-            <div class="battery-score">${score.personalityScorePct}%</div>
-            <div style="font-size: 10px; color: #94a3b8;">140 Items (28%)</div>
-        </div>
-        <div class="battery-card">
-            <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">02 &bull; Judgment (SJT)</div>
-            <div class="battery-score">${score.sjtScorePct}%</div>
-            <div style="font-size: 10px; color: #94a3b8;">16 Scenarios (22%)</div>
-        </div>
-        <div class="battery-card">
-            <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">03 &bull; Derailers</div>
-            <div class="battery-score">${score.derailersEffectiveScorePct}%</div>
-            <div style="font-size: 10px; color: #94a3b8;">60 Items (20%)</div>
-        </div>
-        <div class="battery-card">
-            <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">04 &bull; Cognitive (GCAT)</div>
-            <div class="battery-score">${score.cognitiveScorePct}%</div>
-            <div style="font-size: 10px; color: #94a3b8;">42 Items (30%)</div>
-        </div>
-    </div>
+        <h3>2. Behavioral Risk Factors (6 Derailer Categories)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th style="text-align: center;">Raw Points (Max 40)</th>
+                    <th style="text-align: right;">Score %</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${derailerRows}
+            </tbody>
+        </table>
 
-    <h3>1. Personality Dimensions (PQ10 8 Core Competency Traits)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Trait Name</th>
-                <th>Trait Code</th>
-                <th style="text-align: center;">Raw Points</th>
-                <th style="text-align: right;">Score %</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${traitRows}
-        </tbody>
-    </table>
-
-    <h3>2. Behavioral Risk Factors (6 Derailer Categories)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th style="text-align: center;">Raw Points (Max 40)</th>
-                <th style="text-align: right;">Score %</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${derailerRows}
-        </tbody>
-    </table>
-
-    <h3>3. Cognitive Aptitude Breakdown (GCAT Subtests)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Subtest Dimension</th>
-                <th style="text-align: center;">Questions Correct (Out of 14)</th>
-                <th style="text-align: right;">Accuracy %</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${gcatRows}
-        </tbody>
-    </table>
-
-    <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #e2e8f0; font-size: 10px; color: #94a3b8; text-align: center;">
-        Psychometric Evaluation System &bull; Confidential Executive Document &bull; Generated on ${dateStr}
+        <h3>3. Cognitive Aptitude Breakdown (GCAT Subtests)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Subtest Dimension</th>
+                    <th style="text-align: center;">Questions Correct (Out of 14)</th>
+                    <th style="text-align: right;">Accuracy %</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${gcatRows}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>`;

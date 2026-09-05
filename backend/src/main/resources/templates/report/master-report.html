@@ -18,11 +18,18 @@
 
     <style>
         /* ==========================================================================
-           Master Print &amp; PDF Multi-page Configuration (openhtmltopdf &amp; Flying Saucer)
+           Master Print & PDF Multi-page Configuration (OpenHTMLtoPDF CSS Paged Media)
            ========================================================================== */
         @page {
             size: A4 portrait;
-            margin: 0;
+            margin: 25px 25px 75px 25px; /* Top, Right, Bottom (larger for footer), Left */
+
+            @top-center {
+                content: element(header);
+            }
+            @bottom-center {
+                content: element(footer);
+            }
         }
 
         * {
@@ -31,11 +38,32 @@
             print-color-adjust: exact;
         }
 
-        html, body {
+        body {
             margin: 0;
             padding: 0;
             background-color: #ffffff;
-            font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Arial', sans-serif;
+            font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Inter', 'Arial', sans-serif;
+            color: #404041;
+        }
+
+        /* Repeating Top Bar */
+        div.header {
+            position: running(header);
+            height: 35px;
+            background-color: #2A3686;
+            color: #ffffff;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        /* Repeating Bottom Bar */
+        div.footer {
+            position: running(footer);
+            height: 50px;
+            border-top: 3px solid #2A3686;
+            background-color: #ffffff;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
         html[dir="rtl"], body[dir="rtl"], .rtl {
@@ -48,28 +76,61 @@
             text-align: left;
         }
 
+        /* Hide redundant old bottom banners since repeating @bottom-center footer is used */
+        .bottom-banner-container, .cover-footer, .banner-subtext, .page-footer-label {
+            display: none !important;
+        }
+
         .pdf-page-wrapper {
-            width: 210mm;
-            min-height: 297mm;
-            max-height: 297mm;
-            height: 297mm;
+            width: 100%;
+            height: 100%;
             position: relative;
             page-break-inside: avoid;
             page-break-after: always;
             overflow: hidden;
             background-color: #ffffff;
             margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .pdf-page-wrapper:last-child {
+            page-break-after: avoid;
         }
 
     </style>
 </head>
 <body th:class="${dir != null ? dir : 'rtl'}">
 
-    <!-- Page 1: Cover Page -->
-    <div class="pdf-page-wrapper" th:insert="~{report/cover-page :: body}"></div>
+    <!-- PDF Engine Repeating Header -->
+    <div class="header">
+        <table style="width: 100%; border-collapse: collapse; border: none; height: 35px; direction: ltr;">
+            <tr>
+                <td style="text-align: left; vertical-align: middle; color: #ffffff; font-size: 11px; font-weight: bold; border: none; padding: 0;">Executive Assessment Dossier</td>
+                <td style="text-align: right; vertical-align: middle; color: #ffffff; font-size: 11px; font-weight: bold; border: none; padding: 0;">Candidate ID: <span th:text="${candidateId}"></span></td>
+            </tr>
+        </table>
+    </div>
 
-    <!-- Page 2: Introduction &amp; Impression Management -->
-    <div class="pdf-page-wrapper" th:insert="~{report/page2 :: body}"></div>
+    <!-- PDF Engine Repeating Footer -->
+    <div class="footer">
+        <table style="width: 100%; border-collapse: collapse; border: none; height: 50px; direction: ltr;">
+            <tr>
+                <td style="text-align: left; vertical-align: middle; color: #64748b; font-size: 11px; border: none; padding: 0;">Generated on: <span th:text="${currentDate}"></span></td>
+                <td style="text-align: right; vertical-align: middle; border: none; padding: 0;">
+                    <!-- Ensure the logo path is accessible to the backend PDF renderer (e.g., classpath or base64) -->
+                    <img th:src="${companyLogoBase64 != null ? companyLogoBase64 : 'classpath:/static/assets/images/logo.png'}" style="height: 30px; vertical-align: middle;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Page Content (Pages 1 through 14) -->
+    <div class="content">
+        <!-- Page 1: Cover Page -->
+        <div class="pdf-page-wrapper" th:insert="~{report/cover-page :: body}"></div>
+
+        <!-- Page 2: Introduction &amp; Impression Management -->
+        <div class="pdf-page-wrapper" th:insert="~{report/page2 :: body}"></div>
 
     <!-- Page 3: Framework &amp; Methodology -->
     <div class="pdf-page-wrapper" th:insert="~{report/page3 :: body}"></div>
@@ -282,6 +343,7 @@
 
     <!-- Page 14: Development Plan – GROW Model -->
     <div class="pdf-page-wrapper" th:with="pageNum=14" th:insert="~{report/page14 :: body}"></div>
+    </div>
 
 </body>
 </html>

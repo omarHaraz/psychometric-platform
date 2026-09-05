@@ -8,10 +8,7 @@
         /* ==========================================================================
            PDF and Print Optimization (OpenHTMLtoPDF / Flying Saucer Compatible)
            ========================================================================== */
-        @page {
-            size: A4 portrait;
-            margin: 0;
-        }
+        /* page overridden by master */
 
         * {
             box-sizing: border-box;
@@ -24,16 +21,16 @@
             padding: 0;
             font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Arial', sans-serif;
             background-color: #ffffff;
-            color: #1e293b;
+            color: #404041;
             direction: rtl;
             text-align: right;
             font-size: 9.5px;
             line-height: 1.4;
         }
 
-        /* 0. Main Page 3 Uniform 10px Boundary Wrapper */
+        /* 0. Main Page 3 Uniform Boundary Wrapper */
         .page3-wrapper {
-            padding: 10px;
+            padding: 0;
             width: 100%;
             height: 100%;
             box-sizing: border-box;
@@ -43,50 +40,52 @@
         /* 1. Page Header */
         .page-header-box {
             width: 100%;
-            border-bottom: 2px solid #1e3a4c;
-            padding-bottom: 10px;
-            margin-bottom: 26px;
+            border-bottom: 2px solid #2A3686;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
             background: transparent;
         }
 
+        /* 2. Derailer Reference Table */
         /* 2. Derailer Reference Table */
         table.derailer-table {
             width: 100%;
             table-layout: fixed;
             border-collapse: collapse;
             margin-top: 0;
-            margin-bottom: 34px;
-            font-size: 10.5px;
+            margin-bottom: 0;
+            font-size: 9.5px;
             background-color: #ffffff;
         }
 
         table.derailer-table th {
-            background-color: #7a4b3a;
+            background-color: #2A3686;
             color: #ffffff;
             font-weight: 700;
-            font-size: 12px;
-            padding: 11px 14px;
+            font-size: 11px;
+            padding: 12px 10px;
             text-align: right;
             border: none;
             letter-spacing: 0.2px;
+            vertical-align: middle;
         }
 
         table.derailer-table th.th-behaviors {
-            width: 68%;
+            width: 70%;
             border-top-left-radius: 4px;
         }
 
         table.derailer-table th.th-trait {
-            width: 32%;
+            width: 30%;
             border-top-right-radius: 4px;
         }
 
         table.derailer-table tr {
-            height: 58px;
+            height: auto;
         }
 
         table.derailer-table td {
-            padding: 16px 14px;
+            padding: 11px 10px;
             vertical-align: middle;
             border: none;
             border-bottom: 1px solid #e2e8f0;
@@ -99,8 +98,8 @@
         }
 
         .trait-title {
-            color: #7a4b3a;
-            font-size: 11.5px;
+            color: #2A3686;
+            font-size: 10.5px;
             font-weight: 700;
             display: inline-block;
             margin-left: 4px;
@@ -108,18 +107,19 @@
 
         .trait-desc {
             color: #475569;
-            font-size: 10.5px;
+            font-size: 9.5px;
             display: inline;
+            line-height: 1.6;
         }
 
         .behaviors-text {
             color: #334155;
-            font-size: 10.5px;
+            font-size: 9.5px;
             line-height: 1.6;
         }
 
         .behavior-dot {
-            color: #7a4b3a;
+            color: #2A3686;
             font-weight: bold;
             margin: 0 3px 0 2px;
         }
@@ -129,14 +129,36 @@
             width: 100%;
             table-layout: fixed;
             border-collapse: collapse;
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 10.5px;
+            margin-top: 30px;
+            margin-bottom: 0;
+            font-size: 9.5px;
             background-color: #ffffff;
         }
 
+        table.competency-table th {
+            background-color: #2A3686;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 12px 10px;
+            text-align: right;
+            border: none;
+            letter-spacing: 0.2px;
+            vertical-align: middle;
+        }
+
+        table.competency-table th.th-comp-desc {
+            width: 70%;
+            border-top-left-radius: 4px;
+        }
+
+        table.competency-table th.th-comp-name {
+            width: 30%;
+            border-top-right-radius: 4px;
+        }
+
         table.competency-table tr {
-            height: 52px;
+            height: auto;
         }
 
         table.competency-table tr.shaded-row {
@@ -144,25 +166,25 @@
         }
 
         table.competency-table td.comp-desc-cell {
-            width: 72%;
-            padding: 15px 14px;
+            width: 70%;
+            padding: 10px 10px;
             vertical-align: middle;
             border: none;
             border-bottom: 1px solid #e2e8f0;
             color: #334155;
-            font-size: 10.5px;
+            font-size: 9.5px;
             line-height: 1.6;
             text-align: justify;
         }
 
         table.competency-table td.comp-name-cell {
-            width: 28%;
-            padding: 15px 14px;
+            width: 30%;
+            padding: 10px 10px;
             vertical-align: middle;
             border: none;
             border-bottom: 1px solid #e2e8f0;
-            color: #1e3a4c;
-            font-size: 11.5px;
+            color: #2A3686;
+            font-size: 10.5px;
             font-weight: 700;
             text-align: right;
         }
@@ -200,11 +222,11 @@
                 <tr>
                     <!-- Left: Page Number -->
                     <td style="text-align: left; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #1e3a4c; font-size: 11px; background: transparent; display: inline-block;">صفحة 3</span>
+                        <span style="font-family: 'Cairo', 'Amiri', sans-serif; font-weight: bold; color: #2A3686; font-size: 11px; background: transparent; display: inline-block;">صفحة 3</span>
                     </td>
                     <!-- Right: Main Title -->
                     <td style="text-align: right; vertical-align: bottom; width: 50%; border: none; padding: 0; background: transparent;">
-                        <h1 style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 20px; font-weight: 800; color: #1e3a4c; line-height: 1.1; background: transparent;">ما الذي يقيسه استبيان حدود</h1>
+                        <h1 style="margin: 0; font-family: 'Cairo', 'Amiri', sans-serif; font-size: 20px; font-weight: 800; color: #2A3686; line-height: 1.1; background: transparent;">ما الذي يقيسه استبيان حدود</h1>
                     </td>
                 </tr>
             </table>
@@ -214,23 +236,23 @@
         <table class="derailer-table">
             <thead>
                 <tr>
-                    <!-- 1st in HTML (Left): Behaviors Column (68%) -->
-                    <th class="th-behaviors">السلوكيات المُعطلة</th>
-                    <!-- 2nd in HTML (Right): Trait Column (32%) -->
-                    <th class="th-trait">السمة</th>
+                    <!-- 1st in HTML (Left): Description Column (70%) -->
+                    <th class="th-behaviors">الوصف</th>
+                    <!-- 2nd in HTML (Right): Derailers Column (30%) -->
+                    <th class="th-trait">السلوكيات المُعطلة</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Row 1: التحفظ -->
                 <tr>
-                    <td style="width: 68%;">
+                    <td style="width: 70%;">
                         <div class="behaviors-text">
                             <span class="behavior-dot">•</span> تجنّب الآخرين والحفاظ على مسافة في العلاقات.
                             <span class="behavior-dot">•</span> الظهور بمظهر غير ودود أو غير مهتم بالآخرين أو ببناء العلاقات.
                             <span class="behavior-dot">•</span> الظهور بمزاج مكتئب أو حزين.
                         </div>
                     </td>
-                    <td style="width: 32%;">
+                    <td style="width: 30%;">
                         <strong class="trait-title">التحفظ:</strong>
                         <span class="trait-desc">ميل إلى الانسحاب والعزلة عن الآخرين.</span>
                     </td>
@@ -238,14 +260,14 @@
 
                 <!-- Row 2: الانفعالية -->
                 <tr>
-                    <td style="width: 68%;">
+                    <td style="width: 70%;">
                         <div class="behaviors-text">
                             <span class="behavior-dot">•</span> امتلاك نظرة سلبية وانخفاض تقدير الذات.
                             <span class="behavior-dot">•</span> التقلب المزاجي أو القلق.
                             <span class="behavior-dot">•</span> الظهور بمظهر المتشكك أو المتحفظ تجاه الآخرين.
                         </div>
                     </td>
-                    <td style="width: 32%;">
+                    <td style="width: 30%;">
                         <strong class="trait-title">الانفعالية:</strong>
                         <span class="trait-desc">ميل إلى التركيز على العيوب وإظهار المشاعر السلبية.</span>
                     </td>
@@ -253,14 +275,14 @@
 
                 <!-- Row 3: العدائية -->
                 <tr>
-                    <td style="width: 68%;">
+                    <td style="width: 70%;">
                         <div class="behaviors-text">
                             <span class="behavior-dot">•</span> إظهار العداء والعدوانية تجاه الآخرين.
                             <span class="behavior-dot">•</span> السعي لتحقيق الأهداف بأي ثمن والتعامل مع الآخرين بدافع هذا السعي.
                             <span class="behavior-dot">•</span> التركيز المفرط على الذات وقلة الاهتمام بآراء ومشاعر الآخرين.
                         </div>
                     </td>
-                    <td style="width: 32%;">
+                    <td style="width: 30%;">
                         <strong class="trait-title">العدائية:</strong>
                         <span class="trait-desc">ميل إلى العدوانية في التعامل مع الآخرين واعتماد أسلوب مباشر وصدامي في التواصل.</span>
                     </td>
@@ -268,14 +290,14 @@
 
                 <!-- Row 4: الاندفاعية -->
                 <tr>
-                    <td style="width: 68%;">
+                    <td style="width: 70%;">
                         <div class="behaviors-text">
                             <span class="behavior-dot">•</span> قلة التركيز والانتباه لفترات طويلة.
                             <span class="behavior-dot">•</span> التهاون في الالتزامات وعدم متابعة المهام حتى النهاية.
                             <span class="behavior-dot">•</span> التصرّف بطيش واتخاذ قرارات متسرّعة وغير مدروسة.
                         </div>
                     </td>
-                    <td style="width: 32%;">
+                    <td style="width: 30%;">
                         <strong class="trait-title">الاندفاعية:</strong>
                         <span class="trait-desc">ميل إلى الاندفاع والمخاطرة دون تفكير كافٍ.</span>
                     </td>
@@ -283,14 +305,14 @@
 
                 <!-- Row 5: الصرامة -->
                 <tr>
-                    <td style="width: 68%;">
+                    <td style="width: 70%;">
                         <div class="behaviors-text">
                             <span class="behavior-dot">•</span> التعامل بصرامة وجمود في المواقف.
                             <span class="behavior-dot">•</span> وضع أهداف غير واقعية لأنفسهم وللآخرين.
                             <span class="behavior-dot">•</span> عدم التسامح مع الأخطاء واعتبار أي تقصير فشلًا.
                         </div>
                     </td>
-                    <td style="width: 32%;">
+                    <td style="width: 30%;">
                         <strong class="trait-title">الصرامة:</strong>
                         <span class="trait-desc">ميل إلى الصرامة وعدم المرونة وعدم التسامح مع ما يُعتبر تقصيرًا في الالتزامات.</span>
                     </td>
@@ -298,14 +320,14 @@
 
                 <!-- Row 6: اللامألوفية -->
                 <tr>
-                    <td style="width: 68%;">
+                    <td style="width: 70%;">
                         <div class="behaviors-text">
                             <span class="behavior-dot">•</span> امتلاك أساليب تفكير غير اعتيادية ومعتقدات غير مألوفة.
                             <span class="behavior-dot">•</span> الظهور بمظهر غريب أو مختلف في نظر الآخرين.
                             <span class="behavior-dot">•</span> العجز عن تفسير كيفية أو أسباب أفعالهم.
                         </div>
                     </td>
-                    <td style="width: 32%;">
+                    <td style="width: 30%;">
                         <strong class="trait-title">اللامألوفية:</strong>
                         <span class="trait-desc">ميل إلى إظهار سلوكيات غير مألوفة وتجاهل الأعراف الاجتماعية.</span>
                     </td>
@@ -314,7 +336,15 @@
         </table>
 
         <!-- 3. Competency Reference Table (New Section from Specification) -->
-        <table class="competency-table">
+        <table class="competency-table" style="margin-top: 30px;">
+            <thead>
+                <tr style="background-color: #2A3686; color: #ffffff;">
+                    <!-- 1st in HTML (Left): Description Column (70%) -->
+                    <th class="th-comp-desc" style="width: 70%;">الوصف</th>
+                    <!-- 2nd in HTML (Right): Competency Column (30%) -->
+                    <th class="th-comp-name" style="width: 30%;">الكفاءة</th>
+                </tr>
+            </thead>
             <tbody>
                 <!-- Row 1: التواصل والتأثير الفعال -->
                 <tr class="shaded-row">
@@ -402,7 +432,7 @@
         <div class="bottom-banner-container">
             <table style="width: 100%; border-collapse: collapse; height: 24px; border: none;">
                 <tr>
-                    <td style="background-color: #7a4b3a; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
+                    <td style="background-color: #2A3686; color: #ffffff; text-align: right; padding-right: 12px; font-size: 9px; font-weight: 600; vertical-align: middle; border: none; direction: ltr;">
                         Executive Leadership Platform
                     </td>
                 </tr>

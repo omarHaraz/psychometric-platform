@@ -1,5 +1,6 @@
 package com.psychometric.platform.features.report.dto;
 
+import com.psychometric.platform.features.assessment.dto.response.AssessmentScoreResponseDto;
 import org.springframework.ui.Model;
 import org.thymeleaf.context.Context;
 
@@ -31,6 +32,9 @@ public class ReportContextDto implements Serializable {
     // Page 1: Cover Page (cover-page.html)
     // =========================================================================
     private String resultScore = "88.5";
+    private AssessmentScoreResponseDto score;
+    private String readinessLabel;
+    private String readinessColor;
 
     // =========================================================================
     // Page 2: Introduction & Impression Management (page2.html / page-2-intro.html)
@@ -154,6 +158,52 @@ public class ReportContextDto implements Serializable {
 
     public String getResultScore() { return resultScore; }
     public void setResultScore(String resultScore) { this.resultScore = resultScore; }
+
+    public AssessmentScoreResponseDto getScore() { return score; }
+    public void setScore(AssessmentScoreResponseDto score) { this.score = score; }
+
+    public Double getEffectiveCompositeScore() {
+        if (score != null && score.getCompositeScore() != null) {
+            return score.getCompositeScore();
+        }
+        if (resultScore != null && !resultScore.isBlank()) {
+            try {
+                return Double.parseDouble(resultScore.replace("%", "").trim());
+            } catch (Exception ignored) {}
+        }
+        return 0.0;
+    }
+
+    public boolean isPassed() {
+        Double scoreVal = getEffectiveCompositeScore();
+        return scoreVal != null && scoreVal >= 70.0;
+    }
+
+    public String getReadinessLabel() {
+        Double scoreVal = getEffectiveCompositeScore();
+        if (scoreVal != null && scoreVal < 70.0) {
+            return "عدم اجتياز (Fail)";
+        }
+        if (readinessLabel != null && !readinessLabel.isBlank()) {
+            return readinessLabel;
+        }
+        return (scoreVal != null && scoreVal >= 70.0) ? "اجتياز (Pass)" : "عدم اجتياز (Fail)";
+    }
+
+    public void setReadinessLabel(String readinessLabel) { this.readinessLabel = readinessLabel; }
+
+    public String getReadinessColor() {
+        Double scoreVal = getEffectiveCompositeScore();
+        if (scoreVal != null && scoreVal < 70.0) {
+            return "#b91c1c";
+        }
+        if (readinessColor != null && !readinessColor.isBlank()) {
+            return readinessColor;
+        }
+        return (scoreVal != null && scoreVal >= 70.0) ? "#166534" : "#b91c1c";
+    }
+
+    public void setReadinessColor(String readinessColor) { this.readinessColor = readinessColor; }
 
     public Integer getSocialScore() { return socialScore; }
     public void setSocialScore(Integer socialScore) { this.socialScore = socialScore; }
@@ -504,12 +554,18 @@ public class ReportContextDto implements Serializable {
         map.put("candidateId", candidateId);
         map.put("candidateName", candidateName);
         map.put("reportDate", reportDate);
+        map.put("currentDate", reportDate);
         map.put("evaluationPurpose", evaluationPurpose);
         map.put("companyLogoBase64", companyLogoBase64);
         map.put("logoUrl", logoUrl);
 
         // Page 1
         map.put("resultScore", resultScore);
+        map.put("score", score != null ? score : new AssessmentScoreResponseDto());
+        map.put("isPassed", isPassed());
+        map.put("readinessLabel", getReadinessLabel());
+        map.put("readinessColor", getReadinessColor());
+        map.put("readinessLabelEn", isPassed() ? "Pass" : "Fail");
 
         // Page 2
         map.put("socialScore", socialScore);
@@ -832,6 +888,21 @@ public class ReportContextDto implements Serializable {
         if (candidateId != null) {
             report.setCandidateId(candidateId);
         }
+
+        // Page 1 Default Score
+        AssessmentScoreResponseDto defaultScore = new AssessmentScoreResponseDto();
+        defaultScore.setAttemptToken(report.getCandidateId());
+        defaultScore.setCompositeScore(88.5);
+        defaultScore.setPercentile(85);
+        defaultScore.setPersonalityScorePct(78.0);
+        defaultScore.setSjtScorePct(72.0);
+        defaultScore.setDerailersEffectiveScorePct(84.0);
+        defaultScore.setCognitiveScorePct(80.0);
+        defaultScore.setSocialDesirabilityRiskPct(15.0);
+        defaultScore.setCentralTendencyRatePct(10.0);
+        report.setScore(defaultScore);
+        report.setReadinessLabel("متقدم (Advanced)");
+        report.setReadinessColor("#166534");
 
         // Page 5 Default Competency Scores & Master Colors
         report.setCommScore(4.0);
