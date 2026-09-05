@@ -6,4 +6,4 @@ const isLocal = typeof window !== 'undefined' && (
 
 export const API_BASE = isLocal 
     ? 'http://localhost:8081' 
-    : 'https://battle-barrier-jewelry-artificial.trycloudflare.com';
+    : 'https://revised-port-means-musicians.trycloudflare.com';

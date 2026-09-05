@@ -253,5 +253,5 @@ window.formatCurrency = formatCurrency;
     );
     window.API_BASE_URL = isLocal 
         ? 'http://localhost:8081/api' 
-        : 'https://battle-barrier-jewelry-artificial.trycloudflare.com/api';
+        : 'https://revised-port-means-musicians.trycloudflare.com/api';
 })();
