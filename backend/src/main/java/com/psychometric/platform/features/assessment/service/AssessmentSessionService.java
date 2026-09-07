@@ -159,9 +159,9 @@ public class AssessmentSessionService {
         List<Long> sampledIds = samplingService.sampleItemsForBattery(firstSession.getBatteryType());
         firstSession.setSampledItemIds(sampledIds);
 
-        // Set Redis Timer
+        // Set Redis Timer with 2-hour TTL
         String timerKey = "battery_session:" + firstSession.getId() + ":timer";
-        redisTemplate.opsForValue().set(timerKey, String.valueOf(firstSession.getStartTime().toEpochMilli()));
+        redisTemplate.opsForValue().set(timerKey, String.valueOf(firstSession.getStartTime().toEpochMilli()), 2, TimeUnit.HOURS);
 
         return attemptRepo.save(attempt);
     }
@@ -231,6 +231,15 @@ public class AssessmentSessionService {
         session.setSubmitTime(Instant.now());
 
         flushRedisBufferToDb(session);
+
+        // Clean up temporary Redis session keys upon submission
+        try {
+            String respKey = "battery_session:" + session.getId() + ":responses";
+            String timerKey = "battery_session:" + session.getId() + ":timer";
+            redisTemplate.delete(List.of(respKey, timerKey));
+        } catch (Exception e) {
+            System.err.println("Warning: failed to clean up Redis session keys for session " + session.getId() + ": " + e.getMessage());
+        }
 
         AssessmentAttempt attempt = session.getAttempt();
         int currentIndex = attempt.getCurrentBatteryIndex();
@@ -361,7 +370,7 @@ public class AssessmentSessionService {
             sessionRepo.save(session);
             
             String timerKey = "battery_session:" + session.getId() + ":timer";
-            redisTemplate.opsForValue().set(timerKey, String.valueOf(session.getStartTime().toEpochMilli()));
+            redisTemplate.opsForValue().set(timerKey, String.valueOf(session.getStartTime().toEpochMilli()), 2, TimeUnit.HOURS);
         }
 
         List<Long> sampledIds = session.getSampledItemIds();
