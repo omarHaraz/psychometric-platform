@@ -6,4 +6,4 @@ const isLocal = typeof window !== 'undefined' && (
 
 export const API_BASE = isLocal 
     ? 'http://localhost:8081' 
-    : 'https://refine-mlb-discretion-moisture.trycloudflare.com';
+    : 'https://hoping-lighter-peers-charts.trycloudflare.com';
