@@ -15,6 +15,7 @@ public class AssessmentScoreResponseDto implements Serializable {
 
     private Long id;
     private String attemptToken;
+    private String examType;
     private String candidateName;
     private String candidateEmail;
 
@@ -133,6 +134,7 @@ public class AssessmentScoreResponseDto implements Serializable {
         dto.setId(score.getId());
         if (score.getAttempt() != null) {
             dto.setAttemptToken(score.getAttempt().getAttemptToken());
+            dto.setExamType(score.getAttempt().getExamType());
             if (score.getAttempt().getCandidate() != null) {
                 dto.setCandidateName(score.getAttempt().getCandidate().getName());
                 dto.setCandidateEmail(score.getAttempt().getCandidate().getEmail());
@@ -149,8 +151,9 @@ public class AssessmentScoreResponseDto implements Serializable {
         dto.setPercentile(score.getPercentile());
         dto.setReadinessBand(score.getReadinessBand());
         if (score.getReadinessBand() != null) {
+            String examType = score.getAttempt() != null ? score.getAttempt().getExamType() : null;
             dto.setReadinessBandLabelEn(score.getReadinessBand().getLabelEn());
-            dto.setReadinessBandLabelAr(score.getReadinessBand().getLabelAr());
+            dto.setReadinessBandLabelAr(score.getReadinessBand().getLabelAr(examType));
         }
         dto.setSocialDesirabilityRiskPct(score.getSocialDesirabilityRiskPct());
         dto.setElevatedImpressionManagement(score.getElevatedImpressionManagement());
@@ -184,6 +187,11 @@ public class AssessmentScoreResponseDto implements Serializable {
             }
         }
 
+        if ("EMPLOYMENT".equalsIgnoreCase(dto.getExamType())) {
+            dto.setDerailersEffectiveScorePct(null);
+            dto.getDerailerCategoryScores().clear();
+        }
+
         return dto;
     }
 
@@ -191,6 +199,8 @@ public class AssessmentScoreResponseDto implements Serializable {
     public void setId(Long id) { this.id = id; }
     public String getAttemptToken() { return attemptToken; }
     public void setAttemptToken(String attemptToken) { this.attemptToken = attemptToken; }
+    public String getExamType() { return examType; }
+    public void setExamType(String examType) { this.examType = examType; }
     public String getCandidateName() { return candidateName; }
     public void setCandidateName(String candidateName) { this.candidateName = candidateName; }
     public String getCandidateEmail() { return candidateEmail; }

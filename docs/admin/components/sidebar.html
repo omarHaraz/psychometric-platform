@@ -1,4 +1,4 @@
-<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2 bg-white my-2" id="sidenav-main">
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2 bg-white my-2" id="sidenav-main" style="overflow-x: hidden !important;">
   <div class="sidenav-header">
     <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
       aria-hidden="true" id="iconSidenav"></i>
@@ -13,7 +13,7 @@
 
   <hr class="horizontal dark mt-0 mb-2">
 
-  <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main" style="max-height: calc(100vh - 200px); overflow-y: auto;">
+  <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main" style="max-height: calc(100vh - 200px); overflow-y: auto; overflow-x: hidden !important;">
     <ul class="navbar-nav px-2">
 
       <!-- Standalone Top Item: Dashboard -->
@@ -30,14 +30,14 @@
           ADMINISTRATION
         </h6>
       </li>
-      <li class="nav-item ms-2">
-        <a class="nav-link text-dark ps-3 py-2" href="../pages/admins.html">
+      <li class="nav-item">
+        <a class="nav-link text-dark px-3 py-2" href="../pages/admins.html">
           <i class="material-symbols-rounded opacity-5 text-sm">manage_accounts</i>
           <span class="nav-link-text ms-2 text-sm">Administrators</span>
         </a>
       </li>
-      <li class="nav-item ms-2">
-        <a class="nav-link text-dark ps-3 py-2" href="../pages/candidates.html">
+      <li class="nav-item">
+        <a class="nav-link text-dark px-3 py-2" href="../pages/candidates.html">
           <i class="material-symbols-rounded opacity-5 text-sm">people</i>
           <span class="nav-link-text ms-2 text-sm">Candidates</span>
         </a>
@@ -49,10 +49,22 @@
           ASSESSMENT CONTENT
         </h6>
       </li>
-      <li class="nav-item ms-2">
-        <a class="nav-link text-dark ps-3 py-2" href="../pages/item-bank.html">
-          <i class="material-symbols-rounded opacity-5 text-sm">quiz</i>
-          <span class="nav-link-text ms-2 text-sm">Item Bank (بنك الأسئلة)</span>
+      <li class="nav-item">
+        <a class="nav-link text-dark px-3 py-2 d-flex align-items-center" href="../pages/item-bank.html?exam=PSYCHOMETRIC" id="sidebar-bank-psychometric" title="Psychometric Bank (السيكومتري)">
+          <i class="material-symbols-rounded opacity-5 text-sm me-2">psychology</i>
+          <span class="nav-link-text d-flex align-items-center flex-wrap" style="font-size: 0.8125rem; line-height: 1.2;">
+            <span class="font-weight-600">Psychometric Bank</span>
+            <span class="text-secondary ms-1" style="font-size: 0.72rem;">(السيكومتري)</span>
+          </span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-dark px-3 py-2 d-flex align-items-center" href="../pages/item-bank.html?exam=EMPLOYMENT" id="sidebar-bank-employment" title="Employment Bank (التوظيف)">
+          <i class="material-symbols-rounded opacity-5 text-sm me-2">work</i>
+          <span class="nav-link-text d-flex align-items-center flex-wrap" style="font-size: 0.8125rem; line-height: 1.2;">
+            <span class="font-weight-600">Employment Bank</span>
+            <span class="text-secondary ms-1" style="font-size: 0.72rem;">(التوظيف)</span>
+          </span>
         </a>
       </li>
 

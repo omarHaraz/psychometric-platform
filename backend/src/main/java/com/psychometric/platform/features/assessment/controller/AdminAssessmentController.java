@@ -27,12 +27,17 @@ public class AdminAssessmentController {
     @PostMapping
     public ResponseEntity<AssessmentAttempt> createAttempt(@RequestBody AdminAttemptCreateRequest request,
                                                            @AuthenticationPrincipal String adminEmail) {
-        AssessmentAttempt attempt = sessionService.assignAttempt(request.getCandidateId(), adminEmail);
+        AssessmentAttempt attempt = sessionService.assignAttempt(request.getCandidateId(), request.getExamType(), adminEmail);
         return ResponseEntity.ok(attempt);
     }
 
     @GetMapping
-    public ResponseEntity<List<AssessmentAttempt>> getCandidateAttempts(@RequestParam Long candidateId) {
+    public ResponseEntity<List<AssessmentAttempt>> getCandidateAttempts(
+            @RequestParam Long candidateId,
+            @RequestParam(value = "examType", required = false) String examType) {
+        if (examType != null && !examType.isBlank()) {
+            return ResponseEntity.ok(attemptRepo.findByCandidateIdAndExamTypeOrderByCreatedAtDesc(candidateId, examType.trim().toUpperCase()));
+        }
         return ResponseEntity.ok(attemptRepo.findByCandidateIdOrderByCreatedAtDesc(candidateId));
     }
 

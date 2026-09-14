@@ -9,14 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "gcat_questions")
+@Table(name = "gcat_questions", uniqueConstraints = {
+    @UniqueConstraint(name = "uk_gcat_item_code_exam_type", columnNames = {"item_code", "exam_type"})
+})
 public class GcatQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "item_code", nullable = false, unique = true, length = 100)
+    @Column(name = "item_code", nullable = false, length = 100)
     private String itemCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -68,6 +70,9 @@ public class GcatQuestion {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
+
+    @Column(name = "exam_type", nullable = false, length = 50)
+    private String examType = "PSYCHOMETRIC";
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GcatOption> options = new ArrayList<>();
@@ -237,5 +242,13 @@ public class GcatQuestion {
 
     public void setOptions(List<GcatOption> options) {
         this.options = options;
+    }
+
+    public String getExamType() {
+        return examType != null ? examType : "PSYCHOMETRIC";
+    }
+
+    public void setExamType(String examType) {
+        this.examType = (examType != null && !examType.isBlank()) ? examType.toUpperCase() : "PSYCHOMETRIC";
     }
 }

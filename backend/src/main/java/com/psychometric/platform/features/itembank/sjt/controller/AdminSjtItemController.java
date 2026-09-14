@@ -33,8 +33,8 @@ public class AdminSjtItemController {
 
     @GetMapping
     @Operation(summary = "Get all SJT scenarios for admin")
-    public ResponseEntity<List<SjtScenarioAdminResponse>> getAll() {
-        return ResponseEntity.ok(sjtItemService.getAll());
+    public ResponseEntity<List<SjtScenarioAdminResponse>> getAll(@RequestParam(value = "examType", required = false) String examType) {
+        return ResponseEntity.ok(sjtItemService.getAll(examType));
     }
 
     @GetMapping("/{id}")

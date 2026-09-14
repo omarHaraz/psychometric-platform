@@ -37,8 +37,11 @@ public class AdminSjtItemService {
 
     @Transactional
     public SjtScenarioAdminResponse create(SjtScenarioAdminRequest request) {
-        scenarioRepository.findByItemCode(request.getItemCode()).ifPresent(existing -> {
-            throw new BadRequestException("SJT Scenario already exists with itemCode: " + request.getItemCode());
+        String examType = (request.getExamType() != null && !request.getExamType().isBlank())
+                ? request.getExamType().trim().toUpperCase()
+                : "PSYCHOMETRIC";
+        scenarioRepository.findByItemCodeAndExamType(request.getItemCode(), examType).ifPresent(existing -> {
+            throw new BadRequestException("SJT Scenario already exists with itemCode: " + request.getItemCode() + " in " + examType + " bank");
         });
 
         SjtDomain domain = domainRepository.findById(request.getDomainId())
@@ -57,6 +60,10 @@ public class AdminSjtItemService {
                 request.getCoachingNoteAr(),
                 request.getExamMode()
         );
+
+        if (request.getExamType() != null && !request.getExamType().isBlank()) {
+            scenario.setExamType(request.getExamType());
+        }
 
         if (request.getOptions() != null) {
             int order = 1;
@@ -83,7 +90,18 @@ public class AdminSjtItemService {
 
     @Transactional(readOnly = true)
     public List<SjtScenarioAdminResponse> getAll() {
-        return scenarioRepository.findAllWithDomainAndOptions().stream()
+        return getAll(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SjtScenarioAdminResponse> getAll(String examType) {
+        List<SjtScenario> scenarios;
+        if (examType != null && !examType.isBlank()) {
+            scenarios = scenarioRepository.findAllByExamTypeWithDomainAndOptions(examType.trim().toUpperCase());
+        } else {
+            scenarios = scenarioRepository.findAllWithDomainAndOptions();
+        }
+        return scenarios.stream()
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -98,9 +116,13 @@ public class AdminSjtItemService {
     public SjtScenarioAdminResponse update(Long id, SjtScenarioAdminRequest request) {
         SjtScenario scenario = findEntity(id);
 
-        scenarioRepository.findByItemCode(request.getItemCode()).ifPresent(existing -> {
+        String effectiveExamType = (request.getExamType() != null && !request.getExamType().isBlank())
+                ? request.getExamType().trim().toUpperCase()
+                : (scenario.getExamType() != null ? scenario.getExamType().toUpperCase() : "PSYCHOMETRIC");
+
+        scenarioRepository.findByItemCodeAndExamType(request.getItemCode(), effectiveExamType).ifPresent(existing -> {
             if (!existing.getId().equals(id)) {
-                throw new BadRequestException("ItemCode already in use by another scenario: " + request.getItemCode());
+                throw new BadRequestException("ItemCode already in use by another scenario in " + effectiveExamType + " bank: " + request.getItemCode());
             }
         });
 
@@ -120,6 +142,9 @@ public class AdminSjtItemService {
         scenario.setCommonMistakeAr(request.getCommonMistakeAr());
         scenario.setCoachingNoteAr(request.getCoachingNoteAr());
         scenario.setExamMode(request.getExamMode());
+        if (request.getExamType() != null && !request.getExamType().isBlank()) {
+            scenario.setExamType(request.getExamType());
+        }
 
         if (oldImageUrl != null && !oldImageUrl.equals(request.getScenarioImageUrl())) {
             cloudinaryService.deleteImageByUrl(oldImageUrl);
@@ -255,7 +280,7 @@ public class AdminSjtItemService {
                 ))
                 .toList();
 
-        return new SjtScenarioAdminResponse(
+        SjtScenarioAdminResponse response = new SjtScenarioAdminResponse(
                 s.getId(),
                 s.getItemCode(),
                 s.getDomain() != null ? s.getDomain().getId() : null,
@@ -274,5 +299,7 @@ public class AdminSjtItemService {
                 s.getCreatedAt(),
                 optionDtos
         );
+        response.setExamType(s.getExamType());
+        return response;
     }
 }

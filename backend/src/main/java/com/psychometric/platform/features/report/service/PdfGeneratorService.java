@@ -3,6 +3,7 @@ package com.psychometric.platform.features.report.service;
 import com.openhtmltopdf.bidi.support.ICUBidiReorderer;
 import com.openhtmltopdf.bidi.support.ICUBidiSplitter;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import com.psychometric.platform.features.report.dto.EmploymentReportDto;
 import com.psychometric.platform.features.report.dto.ReportContextDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,28 @@ public class PdfGeneratorService {
         return templateEngine.process("report/master-report", context);
     }
 
+    /**
+     * Renders the Employment Thymeleaf report template into an HTML string with specific language (ar / en).
+     */
+    public String generateEmploymentHtmlReport(EmploymentReportDto reportDto, String lang) {
+        if (reportDto == null) {
+            throw new IllegalArgumentException("EmploymentReportDto cannot be null");
+        }
+        String normalizedLang = (lang != null && lang.trim().equalsIgnoreCase("en")) ? "en" : "ar";
+        String dir = normalizedLang.equals("ar") ? "rtl" : "ltr";
+
+        Context context = reportDto.toThymeleafContext();
+        context.setLocale(new Locale(normalizedLang));
+        context.setVariable("lang", normalizedLang);
+        context.setVariable("dir", dir);
+        context.setVariable("currentDate", reportDto.getReportDate() != null ? reportDto.getReportDate() : java.time.LocalDate.now().toString());
+        String logoB64 = getLogoBase64();
+        if (logoB64 != null) {
+            context.setVariable("companyLogoBase64", logoB64);
+        }
+        return templateEngine.process("report/employment-report", context);
+    }
+
     private String getLogoBase64() {
         try (var is = getClass().getResourceAsStream("/static/assets/images/logo.png")) {
             if (is != null) {
@@ -96,14 +119,43 @@ public class PdfGeneratorService {
                 reportDto.getCandidateId(), reportDto.getCandidateName(), normalizedLang, dir);
         log.info("================================================================================");
 
+        String htmlContent = generateHtmlReport(reportDto, normalizedLang);
+        return renderHtmlToPdf(htmlContent, isRtl);
+    }
+
+    /**
+     * Generates a complete Employment PDF document byte array from a populated {@link EmploymentReportDto}.
+     */
+    public byte[] generateEmploymentPdfReport(EmploymentReportDto reportDto, String lang) {
+        if (reportDto == null) {
+            throw new IllegalArgumentException("EmploymentReportDto cannot be null");
+        }
+
+        String normalizedLang = (lang != null && lang.trim().equalsIgnoreCase("en")) ? "en" : "ar";
+        String dir = normalizedLang.equals("ar") ? "rtl" : "ltr";
+        boolean isRtl = normalizedLang.equals("ar");
+
+        log.info("================================================================================");
+        log.info("[EMPLOYMENT PDF] Generating PDF report for candidate: {} ({}) | Lang: {} | Dir: {}",
+                reportDto.getCandidateId(), reportDto.getCandidateName(), normalizedLang, dir);
+        log.info("================================================================================");
+
+        String htmlContent = generateEmploymentHtmlReport(reportDto, normalizedLang);
+        return renderHtmlToPdf(htmlContent, isRtl);
+    }
+
+    public byte[] generateEmploymentPdfReport(EmploymentReportDto reportDto) {
+        return generateEmploymentPdfReport(reportDto, "ar");
+    }
+
+    /**
+     * Shared high-fidelity XHTML-to-PDF rendering pipeline using OpenHTMLtoPDF.
+     */
+    public byte[] renderHtmlToPdf(String htmlContent, boolean isRtl) {
         try {
-            // 1. Process Thymeleaf Master Report Template into HTML String
-            String htmlContent = generateHtmlReport(reportDto, normalizedLang);
+            // Sanitize HTML -> XHTML: OpenHTMLtoPDF parses as strict XML.
+            String sanitizedHtml = htmlContent.replaceAll("&(?!(amp|lt|gt|quot|apos|#\\d+|#x[0-9a-fA-F]+);)", "&amp;");
 
-            // 2. Sanitize HTML -> XHTML: OpenHTMLtoPDF parses as strict XML.
-            htmlContent = htmlContent.replaceAll("&(?!(amp|lt|gt|quot|apos|#\\d+|#x[0-9a-fA-F]+);)", "&amp;");
-
-            // 3. Build PDF using OpenHTMLtoPDF with language-aware text direction
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 PdfRendererBuilder builder = new PdfRendererBuilder();
                 builder.useFastMode();
@@ -126,18 +178,14 @@ public class PdfGeneratorService {
                     }
                 } catch (Exception ignored) {}
 
-                builder.withHtmlContent(htmlContent, baseUri);
+                builder.withHtmlContent(sanitizedHtml, baseUri);
                 builder.toStream(outputStream);
                 builder.run();
 
-                byte[] pdfBytes = outputStream.toByteArray();
-                log.info("Successfully generated PDF report ({} bytes) in {} (dir={}) for candidate: {}",
-                        pdfBytes.length, normalizedLang, dir, reportDto.getCandidateId());
-                return pdfBytes;
+                return outputStream.toByteArray();
             }
-
         } catch (Exception e) {
-            log.error("Failed to generate PDF report: {}", e.getMessage(), e);
+            log.error("Failed to render PDF: {}", e.getMessage(), e);
             throw new RuntimeException("PDF Generation failed: " + e.getMessage(), e);
         }
     }

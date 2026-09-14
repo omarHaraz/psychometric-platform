@@ -17,6 +17,7 @@ public class DerailerItemAdminResponse {
     private boolean active;
     private int exposureCount;
     private Instant createdAt;
+    private String examType;
 
     public DerailerItemAdminResponse() {
     }
@@ -123,5 +124,13 @@ public class DerailerItemAdminResponse {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getExamType() {
+        return examType;
+    }
+
+    public void setExamType(String examType) {
+        this.examType = examType;
     }
 }

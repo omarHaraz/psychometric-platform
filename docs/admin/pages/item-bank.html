@@ -95,7 +95,28 @@
                 </div>
               </div>
 
-              <hr class="horizontal dark my-3">
+              <!-- Exam Type Selector Bar -->
+              <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 p-2 bg-gray-100 border-radius-lg my-3">
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <span class="text-xs font-weight-bolder text-uppercase text-secondary tracking-wider ms-2">EXAM BANK:</span>
+                  <div class="btn-group p-1 bg-white border-radius-md shadow-xs" role="group" id="examTypeSelector">
+                    <button type="button" class="btn btn-sm mb-0 px-3 py-2 btn-dark active exam-type-btn" data-exam="PSYCHOMETRIC">
+                      <i class="material-symbols-rounded text-sm me-1 align-middle">psychology</i>
+                      <span class="font-weight-bold">التقييم السيكومتري (Psychometric)</span>
+                    </button>
+                    <button type="button" class="btn btn-sm mb-0 px-3 py-2 btn-outline-dark exam-type-btn" data-exam="EMPLOYMENT">
+                      <i class="material-symbols-rounded text-sm me-1 align-middle">work</i>
+                      <span class="font-weight-bold">اختبار التوظيف (Employment)</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center me-2">
+                  <span class="badge bg-gradient-info text-xxs font-weight-bold px-3 py-2" id="currentBankBadge">
+                    <i class="material-symbols-rounded text-xs me-1 align-middle">inventory_2</i>
+                    Active Bank: Psychometric
+                  </span>
+                </div>
+              </div>
 
               <!-- Dimension Tabs -->
               <ul class="nav nav-pills nav-fill p-1 bg-gray-200 border-radius-lg" id="dimensionTabs" role="tablist">
@@ -105,7 +126,7 @@
                     <span>Personality (PQ10)</span>
                   </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" id="derailersTabNavItem">
                   <a class="nav-link mb-0 px-0 py-2 d-flex align-items-center justify-content-center" data-dimension="derailers" role="tab">
                     <i class="material-symbols-rounded text-sm me-2">warning</i>
                     <span>Derailers & Dark Traits</span>

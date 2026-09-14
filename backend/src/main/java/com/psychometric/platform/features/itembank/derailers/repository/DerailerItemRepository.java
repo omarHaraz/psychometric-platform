@@ -22,4 +22,8 @@ public interface DerailerItemRepository extends JpaRepository<DerailerItem, Long
             @Param("typeId") Long typeId,
             @Param("modes") Collection<ExamMode> modes
     );
+
+    List<DerailerItem> findByExamType(String examType);
+
+    List<DerailerItem> findByExamTypeAndActiveTrue(String examType);
 }

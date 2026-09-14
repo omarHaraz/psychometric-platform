@@ -3,10 +3,10 @@
 ========================================================== */
 
 :root{
-    --sidenav-width:250px;
+    --sidenav-width:255px;
 }
 
-/* Prevent horizontal scrolling */
+/* Prevent horizontal scrolling globally */
 html,
 body{
     overflow-x:hidden;
@@ -14,7 +14,44 @@ body{
 
 /* ==========================================================
    SIDENAV
+   Ensure sidebar fits all items without horizontal scrollbars
 ========================================================== */
+
+#sidenav-main,
+.sidenav {
+    width: var(--sidenav-width) !important;
+    max-width: var(--sidenav-width) !important;
+    overflow-x: hidden !important;
+}
+
+@media (min-width: 1200px) {
+    #sidenav-main,
+    .sidenav,
+    .sidenav:hover {
+        width: var(--sidenav-width) !important;
+        max-width: var(--sidenav-width) !important;
+    }
+}
+
+#sidenav-collapse-main {
+    overflow-x: hidden !important;
+    scrollbar-width: thin;
+}
+
+/* Completely suppress horizontal scrollbar rail from PerfectScrollbar */
+.ps__rail-x {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Active link secondary text styling in sidebar */
+#sidenav-main .nav-link.active .text-secondary,
+#sidenav-main .nav-link.active small,
+#sidenav-main .nav-link.active .sidebar-badge {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
 
 @media (max-width:1199.98px){
 

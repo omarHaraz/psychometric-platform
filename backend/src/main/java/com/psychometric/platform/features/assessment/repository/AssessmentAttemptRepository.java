@@ -18,4 +18,7 @@ public interface AssessmentAttemptRepository extends JpaRepository<AssessmentAtt
 
     boolean existsByCandidateIdAndStateNot(Long candidateId, AttemptState state);
     boolean existsByCandidateIdAndStateIn(Long candidateId, List<AttemptState> states);
+    boolean existsByCandidateIdAndExamTypeAndStateIn(Long candidateId, String examType, List<AttemptState> states);
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"candidate", "createdBy", "batterySessions"})
+    List<AssessmentAttempt> findByCandidateIdAndExamTypeOrderByCreatedAtDesc(Long candidateId, String examType);
 }

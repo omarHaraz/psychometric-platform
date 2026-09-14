@@ -38,6 +38,8 @@ public class SjtScenarioAdminRequest {
     @NotNull(message = "نمط الاختبار مطلوب")
     private ExamMode examMode = ExamMode.BOTH;
 
+    private String examType = "PSYCHOMETRIC";
+
     private List<SjtOptionAdminDto> options = new ArrayList<>();
 
     public SjtScenarioAdminRequest() {
@@ -155,5 +157,13 @@ public class SjtScenarioAdminRequest {
 
     public void setOptions(List<SjtOptionAdminDto> options) {
         this.options = options;
+    }
+
+    public String getExamType() {
+        return examType != null ? examType : "PSYCHOMETRIC";
+    }
+
+    public void setExamType(String examType) {
+        this.examType = (examType != null && !examType.isBlank()) ? examType.toUpperCase() : "PSYCHOMETRIC";
     }
 }

@@ -16,6 +16,7 @@ public class PersonalityItemAdminResponse {
     private int exposureCount;
     private Instant createdAt;
     private String justificationAr;
+    private String examType;
 
     public PersonalityItemAdminResponse() {
     }
@@ -113,5 +114,13 @@ public class PersonalityItemAdminResponse {
 
     public void setJustificationAr(String justificationAr) {
         this.justificationAr = justificationAr;
+    }
+
+    public String getExamType() {
+        return examType;
+    }
+
+    public void setExamType(String examType) {
+        this.examType = examType;
     }
 }

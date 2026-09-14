@@ -14,21 +14,32 @@ function loadComponent(id, file, callback) {
 }
 
 function setActiveSidebarItem() {
-
     const currentPage = window.location.pathname.split("/").pop();
+    const urlParams = new URLSearchParams(window.location.search);
+    const examParam = urlParams.get("exam") ? urlParams.get("exam").toUpperCase() : "";
 
     document.querySelectorAll("#sidebar .nav-link").forEach(link => {
-
         const href = link.getAttribute("href");
+        if (!href) return;
 
-        if (href && href.endsWith(currentPage)) {
+        let isMatch = false;
+        if (currentPage === "item-bank.html") {
+            if (examParam === "EMPLOYMENT" && link.id === "sidebar-bank-employment") {
+                isMatch = true;
+            } else if ((examParam === "PSYCHOMETRIC" || !examParam) && link.id === "sidebar-bank-psychometric") {
+                isMatch = true;
+            }
+        } else if (href.includes(currentPage)) {
+            isMatch = true;
+        }
+
+        if (isMatch) {
             link.classList.add("active", "bg-gradient-dark", "text-white");
             link.classList.remove("text-dark");
         } else {
             link.classList.remove("active", "bg-gradient-dark", "text-white");
             link.classList.add("text-dark");
         }
-
     });
 }
 

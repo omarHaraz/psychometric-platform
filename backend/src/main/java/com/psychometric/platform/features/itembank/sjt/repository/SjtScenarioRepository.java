@@ -15,6 +15,7 @@ import java.util.Optional;
 public interface SjtScenarioRepository extends JpaRepository<SjtScenario, Long> {
 
     Optional<SjtScenario> findByItemCode(String itemCode);
+    Optional<SjtScenario> findByItemCodeAndExamType(String itemCode, String examType);
 
     List<SjtScenario> findByDomain_IdAndExamModeInAndActiveTrue(Long domainId, Collection<ExamMode> examModes);
 
@@ -24,6 +25,9 @@ public interface SjtScenarioRepository extends JpaRepository<SjtScenario, Long> 
 
     @Query("SELECT DISTINCT s FROM SjtScenario s LEFT JOIN FETCH s.domain LEFT JOIN FETCH s.options ORDER BY s.id ASC")
     List<SjtScenario> findAllWithDomainAndOptions();
+
+    @Query("SELECT DISTINCT s FROM SjtScenario s LEFT JOIN FETCH s.domain LEFT JOIN FETCH s.options WHERE s.examType = :examType ORDER BY s.id ASC")
+    List<SjtScenario> findAllByExamTypeWithDomainAndOptions(@Param("examType") String examType);
 
     @Query("SELECT DISTINCT s FROM SjtScenario s LEFT JOIN FETCH s.domain LEFT JOIN FETCH s.options WHERE s.id = :id")
     Optional<SjtScenario> findByIdWithOptions(@Param("id") Long id);

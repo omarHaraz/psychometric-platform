@@ -28,6 +28,8 @@ public class DerailerItemAdminRequest {
     @NotNull(message = "نمط الاختبار مطلوب")
     private ExamMode examMode = ExamMode.FULL;
 
+    private String examType = "PSYCHOMETRIC";
+
     public DerailerItemAdminRequest() {
     }
 
@@ -86,5 +88,13 @@ public class DerailerItemAdminRequest {
 
     public void setExamMode(ExamMode examMode) {
         this.examMode = examMode;
+    }
+
+    public String getExamType() {
+        return examType != null ? examType : "PSYCHOMETRIC";
+    }
+
+    public void setExamType(String examType) {
+        this.examType = (examType != null && !examType.isBlank()) ? examType.toUpperCase() : "PSYCHOMETRIC";
     }
 }

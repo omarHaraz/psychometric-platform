@@ -33,8 +33,8 @@ public class AdminDerailerItemController {
 
     @GetMapping
     @Operation(summary = "Get all derailer items for admin")
-    public ResponseEntity<List<DerailerItemAdminResponse>> getAll() {
-        return ResponseEntity.ok(derailerItemService.getAll());
+    public ResponseEntity<List<DerailerItemAdminResponse>> getAll(@RequestParam(value = "examType", required = false) String examType) {
+        return ResponseEntity.ok(derailerItemService.getAll(examType));
     }
 
     @GetMapping("/{id}")

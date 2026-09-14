@@ -38,6 +38,10 @@ public class AdminPersonalityItemService {
             competencies = List.of(competencies.get(0));
         }
 
+        String examType = request.getExamType() != null && !request.getExamType().isBlank()
+                ? request.getExamType().trim().toUpperCase()
+                : "PSYCHOMETRIC";
+
         PersonalityItem item = new PersonalityItem(
                 request.getStatementAr(),
                 new java.util.HashSet<>(competencies),
@@ -45,6 +49,7 @@ public class AdminPersonalityItemService {
                 request.getExamMode(),
                 request.getJustificationAr()
         );
+        item.setExamType(examType);
         PersonalityItem saved = personalityItemRepository.save(item);
         log.info("Created PersonalityItem with ID: {}", saved.getId());
         return mapToResponse(saved);
@@ -52,7 +57,18 @@ public class AdminPersonalityItemService {
 
     @Transactional(readOnly = true)
     public List<PersonalityItemAdminResponse> getAll() {
-        return personalityItemRepository.findAll().stream()
+        return getAll(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PersonalityItemAdminResponse> getAll(String examType) {
+        List<PersonalityItem> items;
+        if (examType != null && !examType.isBlank()) {
+            items = personalityItemRepository.findByExamType(examType.trim().toUpperCase());
+        } else {
+            items = personalityItemRepository.findAll();
+        }
+        return items.stream()
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -74,11 +90,18 @@ public class AdminPersonalityItemService {
             competencies = List.of(competencies.get(0));
         }
 
+        String effectiveExamType = (request.getExamType() != null && !request.getExamType().isBlank())
+                ? request.getExamType().trim().toUpperCase()
+                : (item.getExamType() != null ? item.getExamType().toUpperCase() : "PSYCHOMETRIC");
+
         item.setStatementAr(request.getStatementAr());
         item.setCompetencies(new java.util.HashSet<>(competencies));
         item.setIdealTarget(request.getIdealTarget());
         item.setExamMode(request.getExamMode());
         item.setJustificationAr(request.getJustificationAr());
+        if (request.getExamType() != null && !request.getExamType().isBlank()) {
+            item.setExamType(request.getExamType());
+        }
 
         PersonalityItem updated = personalityItemRepository.save(item);
         log.info("Updated PersonalityItem with ID: {}", updated.getId());
@@ -125,7 +148,7 @@ public class AdminPersonalityItemService {
     }
 
     private PersonalityItemAdminResponse mapToResponse(PersonalityItem item) {
-        return new PersonalityItemAdminResponse(
+        PersonalityItemAdminResponse response = new PersonalityItemAdminResponse(
                 item.getId(),
                 item.getStatementAr(),
                 item.getCompetencies().stream().map(Competency::getId).toList(),
@@ -137,5 +160,7 @@ public class AdminPersonalityItemService {
                 item.getCreatedAt(),
                 item.getJustificationAr()
         );
+        response.setExamType(item.getExamType());
+        return response;
     }
 }

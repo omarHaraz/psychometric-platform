@@ -37,6 +37,9 @@ public class AdminDerailerItemService {
 
     @Transactional
     public DerailerItemAdminResponse create(DerailerItemAdminRequest request) {
+        if ("EMPLOYMENT".equalsIgnoreCase(request.getExamType())) {
+            throw new BadRequestException("Derailers are excluded from the Employment Test.");
+        }
         List<DerailerType> derailerTypesList = derailerTypeRepository.findAllById(request.getDerailerTypeIds());
         if (derailerTypesList.size() != request.getDerailerTypeIds().size()) {
             throw new BadRequestException("One or more DerailerTypes not found with provided IDs.");
@@ -51,6 +54,9 @@ public class AdminDerailerItemService {
                 request.getResponseScaleType(),
                 request.getExamMode()
         );
+        if (request.getExamType() != null && !request.getExamType().isBlank()) {
+            item.setExamType(request.getExamType());
+        }
         DerailerItem saved = derailerItemRepository.save(item);
         log.info("Created DerailerItem with ID: {}", saved.getId());
         return mapToResponse(saved);
@@ -58,7 +64,21 @@ public class AdminDerailerItemService {
 
     @Transactional(readOnly = true)
     public List<DerailerItemAdminResponse> getAll() {
-        return derailerItemRepository.findAll().stream()
+        return getAll(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<DerailerItemAdminResponse> getAll(String examType) {
+        if ("EMPLOYMENT".equalsIgnoreCase(examType)) {
+            return List.of();
+        }
+        List<DerailerItem> items;
+        if (examType != null && !examType.isBlank()) {
+            items = derailerItemRepository.findByExamType(examType.trim().toUpperCase());
+        } else {
+            items = derailerItemRepository.findAll();
+        }
+        return items.stream()
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -71,6 +91,9 @@ public class AdminDerailerItemService {
 
     @Transactional
     public DerailerItemAdminResponse update(Long id, DerailerItemAdminRequest request) {
+        if ("EMPLOYMENT".equalsIgnoreCase(request.getExamType())) {
+            throw new BadRequestException("Derailers are excluded from the Employment Test.");
+        }
         DerailerItem item = findEntity(id);
         List<DerailerType> derailerTypesList = derailerTypeRepository.findAllById(request.getDerailerTypeIds());
         if (derailerTypesList.size() != request.getDerailerTypeIds().size()) {
@@ -84,6 +107,9 @@ public class AdminDerailerItemService {
         item.setIdealTarget(request.getIdealTarget());
         item.setResponseScaleType(request.getResponseScaleType());
         item.setExamMode(request.getExamMode());
+        if (request.getExamType() != null && !request.getExamType().isBlank()) {
+            item.setExamType(request.getExamType());
+        }
 
         DerailerItem updated = derailerItemRepository.save(item);
         log.info("Updated DerailerItem with ID: {}", updated.getId());
@@ -192,7 +218,7 @@ public class AdminDerailerItemService {
     }
 
     private DerailerItemAdminResponse mapToResponse(DerailerItem item) {
-        return new DerailerItemAdminResponse(
+        DerailerItemAdminResponse response = new DerailerItemAdminResponse(
                 item.getId(),
                 item.getStatementAr(),
                 item.getJustificationAr(),
@@ -205,5 +231,7 @@ public class AdminDerailerItemService {
                 item.getExposureCount(),
                 item.getCreatedAt()
         );
+        response.setExamType(item.getExamType());
+        return response;
     }
 }

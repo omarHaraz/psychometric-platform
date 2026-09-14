@@ -5,6 +5,7 @@ import com.psychometric.platform.features.assessment.domain.model.AssessmentScor
 import com.psychometric.platform.features.assessment.dto.response.AssessmentScoreResponseDto;
 import com.psychometric.platform.features.assessment.repository.AssessmentScoreRepository;
 import com.psychometric.platform.features.itembank.common.service.CloudinaryService;
+import com.psychometric.platform.features.report.dto.EmploymentReportDto;
 import com.psychometric.platform.features.report.dto.ReportContextDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Coordinates the full end-to-end report generation lifecycle:
  * 1. Cache Check: returns existing Cloudinary URL if report was already generated.
  * 2. Raw Data Fetch: retrieves AssessmentScore from the database.
- * 3. AI Narrative Generation: calls LeadershipReportGeneratorService.
- * 4. PDF Compilation: compiles master-report.html into PDF bytes using PdfGeneratorService.
+ * 3. AI / Diagnostic Narrative Generation (LeadershipReportGeneratorService for Psychometric, EmploymentReportGeneratorService for Employment).
+ * 4. PDF Compilation: compiles master-report.html or employment-report.html into PDF bytes using PdfGeneratorService.
  * 5. Cloud CDN Upload: uploads the PDF to Cloudinary and obtains secure download URL.
  * 6. Persistence: caches the URL in the database for instant subsequent retrievals.
  */
@@ -29,17 +30,20 @@ public class AssessmentReportFacade {
 
     private final AssessmentScoreRepository scoreRepository;
     private final LeadershipReportGeneratorService reportGeneratorService;
+    private final EmploymentReportGeneratorService employmentReportGeneratorService;
     private final PdfGeneratorService pdfGeneratorService;
     private final CloudinaryService cloudinaryService;
 
     public AssessmentReportFacade(
             AssessmentScoreRepository scoreRepository,
             LeadershipReportGeneratorService reportGeneratorService,
+            EmploymentReportGeneratorService employmentReportGeneratorService,
             PdfGeneratorService pdfGeneratorService,
             CloudinaryService cloudinaryService
     ) {
         this.scoreRepository = scoreRepository;
         this.reportGeneratorService = reportGeneratorService;
+        this.employmentReportGeneratorService = employmentReportGeneratorService;
         this.pdfGeneratorService = pdfGeneratorService;
         this.cloudinaryService = cloudinaryService;
     }
@@ -59,10 +63,14 @@ public class AssessmentReportFacade {
         AssessmentScore score = scoreRepository.findByAttemptAttemptToken(attemptToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Assessment score not found for attempt token: " + attemptToken));
 
+        boolean isEmployment = (score.getAttempt() != null && "EMPLOYMENT".equalsIgnoreCase(score.getAttempt().getExamType()));
+
         // 1. If forceRefresh is requested, evict in-memory and section AI caches
         if (forceRefresh) {
             log.info("Force refresh requested: Clearing all caches for attempt {}", attemptToken);
-            reportGeneratorService.clearCandidateCaches(attemptToken);
+            if (!isEmployment) {
+                reportGeneratorService.clearCandidateCaches(attemptToken);
+            }
         } else {
             // 2. Cache Check: Return existing PDF URL if already generated and valid (.pdf extension)
             if (score.getReportPdfUrl() != null && !score.getReportPdfUrl().isBlank() && score.getReportPdfUrl().toLowerCase().endsWith(".pdf")) {
@@ -71,22 +79,26 @@ public class AssessmentReportFacade {
             }
         }
 
-        log.info("Generating AI-driven leadership report PDF for attempt: {} in {}", attemptToken, normalizedLang);
+        byte[] pdfBytes;
+        String fileName;
 
-        // 3. Fetch and Convert Raw Scoring Data
-        AssessmentScoreResponseDto rawScoreDto = AssessmentScoreResponseDto.fromEntity(score);
+        if (isEmployment) {
+            log.info("Generating Employment Readiness report PDF for attempt: {} in {}", attemptToken, normalizedLang);
+            EmploymentReportDto empReportDto = employmentReportGeneratorService.generateReport(score);
+            pdfBytes = pdfGeneratorService.generateEmploymentPdfReport(empReportDto, normalizedLang);
+            fileName = "employment_report_" + attemptToken + "_" + normalizedLang + ".pdf";
+        } else {
+            log.info("Generating AI-driven leadership report PDF for attempt: {} in {}", attemptToken, normalizedLang);
+            AssessmentScoreResponseDto rawScoreDto = AssessmentScoreResponseDto.fromEntity(score);
+            ReportContextDto reportContextDto = reportGeneratorService.generateReport(rawScoreDto);
+            pdfBytes = pdfGeneratorService.generatePdfReport(reportContextDto, normalizedLang);
+            fileName = "leadership_report_" + attemptToken + "_" + normalizedLang + ".pdf";
+        }
 
-        // 4. AI Normalization & Arabic Narrative Generation
-        ReportContextDto reportContextDto = reportGeneratorService.generateReport(rawScoreDto);
-
-        // 5. PDF Compilation using OpenHTMLtoPDF & Master Thymeleaf Template
-        byte[] pdfBytes = pdfGeneratorService.generatePdfReport(reportContextDto, normalizedLang);
-
-        // 6. Upload to Cloudinary CDN
-        String fileName = "leadership_report_" + attemptToken + "_" + normalizedLang + ".pdf";
+        // Upload to Cloudinary CDN
         String cloudinaryUrl = cloudinaryService.uploadPdf(pdfBytes, fileName, "psychometric/reports");
 
-        // 7. Cache the generated URL in the database
+        // Cache the generated URL in the database
         score.setReportPdfUrl(cloudinaryUrl);
         scoreRepository.save(score);
 
@@ -108,15 +120,23 @@ public class AssessmentReportFacade {
     @Transactional(readOnly = true)
     public byte[] generateDirectPdfBytes(String attemptToken, boolean forceRefresh, String lang) {
         String normalizedLang = (lang != null && lang.trim().equalsIgnoreCase("en")) ? "en" : "ar";
-        if (forceRefresh) {
-            reportGeneratorService.clearCandidateCaches(attemptToken);
-        }
         AssessmentScore score = scoreRepository.findByAttemptAttemptToken(attemptToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Assessment score not found for attempt token: " + attemptToken));
 
-        AssessmentScoreResponseDto rawScoreDto = AssessmentScoreResponseDto.fromEntity(score);
-        ReportContextDto reportContextDto = reportGeneratorService.generateReport(rawScoreDto);
-        return pdfGeneratorService.generatePdfReport(reportContextDto, normalizedLang);
+        boolean isEmployment = (score.getAttempt() != null && "EMPLOYMENT".equalsIgnoreCase(score.getAttempt().getExamType()));
+
+        if (forceRefresh && !isEmployment) {
+            reportGeneratorService.clearCandidateCaches(attemptToken);
+        }
+
+        if (isEmployment) {
+            EmploymentReportDto empReportDto = employmentReportGeneratorService.generateReport(score);
+            return pdfGeneratorService.generateEmploymentPdfReport(empReportDto, normalizedLang);
+        } else {
+            AssessmentScoreResponseDto rawScoreDto = AssessmentScoreResponseDto.fromEntity(score);
+            ReportContextDto reportContextDto = reportGeneratorService.generateReport(rawScoreDto);
+            return pdfGeneratorService.generatePdfReport(reportContextDto, normalizedLang);
+        }
     }
 
     public byte[] generateDirectPdfBytes(String attemptToken, boolean forceRefresh) {

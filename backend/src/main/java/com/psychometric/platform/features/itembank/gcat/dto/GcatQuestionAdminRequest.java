@@ -38,6 +38,8 @@ public class GcatQuestionAdminRequest {
     @NotNull(message = "نمط الاختبار مطلوب")
     private ExamMode examMode = ExamMode.BOTH;
 
+    private String examType = "PSYCHOMETRIC";
+
     private List<GcatOptionAdminDto> options = new ArrayList<>();
 
     public GcatQuestionAdminRequest() {
@@ -174,5 +176,13 @@ public class GcatQuestionAdminRequest {
 
     public void setOptions(List<GcatOptionAdminDto> options) {
         this.options = options;
+    }
+
+    public String getExamType() {
+        return examType != null ? examType : "PSYCHOMETRIC";
+    }
+
+    public void setExamType(String examType) {
+        this.examType = (examType != null && !examType.isBlank()) ? examType.toUpperCase() : "PSYCHOMETRIC";
     }
 }

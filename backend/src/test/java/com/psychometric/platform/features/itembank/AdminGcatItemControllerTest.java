@@ -138,4 +138,53 @@ class AdminGcatItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.active").value(false));
     }
+
+    @Test
+    @DisplayName("GET /api/admin/items/cognitive?examType=EMPLOYMENT filters by exam type")
+    void testGetAll_EmploymentExamType() throws Exception {
+        GcatQuestionAdminResponse response = new GcatQuestionAdminResponse(
+                101L, "GCAT-EMP-01", GcatSubtestCode.ABSTRACT, "سؤال توظيف",
+                null, null, null, null, null, null, null,
+                GcatOptionKey.A, GcatDifficulty.EASY, ExamMode.FULL, true, 0, null, List.of()
+        );
+        response.setExamType("EMPLOYMENT");
+
+        when(gcatItemService.getAll("EMPLOYMENT")).thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/admin/items/cognitive?examType=EMPLOYMENT"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(101))
+                .andExpect(jsonPath("$[0].itemCode").value("GCAT-EMP-01"))
+                .andExpect(jsonPath("$[0].examType").value("EMPLOYMENT"));
+
+        verify(gcatItemService).getAll("EMPLOYMENT");
+    }
+
+    @Test
+    @DisplayName("POST /api/admin/items/cognitive with EMPLOYMENT examType creates item")
+    void testCreate_WithEmploymentExamType() throws Exception {
+        GcatQuestionAdminRequest request = new GcatQuestionAdminRequest(
+                "GCAT-EMP-02", GcatSubtestCode.NUMERICAL, "سؤال حسابي",
+                null, null, null, null, null, null, null,
+                GcatOptionKey.C, GcatDifficulty.MEDIUM, ExamMode.FULL, List.of()
+        );
+        request.setExamType("EMPLOYMENT");
+
+        GcatQuestionAdminResponse response = new GcatQuestionAdminResponse(
+                102L, "GCAT-EMP-02", GcatSubtestCode.NUMERICAL, "سؤال حسابي",
+                null, null, null, null, null, null, null,
+                GcatOptionKey.C, GcatDifficulty.MEDIUM, ExamMode.FULL, true, 0, null, List.of()
+        );
+        response.setExamType("EMPLOYMENT");
+
+        when(gcatItemService.create(any(GcatQuestionAdminRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/admin/items/cognitive")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(102))
+                .andExpect(jsonPath("$.itemCode").value("GCAT-EMP-02"))
+                .andExpect(jsonPath("$.examType").value("EMPLOYMENT"));
+    }
 }

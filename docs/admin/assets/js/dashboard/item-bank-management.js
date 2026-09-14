@@ -16,9 +16,34 @@ function getAuthHeaders() {
 }
 
 // State Management
+let currentExamType = "PSYCHOMETRIC"; // 'PSYCHOMETRIC' | 'EMPLOYMENT'
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("exam")) {
+    const p = urlParams.get("exam").toUpperCase();
+    if (p === "EMPLOYMENT" || p === "PSYCHOMETRIC") {
+        currentExamType = p;
+    }
+}
+
 let currentDimension = "personality"; // 'personality' | 'derailers' | 'cognitive' | 'sjt'
 let rawItems = [];
 let filteredItems = [];
+
+const EMPLOYMENT_COMPETENCIES_LIST = [
+    "الانضباط والمسؤولية",
+    "التعاون والعمل الجماعي",
+    "الاستقرار الانفعالي",
+    "الانفتاح على التجربة",
+    "التفاعل والتواصل",
+    "المرونة والتكيف",
+    "الدافعية والمبادرة",
+    "الثقة بالنفس",
+    "الرشاقة الرقمية",
+    "التفكير الناقد",
+    "النزاهة وأخلاقيات العمل",
+    "التوجه نحو الخدمة",
+    "التظاهر الاجتماعي"
+];
 
 let taxonomies = {
     competencies: [],
@@ -37,6 +62,68 @@ let derailerModal = null;
 let gcatModal = null;
 let sjtModal = null;
 
+function updateExamTypeUI() {
+    document.querySelectorAll("#examTypeSelector .exam-type-btn").forEach(btn => {
+        const isCurrent = btn.getAttribute("data-exam") === currentExamType;
+        btn.classList.toggle("active", isCurrent);
+        btn.classList.toggle("btn-dark", isCurrent);
+        btn.classList.toggle("btn-outline-dark", !isCurrent);
+    });
+
+    const badge = document.getElementById("currentBankBadge");
+    if (badge) {
+        if (currentExamType === "EMPLOYMENT") {
+            badge.className = "badge bg-gradient-success text-xxs font-weight-bold px-3 py-2";
+            badge.innerHTML = '<i class="material-symbols-rounded text-xs me-1 align-middle">work</i> Active Bank: Employment (اختبار التوظيف)';
+        } else {
+            badge.className = "badge bg-gradient-info text-xxs font-weight-bold px-3 py-2";
+            badge.innerHTML = '<i class="material-symbols-rounded text-xs me-1 align-middle">psychology</i> Active Bank: Psychometric (التقييم السيكومتري)';
+        }
+    }
+
+    // Sync active state on sidebar links
+    const psychLink = document.getElementById("sidebar-bank-psychometric");
+    const empLink = document.getElementById("sidebar-bank-employment");
+    if (psychLink && empLink) {
+        if (currentExamType === "EMPLOYMENT") {
+            empLink.classList.add("active", "bg-gradient-dark", "text-white");
+            empLink.classList.remove("text-dark");
+            psychLink.classList.remove("active", "bg-gradient-dark", "text-white");
+            psychLink.classList.add("text-dark");
+        } else {
+            psychLink.classList.add("active", "bg-gradient-dark", "text-white");
+            psychLink.classList.remove("text-dark");
+            empLink.classList.remove("active", "bg-gradient-dark", "text-white");
+            empLink.classList.add("text-dark");
+        }
+    }
+
+    // Keep URL parameter synchronized
+    try {
+        const url = new URL(window.location);
+        url.searchParams.set("exam", currentExamType);
+        window.history.replaceState({}, "", url);
+    } catch (e) {
+        // Ignore in environments without window.history
+    }
+
+    // Toggle Derailers tab visibility (Employment test excludes Derailers completely)
+    const derailerTabLi = document.getElementById("derailersTabNavItem");
+    if (derailerTabLi) {
+        if (currentExamType === "EMPLOYMENT") {
+            derailerTabLi.classList.add("d-none");
+            if (currentDimension === "derailers") {
+                currentDimension = "personality";
+                document.querySelectorAll("#dimensionTabs [data-dimension]").forEach(l => {
+                    l.classList.toggle("active", l.getAttribute("data-dimension") === "personality");
+                });
+            }
+        } else {
+            derailerTabLi.classList.remove("d-none");
+        }
+    }
+}
+
 // Initialize on DOM Ready
 async function initItemBank() {
     const user = getUser();
@@ -47,6 +134,7 @@ async function initItemBank() {
 
     initModals();
     setupEventListeners();
+    updateExamTypeUI();
     await loadTaxonomies();
     await loadDimensionData(currentDimension);
 }
@@ -74,6 +162,21 @@ function initModals() {
 }
 
 function setupEventListeners() {
+    // Exam Type Selector Buttons
+    document.querySelectorAll("#examTypeSelector .exam-type-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const exam = btn.getAttribute("data-exam");
+            if (exam === currentExamType) return;
+
+            currentExamType = exam;
+            updateExamTypeUI();
+            await loadTaxonomies();
+            populateTaxonomyDropdowns();
+            await loadDimensionData(currentDimension);
+        });
+    });
+
     // Dimension Tabs
     document.querySelectorAll("#dimensionTabs [data-dimension]").forEach(tab => {
         tab.addEventListener("click", async (e) => {
@@ -251,7 +354,7 @@ async function loadTaxonomies() {
         const headers = getAuthHeaders();
 
         // 1. Competencies
-        const compRes = await fetch(`${API_BASE}/api/admin/taxonomies/competencies`, { headers });
+        const compRes = await fetch(`${API_BASE}/api/admin/taxonomies/competencies?examType=${encodeURIComponent(currentExamType)}`, { headers });
         if (compRes.ok) taxonomies.competencies = await compRes.json();
 
         // 2. Derailer Types
@@ -272,7 +375,7 @@ function updateCompPillStyle(el, isSelected) {
     const isSD = el.dataset.isSd === "true";
     if (isSelected) {
         if (isSD) {
-            el.className = "btn btn-warning text-white btn-sm mb-0 p-comp-drag shadow-xs";
+            el.className = "btn bg-gradient-warning text-white btn-sm mb-0 p-comp-drag shadow-xs";
         } else {
             el.className = "btn btn-info text-white btn-sm mb-0 p-comp-drag shadow-xs";
         }
@@ -292,11 +395,24 @@ function populateTaxonomyDropdowns() {
     if (availBox && selBox) {
         availBox.innerHTML = "";
         selBox.innerHTML = "";
-        taxonomies.competencies.forEach(c => {
-            const el = document.createElement("div");
+        
+        // Include both workplace competencies and Social Desirability
+        const filteredComps = taxonomies.competencies.filter(c => {
             const isSD = (c.code === "SOCIAL_DESIRABILITY" || (c.nameAr && c.nameAr.includes("التظاهر")));
+            if (currentExamType === "EMPLOYMENT") {
+                return isSD || EMPLOYMENT_COMPETENCIES_LIST.includes(c.nameAr);
+            } else {
+                return isSD || !EMPLOYMENT_COMPETENCIES_LIST.includes(c.nameAr);
+            }
+        });
+
+        filteredComps.forEach(c => {
+            const isSD = (c.code === "SOCIAL_DESIRABILITY" || (c.nameAr && c.nameAr.includes("التظاهر")));
+            const el = document.createElement("div");
             el.dataset.isSd = isSD ? "true" : "false";
-            el.className = isSD ? "btn btn-outline-warning btn-sm mb-0 p-comp-drag" : "btn btn-outline-info btn-sm mb-0 p-comp-drag";
+            el.className = isSD
+                ? "btn btn-outline-warning btn-sm mb-0 p-comp-drag"
+                : "btn btn-outline-info btn-sm mb-0 p-comp-drag";
             el.draggable = true;
             el.dataset.id = c.id;
             el.innerText = c.nameAr;
@@ -434,14 +550,22 @@ async function loadDimensionData(dim) {
         `;
     }
 
+    if (currentExamType === "EMPLOYMENT" && dim === "derailers") {
+        dim = "personality";
+        currentDimension = "personality";
+        document.querySelectorAll("#dimensionTabs [data-dimension]").forEach(l => {
+            l.classList.toggle("active", l.getAttribute("data-dimension") === "personality");
+        });
+    }
+
     updateTableHeaders(dim);
 
     try {
         let endpoint = "";
-        if (dim === "personality") endpoint = `${API_BASE}/api/admin/items/personality`;
-        else if (dim === "derailers") endpoint = `${API_BASE}/api/admin/items/derailers`;
-        else if (dim === "cognitive") endpoint = `${API_BASE}/api/admin/items/cognitive`;
-        else if (dim === "sjt") endpoint = `${API_BASE}/api/admin/items/sjt`;
+        if (dim === "personality") endpoint = `${API_BASE}/api/admin/items/personality?examType=${currentExamType}`;
+        else if (dim === "derailers") endpoint = `${API_BASE}/api/admin/items/derailers?examType=${currentExamType}`;
+        else if (dim === "cognitive") endpoint = `${API_BASE}/api/admin/items/cognitive?examType=${currentExamType}`;
+        else if (dim === "sjt") endpoint = `${API_BASE}/api/admin/items/sjt?examType=${currentExamType}`;
 
         const res = await fetch(endpoint, { headers: getAuthHeaders() });
         if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
@@ -519,9 +643,17 @@ function updateStats(dim) {
     let summaryLines = [];
 
     if (dim === "personality") {
-        taxCount = taxonomies.competencies.length;
+        const applicableComps = taxonomies.competencies.filter(c => {
+            const isSD = (c.code === "SOCIAL_DESIRABILITY" || (c.nameAr && c.nameAr.includes("التظاهر")));
+            if (currentExamType === "EMPLOYMENT") {
+                return isSD || EMPLOYMENT_COMPETENCIES_LIST.includes(c.nameAr);
+            } else {
+                return isSD || !EMPLOYMENT_COMPETENCIES_LIST.includes(c.nameAr);
+            }
+        });
+        taxCount = applicableComps.length;
         const counts = {};
-        taxonomies.competencies.forEach(c => counts[c.nameAr] = 0);
+        applicableComps.forEach(c => counts[c.nameAr] = 0);
         rawItems.forEach(item => {
             if (item.competencyNamesAr) {
                 item.competencyNamesAr.forEach(name => {
@@ -813,13 +945,11 @@ function openAddModal() {
         document.getElementById("personalityForm").reset();
         document.getElementById("pItemId").value = "";
         
-        // Reset pills to available
-        const availBox = document.getElementById("availableCompetencies");
-        document.querySelectorAll(".p-comp-drag").forEach(pill => {
-            availBox.appendChild(pill);
-            updateCompPillStyle(pill, false);
-        });
-        document.getElementById("personalityModalTitle").innerText = "Add Personality Item (PQ10)";
+        // Refresh pills strictly according to active bank (e.g. omitting Social Desirability for Employment)
+        populateTaxonomyDropdowns();
+
+        const bankName = currentExamType === "EMPLOYMENT" ? "Employment Bank" : "Psychometric Bank";
+        document.getElementById("personalityModalTitle").innerText = `Add Personality Item (PQ10) - ${bankName}`;
         personalityModal?.show();
     } else if (currentDimension === "derailers") {
         document.getElementById("derailerForm").reset();
@@ -887,15 +1017,12 @@ function openEditModal(id) {
         document.getElementById("pItemId").value = item.id;
         document.getElementById("pStatementAr").value = item.statementAr || "";
         document.getElementById("pJustificationAr").value = item.justificationAr || "";
+        
+        // Refresh pills strictly according to active bank (e.g. omitting Social Desirability for Employment)
+        populateTaxonomyDropdowns();
+
         const availBox = document.getElementById("availableCompetencies");
         const selBox = document.getElementById("selectedCompetencies");
-        const allPills = document.querySelectorAll(".p-comp-drag");
-        
-        // Reset all pills to available
-        allPills.forEach(pill => {
-            availBox.appendChild(pill);
-            updateCompPillStyle(pill, false);
-        });
 
         // Select strictly one competency (the first one if legacy data had multiple)
         const primaryCompId = (item.competencyIds && item.competencyIds.length > 0) ? Number(item.competencyIds[0]) : null;
@@ -1194,7 +1321,8 @@ async function handlePersonalitySubmit(e) {
         justificationAr: document.getElementById("pJustificationAr").value,
         competencyIds: [selectedCompetencyIds[0]],
         idealTarget: Number(document.getElementById("pIdealTarget").value),
-        examMode: document.getElementById("pExamMode").value
+        examMode: document.getElementById("pExamMode").value,
+        examType: currentExamType
     };
 
     const isEdit = Boolean(id);
@@ -1206,6 +1334,10 @@ async function handlePersonalitySubmit(e) {
 
 async function handleDerailerSubmit(e) {
     e.preventDefault();
+    if (currentExamType === "EMPLOYMENT") {
+        alert("محاذير السلوك غير مشمولة في اختبار التوظيف (Derailers are excluded from the Employment Test).");
+        return;
+    }
     const id = document.getElementById("dItemId").value;
     const selectedPills = document.querySelectorAll("#selectedDerailers .d-type-drag");
     const selectedTypeIds = Array.from(selectedPills).map(pill => Number(pill.dataset.id));
@@ -1221,7 +1353,8 @@ async function handleDerailerSubmit(e) {
         derailerTypeIds: selectedTypeIds,
         idealTarget: Number(document.getElementById("dIdealTarget").value),
         responseScaleType: "FREQUENCY",
-        examMode: document.getElementById("dExamMode").value
+        examMode: document.getElementById("dExamMode").value,
+        examType: currentExamType
     };
 
     const isEdit = Boolean(id);
@@ -1260,6 +1393,7 @@ async function handleGcatSubmit(e) {
         applicationAr: document.getElementById("gcatApplicationAr").value.trim() || null,
         correctOptionKey: correctOptionKey,
         examMode: document.getElementById("gcatExamMode").value,
+        examType: currentExamType,
         options: options
     };
 
@@ -1295,6 +1429,7 @@ async function handleSjtSubmit(e) {
         commonMistakeAr: document.getElementById("sjtCommonMistakeAr").value.trim() || null,
         coachingNoteAr: document.getElementById("sjtCoachingNoteAr").value.trim() || null,
         examMode: document.getElementById("sjtExamMode").value,
+        examType: currentExamType,
         options: options
     };
 

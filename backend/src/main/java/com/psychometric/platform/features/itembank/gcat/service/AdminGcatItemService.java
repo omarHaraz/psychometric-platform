@@ -37,8 +37,11 @@ public class AdminGcatItemService {
 
     @Transactional
     public GcatQuestionAdminResponse create(GcatQuestionAdminRequest request) {
-        questionRepository.findByItemCode(request.getItemCode()).ifPresent(existing -> {
-            throw new BadRequestException("GCAT Question already exists with itemCode: " + request.getItemCode());
+        String examType = (request.getExamType() != null && !request.getExamType().isBlank())
+                ? request.getExamType().trim().toUpperCase()
+                : "PSYCHOMETRIC";
+        questionRepository.findByItemCodeAndExamType(request.getItemCode(), examType).ifPresent(existing -> {
+            throw new BadRequestException("GCAT Question already exists with itemCode: " + request.getItemCode() + " in " + examType + " bank");
         });
 
         GcatSubtest subtest = subtestRepository.findByCode(request.getSubtestCode())
@@ -59,6 +62,9 @@ public class AdminGcatItemService {
                 request.getExamMode()
         );
         question.setQuestionImagePublicId(request.getQuestionImagePublicId());
+        if (request.getExamType() != null && !request.getExamType().isBlank()) {
+            question.setExamType(request.getExamType());
+        }
 
         if (request.getOptions() != null) {
             int order = 1;
@@ -86,7 +92,18 @@ public class AdminGcatItemService {
 
     @Transactional(readOnly = true)
     public List<GcatQuestionAdminResponse> getAll() {
-        return questionRepository.findAllWithSubtestAndOptions().stream()
+        return getAll(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GcatQuestionAdminResponse> getAll(String examType) {
+        List<GcatQuestion> questions;
+        if (examType != null && !examType.isBlank()) {
+            questions = questionRepository.findAllByExamTypeWithSubtestAndOptions(examType.trim().toUpperCase());
+        } else {
+            questions = questionRepository.findAllWithSubtestAndOptions();
+        }
+        return questions.stream()
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -101,9 +118,13 @@ public class AdminGcatItemService {
     public GcatQuestionAdminResponse update(Long id, GcatQuestionAdminRequest request) {
         GcatQuestion question = findEntity(id);
 
-        questionRepository.findByItemCode(request.getItemCode()).ifPresent(existing -> {
+        String effectiveExamType = (request.getExamType() != null && !request.getExamType().isBlank())
+                ? request.getExamType().trim().toUpperCase()
+                : (question.getExamType() != null ? question.getExamType().toUpperCase() : "PSYCHOMETRIC");
+
+        questionRepository.findByItemCodeAndExamType(request.getItemCode(), effectiveExamType).ifPresent(existing -> {
             if (!existing.getId().equals(id)) {
-                throw new BadRequestException("ItemCode already in use by another question: " + request.getItemCode());
+                throw new BadRequestException("ItemCode already in use by another question in " + effectiveExamType + " bank: " + request.getItemCode());
             }
         });
 
@@ -125,6 +146,9 @@ public class AdminGcatItemService {
         question.setCorrectOptionKey(request.getCorrectOptionKey());
         question.setDifficulty(request.getDifficulty());
         question.setExamMode(request.getExamMode());
+        if (request.getExamType() != null && !request.getExamType().isBlank()) {
+            question.setExamType(request.getExamType());
+        }
 
         if (oldImageUrl != null && !oldImageUrl.equals(request.getQuestionImageUrl())) {
             cloudinaryService.deleteImageByUrl(oldImageUrl);
@@ -254,7 +278,7 @@ public class AdminGcatItemService {
                 ))
                 .toList();
 
-        return new GcatQuestionAdminResponse(
+        GcatQuestionAdminResponse response = new GcatQuestionAdminResponse(
                 q.getId(),
                 q.getItemCode(),
                 q.getSubtest() != null ? q.getSubtest().getCode() : null,
@@ -274,5 +298,7 @@ public class AdminGcatItemService {
                 q.getCreatedAt(),
                 optionDtos
         );
+        response.setExamType(q.getExamType());
+        return response;
     }
 }

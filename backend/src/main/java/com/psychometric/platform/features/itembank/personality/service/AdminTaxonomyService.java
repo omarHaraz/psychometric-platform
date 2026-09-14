@@ -29,7 +29,24 @@ public class AdminTaxonomyService {
 
     @Transactional(readOnly = true)
     public List<CompetencyAdminResponse> getAllCompetencies() {
-        return competencyRepository.findAllByOrderByDisplayOrderAsc().stream()
+        return getAllCompetencies(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CompetencyAdminResponse> getAllCompetencies(String examType) {
+        List<Competency> list;
+        if ("EMPLOYMENT".equalsIgnoreCase(examType)) {
+            list = competencyRepository.findByExamTypeOrderByDisplayOrderAsc("EMPLOYMENT");
+        } else if ("PSYCHOMETRIC".equalsIgnoreCase(examType)) {
+            list = competencyRepository.findByExamTypeOrderByDisplayOrderAsc("PSYCHOMETRIC");
+        } else {
+            list = competencyRepository.findByExamTypeOrderByDisplayOrderAsc("PSYCHOMETRIC");
+            if (list.isEmpty()) {
+                list = competencyRepository.findAllByOrderByDisplayOrderAsc();
+            }
+        }
+
+        return list.stream()
                 .map(c -> new CompetencyAdminResponse(
                         c.getId(),
                         c.getCode(),

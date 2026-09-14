@@ -47,6 +47,9 @@ public class PersonalityItem {
     @Column(name = "justification_ar", columnDefinition = "TEXT")
     private String justificationAr;
 
+    @Column(name = "exam_type", nullable = false, length = 50)
+    private String examType = "PSYCHOMETRIC";
+
     public PersonalityItem() {
     }
 
@@ -139,5 +142,13 @@ public class PersonalityItem {
 
     public void setJustificationAr(String justificationAr) {
         this.justificationAr = justificationAr;
+    }
+
+    public String getExamType() {
+        return examType != null ? examType : "PSYCHOMETRIC";
+    }
+
+    public void setExamType(String examType) {
+        this.examType = (examType != null && !examType.isBlank()) ? examType.toUpperCase() : "PSYCHOMETRIC";
     }
 }

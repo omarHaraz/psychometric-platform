@@ -22,4 +22,8 @@ public interface PersonalityItemRepository extends JpaRepository<PersonalityItem
             @Param("competencyId") Long competencyId,
             @Param("modes") Collection<ExamMode> modes
     );
+
+    List<PersonalityItem> findByExamType(String examType);
+
+    List<PersonalityItem> findByExamTypeAndActiveTrue(String examType);
 }

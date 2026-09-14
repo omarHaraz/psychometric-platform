@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${lang != null ? lang : 'ar'}" th:dir="${dir != null ? dir : 'rtl'}">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>تقرير مقياس الجاهزية المهنية لسوق العمل</title>
+    
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 80px 25px 70px 25px;
+
+            @top-center {
+                content: element(header);
+                vertical-align: top;
+            }
+            @bottom-center {
+                content: element(footer);
+                vertical-align: bottom;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            font-family: 'Cairo', 'Amiri', 'DejaVu Sans', 'Arial', sans-serif;
+            color: #1e293b;
+            direction: rtl;
+            text-align: right;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* Repeating Top Bar */
+        div.header {
+            position: running(header);
+            height: 35px;
+            background-color: #2A3686;
+            color: #ffffff;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        /* Repeating Bottom Bar */
+        div.footer {
+            position: running(footer);
+            height: 45px;
+            border-top: 2px solid #2A3686;
+            background-color: #ffffff;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .pdf-page-wrapper {
+            width: 100%;
+            position: relative;
+            box-sizing: border-box;
+            padding-bottom: 20px;
+        }
+
+        .section-box {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            color: #2A3686;
+            font-size: 15px;
+            font-weight: 800;
+            margin: 0 0 12px 0;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #edf2f7;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Score Table */
+        table.score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        table.score-table th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 9px 10px;
+            border: 1px solid #cbd5e1;
+            text-align: center;
+        }
+
+        table.score-table td {
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            font-size: 11px;
+            vertical-align: middle;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .status-advanced {
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+        }
+
+        .status-intermediate {
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .status-needs-dev {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+
+        /* Competency grid */
+        .comp-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 10px;
+            background-color: #f8fafc;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-bg {
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .plan-step-box {
+            background-color: #f8fafc;
+            border-right: 4px solid #2A3686;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+            border-radius: 0 6px 6px 0;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+        }
+
+        .plan-step-badge {
+            background-color: #2A3686;
+            color: #ffffff;
+            font-size: 9px;
+            font-weight: bold;
+            padding: 2px 7px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Repeating Header -->
+    <div class="header">
+        <table style="width: 100%; border-collapse: collapse; border: none; height: 35px; direction: ltr;">
+            <tr>
+                <td style="text-align: left; vertical-align: middle; color: #ffffff; font-size: 11px; font-weight: bold; border: none; padding: 0;">
+                    <span th:text="${referenceNumber}">REF-XXXX</span>
+                </td>
+                <td style="text-align: right; vertical-align: middle; color: #ffffff; font-size: 11px; font-weight: bold; border: none; padding: 0;">تقرير مقياس الجاهزية المهنية لسوق العمل</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Repeating Footer -->
+    <div class="footer">
+        <table style="width: 100%; border-collapse: collapse; border: none; height: 45px; direction: ltr;">
+            <tr>
+                <td style="text-align: left; vertical-align: middle; color: #64748b; font-size: 10px; border: none; padding: 0; direction: ltr;">
+                    All Rights Reserved - Arab Experts Institute | <span th:text="${reportDate}">01/01/2026</span>
+                </td>
+                <td style="text-align: right; vertical-align: middle; border: none; padding: 0;">
+                    <img th:src="${companyLogoBase64 != null ? companyLogoBase64 : 'classpath:/static/assets/images/logo.png'}" style="height: 26px; vertical-align: middle;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Main Report Body -->
+    <div class="pdf-page-wrapper">
+
+        <!-- Candidate Metadata Strip -->
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 20px; margin-bottom: 22px;">
+            <table style="width: 100%; border-collapse: collapse; border: none; font-size: 11px;">
+                <tr>
+                    <td style="width: 25%; border: none; padding: 4px;">
+                        <span style="color: #64748b; font-weight: 600; font-size: 11px;">اسم المتقدم:</span>
+                        <strong style="color: #0f172a; display: block; font-size: 13px; margin-top: 3px;" th:text="${candidateName}">مرشح التوظيف</strong>
+                    </td>
+                    <td style="width: 25%; border: none; padding: 4px;">
+                        <span style="color: #64748b; font-weight: 600; font-size: 11px;">تاريخ التقييم:</span>
+                        <strong style="color: #0f172a; display: block; font-size: 13px; margin-top: 3px;" th:text="${reportDate}">01/01/2026</strong>
+                    </td>
+                    <td style="width: 25%; border: none; padding: 4px;">
+                        <span style="color: #64748b; font-weight: 600; font-size: 11px;">الرقم المرجعي:</span>
+                        <strong style="color: #0f172a; display: block; font-size: 13px; margin-top: 3px;" th:text="${referenceNumber}">REF-EMP-001</strong>
+                    </td>
+                    <td style="width: 25%; border: none; padding: 4px;">
+                        <span style="color: #64748b; font-weight: 600; font-size: 11px;">مستوى الجاهزية العام:</span>
+                        <span style="font-size: 14px; font-weight: 800; display: block; margin-top: 2px;"
+                              th:styleappend="${caseNumber == 1 ? 'color: #059669;' : (caseNumber == 2 ? 'color: #2563eb;' : (caseNumber == 3 ? 'color: #d97706;' : 'color: #dc2626;'))}"
+                              th:text="${readinessBandLabelAr}">ممتاز</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 3. Overall Readiness Hero Status -->
+        <div style="border-radius: 8px; padding: 18px 24px; margin-bottom: 22px; border: 1px solid;"
+             th:styleappend="${caseNumber == 1 ? 'background-color: #f0fdf4; border-color: #bbf7d0;' : (caseNumber == 2 ? 'background-color: #eff6ff; border-color: #bfdbfe;' : (caseNumber == 3 ? 'background-color: #fffbeb; border-color: #fde68a;' : 'background-color: #fef2f2; border-color: #fecaca;'))}">
+            <table style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed;">
+                <tr>
+                    <td style="width: 74%; border: none; padding: 0; padding-right: 30px; vertical-align: middle;">
+                        <span style="font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;"
+                              th:styleappend="${caseNumber == 1 ? 'color: #15803d;' : (caseNumber == 2 ? 'color: #1d4ed8;' : (caseNumber == 3 ? 'color: #b45309;' : 'color: #b91c1c;'))}"
+                              th:text="${'مستوى الجاهزية: ' + readinessBandLabelAr}">مستوى الجاهزية: ممتاز</span>
+                        <h2 style="margin: 3px 0 2px 0; font-size: 16px; font-weight: 800; line-height: 1.35;"
+                            th:styleappend="${caseNumber == 1 ? 'color: #166534;' : (caseNumber == 2 ? 'color: #1e40af;' : (caseNumber == 3 ? 'color: #92400e;' : 'color: #991b1b;'))}"
+                            th:text="${diagnosticCaseTitle}">تكامل الأداء والجدارة الاستثنائية</h2>
+                        <p style="margin: 3px 0 0 0; font-size: 11px; color: #475569; line-height: 1.45;" th:text="${diagnosticCaseSubtitle}">تفوق متوازن واستثنائي في السمات الشخصية وتقدير المواقف والقدرات المعرفية</p>
+                    </td>
+                    <td style="width: 26%; text-align: center; vertical-align: middle; border: none; padding: 0; padding-left: 10px;">
+                        <div style="display: inline-block; min-width: 95px; padding: 10px 18px; border-radius: 24px; font-weight: bold; font-size: 16px; text-align: center; white-space: nowrap;"
+                             th:styleappend="${caseNumber == 1 ? 'background-color: #22c55e; color: #ffffff;' : (caseNumber == 2 ? 'background-color: #3b82f6; color: #ffffff;' : (caseNumber == 3 ? 'background-color: #f59e0b; color: #ffffff;' : 'background-color: #ef4444; color: #ffffff;'))}"
+                             th:text="${compositeScore + '%'}">
+                            88.5%
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Validity Penalty Alert if applicable -->
+        <div th:if="${cappedPenaltyPct != null and cappedPenaltyPct > 0}" style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; font-size: 11px; color: #92400e;">
+            <strong>⚠️ تنبيه صدق الاستجابة:</strong>
+            تم تطبيق خصم على المعدل المركب بمقدار (<span th:text="'-' + ${cappedPenaltyPct} + '%'">-5%</span>) نظراً لتجاوز مؤشرات الصدق الحدود المعتمدة (المعدل الخام: <span th:text="${rawCompositeScore + '%'}">85%</span>، المعدل النهائي بعد الخصم: <strong th:text="${compositeScore + '%'}">80%</strong>).
+        </div>
+
+        <!-- 4. Performance Results Table (لوحة نتائج الأداء الموزعة) -->
+        <div class="section-box" style="padding: 18px 20px; margin-bottom: 22px;">
+            <div class="section-title" style="font-size: 15px; margin-bottom: 14px; padding-bottom: 8px;">📊 لوحة نتائج الأداء الموزعة للاختبار</div>
+            
+            <table class="score-table">
+                <thead>
+                    <tr>
+                        <th style="text-align: right; width: 45%; padding: 12px 10px; font-size: 11.5px;">جزء الاختبار الرئيسي</th>
+                        <th style="width: 15%; padding: 12px 10px; font-size: 11.5px;">الوزن النسبي</th>
+                        <th style="width: 18%; padding: 12px 10px; font-size: 11.5px;">الدرجة المتحققة</th>
+                        <th style="width: 22%; padding: 12px 10px; font-size: 11.5px;">حالة المحور مقارنة بالمعيار</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Row 1: Personality -->
+                    <tr>
+                        <td style="text-align: right; padding: 12px 10px;">
+                            <strong style="color: #1e293b; font-size: 12px;">1- اختبار السمات الشخصية وسلوكيات العمل (PQ10)</strong>
+                            <div style="font-size: 10.5px; color: #64748b; margin-top: 3px;">40 سؤالاً • مقياس ليكرت خماسي • 12 كفاءة مهنية</div>
+                        </td>
+                        <td style="text-align: center; font-weight: 700; color: #2A3686; font-size: 12px;">30%</td>
+                        <td style="text-align: center; font-weight: 800; font-size: 13px;" th:text="${personalityScorePct + '%'}">82.0%</td>
+                        <td style="text-align: center; padding: 12px 10px;">
+                            <span class="badge-status"
+                                  th:classappend="${personalityStatus == 'متقدم' ? 'status-advanced' : (personalityStatus == 'متوسط' ? 'status-intermediate' : 'status-needs-dev')}"
+                                  th:text="${personalityStatus}">متقدم</span>
+                        </td>
+                    </tr>
+
+                    <!-- Row 2: SJT -->
+                    <tr>
+                        <td style="text-align: right; padding: 12px 10px;">
+                            <strong style="color: #1e293b; font-size: 12px;">2- اختبار المواقف المهنية والجدارات (SJT)</strong>
+                            <div style="font-size: 10.5px; color: #64748b; margin-top: 3px;">10 سيناريوهات واقعية • ترتيب 4 خيارات حسب الفعالية</div>
+                        </td>
+                        <td style="text-align: center; font-weight: 700; color: #2A3686; font-size: 12px;">30%</td>
+                        <td style="text-align: center; font-weight: 800; font-size: 13px;" th:text="${sjtScorePct + '%'}">85.0%</td>
+                        <td style="text-align: center; padding: 12px 10px;">
+                            <span class="badge-status"
+                                  th:classappend="${sjtStatus == 'متقدم' ? 'status-advanced' : (sjtStatus == 'متوسط' ? 'status-intermediate' : 'status-needs-dev')}"
+                                  th:text="${sjtStatus}">متقدم</span>
+                        </td>
+                    </tr>
+
+                    <!-- Row 3: GCAT Cognitive -->
+                    <tr>
+                        <td style="text-align: right; padding: 12px 10px;">
+                            <strong style="color: #1e293b; font-size: 12px;">3- اختبار القدرات الإدراكية المعرفية (GCAT)</strong>
+                            <div style="font-size: 10.5px; color: #475569; margin-top: 4px; line-height: 1.5;">
+                                • الاستدلال اللفظي (وزن 30%): <strong th:text="${verbalScorePct + '%'}">80%</strong> (<span th:text="${verbalStatus}">متقدم</span>)<br/>
+                                • الاستدلال العددي (وزن 30%): <strong th:text="${numericalScorePct + '%'}">75%</strong> (<span th:text="${numericalStatus}">متقدم</span>)<br/>
+                                • الاستدلال المنطقي والتجريدي (وزن 40%): <strong th:text="${abstractScorePct + '%'}">90%</strong> (<span th:text="${abstractStatus}">متقدم</span>)
+                            </div>
+                        </td>
+                        <td style="text-align: center; font-weight: 700; color: #2A3686; font-size: 12px;">40%</td>
+                        <td style="text-align: center; font-weight: 800; font-size: 13px;" th:text="${cognitiveScorePct + '%'}">82.5%</td>
+                        <td style="text-align: center; padding: 12px 10px;">
+                            <span class="badge-status"
+                                  th:classappend="${cognitiveStatus == 'متقدم' ? 'status-advanced' : (cognitiveStatus == 'متوسط' ? 'status-intermediate' : 'status-needs-dev')}"
+                                  th:text="${cognitiveStatus}">متقدم</span>
+                        </td>
+                    </tr>
+
+                    <!-- Total Row -->
+                    <tr style="background-color: #f8fafc; font-weight: bold; border-top: 2px solid #2A3686;">
+                        <td style="text-align: right; color: #2A3686; font-size: 12.5px; padding: 12px 10px;">المعدل الإجمالي الموزون</td>
+                        <td style="text-align: center; color: #2A3686; font-size: 12.5px;">100%</td>
+                        <td style="text-align: center; color: #2A3686; font-size: 14px;" th:text="${compositeScore + '%'}">83.1%</td>
+                        <td style="text-align: center; padding: 12px 10px;">
+                            <span style="font-weight: 800; font-size: 11.5px; color: #2A3686;" th:text="${'التقدير: ' + readinessBandLabelAr}">التقدير: ممتاز</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Response Validity Panel -->
+        <div class="section-box" style="padding: 18px 20px; margin-bottom: 0px;">
+            <div class="section-title" style="font-size: 14.5px; margin-bottom: 12px; padding-bottom: 8px;">🛡️ مؤشرات صدق وموثوقية الاستجابة (Response Validity)</div>
+            <table style="width: 100%; border-collapse: collapse; border: none; font-size: 11px; table-layout: fixed;">
+                <tr>
+                    <td style="width: 50%; padding: 4px; border: none; vertical-align: top;">
+                        <div style="padding: 12px 14px; border-radius: 6px; border: 1px solid;"
+                             th:styleappend="${elevatedImpressionManagement ? 'background-color: #fffbeb; border-color: #fde68a;' : 'background-color: #f0fdf4; border-color: #bbf7d0;'}">
+                            <table style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed;">
+                                <tr>
+                                    <td style="width: 72%; border: none; padding: 0; padding-right: 22px; vertical-align: middle;">
+                                        <div style="font-weight: 800; font-size: 11px; line-height: 1.35;"
+                                             th:styleappend="${elevatedImpressionManagement ? 'color: #92400e;' : 'color: #166534;'}">
+                                            مقياس التظاهر الاجتماعي
+                                            <span style="font-size: 9.5px; font-weight: 600; color: #64748b; display: block; margin-top: 2px;">(Social Desirability)</span>
+                                        </div>
+                                        <div style="font-size: 10px; color: #64748b; margin-top: 4px; line-height: 1.35;"
+                                              th:text="${elevatedImpressionManagement ? 'ميل مرتفع لإظهار صورة مثالية مبالغ فيها' : 'استجابات واقعية وصادقة وتلقائية'}">
+                                            استجابات واقعية وصادقة
+                                        </div>
+                                    </td>
+                                    <td style="width: 28%; text-align: center; border: none; padding: 0; padding-left: 8px; vertical-align: middle;">
+                                        <span style="font-weight: bold; font-size: 11.5px; padding: 5px 12px; border-radius: 12px; display: inline-block; white-space: nowrap;"
+                                              th:styleappend="${elevatedImpressionManagement ? 'background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a;' : 'background-color: #dcfce7; color: #166534; border: 1px solid #86efac;'}"
+                                              th:text="${socialDesirabilityRiskPct + '%'}">
+                                            15%
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                    <td style="width: 50%; padding: 4px; border: none; vertical-align: top;">
+                        <div style="padding: 12px 14px; border-radius: 6px; border: 1px solid;"
+                             th:styleappend="${elevatedCentralTendency ? 'background-color: #fffbeb; border-color: #fde68a;' : 'background-color: #f0fdf4; border-color: #bbf7d0;'}">
+                            <table style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed;">
+                                <tr>
+                                    <td style="width: 72%; border: none; padding: 0; padding-right: 22px; vertical-align: middle;">
+                                        <div style="font-weight: 800; font-size: 11px; line-height: 1.35;"
+                                             th:styleappend="${elevatedCentralTendency ? 'color: #92400e;' : 'color: #166534;'}">
+                                            مؤشر الوسطية
+                                            <span style="font-size: 9.5px; font-weight: 600; color: #64748b; display: block; margin-top: 2px;">(Central Tendency)</span>
+                                        </div>
+                                        <div style="font-size: 10px; color: #64748b; margin-top: 4px; line-height: 1.35;"
+                                              th:text="${elevatedCentralTendency ? 'نزعة زائدة وتردد نحو الخيار المحايد' : 'استجابات متوازنة وتمايز واضح عبر المقياس'}">
+                                            استجابات متوازنة وتمايز واضح
+                                        </div>
+                                    </td>
+                                    <td style="width: 28%; text-align: center; border: none; padding: 0; padding-left: 8px; vertical-align: middle;">
+                                        <span style="font-weight: bold; font-size: 11.5px; padding: 5px 12px; border-radius: 12px; display: inline-block; white-space: nowrap;"
+                                              th:styleappend="${elevatedCentralTendency ? 'background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a;' : 'background-color: #dcfce7; color: #166534; border: 1px solid #86efac;'}"
+                                              th:text="${centralTendencyRatePct + '%'}">
+                                            25%
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 5. Diagnostic Analytical Narrative (التقرير التشخيصي المرتبط بأجزاء الاختبار) -->
+        <div class="section-box" style="page-break-before: always; padding: 18px 20px; margin-bottom: 18px;">
+            <div class="section-title" style="font-size: 14.5px; margin-bottom: 12px; padding-bottom: 8px;">📝 التقرير التشخيصي المرتبط بأجزاء الاختبار</div>
+            <div th:each="dp : ${diagnosticPoints}" style="margin-bottom: 10px; padding: 10px 14px; background-color: #f8fafc; border-radius: 6px; border: 1px solid #edf2f7;">
+                <strong style="color: #2A3686; display: block; font-size: 11.5px; margin-bottom: 3px;" th:text="${dp.category}">المحور</strong>
+                <p style="margin: 0; font-size: 10.5px; color: #334155; line-height: 1.55;" th:text="${dp.narrative}">النص التحليلي</p>
+            </div>
+        </div>
+
+        <!-- 6. Targeted Action & Empowerment Plan (خطة التطوير والتمكين الموجهة) -->
+        <div class="section-box" style="padding: 18px 20px; margin-bottom: 0;">
+            <div class="section-title" style="font-size: 14.5px; margin-bottom: 12px; padding-bottom: 8px;">🎯 <span th:text="${actionPlanTitle}">خطة الاستثمار المهني والانطلاق</span></div>
+            <div th:each="step : ${actionPlanItems}" class="plan-step-box" style="padding: 12px 16px; margin-bottom: 10px;">
+                <table style="width: 100%; border-collapse: collapse; border: none;">
+                    <tr>
+                        <td style="border: none; padding: 0;">
+                            <span class="plan-step-badge" th:text="${step.badge}">المسار</span>
+                            <h4 style="margin: 3px 0 3px 0; font-size: 12px; font-weight: 700; color: #1e293b;" th:text="${step.title}">عنوان الإجراء</h4>
+                            <p style="margin: 0; font-size: 10.5px; color: #475569; line-height: 1.5;" th:text="${step.description}">تفاصيل الخطة</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

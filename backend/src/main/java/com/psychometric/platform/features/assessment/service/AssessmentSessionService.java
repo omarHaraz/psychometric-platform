@@ -70,6 +70,12 @@ public class AssessmentSessionService {
 
     @Transactional
     public AssessmentAttempt assignAttempt(Long candidateId, String adminEmail) {
+        return assignAttempt(candidateId, "PSYCHOMETRIC", adminEmail);
+    }
+
+    @Transactional
+    public AssessmentAttempt assignAttempt(Long candidateId, String examType, String adminEmail) {
+        String finalExamType = (examType != null && !examType.isBlank()) ? examType.trim().toUpperCase() : "PSYCHOMETRIC";
         User candidate = userRepo.findById(candidateId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Candidate not found"));
         User admin = getUserByEmail(adminEmail);
@@ -78,9 +84,10 @@ public class AssessmentSessionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Candidate account is disabled");
         }
 
-        if (attemptRepo.existsByCandidateIdAndStateIn((long) candidate.getId(), 
+        if (attemptRepo.existsByCandidateIdAndExamTypeAndStateIn((long) candidate.getId(), finalExamType,
                 java.util.List.of(com.psychometric.platform.features.assessment.domain.enums.AttemptState.INIT, com.psychometric.platform.features.assessment.domain.enums.AttemptState.IN_PROGRESS))) {
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT, "Candidate already has an active attempt");
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT, 
+                    "Candidate already has an active " + finalExamType + " attempt");
         }
 
         AssessmentAttempt attempt = new AssessmentAttempt();
@@ -90,15 +97,23 @@ public class AssessmentSessionService {
         attempt.setState(AttemptState.INIT);
         attempt.setCurrentBatteryIndex(0);
         attempt.setCreatedAt(Instant.now());
+        attempt.setExamType(finalExamType);
 
         attempt = attemptRepo.save(attempt);
 
-        // Create the 4 batteries sequentially
-        // 0: PQ10 (40 mins), 1: SJT (45 mins), 2: DERAILERS (20 mins), 3: GCAT (20 mins)
-        createBattery(attempt, 0, BatteryType.PQ10, 2400);
-        createBattery(attempt, 1, BatteryType.SJT, 2700);
-        createBattery(attempt, 2, BatteryType.DERAILERS, 1200);
-        createBattery(attempt, 3, BatteryType.GCAT, 1200);
+        // Sequential battery creation:
+        // PSYCHOMETRIC has 4 batteries: PQ10 (40m = 2400s), SJT (45m = 2700s), DERAILERS (20m = 1200s), GCAT (20m = 1200s)
+        // EMPLOYMENT has 3 batteries: PQ10 (20m = 1200s), SJT (30m = 1800s), GCAT (15m = 900s) - Derailers excluded
+        if ("EMPLOYMENT".equalsIgnoreCase(finalExamType)) {
+            createBattery(attempt, 0, BatteryType.PQ10, 1200); // 20 min
+            createBattery(attempt, 1, BatteryType.SJT, 1800);  // 30 min
+            createBattery(attempt, 2, BatteryType.GCAT, 900);   // 15 min
+        } else {
+            createBattery(attempt, 0, BatteryType.PQ10, 2400);
+            createBattery(attempt, 1, BatteryType.SJT, 2700);
+            createBattery(attempt, 2, BatteryType.DERAILERS, 1200);
+            createBattery(attempt, 3, BatteryType.GCAT, 1200);
+        }
 
         return attemptRepo.save(attempt);
     }
@@ -156,7 +171,7 @@ public class AssessmentSessionService {
         firstSession.setStartTime(Instant.now());
 
         // Perform stratified item sampling for battery 0 (PQ10)
-        List<Long> sampledIds = samplingService.sampleItemsForBattery(firstSession.getBatteryType());
+        List<Long> sampledIds = samplingService.sampleItemsForBattery(firstSession.getBatteryType(), attempt.getExamType());
         firstSession.setSampledItemIds(sampledIds);
 
         // Set Redis Timer with 2-hour TTL
@@ -243,8 +258,9 @@ public class AssessmentSessionService {
 
         AssessmentAttempt attempt = session.getAttempt();
         int currentIndex = attempt.getCurrentBatteryIndex();
+        int totalBatteries = attempt.getBatterySessions().size();
         
-        if (currentIndex < 3) {
+        if (currentIndex < totalBatteries - 1) {
             // Unlock next battery
             attempt.setCurrentBatteryIndex(currentIndex + 1);
             BatterySession nextSession = attempt.getBatterySessions().stream()
@@ -255,7 +271,7 @@ public class AssessmentSessionService {
             nextSession.setState(SessionState.LOCKED);
 
             // Perform stratified item sampling for the newly unlocked battery
-            List<Long> sampledIds = samplingService.sampleItemsForBattery(nextSession.getBatteryType());
+            List<Long> sampledIds = samplingService.sampleItemsForBattery(nextSession.getBatteryType(), attempt.getExamType());
             nextSession.setSampledItemIds(sampledIds);
         } else {
             // All done
@@ -375,7 +391,8 @@ public class AssessmentSessionService {
 
         List<Long> sampledIds = session.getSampledItemIds();
         if (sampledIds == null || sampledIds.isEmpty()) {
-            sampledIds = samplingService.sampleItemsForBattery(session.getBatteryType());
+            String examType = session.getAttempt() != null ? session.getAttempt().getExamType() : "PSYCHOMETRIC";
+            sampledIds = samplingService.sampleItemsForBattery(session.getBatteryType(), examType);
             session.setSampledItemIds(sampledIds);
             sessionRepo.save(session);
         }

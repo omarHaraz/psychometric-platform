@@ -49,6 +49,9 @@ public class DerailerItem {
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
 
+    @Column(name = "exam_type", nullable = false, length = 50)
+    private String examType = "PSYCHOMETRIC";
+
     public DerailerItem() {
     }
 
@@ -141,5 +144,13 @@ public class DerailerItem {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getExamType() {
+        return examType != null ? examType : "PSYCHOMETRIC";
+    }
+
+    public void setExamType(String examType) {
+        this.examType = (examType != null && !examType.isBlank()) ? examType.toUpperCase() : "PSYCHOMETRIC";
     }
 }

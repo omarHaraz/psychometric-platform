@@ -231,6 +231,65 @@
 
   </div>
 
+  <!-- Assign Assessment Modal -->
+  <div class="modal fade" id="assignAssessmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-gradient-dark text-white">
+          <h5 class="modal-title text-white d-flex align-items-center">
+            <i class="material-symbols-rounded text-sm me-2">assignment_add</i>
+            <span>Assign Assessment to Candidate</span>
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-sm text-secondary mb-3">
+            Candidate: <strong id="assignCandidateName" class="text-dark"></strong>
+          </p>
+          <input type="hidden" id="assignCandidateId">
+          
+          <label class="form-label text-xs font-weight-bold text-dark text-uppercase tracking-wider mb-2">
+            Select Exam Type (اختر نوع الاختبار المراد تعيينه):
+          </label>
+          <div class="d-flex flex-column gap-2 mb-3">
+            <label class="card border p-3 cursor-pointer exam-assign-card active mb-0" id="cardPsychometric" style="border-width: 2px !important; border-color: #344767 !important; background-color: #f8f9fa;">
+              <div class="d-flex align-items-center justify-content-between">
+                <div>
+                  <h6 class="mb-1 font-weight-bold text-dark d-flex align-items-center">
+                    <i class="material-symbols-rounded text-info text-sm me-2">psychology</i>
+                    التقييم السيكومتري القيادي (Psychometric Assessment)
+                  </h6>
+                  <small class="text-xxs text-secondary">4 Batteries (PQ10, SJT, Derailers, GCAT) - Leadership Track</small>
+                </div>
+                <input class="form-check-input ms-2" type="radio" name="assignExamRadio" id="radioPsychometric" value="PSYCHOMETRIC" checked>
+              </div>
+            </label>
+
+            <label class="card border p-3 cursor-pointer exam-assign-card mb-0" id="cardEmployment" style="border-width: 2px !important; border-color: #e9ecef;">
+              <div class="d-flex align-items-center justify-content-between">
+                <div>
+                  <h6 class="mb-1 font-weight-bold text-dark d-flex align-items-center">
+                    <i class="material-symbols-rounded text-success text-sm me-2">work</i>
+                    اختبار التوظيف (Employment Assessment)
+                  </h6>
+                  <small class="text-xxs text-secondary">3 Batteries (PQ10, SJT, GCAT) - Hiring Track (No Derailers)</small>
+                </div>
+                <input class="form-check-input ms-2" type="radio" name="assignExamRadio" id="radioEmployment" value="EMPLOYMENT">
+              </div>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-outline-secondary btn-sm mb-0" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn bg-gradient-primary btn-sm shadow-sm mb-0" id="confirmAssignExamBtn">
+            <i class="material-symbols-rounded text-xs me-1">check_circle</i>
+            Assign Assessment
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Score Breakdown Modal -->
   <div class="modal fade" id="adminScoreModal" tabindex="-1" aria-labelledby="adminScoreModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">

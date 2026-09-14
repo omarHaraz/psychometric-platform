@@ -28,8 +28,10 @@ public class AdminCompetencyController {
 
     @GetMapping
     @Operation(summary = "Get all competencies with item counts")
-    public ResponseEntity<List<CompetencyAdminResponse>> getAllCompetencies() {
-        return ResponseEntity.ok(taxonomyService.getAllCompetencies());
+    public ResponseEntity<List<CompetencyAdminResponse>> getAllCompetencies(
+            @RequestParam(value = "examType", required = false) String examType
+    ) {
+        return ResponseEntity.ok(taxonomyService.getAllCompetencies(examType));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

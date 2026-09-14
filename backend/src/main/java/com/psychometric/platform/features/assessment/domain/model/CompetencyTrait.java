@@ -22,6 +22,9 @@ public class CompetencyTrait {
     @Column(name = "display_order", nullable = false)
     private Integer displayOrder = 1;
 
+    @Column(name = "exam_type", nullable = false, length = 50)
+    private String examType = "PSYCHOMETRIC";
+
     public CompetencyTrait() {
     }
 
@@ -30,6 +33,15 @@ public class CompetencyTrait {
         this.nameAr = nameAr;
         this.definitionAr = definitionAr;
         this.displayOrder = displayOrder;
+        this.examType = "PSYCHOMETRIC";
+    }
+
+    public CompetencyTrait(String code, String nameAr, String definitionAr, Integer displayOrder, String examType) {
+        this.code = code;
+        this.nameAr = nameAr;
+        this.definitionAr = definitionAr;
+        this.displayOrder = displayOrder;
+        this.examType = examType != null ? examType : "PSYCHOMETRIC";
     }
 
     public Long getId() {
@@ -70,5 +82,13 @@ public class CompetencyTrait {
 
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
+    }
+
+    public String getExamType() {
+        return examType;
+    }
+
+    public void setExamType(String examType) {
+        this.examType = examType;
     }
 }

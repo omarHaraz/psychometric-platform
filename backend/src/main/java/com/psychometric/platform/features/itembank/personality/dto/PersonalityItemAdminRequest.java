@@ -24,6 +24,7 @@ public class PersonalityItemAdminRequest {
     private ExamMode examMode = ExamMode.BOTH;
 
     private String justificationAr;
+    private String examType = "PSYCHOMETRIC";
 
     public PersonalityItemAdminRequest() {
     }
@@ -74,5 +75,13 @@ public class PersonalityItemAdminRequest {
 
     public void setJustificationAr(String justificationAr) {
         this.justificationAr = justificationAr;
+    }
+
+    public String getExamType() {
+        return examType != null ? examType : "PSYCHOMETRIC";
+    }
+
+    public void setExamType(String examType) {
+        this.examType = (examType != null && !examType.isBlank()) ? examType.toUpperCase() : "PSYCHOMETRIC";
     }
 }

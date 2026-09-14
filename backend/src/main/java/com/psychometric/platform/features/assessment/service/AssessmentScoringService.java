@@ -155,11 +155,19 @@ public class AssessmentScoringService {
         boolean elevatedCentralTendency = (centralTendencyPct >= centralTendencyCutoffPct);
 
         // 6. Raw Composite Score Calculation
-        // Raw Composite = 0.28*PQ10% + 0.22*SJT% + 0.20*Derailers% + 0.30*GCAT%
-        double rawComposite = (0.28 * pq10Result.overallPct)
-                            + (0.22 * sjtScorePct)
-                            + (0.20 * derailerResult.overallPct)
-                            + (0.30 * gcatResult.overallPct);
+        double rawComposite;
+        if ("EMPLOYMENT".equalsIgnoreCase(attempt.getExamType())) {
+            // Employment exam: 3 batteries (PQ10: 30%, SJT: 30%, GCAT: 40%) - Derailers omitted
+            rawComposite = (0.30 * pq10Result.overallPct)
+                         + (0.30 * sjtScorePct)
+                         + (0.40 * gcatResult.overallPct);
+        } else {
+            // Raw Composite = 0.28*PQ10% + 0.22*SJT% + 0.20*Derailers% + 0.30*GCAT%
+            rawComposite = (0.28 * pq10Result.overallPct)
+                         + (0.22 * sjtScorePct)
+                         + (0.20 * derailerResult.overallPct)
+                         + (0.30 * gcatResult.overallPct);
+        }
 
         // 7. Validity Penalty Calculation
         // ValidityPenaltyPct = max(0, SDRiskPct - 60) * 0.15 + max(0, CentralTendencyRatePct - 45) * 0.15
@@ -178,7 +186,7 @@ public class AssessmentScoringService {
         int percentile = calculateLogisticPercentile(adjustedComposite);
 
         // Promotion Readiness Band
-        ReadinessBand band = ReadinessBand.fromCompositeScore(adjustedComposite);
+        ReadinessBand band = ReadinessBand.fromCompositeScore(adjustedComposite, attempt.getExamType());
 
         // Persist AssessmentScore
         AssessmentScore score = assessmentScoreRepo.findByAttemptId(attempt.getId())
@@ -186,7 +194,7 @@ public class AssessmentScoringService {
         score.setAttempt(attempt);
         score.setPersonalityScorePct(round2(pq10Result.overallPct));
         score.setSjtScorePct(round2(sjtScorePct));
-        score.setDerailersEffectiveScorePct(round2(derailerResult.overallPct));
+        score.setDerailersEffectiveScorePct("EMPLOYMENT".equalsIgnoreCase(attempt.getExamType()) ? 0.0 : round2(derailerResult.overallPct));
         score.setCognitiveScorePct(round2(gcatResult.overallPct));
         score.setRawCompositeScore(round2(rawComposite));
         score.setValidityPenaltyPct(round2(validityPenalty));
@@ -207,11 +215,13 @@ public class AssessmentScoringService {
             score.getTraitScores().add(ts);
         }
 
-        // Attach Derailer Category Scores
+        // Attach Derailer Category Scores (omitted for EMPLOYMENT)
         score.getDerailerCategoryScores().clear();
-        for (DerailerCategoryScore dcs : derailerResult.categoryScores) {
-            dcs.setAssessmentScore(score);
-            score.getDerailerCategoryScores().add(dcs);
+        if (!"EMPLOYMENT".equalsIgnoreCase(attempt.getExamType())) {
+            for (DerailerCategoryScore dcs : derailerResult.categoryScores) {
+                dcs.setAssessmentScore(score);
+                score.getDerailerCategoryScores().add(dcs);
+            }
         }
 
         // Attach GCAT Subtest Scores
@@ -257,29 +267,59 @@ public class AssessmentScoringService {
             }
         }
 
-        List<CompetencyTrait> allTraits = traitRepo.findAllByOrderByDisplayOrderAsc();
+        boolean isEmployment = (session.getAttempt() != null && "EMPLOYMENT".equalsIgnoreCase(session.getAttempt().getExamType()));
 
-        // Identify social desirability item IDs
-        Set<Long> sdItemIds = new HashSet<>(jdbcTemplate.queryForList(
-                "SELECT DISTINCT pic.item_id FROM personality_item_competencies pic " +
-                "JOIN competencies c ON pic.competency_id = c.id " +
-                "WHERE c.code = 'SOCIAL_DESIRABILITY'",
-                Long.class
-        ));
+        List<CompetencyTrait> allTraits;
+        if (isEmployment) {
+            allTraits = traitRepo.findByExamTypeOrderByDisplayOrderAsc("EMPLOYMENT");
+        } else {
+            allTraits = traitRepo.findByExamTypeOrderByDisplayOrderAsc("PSYCHOMETRIC");
+            if (allTraits.isEmpty()) {
+                allTraits = traitRepo.findAllByOrderByDisplayOrderAsc();
+            }
+        }
+
+        // Identify social desirability item IDs for the respective exam type
+        Set<Long> sdItemIds;
+        if (isEmployment) {
+            sdItemIds = new HashSet<>(jdbcTemplate.queryForList(
+                    "SELECT DISTINCT pic.item_id FROM personality_item_competencies pic " +
+                    "JOIN competencies c ON pic.competency_id = c.id " +
+                    "WHERE c.code = 'SOCIAL_DESIRABILITY' AND c.exam_type = 'EMPLOYMENT'",
+                    Long.class
+            ));
+        } else {
+            sdItemIds = new HashSet<>(jdbcTemplate.queryForList(
+                    "SELECT DISTINCT pic.item_id FROM personality_item_competencies pic " +
+                    "JOIN competencies c ON pic.competency_id = c.id " +
+                    "WHERE c.code = 'SOCIAL_DESIRABILITY' AND (c.exam_type = 'PSYCHOMETRIC' OR c.exam_type IS NULL)",
+                    Long.class
+            ));
+        }
         result.sdItemIds = sdItemIds;
 
-        // Query all items and their target answers and all their mapped competencies
+        // Query all items and their target answers and all their mapped competencies (resolving to competency_traits.id)
         Map<Long, Integer> targetMap = new HashMap<>();
         Map<Long, Set<Long>> itemToTraitsMap = new HashMap<>();
 
         jdbcTemplate.query(
-                "SELECT pi.id, pi.ideal_target, pic.competency_id " +
+                "SELECT pi.id, pi.ideal_target, ct.id AS trait_id, pic.competency_id " +
                 "FROM personality_items pi " +
-                "JOIN personality_item_competencies pic ON pi.id = pic.item_id",
+                "JOIN personality_item_competencies pic ON pi.id = pic.item_id " +
+                "JOIN competencies c ON pic.competency_id = c.id " +
+                "LEFT JOIN competency_traits ct ON c.code = ct.code AND (c.exam_type = ct.exam_type OR (c.exam_type IS NULL AND ct.exam_type = 'PSYCHOMETRIC'))",
                 rs -> {
                     long itemId = rs.getLong("id");
                     int target = rs.getInt("ideal_target");
-                    long traitId = rs.getLong("competency_id");
+                    long traitId = 0L;
+                    try {
+                        traitId = rs.getLong("trait_id");
+                    } catch (Exception ignored) {}
+                    if (traitId == 0L) {
+                        try {
+                            traitId = rs.getLong("competency_id");
+                        } catch (Exception ignored) {}
+                    }
                     targetMap.put(itemId, target > 0 ? target : 5);
                     itemToTraitsMap.computeIfAbsent(itemId, k -> new HashSet<>()).add(traitId);
                 }
@@ -290,7 +330,7 @@ public class AssessmentScoringService {
             sampledIds = new ArrayList<>(answerMap.keySet());
         }
 
-        // Separate 136 competency items and 4 social desirability items
+        // Separate competency items and social desirability items
         List<Long> competencySampledIds = new ArrayList<>();
         List<Long> sdSampledIds = new ArrayList<>();
         for (Long id : sampledIds) {
@@ -299,6 +339,59 @@ public class AssessmentScoringService {
             } else {
                 competencySampledIds.add(id);
             }
+        }
+
+        if (isEmployment) {
+            Map<Long, List<Long>> traitAssigned = new HashMap<>();
+            for (CompetencyTrait t : allTraits) {
+                traitAssigned.put(t.getId(), new ArrayList<>());
+            }
+            for (Long itemId : competencySampledIds) {
+                Set<Long> candidateTraits = itemToTraitsMap.getOrDefault(itemId, Collections.emptySet());
+                for (Long tid : candidateTraits) {
+                    if (traitAssigned.containsKey(tid)) {
+                        traitAssigned.get(tid).add(itemId);
+                        break;
+                    }
+                }
+            }
+
+            double totalPoints = 0.0;
+            for (CompetencyTrait trait : allTraits) {
+                List<Long> traitItemIds = traitAssigned.getOrDefault(trait.getId(), Collections.emptyList());
+                int n = traitItemIds.isEmpty() ? 3 : traitItemIds.size();
+                double raw = 0.0;
+                for (Long itemId : traitItemIds) {
+                    if (answerMap.containsKey(itemId)) {
+                        int answer = answerMap.get(itemId);
+                        int target = targetMap.getOrDefault(itemId, 5);
+                        int distance = Math.abs(answer - target);
+                        int points = 4 - distance;
+                        raw += points;
+                    }
+                }
+                totalPoints += raw;
+                double maxPossiblePoints = n * 4.0;
+                double pct = (maxPossiblePoints > 0) ? (raw / maxPossiblePoints) * 100.0 : 0.0;
+                result.traitScores.add(new TraitScore(null, trait, round2(raw), round2(pct)));
+            }
+
+            int totalItemsCount = competencySampledIds.isEmpty() ? 36 : competencySampledIds.size();
+            result.overallPct = (totalItemsCount > 0) ? (totalPoints / (totalItemsCount * 4.0)) * 100.0 : 0.0;
+
+            // Score Social Desirability validity category: SDRiskPct = (Σ(A_i - 1) / (4 * 4)) * 100
+            double sdSum = 0.0;
+            int sdCount = sdSampledIds.isEmpty() ? 4 : sdSampledIds.size();
+            for (Long itemId : sdSampledIds) {
+                if (answerMap.containsKey(itemId)) {
+                    int answer = answerMap.get(itemId);
+                    sdSum += (answer - 1);
+                }
+            }
+            double sdRiskPct = (sdSum / (sdCount * 4.0)) * 100.0;
+            result.sdRiskPct = Math.min(100.0, Math.max(0.0, sdRiskPct));
+            result.elevatedImpressionManagement = (result.sdRiskPct >= 60.0);
+            return result;
         }
 
         // Partition the 136 competency items into the 8 traits (17 items each) using bipartite matching
@@ -657,14 +750,34 @@ public class AssessmentScoringService {
             subtestTotalCount.put(meta.subtest, subtestTotalCount.getOrDefault(meta.subtest, 0) + 1);
         }
 
-        int totalQuestions = sampledIds.size();
-        result.overallPct = (totalQuestions > 0) ? ((double) totalCorrect / totalQuestions) * 100.0 : 0.0;
+        boolean isEmployment = (session.getAttempt() != null && "EMPLOYMENT".equalsIgnoreCase(session.getAttempt().getExamType()));
 
         for (GcatSubtestCode sub : GcatSubtestCode.values()) {
             int correct = subtestCorrectCount.getOrDefault(sub, 0);
-            int total = subtestTotalCount.getOrDefault(sub, 14);
+            int defaultTotal = isEmployment ? 10 : 14;
+            int total = subtestTotalCount.getOrDefault(sub, defaultTotal);
             double pct = (total > 0) ? ((double) correct / total) * 100.0 : 0.0;
             result.subtestScores.add(new GcatSubtestScore(null, sub, correct, round2(pct)));
+        }
+
+        if (isEmployment) {
+            // Internal GCAT weighting: Verbal 30%, Numerical 30%, Abstract 40%
+            double verbalPct = result.subtestScores.stream()
+                    .filter(s -> s.getSubtest() == GcatSubtestCode.VERBAL)
+                    .mapToDouble(GcatSubtestScore::getScorePct)
+                    .findFirst().orElse(0.0);
+            double numericalPct = result.subtestScores.stream()
+                    .filter(s -> s.getSubtest() == GcatSubtestCode.NUMERICAL)
+                    .mapToDouble(GcatSubtestScore::getScorePct)
+                    .findFirst().orElse(0.0);
+            double abstractPct = result.subtestScores.stream()
+                    .filter(s -> s.getSubtest() == GcatSubtestCode.ABSTRACT)
+                    .mapToDouble(GcatSubtestScore::getScorePct)
+                    .findFirst().orElse(0.0);
+            result.overallPct = round2((0.30 * verbalPct) + (0.30 * numericalPct) + (0.40 * abstractPct));
+        } else {
+            int totalQuestions = sampledIds.size();
+            result.overallPct = (totalQuestions > 0) ? ((double) totalCorrect / totalQuestions) * 100.0 : 0.0;
         }
 
         return result;

@@ -137,4 +137,55 @@ class AdminSjtItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.active").value(false));
     }
+
+    @Test
+    @DisplayName("GET /api/admin/items/sjt?examType=EMPLOYMENT filters by exam type")
+    void testGetAll_EmploymentExamType() throws Exception {
+        SjtScenarioAdminResponse response = new SjtScenarioAdminResponse(
+                101L, "SJT-EMP-01", 1L, "المجال", "عنوان",
+                "نص", null, SjtComplexity.DIRECT, SjtOptionKey.A,
+                null, null, null, ExamMode.FULL, true, 0, null, List.of()
+        );
+        response.setExamType("EMPLOYMENT");
+
+        when(sjtItemService.getAll("EMPLOYMENT")).thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/admin/items/sjt?examType=EMPLOYMENT"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(101))
+                .andExpect(jsonPath("$[0].itemCode").value("SJT-EMP-01"))
+                .andExpect(jsonPath("$[0].examType").value("EMPLOYMENT"));
+
+        verify(sjtItemService).getAll("EMPLOYMENT");
+    }
+
+    @Test
+    @DisplayName("POST /api/admin/items/sjt with EMPLOYMENT examType creates scenario")
+    void testCreate_WithEmploymentExamType() throws Exception {
+        SjtScenarioAdminRequest request = new SjtScenarioAdminRequest(
+                "SJT-EMP-02", 1L, "عنوان سيناريو توظيف", "نص السيناريو",
+                null, SjtComplexity.DIRECT, SjtOptionKey.C,
+                "تعليل", "خطأ", "ملاحظة",
+                ExamMode.FULL, List.of()
+        );
+        request.setExamType("EMPLOYMENT");
+
+        SjtScenarioAdminResponse response = new SjtScenarioAdminResponse(
+                102L, "SJT-EMP-02", 1L, "المجال", "عنوان سيناريو توظيف",
+                "نص السيناريو", null, SjtComplexity.DIRECT, SjtOptionKey.C,
+                "تعليل", "خطأ", "ملاحظة",
+                ExamMode.FULL, true, 0, null, List.of()
+        );
+        response.setExamType("EMPLOYMENT");
+
+        when(sjtItemService.create(any(SjtScenarioAdminRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/admin/items/sjt")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(102))
+                .andExpect(jsonPath("$.itemCode").value("SJT-EMP-02"))
+                .andExpect(jsonPath("$.examType").value("EMPLOYMENT"));
+    }
 }

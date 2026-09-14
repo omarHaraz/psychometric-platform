@@ -36,8 +36,8 @@ public class AdminGcatItemController {
 
     @GetMapping
     @Operation(summary = "Get all GCAT questions for admin")
-    public ResponseEntity<List<GcatQuestionAdminResponse>> getAll() {
-        return ResponseEntity.ok(gcatItemService.getAll());
+    public ResponseEntity<List<GcatQuestionAdminResponse>> getAll(@RequestParam(value = "examType", required = false) String examType) {
+        return ResponseEntity.ok(gcatItemService.getAll(examType));
     }
 
     @GetMapping("/{id}")

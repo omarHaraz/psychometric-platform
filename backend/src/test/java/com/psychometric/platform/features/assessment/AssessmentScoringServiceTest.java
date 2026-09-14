@@ -514,6 +514,98 @@ class AssessmentScoringServiceTest {
         assertEquals(23.0, cappedScore.getCompositeScore(), 0.01);
     }
 
+    @Test
+    @DisplayName("Verify Employment scoring calculates SD risk, Central Tendency, and Validity Penalty identically")
+    void testEmploymentValidityPenaltyAndScoring() {
+        List<CompetencyTrait> empTraits = new ArrayList<>();
+        for (int i = 1; i <= 12; i++) {
+            CompetencyTrait t = new CompetencyTrait("EMP_TRAIT_" + i, "كفاءة " + i, "تعريف " + i, i);
+            t.setId((long) (100 + i));
+            t.setExamType("EMPLOYMENT");
+            empTraits.add(t);
+        }
+        when(traitRepo.findByExamTypeOrderByDisplayOrderAsc("EMPLOYMENT")).thenReturn(empTraits);
+
+        List<Long> sampledIds = new ArrayList<>();
+        List<CandidateResponse> responses = new ArrayList<>();
+        List<Object[]> dbRows = new ArrayList<>();
+
+        long itemIdCounter = 500L;
+        // 12 competencies * 3 items = 36 substantive items
+        for (int i = 0; i < 12; i++) {
+            Long traitId = empTraits.get(i).getId();
+            for (int k = 0; k < 3; k++) {
+                long itemId = itemIdCounter++;
+                sampledIds.add(itemId);
+                dbRows.add(new Object[]{itemId, 3, traitId});
+
+                // Midpoint response (3) -> distance = 0 to target 3, points = 4
+                CandidateResponse cr = new CandidateResponse();
+                cr.setItemId(itemId);
+                cr.setSelectedLikert(3);
+                responses.add(cr);
+            }
+        }
+
+        // 4 Employment Social Desirability items
+        List<Long> empSdItemIds = List.of(271L, 272L, 273L, 274L);
+        when(jdbcTemplate.queryForList(contains("SOCIAL_DESIRABILITY"), eq(Long.class)))
+                .thenReturn(empSdItemIds);
+
+        for (Long sdId : empSdItemIds) {
+            sampledIds.add(sdId);
+            dbRows.add(new Object[]{sdId, 1, 76L});
+            CandidateResponse cr = new CandidateResponse();
+            cr.setItemId(sdId);
+            cr.setSelectedLikert(5); // Maximum SD endorsement
+            responses.add(cr);
+        }
+
+        doAnswer(invocation -> {
+            RowCallbackHandler handler = invocation.getArgument(1);
+            for (Object[] row : dbRows) {
+                var rs = mock(java.sql.ResultSet.class);
+                when(rs.getLong("id")).thenReturn((Long) row[0]);
+                when(rs.getInt("ideal_target")).thenReturn((Integer) row[1]);
+                when(rs.getLong("competency_id")).thenReturn((Long) row[2]);
+                handler.processRow(rs);
+            }
+            return null;
+        }).when(jdbcTemplate).query(contains("FROM personality_items"), any(RowCallbackHandler.class));
+
+        BatterySession pq10Session = new BatterySession();
+        pq10Session.setBatteryType(BatteryType.PQ10);
+        pq10Session.setSampledItemIds(sampledIds);
+        pq10Session.setResponses(responses);
+
+        AssessmentAttempt attempt = new AssessmentAttempt();
+        attempt.setId(201L);
+        attempt.setExamType("EMPLOYMENT");
+        attempt.setBatterySessions(List.of(pq10Session));
+        pq10Session.setAttempt(attempt);
+
+        when(assessmentScoreRepo.findByAttemptId(201L)).thenReturn(Optional.empty());
+        when(assessmentScoreRepo.save(any(AssessmentScore.class))).thenAnswer(i -> i.getArgument(0));
+
+        // SD excess: max(0, 100 - 60) = 40 -> 40 * 0.15 = 6.0%
+        // CT excess: max(0, 100 - 45) = 55 -> 55 * 0.15 = 8.25%
+        // ValidityPenalty = 6.0 + 8.25 = 14.25%
+        // CappedPenalty = min(14.25, 15.0) = 14.25%
+        // RawComposite for Employment = 0.30 * 100.0 (PQ10) + 0.30 * 0 (SJT) + 0.40 * 0 (GCAT) = 30.0%
+        // AdjustedComposite = max(0, 30.0 - 14.25) = 15.75%
+        AssessmentScore score = scoringService.scoreAttempt(attempt);
+
+        assertNotNull(score);
+        assertEquals(100.0, score.getSocialDesirabilityRiskPct(), 0.01);
+        assertTrue(score.getElevatedImpressionManagement());
+        assertEquals(100.0, score.getCentralTendencyRatePct(), 0.01);
+        assertTrue(score.getElevatedCentralTendency());
+        assertEquals(14.25, score.getValidityPenaltyPct(), 0.01);
+        assertEquals(14.25, score.getCappedPenaltyPct(), 0.01);
+        assertEquals(30.0, score.getRawCompositeScore(), 0.01);
+        assertEquals(15.75, score.getCompositeScore(), 0.01);
+    }
+
     private double round(double val, int places) {
         return java.math.BigDecimal.valueOf(val).setScale(places, java.math.RoundingMode.HALF_UP).doubleValue();
     }

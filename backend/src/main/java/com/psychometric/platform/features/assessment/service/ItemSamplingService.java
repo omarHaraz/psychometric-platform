@@ -19,12 +19,153 @@ public class ItemSamplingService {
      * Executes stratified random item sampling without replacement for the given battery.
      */
     public List<Long> sampleItemsForBattery(BatteryType batteryType) {
+        return sampleItemsForBattery(batteryType, "PSYCHOMETRIC");
+    }
+
+    public List<Long> sampleItemsForBattery(BatteryType batteryType, String examType) {
+        if ("EMPLOYMENT".equalsIgnoreCase(examType)) {
+            return switch (batteryType) {
+                case PQ10 -> sampleEmploymentPersonalityItems(40);
+                case DERAILERS -> Collections.emptyList();
+                case SJT -> sampleEmploymentSjtItems(10);
+                case GCAT -> sampleEmploymentGcatItems(30);
+            };
+        }
         return switch (batteryType) {
             case PQ10 -> samplePersonalityItems(140);
             case DERAILERS -> sampleDerailerItems(60);
             case SJT -> sampleSjtItems(16);
             case GCAT -> sampleGcatItems(42);
         };
+    }
+
+    public List<Long> sampleEmploymentPersonalityItems() {
+        return sampleEmploymentPersonalityItems(40);
+    }
+
+    public List<Long> sampleEmploymentPersonalityItems(int targetCount) {
+        Set<Long> sampledSet = new LinkedHashSet<>();
+
+        // 1. Fetch all 12 workplace competencies (excluding SOCIAL_DESIRABILITY)
+        List<Long> compIds = jdbcTemplate.queryForList(
+                "SELECT id FROM competencies WHERE exam_type = 'EMPLOYMENT' AND code != 'SOCIAL_DESIRABILITY' ORDER BY display_order ASC",
+                Long.class
+        );
+
+        // 2. Sample exactly 3 items per workplace competency (12 * 3 = 36 items)
+        for (Long cId : compIds) {
+            List<Long> ids = jdbcTemplate.queryForList(
+                    "SELECT DISTINCT pic.item_id FROM personality_item_competencies pic " +
+                    "JOIN personality_items pi ON pic.item_id = pi.id " +
+                    "WHERE pic.competency_id = ? AND pi.exam_type = 'EMPLOYMENT' AND pi.is_active = true " +
+                    "ORDER BY RAND() LIMIT 3",
+                    Long.class, cId
+            );
+            sampledSet.addAll(ids);
+        }
+
+        // 3. Sample exactly 4 items from Social Desirability (التظاهر الاجتماعي)
+        List<Long> sdIds = jdbcTemplate.queryForList(
+                "SELECT DISTINCT pic.item_id FROM personality_item_competencies pic " +
+                "JOIN personality_items pi ON pic.item_id = pi.id " +
+                "JOIN competencies c ON pic.competency_id = c.id " +
+                "WHERE c.code = 'SOCIAL_DESIRABILITY' AND pi.exam_type = 'EMPLOYMENT' AND pi.is_active = true " +
+                "ORDER BY RAND() LIMIT 4",
+                Long.class
+        );
+        sampledSet.addAll(sdIds);
+
+        // 4. Fallback top-up if any stratum was short of targetCount (40)
+        if (sampledSet.size() < targetCount) {
+            List<Long> extra = jdbcTemplate.queryForList(
+                    "SELECT id FROM personality_items WHERE exam_type = 'EMPLOYMENT' AND is_active = true ORDER BY RAND()",
+                    Long.class
+            );
+            for (Long id : extra) {
+                sampledSet.add(id);
+                if (sampledSet.size() >= targetCount) break;
+            }
+        }
+
+        List<Long> result = new ArrayList<>(sampledSet);
+        if (result.size() > targetCount) {
+            result = result.subList(0, targetCount);
+        }
+        Collections.shuffle(result);
+        return result;
+    }
+
+    public List<Long> sampleEmploymentSjtItems(int targetCount) {
+        return jdbcTemplate.queryForList(
+                "SELECT id FROM sjt_scenarios WHERE exam_type = 'EMPLOYMENT' AND is_active = true ORDER BY RAND() LIMIT ?",
+                Long.class, targetCount
+        );
+    }
+
+    public List<Long> sampleEmploymentGcatItems(int targetCount) {
+        List<Long> allSampled = new ArrayList<>();
+        String[] subtests = {"ABSTRACT", "NUMERICAL", "VERBAL"};
+
+        for (String sub : subtests) {
+            Set<Long> subtestSampled = new LinkedHashSet<>();
+
+            // 3 Easy
+            List<Long> easyIds = jdbcTemplate.queryForList(
+                    "SELECT q.id FROM gcat_questions q " +
+                    "JOIN gcat_subtests s ON q.subtest_id = s.id " +
+                    "WHERE s.code = ? AND q.difficulty = 'EASY' AND q.exam_type = 'EMPLOYMENT' AND q.is_active = true " +
+                    "ORDER BY RAND() LIMIT 3",
+                    Long.class, sub
+            );
+            subtestSampled.addAll(easyIds);
+
+            // 4 Medium
+            List<Long> medIds = jdbcTemplate.queryForList(
+                    "SELECT q.id FROM gcat_questions q " +
+                    "JOIN gcat_subtests s ON q.subtest_id = s.id " +
+                    "WHERE s.code = ? AND q.difficulty = 'MEDIUM' AND q.exam_type = 'EMPLOYMENT' AND q.is_active = true " +
+                    "ORDER BY RAND() LIMIT 4",
+                    Long.class, sub
+            );
+            subtestSampled.addAll(medIds);
+
+            // 3 Hard
+            List<Long> hardIds = jdbcTemplate.queryForList(
+                    "SELECT q.id FROM gcat_questions q " +
+                    "JOIN gcat_subtests s ON q.subtest_id = s.id " +
+                    "WHERE s.code = ? AND q.difficulty = 'HARD' AND q.exam_type = 'EMPLOYMENT' AND q.is_active = true " +
+                    "ORDER BY RAND() LIMIT 3",
+                    Long.class, sub
+            );
+            subtestSampled.addAll(hardIds);
+
+            // Top up if any subtest difficulty stratum fell short of 10
+            if (subtestSampled.size() < 10) {
+                List<Long> fallbackIds = jdbcTemplate.queryForList(
+                        "SELECT q.id FROM gcat_questions q " +
+                        "JOIN gcat_subtests s ON q.subtest_id = s.id " +
+                        "WHERE s.code = ? AND q.exam_type = 'EMPLOYMENT' AND q.is_active = true " +
+                        "ORDER BY RAND()",
+                        Long.class, sub
+                );
+                for (Long id : fallbackIds) {
+                    subtestSampled.add(id);
+                    if (subtestSampled.size() >= 10) break;
+                }
+            }
+
+            allSampled.addAll(subtestSampled);
+        }
+
+        if (allSampled.isEmpty()) {
+            return jdbcTemplate.queryForList(
+                    "SELECT id FROM gcat_questions WHERE exam_type = 'EMPLOYMENT' AND is_active = true ORDER BY RAND() LIMIT ?",
+                    Long.class, targetCount
+            );
+        }
+
+        Collections.shuffle(allSampled);
+        return allSampled;
     }
 
     /**

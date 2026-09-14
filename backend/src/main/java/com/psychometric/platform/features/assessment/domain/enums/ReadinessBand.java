@@ -35,7 +35,29 @@ public enum ReadinessBand {
         return maxScore;
     }
 
+    public String getLabelAr(String examType) {
+        if ("EMPLOYMENT".equalsIgnoreCase(examType)) {
+            return switch (this) {
+                case EXCELLENT -> "ممتاز";
+                case STRONG -> "جيد جداً";
+                case ACCEPTABLE -> "جيد";
+                case FOUNDATIONAL_ADVANCED, FOUNDATIONAL -> "ضعيف";
+            };
+        }
+        return this.labelAr;
+    }
+
     public static ReadinessBand fromCompositeScore(double score) {
+        return fromCompositeScore(score, "PSYCHOMETRIC");
+    }
+
+    public static ReadinessBand fromCompositeScore(double score, String examType) {
+        if ("EMPLOYMENT".equalsIgnoreCase(examType)) {
+            if (score >= 85.0) return EXCELLENT;
+            if (score >= 75.0) return STRONG;
+            if (score >= 60.0) return ACCEPTABLE;
+            return FOUNDATIONAL;
+        }
         if (score >= 90.0) return EXCELLENT;
         if (score >= 80.0) return STRONG;
         if (score >= 70.0) return ACCEPTABLE;

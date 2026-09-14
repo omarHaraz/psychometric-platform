@@ -40,6 +40,9 @@ public class AssessmentAttempt {
     private Instant startTime;
     private Instant submitTime;
 
+    @Column(name = "exam_type", nullable = false, length = 50)
+    private String examType = "PSYCHOMETRIC";
+
     @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("sequenceOrder ASC")
     private List<BatterySession> batterySessions = new ArrayList<>();
@@ -71,4 +74,6 @@ public class AssessmentAttempt {
     public void setBatterySessions(List<BatterySession> batterySessions) { this.batterySessions = batterySessions; }
     public AssessmentScore getScore() { return score; }
     public void setScore(AssessmentScore score) { this.score = score; }
+    public String getExamType() { return examType != null ? examType : "PSYCHOMETRIC"; }
+    public void setExamType(String examType) { this.examType = (examType != null && !examType.isBlank()) ? examType.toUpperCase() : "PSYCHOMETRIC"; }
 }

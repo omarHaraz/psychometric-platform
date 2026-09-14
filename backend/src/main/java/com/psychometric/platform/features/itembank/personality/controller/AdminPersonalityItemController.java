@@ -34,8 +34,8 @@ public class AdminPersonalityItemController {
 
     @GetMapping
     @Operation(summary = "Get all personality items for admin")
-    public ResponseEntity<List<PersonalityItemAdminResponse>> getAll() {
-        return ResponseEntity.ok(personalityItemService.getAll());
+    public ResponseEntity<List<PersonalityItemAdminResponse>> getAll(@RequestParam(value = "examType", required = false) String examType) {
+        return ResponseEntity.ok(personalityItemService.getAll(examType));
     }
 
     @GetMapping("/{id}")

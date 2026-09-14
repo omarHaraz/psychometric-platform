@@ -577,7 +577,8 @@ let intermissionTimerInterval = null;
 let remainingSeconds = 0;
 
 // Battery definitions metadata
-const BATTERY_METADATA = [
+// Battery definitions metadata - Psychometric Assessment (4 Batteries)
+const BATTERY_METADATA_PSYCHOMETRIC = [
     {
         name: "Personality Assessment",
         nameAr: "اختبار الشخصية",
@@ -683,6 +684,100 @@ const BATTERY_METADATA = [
         ]
     }
 ];
+
+// Battery definitions metadata - Employment Test (3 Batteries, Derailers strictly excluded)
+const BATTERY_METADATA_EMPLOYMENT = [
+    {
+        name: "Workplace Competencies (PQ10)",
+        nameAr: "اختبار الكفاءات المهنية",
+        part: "Part 1 of 3",
+        partAr: "الجزء 1 من 3",
+        badge: "PQ10",
+        badgeAr: "الكفاءات المهنية",
+        itemsCount: 40,
+        itemCountAr: "40 سؤالاً",
+        timeLimit: "20 Minutes",
+        timeLimitAr: "20 دقيقة",
+        format: "Likert Scale",
+        formatAr: "مقياس ليكرت",
+        instructions: [
+            "Read each item carefully and respond with your immediate, natural judgment.",
+            "Evaluate your alignment with each workplace competency statement.",
+            "The test timer is strictly enforced by the server (20 minutes). Once started, it cannot be paused.",
+            "Your answers auto-save continuously in real time."
+        ],
+        instructionsAr: [
+            "اقرأ كل عبارة بعناية وأجب بناءً على حكمك الفطري وسلوكك المعتاد في بيئة العمل.",
+            "يقيس هذا القسم الكفاءات المهنية الأساسية عبر مقياس ليكرت الخماسي.",
+            "وقت الاختبار محدد بدقة بـ 20 دقيقة مفروضة من الخادم، وبمجرد بدء الاختبار لا يمكن إيقاف المؤقت.",
+            "يتم حفظ إجاباتك تلقائياً وباستمرار في الوقت الفعلي."
+        ]
+    },
+    {
+        name: "Situational Judgment Test (SJT)",
+        nameAr: "اختبار حكم المواقف القيادية",
+        part: "Part 2 of 3",
+        partAr: "الجزء 2 من 3",
+        badge: "SJT",
+        badgeAr: "حكم المواقف",
+        itemsCount: 10,
+        itemCountAr: "10 سيناريوهات",
+        timeLimit: "30 Minutes",
+        timeLimitAr: "30 دقيقة",
+        format: "4-Option Ranking",
+        formatAr: "ترتيب الخيارات (4)",
+        instructions: [
+            "You will be presented with real-world managerial and workplace scenarios.",
+            "Order the 4 available actions from Most Effective (Rank 1) to Least Effective (Rank 4).",
+            "Drag and drop the 4 actions to adjust their relative ranking.",
+            "You have 30 minutes to complete all 10 scenarios."
+        ],
+        instructionsAr: [
+            "اقرأ كل سيناريو مهني وقيادي بعناية، ثم قيّم البدائل الإجرائية الأربعة المطروحة.",
+            "رتّب الإجراءات الأربعة بالسحب والإفلات من الأكثر فعالية (الترتيب 1) إلى الأقل فعالية (الترتيب 4).",
+            "لديك 30 دقيقة لإكمال جميع السيناريوهات الـ 10.",
+            "يتم حفظ إجاباتك وترتيبك تلقائياً وباستمرار في الوقت الفعلي."
+        ]
+    },
+    {
+        name: "Cognitive Abilities Test (GCAT)",
+        nameAr: "اختبار القدرات المعرفية الإدراكية",
+        part: "Part 3 of 3",
+        partAr: "الجزء 3 من 3",
+        badge: "GCAT",
+        badgeAr: "القدرات المعرفية",
+        itemsCount: 30,
+        itemCountAr: "30 سؤالاً",
+        timeLimit: "15 Min Strict",
+        timeLimitAr: "15 دقيقة (محدد بدقة)",
+        format: "Multiple Choice (MCQ)",
+        formatAr: "اختيار من متعدد (MCQ)",
+        instructions: [
+            "Evaluates Verbal (30%), Numerical (30%), and Abstract reasoning (40%).",
+            "Each question has one single correct answer option.",
+            "This battery has a STRICT 15-minute time cutoff enforced by the server.",
+            "Pace yourself (approx. 30 seconds per item) and answer every question."
+        ],
+        instructionsAr: [
+            "يقيس هذا الاختبار القدرات اللفظية (30%)، والعددية (30%)، والاستدلال التجريدي (40%).",
+            "يحتوي كل سؤال على خيار إجابة صحيح واحد فقط.",
+            "وقت هذا الاختبار محدد بدقة بـ 15 دقيقة مفروضة من الخادم، ولا يمكن إيقاف المؤقت.",
+            "وزّع وقتك بدقة (حوالي 30 ثانية لكل سؤال) وأجب بأكبر قدر ممكن من السرعة والتركيز."
+        ]
+    }
+];
+
+const BATTERY_METADATA = BATTERY_METADATA_PSYCHOMETRIC;
+
+function getBatteryMetadata(batteryIndex, attempt, session) {
+    const isEmp = (attempt && attempt.examType === 'EMPLOYMENT') || (currentAttempt && currentAttempt.examType === 'EMPLOYMENT');
+    const list = isEmp ? BATTERY_METADATA_EMPLOYMENT : BATTERY_METADATA_PSYCHOMETRIC;
+    if (session && session.batteryType) {
+        const found = list.find(m => m.badge && m.badge.toUpperCase() === session.batteryType.toUpperCase());
+        if (found) return found;
+    }
+    return list[batteryIndex] || list[0];
+}
 
 // Initialize Application
 function initCandidateApp() {
@@ -863,92 +958,199 @@ function initEventListeners() {
                 });
             }
 
-            const titleStr = isArabic ? "تأكيد الإرسال" : "Confirm Submission";
-            
-            const promptText = isArabic 
-                ? "هل أنت متأكد أنك تريد إنهاء وإرسال هذا الاختبار؟ لا يمكنك العودة إلى هذه الأسئلة بعد الإرسال."
-                : "Are you sure you want to finalize and submit this battery? You cannot return to these questions after submitting.";
+            const sequenceIdx = (activeSession && activeSession.sequenceOrder !== undefined) 
+                ? activeSession.sequenceOrder 
+                : 0;
+            const isEmp = (currentAttempt && currentAttempt.examType === 'EMPLOYMENT');
+            const batteryType = (activeSession && activeSession.batteryType) 
+                || (isEmp 
+                    ? (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : "GCAT")
+                    : (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : sequenceIdx === 2 ? "DERAILERS" : "GCAT"));
+            const isSjt = (batteryType && batteryType.toUpperCase() === 'SJT') || sequenceIdx === 1;
 
-            const answeredLabel = isArabic ? "الأسئلة المجاب عنها" : "Answered Questions";
-            const passedLabel = isArabic ? "الأسئلة التي تم تجاوزها" : "Passed / Skipped Questions";
-            const ofTotal = isArabic ? `من إجمالي ${total}` : `of ${total} total`;
-            const clickToJumpNotice = isArabic ? "انقر على رقم السؤال للعودة إليه" : "Click question number to go to it";
-            const allAnsweredNotice = isArabic 
-                ? `رائع! لقد قمت بالإجابة على جميع الأسئلة (${total} من ${total})` 
-                : `Great! You have answered all questions (${total} of ${total}).`;
-            const noneAnsweredNotice = isArabic ? "لم تتم الإجابة على أي سؤال بعد." : "No questions answered yet.";
+            if (isSjt) {
+                // Specialized calm, non-alarmist send card for SJT (answering all questions is optional)
+                const titleStr = isArabic 
+                    ? (isEmp ? "تأكيد إرسال حكم المواقف القيادية (SJT)" : "تأكيد إرسال اختبار حكم المواقف (SJT)")
+                    : "Confirm Situational Judgment (SJT) Submission";
+                
+                const promptText = isArabic 
+                    ? "هل ترغب في إنهاء هذا القسم وإرسال استجاباتك؟ سيتم حفظ واعتماد السيناريوهات التي قمت بترتيبها، ولا يُشترط الإجابة على جميع المواقف."
+                    : "Are you ready to finalize and submit this section? All scenarios you have arranged will be recorded and scored. Answering all scenarios is not required.";
 
-            const msgHtml = `
-                <div class="space-y-3.5 ${isArabic ? 'text-right' : 'text-left'}" dir="${isArabic ? 'rtl' : 'ltr'}">
-                    <p class="text-xs text-slate-600 text-center font-medium">
-                        ${promptText}
-                    </p>
+                const clickToJumpNotice = isArabic ? "انقر على رقم الموقف لمراجعته" : "Click scenario number to review";
+                const answeredLabel = isArabic ? "السيناريوهات المكتملة" : "Completed Scenarios";
+                const optionalLabel = isArabic ? "سيناريوهات متبقية (اختيارية)" : "Remaining Scenarios (Optional)";
 
-                    <!-- Summary Cards -->
-                    <div class="grid grid-cols-2 gap-2.5 text-center">
-                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 shadow-2xs">
-                            <span class="text-[11px] font-bold text-emerald-800 block">${answeredLabel}</span>
-                            <span class="text-2xl font-black text-emerald-700 block my-0.5">${answeredQuestions.length}</span>
-                            <span class="text-[10px] text-emerald-600 font-medium block">${ofTotal}</span>
+                const msgHtml = `
+                    <div class="space-y-3.5 ${isArabic ? 'text-right' : 'text-left'}" dir="${isArabic ? 'rtl' : 'ltr'}">
+                        <p class="text-xs text-slate-600 text-center font-medium leading-relaxed">
+                            ${promptText}
+                        </p>
+
+                        <!-- SJT Clean Status Card (No alarming red cards) -->
+                        <div class="bg-teal-50/70 border border-teal-200 rounded-xl p-4 shadow-2xs text-center space-y-2.5">
+                            <div class="flex items-center justify-between text-xs font-bold text-teal-900">
+                                <span class="flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-base text-teal-700">task_alt</span>
+                                    ${answeredLabel}
+                                </span>
+                                <span class="text-sm font-black text-teal-800">${answeredQuestions.length} / ${total}</span>
+                            </div>
+                            <div class="w-full bg-slate-200/80 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-teal-600 h-2.5 rounded-full transition-all duration-300" style="width: ${total > 0 ? Math.round((answeredQuestions.length / total) * 100) : 0}%"></div>
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] text-slate-600 font-medium">
+                                <span>${isArabic ? `${answeredQuestions.length} سيناريو تم ترتيبه` : `${answeredQuestions.length} arranged`}</span>
+                                <span class="text-slate-500">${isArabic ? `${passedQuestions.length} متبقية (اختيارية)` : `${passedQuestions.length} optional remaining`}</span>
+                            </div>
                         </div>
-                        <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 shadow-2xs">
-                            <span class="text-[11px] font-bold text-rose-800 block">${passedLabel}</span>
-                            <span class="text-2xl font-black text-rose-700 block my-0.5">${passedQuestions.length}</span>
-                            <span class="text-[10px] text-rose-600 font-medium block">${ofTotal}</span>
-                        </div>
+
+                        <!-- Arranged Scenarios Breakdown -->
+                        ${answeredQuestions.length > 0 ? `
+                            <div class="space-y-2 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-xs font-bold text-slate-800 flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-sm text-emerald-600">check_circle</span>
+                                        ${isArabic ? 'السيناريوهات التي قمت بترتيبها' : 'Arranged Scenarios'} (${answeredQuestions.length}):
+                                    </span>
+                                    <span class="text-[10px] text-slate-500 font-medium">${clickToJumpNotice}</span>
+                                </div>
+                                <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 max-h-32 overflow-y-auto p-1.5 bg-white rounded-lg border border-slate-200">
+                                    ${answeredQuestions.map(q => `<button type="button" class="jump-to-q h-8 flex items-center justify-center rounded-lg text-xs font-bold bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-600 hover:text-white transition-all shadow-2xs cursor-pointer active:scale-95" data-target="${q - 1}" title="${isArabic ? 'الانتقال إلى الموقف' : 'Go to scenario'} ${q}">${q}</button>`).join("")}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Optional Remaining Scenarios (Neutral calm tone, NOT red error) -->
+                        ${passedQuestions.length > 0 ? `
+                            <div class="space-y-2 bg-slate-50/60 border border-dashed border-slate-300 rounded-xl p-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-xs font-medium text-slate-700 flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-sm text-slate-500">tune</span>
+                                        ${optionalLabel} (${passedQuestions.length}):
+                                    </span>
+                                    <span class="text-[10px] text-slate-400 font-medium">${clickToJumpNotice}</span>
+                                </div>
+                                <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 max-h-32 overflow-y-auto p-1.5 bg-white/80 rounded-lg border border-slate-200">
+                                    ${passedQuestions.map(q => `<button type="button" class="jump-to-q h-8 flex items-center justify-center rounded-lg text-xs font-medium bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all shadow-2xs cursor-pointer active:scale-95" data-target="${q - 1}" title="${isArabic ? 'الانتقال إلى الموقف' : 'Go to scenario'} ${q}">${q}</button>`).join("")}
+                                </div>
+                                <p class="text-[11px] text-slate-500 text-center font-normal pt-1">
+                                    ${isArabic ? 'يمكنك تسليم الاختبار مباشرة بالضغط على «إرسال»، أو النقر على أي موقف إذا كنت ترغب في ترتيبه.' : 'You can submit immediately by clicking «Submit», or click any scenario to arrange it.'}
+                                </p>
+                            </div>
+                        ` : `
+                            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-700 flex items-center justify-center gap-1.5">
+                                <span class="material-symbols-outlined text-base">check_circle</span>
+                                ${isArabic ? `رائع! لقد قمت بترتيب جميع المواقف (${total} من ${total})` : `Great! You have arranged all scenarios (${total} of ${total}).`}
+                            </div>
+                        `}
                     </div>
+                `;
 
-                    <!-- Passed Questions Breakdown -->
-                    ${passedQuestions.length > 0 ? `
-                        <div class="space-y-2 bg-rose-50/50 border border-rose-200 rounded-xl p-3">
+                window.showCustomModal({
+                    title: titleStr,
+                    htmlContent: msgHtml,
+                    type: "info",
+                    icon: "assignment_turned_in",
+                    maxWidth: "max-w-lg",
+                    buttons: [
+                        { text: isArabic ? "العودة للاختبار" : "Cancel", style: "secondary" },
+                        { text: isArabic ? "إرسال" : "Submit", style: "primary", onClick: () => {
+                            recordItemTime(currentItemIndex);
+                            submitActiveBattery();
+                        }}
+                    ]
+                });
+            } else {
+                // Standard validation modal for other batteries (PQ10, Derailers, GCAT)
+                const titleStr = isArabic ? "تأكيد الإرسال" : "Confirm Submission";
+                
+                const promptText = isArabic 
+                    ? "هل أنت متأكد أنك تريد إنهاء وإرسال هذا الاختبار؟ لا يمكنك العودة إلى هذه الأسئلة بعد الإرسال."
+                    : "Are you sure you want to finalize and submit this battery? You cannot return to these questions after submitting.";
+
+                const answeredLabel = isArabic ? "الأسئلة المجاب عنها" : "Answered Questions";
+                const passedLabel = isArabic ? "الأسئلة التي تم تجاوزها" : "Passed / Skipped Questions";
+                const ofTotal = isArabic ? `من إجمالي ${total}` : `of ${total} total`;
+                const clickToJumpNotice = isArabic ? "انقر على رقم السؤال للعودة إليه" : "Click question number to go to it";
+                const allAnsweredNotice = isArabic 
+                    ? `رائع! لقد قمت بالإجابة على جميع الأسئلة (${total} من ${total})` 
+                    : `Great! You have answered all questions (${total} of ${total}).`;
+                const noneAnsweredNotice = isArabic ? "لم تتم الإجابة على أي سؤال بعد." : "No questions answered yet.";
+
+                const msgHtml = `
+                    <div class="space-y-3.5 ${isArabic ? 'text-right' : 'text-left'}" dir="${isArabic ? 'rtl' : 'ltr'}">
+                        <p class="text-xs text-slate-600 text-center font-medium">
+                            ${promptText}
+                        </p>
+
+                        <!-- Summary Cards -->
+                        <div class="grid grid-cols-2 gap-2.5 text-center">
+                            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 shadow-2xs">
+                                <span class="text-[11px] font-bold text-emerald-800 block">${answeredLabel}</span>
+                                <span class="text-2xl font-black text-emerald-700 block my-0.5">${answeredQuestions.length}</span>
+                                <span class="text-[10px] text-emerald-600 font-medium block">${ofTotal}</span>
+                            </div>
+                            <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 shadow-2xs">
+                                <span class="text-[11px] font-bold text-rose-800 block">${passedLabel}</span>
+                                <span class="text-2xl font-black text-rose-700 block my-0.5">${passedQuestions.length}</span>
+                                <span class="text-[10px] text-rose-600 font-medium block">${ofTotal}</span>
+                            </div>
+                        </div>
+
+                        <!-- Passed Questions Breakdown -->
+                        ${passedQuestions.length > 0 ? `
+                            <div class="space-y-2 bg-rose-50/50 border border-rose-200 rounded-xl p-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-xs font-bold text-rose-800 flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-sm text-rose-600">error</span>
+                                        ${passedLabel} (${passedQuestions.length}):
+                                    </span>
+                                    <span class="text-[10px] text-slate-500 font-medium">${clickToJumpNotice}</span>
+                                </div>
+                                <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 max-h-36 overflow-y-auto p-1.5 bg-white/80 rounded-lg border border-rose-200">
+                                    ${passedQuestions.map(q => `<button type="button" class="jump-to-q h-8 flex items-center justify-center rounded-lg text-xs font-bold bg-rose-50 border border-rose-300 text-rose-700 hover:bg-rose-600 hover:text-white transition-all shadow-2xs cursor-pointer active:scale-95" data-target="${q - 1}" title="${isArabic ? 'الانتقال إلى السؤال' : 'Go to question'} ${q}">${q}</button>`).join("")}
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-700 flex items-center justify-center gap-1.5">
+                                <span class="material-symbols-outlined text-base">check_circle</span>
+                                ${allAnsweredNotice}
+                            </div>
+                        `}
+
+                        <!-- Answered Questions Breakdown -->
+                        <div class="space-y-2 bg-slate-50 border border-slate-200 rounded-xl p-3">
                             <div class="flex items-center justify-between gap-2">
-                                <span class="text-xs font-bold text-rose-800 flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-sm text-rose-600">error</span>
-                                    ${passedLabel} (${passedQuestions.length}):
+                                <span class="text-xs font-bold text-slate-800 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm text-slate-600">check_circle</span>
+                                    ${answeredLabel} (${answeredQuestions.length}):
                                 </span>
                                 <span class="text-[10px] text-slate-500 font-medium">${clickToJumpNotice}</span>
                             </div>
-                            <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 max-h-36 overflow-y-auto p-1.5 bg-white/80 rounded-lg border border-rose-200">
-                                ${passedQuestions.map(q => `<button type="button" class="jump-to-q h-8 flex items-center justify-center rounded-lg text-xs font-bold bg-rose-50 border border-rose-300 text-rose-700 hover:bg-rose-600 hover:text-white transition-all shadow-2xs cursor-pointer active:scale-95" data-target="${q - 1}" title="${isArabic ? 'الانتقال إلى السؤال' : 'Go to question'} ${q}">${q}</button>`).join("")}
+                            <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 max-h-36 overflow-y-auto p-1.5 bg-white/80 rounded-lg border border-slate-200">
+                                ${answeredQuestions.length > 0 ? answeredQuestions.map(q => `<button type="button" class="jump-to-q h-8 flex items-center justify-center rounded-lg text-xs font-bold bg-slate-50 border border-slate-300 text-slate-800 hover:bg-black hover:text-white transition-all shadow-2xs cursor-pointer active:scale-95" data-target="${q - 1}" title="${isArabic ? 'الانتقال إلى السؤال' : 'Go to question'} ${q}">${q}</button>`).join("") : `<div class="col-span-full text-center py-2 text-xs text-slate-400">${noneAnsweredNotice}</div>`}
                             </div>
                         </div>
-                    ` : `
-                        <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-700 flex items-center justify-center gap-1.5">
-                            <span class="material-symbols-outlined text-base">check_circle</span>
-                            ${allAnsweredNotice}
-                        </div>
-                    `}
-
-                    <!-- Answered Questions Breakdown -->
-                    <div class="space-y-2 bg-slate-50 border border-slate-200 rounded-xl p-3">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-xs font-bold text-slate-800 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-sm text-slate-600">check_circle</span>
-                                ${answeredLabel} (${answeredQuestions.length}):
-                            </span>
-                            <span class="text-[10px] text-slate-500 font-medium">${clickToJumpNotice}</span>
-                        </div>
-                        <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 max-h-36 overflow-y-auto p-1.5 bg-white/80 rounded-lg border border-slate-200">
-                            ${answeredQuestions.length > 0 ? answeredQuestions.map(q => `<button type="button" class="jump-to-q h-8 flex items-center justify-center rounded-lg text-xs font-bold bg-slate-50 border border-slate-300 text-slate-800 hover:bg-black hover:text-white transition-all shadow-2xs cursor-pointer active:scale-95" data-target="${q - 1}" title="${isArabic ? 'الانتقال إلى السؤال' : 'Go to question'} ${q}">${q}</button>`).join("") : `<div class="col-span-full text-center py-2 text-xs text-slate-400">${noneAnsweredNotice}</div>`}
-                        </div>
                     </div>
-                </div>
-            `;
-            
-            window.showCustomModal({
-                title: titleStr,
-                htmlContent: msgHtml,
-                type: passedQuestions.length > 0 ? "warning" : "success",
-                icon: passedQuestions.length > 0 ? "assignment_late" : "task_alt",
-                maxWidth: "max-w-lg",
-                buttons: [
-                    { text: "Cancel", style: "secondary" },
-                    { text: "Submit", style: "primary", onClick: () => {
-                        recordItemTime(currentItemIndex);
-                        submitActiveBattery();
-                    }}
-                ]
-            });
+                `;
+                
+                window.showCustomModal({
+                    title: titleStr,
+                    htmlContent: msgHtml,
+                    type: passedQuestions.length > 0 ? "warning" : "success",
+                    icon: passedQuestions.length > 0 ? "assignment_late" : "task_alt",
+                    maxWidth: "max-w-lg",
+                    buttons: [
+                        { text: "Cancel", style: "secondary" },
+                        { text: "Submit", style: "primary", onClick: () => {
+                            recordItemTime(currentItemIndex);
+                            submitActiveBattery();
+                        }}
+                    ]
+                });
+            }
 
             // Attach jump-to-question click listeners
             setTimeout(() => {
@@ -1121,25 +1323,38 @@ function showPendingPortal(attempt) {
 }
 
 function updateOnboardingLanguage(isAr) {
+    const isEmp = currentAttempt && currentAttempt.examType === 'EMPLOYMENT';
     const obBadge = document.getElementById("onboardingBadge");
-    if (obBadge) obBadge.textContent = isAr ? "تقييم الكفاءات القيادية" : "Leadership Competency Assessment";
+    if (obBadge) obBadge.textContent = isAr 
+        ? (isEmp ? "اختبار التوظيف والجاهزية المهنية" : "تقييم الكفاءات القيادية")
+        : (isEmp ? "Employment & Professional Readiness Assessment" : "Leadership Competency Assessment");
 
     const obTitle = document.getElementById("onboardingAssessmentTitle");
-    if (obTitle) obTitle.textContent = isAr ? "تقييم القيادة التنفيذية" : "Executive Leadership Assessment";
+    if (obTitle) obTitle.textContent = isAr 
+        ? (isEmp ? "اختبار التوظيف والجاهزية" : "تقييم القيادة التنفيذية")
+        : (isEmp ? "Employment Assessment" : "Executive Leadership Assessment");
 
     const obSub = document.getElementById("onboardingSubtitle");
-    if (obSub) obSub.textContent = isAr ? "التقييم السيكومتري الشامل للكفاءات القيادية والقدرات المعرفية" : "Comprehensive psychometric evaluation of leadership competencies and cognitive abilities";
+    if (obSub) obSub.textContent = isAr 
+        ? (isEmp ? "تقييم شامل للكفاءات السلوكية، حكم المواقف، والقدرات المعرفية (65 دقيقة)" : "التقييم السيكومتري الشامل للكفاءات القيادية والقدرات المعرفية")
+        : (isEmp ? "Comprehensive evaluation of workplace competencies, situational judgment, and cognitive abilities (65 mins)" : "Comprehensive psychometric evaluation of leadership competencies and cognitive abilities");
 
     const obTime = document.getElementById("onboardingTotalTime");
-    if (obTime) obTime.textContent = isAr ? "90 دقيقة" : "90 Minutes";
+    if (obTime) obTime.textContent = isAr 
+        ? (isEmp ? "65 دقيقة" : "90 دقيقة")
+        : (isEmp ? "65 Minutes" : "90 Minutes");
 
     const warnTitle = document.getElementById("warningBlockTitle");
     if (warnTitle) warnTitle.textContent = isAr ? "قاعدة نزاهة التقييم:" : "Assessment Integrity Rule:";
 
     const warnDesc = document.getElementById("warningBlockDesc");
     if (warnDesc) warnDesc.textContent = isAr 
-        ? "يجب إكمال هذا التقييم في جلسة متواصلة واحدة. بمجرد البدء، لا يمكن إيقاف المؤقت أو العودة إلى الأقسام السابقة. تأكد من تخصيص 90 دقيقة دون مقاطعة."
-        : "This assessment must be completed in a single continuous session. Once started, the timer cannot be paused and previous sections cannot be revisited. Ensure you allocate 90 uninterrupted minutes.";
+        ? (isEmp 
+            ? "يجب إكمال هذا التقييم في جلسة متواصلة واحدة. بمجرد البدء، لا يمكن إيقاف المؤقت أو العودة إلى الأقسام السابقة. تأكد من تخصيص 65 دقيقة دون مقاطعة."
+            : "يجب إكمال هذا التقييم في جلسة متواصلة واحدة. بمجرد البدء، لا يمكن إيقاف المؤقت أو العودة إلى الأقسام السابقة. تأكد من تخصيص 90 دقيقة دون مقاطعة.")
+        : (isEmp 
+            ? "This assessment must be completed in a single continuous session. Once started, the timer cannot be paused and previous sections cannot be revisited. Ensure you allocate 65 uninterrupted minutes."
+            : "This assessment must be completed in a single continuous session. Once started, the timer cannot be paused and previous sections cannot be revisited. Ensure you allocate 90 uninterrupted minutes.");
 
     const startBtn = document.getElementById("startAssessmentBtn");
     if (startBtn) {
@@ -1155,8 +1370,9 @@ function updateOnboardingLanguage(isAr) {
 function updateBatteryCardStates(attempt) {
     const isArabic = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
     const currentIndex = (attempt && typeof attempt.currentBatteryIndex === 'number') ? attempt.currentBatteryIndex : 0;
+    const isEmp = attempt && attempt.examType === 'EMPLOYMENT';
     
-    const cardData = [
+    const cardDataPsychometric = [
         {
             titleEn: "01 • Personality Assessment",
             titleAr: "01 • اختبار الشخصية",
@@ -1183,9 +1399,40 @@ function updateBatteryCardStates(attempt) {
         }
     ];
 
+    const cardDataEmployment = [
+        {
+            titleEn: "01 • Workplace Competencies (PQ10)",
+            titleAr: "01 • الكفاءات المهنية (PQ10)",
+            descEn: "40 Items • 20 Minutes • Likert Scale (30%)",
+            descAr: "40 سؤالاً • 20 دقيقة • مقياس ليكرت (30%)"
+        },
+        {
+            titleEn: "02 • Situational Judgment Test (SJT)",
+            titleAr: "02 • حكم المواقف القيادية (SJT)",
+            descEn: "10 Scenarios • 30 Minutes • Option Ranking (30%)",
+            descAr: "10 سيناريوهات • 30 دقيقة • ترتيب الخيارات (30%)"
+        },
+        {
+            titleEn: "03 • Cognitive Abilities Test (GCAT)",
+            titleAr: "03 • اختبار القدرات المعرفية (GCAT)",
+            descEn: "30 Items • 15 Minutes • MCQ (40%)",
+            descAr: "30 سؤالاً • 15 دقيقة • اختيار من متعدد (40%)"
+        }
+    ];
+
+    const cardData = isEmp ? cardDataEmployment : cardDataPsychometric;
+    const totalBatteries = isEmp ? 3 : 4;
+
     for (let i = 0; i < 4; i++) {
         const card = document.getElementById(`card-battery-${i}`);
         if (!card) continue;
+
+        if (i >= totalBatteries) {
+            card.classList.add("hidden");
+            continue;
+        } else {
+            card.classList.remove("hidden");
+        }
         
         const titleEl = document.getElementById(`card-title-${i}`);
         if (titleEl) titleEl.textContent = isArabic ? cardData[i].titleAr : cardData[i].titleEn;
@@ -1228,10 +1475,20 @@ function openPreBatteryInstructions(batteryIndex, isIntermission = false) {
 
     const htmlDir = document.documentElement.getAttribute("dir") || document.documentElement.dir || "rtl";
     const isArabic = htmlDir !== "ltr";
-    const meta = BATTERY_METADATA[batteryIndex] || BATTERY_METADATA[0];
+    const isEmp = (currentAttempt && currentAttempt.examType === 'EMPLOYMENT');
+    const currentSession = (currentAttempt && currentAttempt.batterySessions) 
+        ? currentAttempt.batterySessions.find(s => s.sequenceOrder === batteryIndex) 
+        : null;
+    const meta = getBatteryMetadata(batteryIndex, currentAttempt, currentSession);
+
+    const totalParts = (currentAttempt && currentAttempt.batterySessions && currentAttempt.batterySessions.length > 0)
+        ? currentAttempt.batterySessions.length
+        : (isEmp ? 3 : 4);
 
     const instPartEl = document.getElementById("instPartNumber");
-    if (instPartEl) instPartEl.textContent = isArabic ? (meta.partAr || meta.part) : meta.part;
+    if (instPartEl) {
+        instPartEl.textContent = isArabic ? `الجزء ${batteryIndex + 1} من ${totalParts}` : `Part ${batteryIndex + 1} of ${totalParts}`;
+    }
 
     const instTitleEl = document.getElementById("instBatteryTitle");
     if (instTitleEl) instTitleEl.textContent = isArabic ? (meta.nameAr || meta.name) : meta.name;
@@ -1398,7 +1655,7 @@ async function fetchAndRenderBatteryItems(session) {
 
         // Setup battery header
         const isArabic = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
-        const meta = BATTERY_METADATA[session.sequenceOrder] || BATTERY_METADATA[0];
+        const meta = getBatteryMetadata(session.sequenceOrder, currentAttempt, session);
         const badgeEl = document.getElementById("activeBatteryBadge");
         if (badgeEl) badgeEl.textContent = isArabic ? (meta.badgeAr || meta.badge) : meta.badge;
         const titleEl = document.getElementById("activeBatteryTitle");
@@ -1551,8 +1808,11 @@ function isQuestionSolved(idx) {
     const sequenceIdx = (activeSession && activeSession.sequenceOrder !== undefined) 
         ? activeSession.sequenceOrder 
         : 0;
+    const isEmp = (currentAttempt && currentAttempt.examType === 'EMPLOYMENT');
     const batteryType = (activeSession && activeSession.batteryType) 
-        || (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : sequenceIdx === 2 ? "DERAILERS" : "GCAT");
+        || (isEmp 
+            ? (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : "GCAT")
+            : (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : sequenceIdx === 2 ? "DERAILERS" : "GCAT"));
 
     if (batteryType === "SJT") {
         // Special Rule for the 'Sittions' (Situations) Section:
@@ -1714,7 +1974,7 @@ function renderCurrentQuestion() {
     const activeBatteryTitle = document.getElementById("activeBatteryTitle");
     const activeBatteryBadge = document.getElementById("activeBatteryBadge");
     if (activeSession && typeof activeSession.sequenceOrder === 'number') {
-        const meta = BATTERY_METADATA[activeSession.sequenceOrder] || BATTERY_METADATA[0];
+        const meta = getBatteryMetadata(activeSession.sequenceOrder, currentAttempt);
         if (activeBatteryTitle) {
             activeBatteryTitle.textContent = isArabic ? meta.nameAr : meta.name;
         }
@@ -1725,6 +1985,14 @@ function renderCurrentQuestion() {
     
     const pct = Math.round((currentNum / total) * 100);
     document.getElementById("progressBarFill").style.width = `${pct}%`;
+
+    const container = document.getElementById("questionBody");
+    const sequenceIdx = (activeSession && activeSession.sequenceOrder !== undefined) ? activeSession.sequenceOrder : currentItemIndex;
+    const isEmp = (currentAttempt && currentAttempt.examType === 'EMPLOYMENT');
+    const batteryType = (activeSession && activeSession.batteryType) 
+        || (isEmp 
+            ? (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : "GCAT")
+            : (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : sequenceIdx === 2 ? "DERAILERS" : "GCAT"));
 
     // Navigation buttons state
     const prevBtn = document.getElementById("prevQuestionBtn");
@@ -1740,10 +2008,6 @@ function renderCurrentQuestion() {
         if (nextBtn) nextBtn.classList.remove("hidden");
         if (submitBtn) submitBtn.classList.add("hidden");
     }
-
-    const container = document.getElementById("questionBody");
-    const sequenceIdx = (activeSession && activeSession.sequenceOrder !== undefined) ? activeSession.sequenceOrder : currentItemIndex;
-    const batteryType = (activeSession && activeSession.batteryType) || (sequenceIdx === 0 ? "PQ10" : sequenceIdx === 1 ? "SJT" : sequenceIdx === 2 ? "DERAILERS" : "GCAT");
 
     if (batteryType === "SJT") {
         questionReachedState[item.id] = true;
@@ -2199,6 +2463,9 @@ async function showCompletedAssessmentView(attempt) {
 }
 
 function populateCompletedScoreHero(score, attempt) {
+    const isEmp = (attempt && attempt.examType === 'EMPLOYMENT') || (score && score.examType === 'EMPLOYMENT');
+    const isArLang = document.documentElement.getAttribute("dir") === "rtl";
+
     const compVal = document.getElementById("completedCompositeVal");
     const percBadge = document.getElementById("completedPercentileBadge");
     const readBadge = document.getElementById("completedReadinessBadge");
@@ -2213,14 +2480,21 @@ function populateCompletedScoreHero(score, attempt) {
     const gcatScore = document.getElementById("completedGcatScore");
     const gcatBar = document.getElementById("completedGcatBar");
 
+    // Update view-complete subtitle
+    const completeSub = document.querySelector("#view-complete > div > p");
+    if (completeSub) {
+        completeSub.textContent = isArLang
+            ? (isEmp ? "تم تقييم واحتساب درجات جميع الاختبارات الـ 3 بنجاح." : "تم تقييم واحتساب درجات جميع الاختبارات الأربعة بنجاح.")
+            : (isEmp ? "All 3 batteries have been successfully evaluated and scored." : "All 4 batteries have been successfully evaluated and scored.");
+    }
+
     if (compVal) compVal.textContent = `${score.compositeScore ?? 0}%`;
     if (percBadge) percBadge.textContent = `Percentile: P${score.percentile ?? 1}`;
     
     const penaltyNotice = document.getElementById("completedPenaltyNotice");
     const penaltyText = document.getElementById("completedPenaltyText");
-    const isArLang = document.documentElement.getAttribute("dir") === "rtl";
 
-    if (score.cappedPenaltyPct && score.cappedPenaltyPct > 0) {
+    if (!isEmp && score.cappedPenaltyPct && score.cappedPenaltyPct > 0) {
         if (penaltyNotice) penaltyNotice.classList.remove("hidden");
         if (penaltyText) {
             penaltyText.textContent = isArLang
@@ -2231,10 +2505,9 @@ function populateCompletedScoreHero(score, attempt) {
         penaltyNotice.classList.add("hidden");
     }
     
-    const readiness = getReadinessInfo(score.readinessBand);
+    const readiness = getReadinessInfo(score.readinessBand, isEmp ? 'EMPLOYMENT' : 'PSYCHOMETRIC');
     if (readLabel) {
-        const isAr = document.documentElement.getAttribute("dir") === "rtl";
-        readLabel.textContent = isAr ? `${readiness.labelAr} (${readiness.labelEn})` : `${readiness.labelEn} (${readiness.labelAr})`;
+        readLabel.textContent = isArLang ? `${readiness.labelAr} (${readiness.labelEn})` : `${readiness.labelEn} (${readiness.labelAr})`;
     }
     if (readBadge) {
         readBadge.className = `inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border ${readiness.badgeClass}`;
@@ -2246,17 +2519,57 @@ function populateCompletedScoreHero(score, attempt) {
     if (sjtScore) sjtScore.textContent = `${score.sjtScorePct ?? 0}%`;
     if (sjtBar) sjtBar.style.width = `${Math.min(100, Math.max(0, score.sjtScorePct ?? 0))}%`;
 
-    if (derailerScore) derailerScore.textContent = `${score.derailersEffectiveScorePct ?? 0}%`;
-    if (derailerBar) derailerBar.style.width = `${Math.min(100, Math.max(0, score.derailersEffectiveScorePct ?? 0))}%`;
-
     if (gcatScore) gcatScore.textContent = `${score.cognitiveScorePct ?? 0}%`;
     if (gcatBar) gcatBar.style.width = `${Math.min(100, Math.max(0, score.cognitiveScorePct ?? 0))}%`;
 
+    // Derailer Card & Battery Grid layout
+    const derailerCard = derailerScore ? derailerScore.closest(".bg-white") : null;
+    const batteryGrid = derailerCard ? derailerCard.parentElement : null;
+
+    const gcatCard = gcatScore ? gcatScore.closest(".bg-white") : null;
+    const gcatTitleEl = gcatCard ? gcatCard.querySelector("span:first-child") : null;
+    const gcatBadgeEl = gcatCard ? gcatCard.querySelector("span:last-child") : null;
+
+    const pqCard = pqScore ? pqScore.closest(".bg-white") : null;
+    const pqBadgeEl = pqCard ? pqCard.querySelector("span:last-child") : null;
+
+    const sjtCard = sjtScore ? sjtScore.closest(".bg-white") : null;
+    const sjtBadgeEl = sjtCard ? sjtCard.querySelector("span:last-child") : null;
+
+    if (isEmp) {
+        if (derailerCard) derailerCard.classList.add("hidden");
+        if (batteryGrid) {
+            batteryGrid.className = "grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1";
+        }
+        if (gcatTitleEl) gcatTitleEl.textContent = isArLang ? "03 • القدرات المعرفية" : "03 • Cognitive";
+        if (pqBadgeEl) pqBadgeEl.textContent = isArLang ? "الكفاءات (30%)" : "PQ10 (30%)";
+        if (sjtBadgeEl) sjtBadgeEl.textContent = isArLang ? "حكم المواقف (30%)" : "SJT (30%)";
+        if (gcatBadgeEl) gcatBadgeEl.textContent = isArLang ? "المعرفية (40%)" : "GCAT (40%)";
+    } else {
+        if (derailerCard) derailerCard.classList.remove("hidden");
+        if (derailerScore) derailerScore.textContent = `${score.derailersEffectiveScorePct ?? 0}%`;
+        if (derailerBar) derailerBar.style.width = `${Math.min(100, Math.max(0, score.derailersEffectiveScorePct ?? 0))}%`;
+        if (batteryGrid) {
+            batteryGrid.className = "grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1";
+        }
+        if (gcatTitleEl) gcatTitleEl.textContent = isArLang ? "04 • القدرات المعرفية" : "04 • Cognitive";
+        if (pqBadgeEl) pqBadgeEl.textContent = "PQ10 (28%)";
+        if (sjtBadgeEl) sjtBadgeEl.textContent = "SJT (22%)";
+        if (gcatBadgeEl) gcatBadgeEl.textContent = "GCAT (30%)";
+    }
+
     // Response Validity Indicators (مقياس التظاهر الاجتماعي ومؤشر الوسطية)
+    const sdCardEl = document.getElementById("completedSdCard");
+    const ctCardEl = document.getElementById("completedCtCard");
+    const validityRow = sdCardEl ? sdCardEl.parentElement : null;
+
+    if (validityRow) validityRow.classList.remove("hidden");
+    if (sdCardEl) sdCardEl.classList.remove("hidden");
+    if (ctCardEl) ctCardEl.classList.remove("hidden");
+
     const sdScoreEl = document.getElementById("completedSdScore");
     const sdLabelEl = document.getElementById("completedSdLabel");
     const sdBadgeEl = document.getElementById("completedSdBadge");
-    const sdCardEl = document.getElementById("completedSdCard");
     const sdIconBgEl = document.getElementById("completedSdIconBg");
 
     const isSdElevated = !!score.elevatedImpressionManagement;
@@ -2287,7 +2600,6 @@ function populateCompletedScoreHero(score, attempt) {
     const ctScoreEl = document.getElementById("completedCtScore");
     const ctLabelEl = document.getElementById("completedCtLabel");
     const ctBadgeEl = document.getElementById("completedCtBadge");
-    const ctCardEl = document.getElementById("completedCtCard");
     const ctIconBgEl = document.getElementById("completedCtIconBg");
 
     const isCtElevated = !!score.elevatedCentralTendency;
@@ -2328,7 +2640,45 @@ function populateCompletedScoreHero(score, attempt) {
     applyCurrentTranslation();
 }
 
-function getReadinessInfo(band) {
+function getReadinessInfo(band, examType = 'PSYCHOMETRIC') {
+    if (examType === 'EMPLOYMENT') {
+        switch (band) {
+            case "EXCELLENT":
+                return {
+                    labelEn: "Excellent",
+                    labelAr: "ممتاز",
+                    badgeClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                    descEn: "Candidate demonstrates exceptional competence across cognitive, behavioral, and judgment dimensions (Score >= 85%).",
+                    descAr: "يُظهر كفاءة استثنائية وجاهزية عالية ومستوى متقدماً جداً عبر جميع الكفاءات والقدرات المعرفية وحكم المواقف (درجة 85% فأعلى)."
+                };
+            case "STRONG":
+                return {
+                    labelEn: "Very Good",
+                    labelAr: "جيد جداً",
+                    badgeClass: "bg-teal-100 text-teal-800 border-teal-300",
+                    descEn: "Candidate displays solid professional competencies, sound judgment, and dependable aptitude (Score >= 75%).",
+                    descAr: "يمتلك المرشح قاعدة كفاءات مهنية صلبة وقدرات معرفية وحكم موقفي متين يؤهله للأداء الفعال (درجة 75% - 84%)."
+                };
+            case "ACCEPTABLE":
+                return {
+                    labelEn: "Good",
+                    labelAr: "جيد",
+                    badgeClass: "bg-indigo-100 text-indigo-800 border-indigo-300",
+                    descEn: "Candidate meets the baseline benchmarks with specific targeted development opportunities (Score >= 60%).",
+                    descAr: "يستوفي الحد المقبول من متطلبات الوظيفة مع وجود بعض المجالات التي تتطلب التدريب الموجه (درجة 60% - 74%)."
+                };
+            case "FOUNDATIONAL":
+            default:
+                return {
+                    labelEn: "Weak",
+                    labelAr: "ضعيف",
+                    badgeClass: "bg-rose-100 text-rose-800 border-rose-300",
+                    descEn: "Candidate is below threshold across key benchmarks; intensive onboarding and development required (Score < 60%).",
+                    descAr: "دون المستوى المطلوب؛ يُوصى ببرامج تدريبية وتأهيلية مكثفة قبل إسناد مهام رئيسية (درجة أقل من 60%)."
+                };
+        }
+    }
+
     switch (band) {
         case "EXCELLENT":
             return {
@@ -2398,6 +2748,7 @@ function renderHistoryList(history) {
         return;
     }
     
+    const isArabic = (document.documentElement.getAttribute("dir") || "ltr") === "rtl";
     let html = "";
     history.forEach(attempt => {
         let isCompleted = (attempt.state === "SCORED" || attempt.state === "ALL_SUBMITTED");
@@ -2406,6 +2757,7 @@ function renderHistoryList(history) {
         
         const dateStr = dateObj.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
         const timeStr = dateObj.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+        const isEmp = attempt.examType === 'EMPLOYMENT';
         
         let actionHtml = "";
         if (isCompleted) {
@@ -2427,7 +2779,7 @@ function renderHistoryList(history) {
                     <span class="bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1">
                         <span class="material-symbols-outlined text-[14px]">pending_actions</span>
                         <span>In Progress</span>
-                    </span>
+                    </button>
                     <button onclick="window.location.search = '?token=${attempt.attemptToken}'" class="text-xs text-primary font-bold hover:underline">
                         Resume &rarr;
                     </button>
@@ -2435,11 +2787,18 @@ function renderHistoryList(history) {
             `;
         }
         
+        const titleStr = isEmp 
+            ? (isArabic ? "اختبار التوظيف والجاهزية المهنية" : "Employment Assessment")
+            : (isArabic ? "تقييم القيادة التنفيذية" : "Executive Leadership Assessment");
+
         html += `
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-3.5 bg-slate-50/70 hover:bg-slate-50 rounded-xl border border-slate-200/90 transition-all">
                 <div class="space-y-0.5 min-w-0">
                     <div class="flex items-center gap-2">
-                        <h3 class="text-xs sm:text-sm font-bold text-slate-800 truncate">Executive Leadership Assessment</h3>
+                        <h3 class="text-xs sm:text-sm font-bold text-slate-800 truncate">${titleStr}</h3>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${isEmp ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
+                            ${isEmp ? (isArabic ? 'توظيف' : 'Employment') : (isArabic ? 'سيكومتري' : 'Psychometric')}
+                        </span>
                         ${isCompleted ? `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0">Scored</span>` : ''}
                     </div>
                     <p class="text-[11px] text-slate-500">${prefix} ${dateStr} at ${timeStr}</p>
@@ -2482,15 +2841,10 @@ window.viewScoreModal = async function(token) {
 
         renderScoreModalContent(score, token);
 
-        // Set up print and download handlers
+        // Set up print handler
         const printBtn = document.getElementById("modalPrintBtn");
         if (printBtn) {
             printBtn.onclick = () => generatePrintableReportWindow(score, token);
-        }
-
-        const jsonBtn = document.getElementById("modalDownloadJsonBtn");
-        if (jsonBtn) {
-            jsonBtn.onclick = () => downloadScoreJson(score, token);
         }
 
     } catch (e) {
@@ -2513,7 +2867,8 @@ function renderScoreModalContent(score, token) {
     const modalBody = document.getElementById("scoreModalBody");
     if (!modalBody) return;
 
-    const readiness = getReadinessInfo(score.readinessBand);
+    const isEmp = (score && score.examType === 'EMPLOYMENT') || (currentAttempt && currentAttempt.examType === 'EMPLOYMENT');
+    const readiness = getReadinessInfo(score.readinessBand, isEmp ? 'EMPLOYMENT' : 'PSYCHOMETRIC');
     const isAr = document.documentElement.getAttribute("dir") === "rtl";
 
     let html = `
@@ -2521,14 +2876,21 @@ function renderScoreModalContent(score, token) {
         <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-5 sm:p-6 shadow-sm space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-700/80 pb-4">
                 <div>
-                    <span class="text-xs font-semibold text-teal-400 uppercase tracking-widest">Composite Assessment Score</span>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xs font-semibold text-teal-400 uppercase tracking-widest">
+                            ${isEmp ? (isAr ? 'الدرجة الكلية لاختبار التوظيف' : 'Employment Composite Score') : (isAr ? 'الدرجة الكلية المركبة' : 'Composite Assessment Score')}
+                        </span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isEmp ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}">
+                            ${isEmp ? (isAr ? 'اختبار التوظيف' : 'Employment Test') : (isAr ? 'التقييم السيكومتري' : 'Psychometric Test')}
+                        </span>
+                    </div>
                     <div class="flex items-baseline gap-3 mt-1">
                         <span class="text-4xl font-black text-white">${score.compositeScore}%</span>
                         <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30">
                             Percentile: P${score.percentile}
                         </span>
                     </div>
-                    ${score.cappedPenaltyPct && score.cappedPenaltyPct > 0 ? `
+                    ${!isEmp && score.cappedPenaltyPct && score.cappedPenaltyPct > 0 ? `
                         <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
                             <span class="text-slate-300">Raw Composite: <strong class="text-white">${score.rawCompositeScore}%</strong></span>
                             <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold">Validity Deduction: -${score.cappedPenaltyPct}%</span>
@@ -2537,7 +2899,9 @@ function renderScoreModalContent(score, token) {
                     ` : ''}
                 </div>
                 <div class="sm:text-right">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Promotion Readiness</span>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                        ${isEmp ? (isAr ? 'مستوى الجاهزية المهنية' : 'Job Readiness') : (isAr ? 'جاهزية الترقية' : 'Promotion Readiness')}
+                    </span>
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${readiness.badgeClass}">
                         <span class="material-symbols-outlined text-[14px]">verified</span>
                         <span>${isAr ? readiness.labelAr : readiness.labelEn}</span>
@@ -2549,31 +2913,34 @@ function renderScoreModalContent(score, token) {
             </p>
         </div>
 
-        <!-- 4 Batteries Overview Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <!-- Batteries Overview Grid -->
+        <div class="grid ${isEmp ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-2 sm:grid-cols-4'} gap-3">
             <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-                <span class="text-[10px] font-bold text-slate-400 uppercase">Personality (PQ10)</span>
+                <span class="text-[10px] font-bold text-slate-400 uppercase">${isEmp ? 'Competencies (PQ10)' : 'Personality (PQ10)'}</span>
                 <div class="text-lg font-black text-slate-800 mt-0.5">${score.personalityScorePct}%</div>
-                <span class="text-[10px] text-slate-500">140 items (Weight 28%)</span>
+                <span class="text-[10px] text-slate-500">${isEmp ? '40 items (Weight 30%)' : '140 items (Weight 28%)'}</span>
             </div>
             <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                 <span class="text-[10px] font-bold text-slate-400 uppercase">Judgment (SJT)</span>
                 <div class="text-lg font-black text-slate-800 mt-0.5">${score.sjtScorePct}%</div>
-                <span class="text-[10px] text-slate-500">16 scenarios (Weight 22%)</span>
+                <span class="text-[10px] text-slate-500">${isEmp ? '10 scenarios (Weight 30%)' : '16 scenarios (Weight 22%)'}</span>
             </div>
+            ${isEmp ? '' : `
             <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                 <span class="text-[10px] font-bold text-slate-400 uppercase">Derailers</span>
                 <div class="text-lg font-black text-slate-800 mt-0.5">${score.derailersEffectiveScorePct}%</div>
                 <span class="text-[10px] text-slate-500">60 items (Weight 20%)</span>
             </div>
+            `}
             <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                 <span class="text-[10px] font-bold text-slate-400 uppercase">Cognitive (GCAT)</span>
                 <div class="text-lg font-black text-slate-800 mt-0.5">${score.cognitiveScorePct}%</div>
-                <span class="text-[10px] text-slate-500">42 items (Weight 30%)</span>
+                <span class="text-[10px] text-slate-500">${isEmp ? '30 items (Weight 40%)' : '42 items (Weight 30%)'}</span>
             </div>
         </div>
 
-        <!-- Validity & Response Style Panel -->
+        ${isEmp ? '' : `
+        <!-- Validity & Response Style Panel (Psychometric only) -->
         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/80 space-y-3">
             <div class="flex items-center justify-between pb-2 border-b border-slate-200/80">
                 <div class="flex items-center gap-2">
@@ -2625,21 +2992,22 @@ function renderScoreModalContent(score, token) {
                 </div>
             </div>
         </div>
+        `}
 
-        <!-- Section 1: PQ10 8 Competency Traits -->
+        <!-- Section 1: Competencies -->
         <div class="space-y-3 pt-2">
             <div class="flex justify-between items-center pb-2 border-b border-slate-200">
                 <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
-                    <span>8 Competency Traits (PQ10)</span>
+                    <span>${isEmp ? (isAr ? 'الكفاءات المهنية (12 كفاءة)' : 'Employment Competencies (12 Competencies)') : (isAr ? '8 سمات كفاءة (PQ10)' : '8 Competency Traits (PQ10)')}</span>
                 </h4>
-                <span class="text-[11px] text-slate-500">17 items per trait (Max 68.0 pts)</span>
+                <span class="text-[11px] text-slate-500">${isEmp ? (isAr ? '40 سؤالاً موزعة بالتساوي' : '40 items distributed evenly') : '17 items per trait (Max 68.0 pts)'}</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
     `;
 
     (score.traitScores || []).forEach(ts => {
-        const maxPts = 68.0; // 17 items * 4 pts max
+        const rawLabel = isEmp ? `Raw: ${ts.rawScore}` : `Raw: ${ts.rawScore} / 68.0`;
         html += `
             <div class="p-3 bg-white rounded-lg border border-slate-200/90 shadow-2xs space-y-1.5">
                 <div class="flex justify-between items-start text-xs">
@@ -2648,7 +3016,7 @@ function renderScoreModalContent(score, token) {
                 </div>
                 <div class="flex justify-between items-center text-[10px] text-slate-400">
                     <span class="font-mono text-[9px]">${ts.traitCode}</span>
-                    <span>Raw: ${ts.rawScore} / ${maxPts}</span>
+                    <span>${rawLabel}</span>
                 </div>
                 <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                     <div class="bg-teal-600 h-full rounded-full" style="width: ${Math.min(100, Math.max(0, ts.scorePct))}%;"></div>
@@ -2657,8 +3025,9 @@ function renderScoreModalContent(score, token) {
         `;
     });
 
-    // 9th Card in Grid: Social Desirability (مقياس التظاهر الاجتماعي / التظاهر الاجتماعي)
-    html += `
+    if (!isEmp) {
+        // 9th Card in Grid: Social Desirability
+        html += `
             <div class="p-3 ${score.elevatedImpressionManagement ? 'bg-amber-50/90 border-amber-300' : 'bg-slate-50 border-slate-200'} rounded-lg border shadow-2xs space-y-1.5 col-span-1 sm:col-span-2">
                 <div class="flex justify-between items-start text-xs">
                     <div class="flex items-center gap-2">
@@ -2675,12 +3044,16 @@ function renderScoreModalContent(score, token) {
                     <div class="${score.elevatedImpressionManagement ? 'bg-amber-500' : 'bg-emerald-500'} h-full rounded-full" style="width: ${Math.min(100, Math.max(0, score.socialDesirabilityRiskPct || 0))}%;"></div>
                 </div>
             </div>
-    `;
+        `;
+    }
 
     html += `
             </div>
         </div>
+    `;
 
+    if (!isEmp) {
+        html += `
         <!-- Section 2: 6 Derailer Risk Categories -->
         <div class="space-y-3 pt-2">
             <div class="flex justify-between items-center pb-2 border-b border-slate-200">
@@ -2691,47 +3064,51 @@ function renderScoreModalContent(score, token) {
                 <span class="text-[11px] text-slate-500">10 items per category &bull; Max 40.0 pts</span>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-    `;
-
-    (score.derailerCategoryScores || []).forEach(ds => {
-        html += `
-            <div class="p-3 bg-white rounded-lg border border-slate-200/90 shadow-2xs space-y-1.5">
-                <div class="flex justify-between items-center text-xs">
-                    <span class="font-bold text-slate-800">${ds.nameAr || ds.categoryCode || 'Category'}</span>
-                    <span class="font-bold text-amber-700">${ds.scorePct}%</span>
-                </div>
-                <div class="text-[10px] text-slate-400">Raw: ${ds.rawScore} / 40.0</div>
-                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                    <div class="bg-amber-500 h-full rounded-full" style="width: ${Math.min(100, Math.max(0, ds.scorePct))}%;"></div>
-                </div>
-            </div>
         `;
-    });
 
-    html += `
+        (score.derailerCategoryScores || []).forEach(ds => {
+            html += `
+                <div class="p-3 bg-white rounded-lg border border-slate-200/90 shadow-2xs space-y-1.5">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-slate-800">${ds.nameAr || ds.categoryCode || 'Category'}</span>
+                        <span class="font-bold text-amber-700">${ds.scorePct}%</span>
+                    </div>
+                    <div class="text-[10px] text-slate-400">Raw: ${ds.rawScore} / 40.0</div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-amber-500 h-full rounded-full" style="width: ${Math.min(100, Math.max(0, ds.scorePct))}%;"></div>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `
             </div>
         </div>
+        `;
+    }
 
-        <!-- Section 3: 3 GCAT Cognitive Subtests -->
+    html += `
+        <!-- Section: GCAT Cognitive Subtests -->
         <div class="space-y-3 pt-2">
             <div class="flex justify-between items-center pb-2 border-b border-slate-200">
                 <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
-                    <span>3 Cognitive Aptitude Subtests (GCAT)</span>
+                    <span>${isEmp ? (isAr ? '3 اختبارات فرعية معرفية (GCAT) - 30% لفظي، 30% عددي، 40% مجرد' : '3 Cognitive Aptitude Subtests (30% V, 30% N, 40% A)') : '3 Cognitive Aptitude Subtests (GCAT)'}</span>
                 </h4>
-                <span class="text-[11px] text-slate-500">14 questions per subtest</span>
+                <span class="text-[11px] text-slate-500">${isEmp ? '10 questions per subtest' : '14 questions per subtest'}</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
     `;
 
     (score.gcatSubtestScores || []).forEach(gs => {
+        const totalSubItems = gs.totalCount || (isEmp ? 10 : 14);
         html += `
             <div class="p-3 bg-white rounded-lg border border-slate-200/90 shadow-2xs space-y-1.5">
                 <div class="flex justify-between items-center text-xs">
                     <span class="font-bold text-slate-800">${gs.subtest}</span>
                     <span class="font-bold text-cyan-700">${gs.scorePct}%</span>
                 </div>
-                <div class="text-[10px] text-slate-400">Correct: ${gs.correctCount} / ${gs.totalCount}</div>
+                <div class="text-[10px] text-slate-400">Correct: ${gs.correctCount} / ${totalSubItems}</div>
                 <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                     <div class="bg-cyan-600 h-full rounded-full" style="width: ${Math.min(100, Math.max(0, gs.scorePct))}%;"></div>
                 </div>
@@ -2770,12 +3147,14 @@ window.downloadReport = function(event, token) {
         }
     }, 3500);
 
+    const isEmp = (currentAttempt && currentAttempt.examType === 'EMPLOYMENT');
+    const filenamePrefix = isEmp ? 'Employment_Assessment_Report_' : 'Leadership_Assessment_Report_';
     // Direct binary stream endpoint - fully compatible with IDM and standard browsers
     const downloadUrl = `${API_BASE}/api/assessments/${encodeURIComponent(token)}/report/pdf`;
     
     const a = document.createElement("a");
     a.href = downloadUrl;
-    a.download = `Leadership_Assessment_Report_${token.substring(0, 8)}.pdf`;
+    a.download = `${filenamePrefix}${token.substring(0, 8)}.pdf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -2795,48 +3174,55 @@ function downloadScoreJson(score, token) {
 }
 
 function generatePrintableReportWindow(score, token) {
-    const readiness = getReadinessInfo(score.readinessBand);
+    const isEmp = (score && score.examType === 'EMPLOYMENT') || (currentAttempt && currentAttempt.examType === 'EMPLOYMENT');
+    const readiness = getReadinessInfo(score.readinessBand, isEmp ? 'EMPLOYMENT' : 'PSYCHOMETRIC');
     const candidateName = score.candidateName || currentUser.name || "Candidate";
     const dateStr = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
     const logoUrl = new URL("../auth/assets/images/logo.png", window.location.href).href;
 
     let traitRows = (score.traitScores || []).map(t => {
-        const maxPts = 68.0; // 17 items * 4 pts max
+        const rawPts = isEmp ? `${t.rawScore}` : `${t.rawScore} / 68.0`;
         return `<tr>
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${t.nameAr || t.traitCode}</td>
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-family: monospace; font-size: 11px;">${t.traitCode}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">${t.rawScore} / ${maxPts}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">${rawPts}</td>
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #2A3686;">${t.scorePct}%</td>
         </tr>`;
     }).join("");
 
-    const isSdElevatedRow = !!score.elevatedImpressionManagement;
-    const sdRiskVal = score.socialDesirabilityRiskPct || 0;
-    traitRows += `
-        <tr style="background: ${isSdElevatedRow ? '#fef3c7' : '#f8fafc'}; font-style: italic;">
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: ${isSdElevatedRow ? '#92400e' : '#2A3686'};">
-                مقياس التظاهر الاجتماعي (التظاهر الاجتماعي)
-            </td>
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-family: monospace; font-size: 11px;">SOCIAL_DESIRABILITY</td>
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">4 items (مقياس صدق)</td>
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: ${isSdElevatedRow ? '#b45309' : '#059669'};">
-                ${sdRiskVal}% ${isSdElevatedRow ? '(مرتفع)' : '(طبيعي)'}
-            </td>
-        </tr>
-    `;
+    if (!isEmp) {
+        const isSdElevatedRow = !!score.elevatedImpressionManagement;
+        const sdRiskVal = score.socialDesirabilityRiskPct || 0;
+        traitRows += `
+            <tr style="background: ${isSdElevatedRow ? '#fef3c7' : '#f8fafc'}; font-style: italic;">
+                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: ${isSdElevatedRow ? '#92400e' : '#2A3686'};">
+                    مقياس التظاهر الاجتماعي (التظاهر الاجتماعي)
+                </td>
+                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-family: monospace; font-size: 11px;">SOCIAL_DESIRABILITY</td>
+                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">4 items (مقياس صدق)</td>
+                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: ${isSdElevatedRow ? '#b45309' : '#059669'};">
+                    ${sdRiskVal}% ${isSdElevatedRow ? '(مرتفع)' : '(طبيعي)'}
+                </td>
+            </tr>
+        `;
+    }
 
-    let derailerRows = (score.derailerCategoryScores || []).map(d => {
-        return `<tr>
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${d.nameAr || d.categoryCode}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">${d.rawScore} / 40.0</td>
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #b45309;">${d.scorePct}%</td>
-        </tr>`;
-    }).join("");
+    let derailerRows = "";
+    if (!isEmp) {
+        derailerRows = (score.derailerCategoryScores || []).map(d => {
+            return `<tr>
+                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${d.nameAr || d.categoryCode}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">${d.rawScore} / 40.0</td>
+                <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #b45309;">${d.scorePct}%</td>
+            </tr>`;
+        }).join("");
+    }
 
     let gcatRows = (score.gcatSubtestScores || []).map(g => {
+        const totalItems = g.totalCount || (isEmp ? 10 : 14);
         return `<tr>
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${g.subtest}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">${g.correctCount} / ${g.totalCount}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">${g.correctCount} / ${totalItems}</td>
             <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #0891b2;">${g.scorePct}%</td>
         </tr>`;
     }).join("");
@@ -2854,7 +3240,7 @@ function generatePrintableReportWindow(score, token) {
                     ${hasAnyValidityWarning ? '⚠️ Response Validity & Quality Indicators (Attention Required)' : '✅ Response Validity & Quality Indicators (High Reliability Profile)'}
                 </div>
                 <div style="font-size: 11px; color: #64748b;">
-                    Substantive Items: 196 | Validity Scales: 2
+                    Substantive Items: ${isEmp ? 36 : 196} | Validity Scales: 2
                 </div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -2891,16 +3277,16 @@ function generatePrintableReportWindow(score, token) {
         </div>
     `;
 
+    const reportTitle = isEmp ? "Employment Assessment Report" : "Executive Leadership Assessment Dossier";
+
     const reportHtml = `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Executive Assessment Report - ${candidateName}</title>
+    <title>${reportTitle} - ${candidateName}</title>
     <style>
-        @page {
-            margin: 25px;
-        }
+        @page { margin: 25px; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: #404041;
@@ -2910,74 +3296,35 @@ function generatePrintableReportWindow(score, token) {
             line-height: 1.5;
             box-sizing: border-box;
         }
-        /* Fixed Top Bar */
         .print-header-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 35px;
-            background-color: #2A3686; /* Logo Blue */
-            color: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            font-size: 11px;
-            font-weight: bold;
-            z-index: 1000;
-            box-sizing: border-box;
+            position: fixed; top: 0; left: 0; right: 0; height: 35px;
+            background-color: #2A3686; color: #ffffff; display: flex;
+            justify-content: space-between; align-items: center; padding: 0 20px;
+            font-size: 11px; font-weight: bold; z-index: 1000; box-sizing: border-box;
         }
-        /* Fixed Bottom Bar */
         .print-footer-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 50px;
-            border-top: 3px solid #2A3686; /* Logo Blue */
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            font-size: 11px;
-            color: #64748b;
-            z-index: 1000;
-            box-sizing: border-box;
+            position: fixed; bottom: 0; left: 0; right: 0; height: 50px;
+            border-top: 3px solid #2A3686; background-color: #ffffff;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; font-size: 11px; color: #64748b; z-index: 1000; box-sizing: border-box;
         }
-        .print-footer-bar img {
-            height: 30px;
-            object-fit: contain;
-        }
-        .report-content {
-            /* Wraps the main body content */
-        }
+        .print-footer-bar img { height: 30px; object-fit: contain; }
         .header { border-bottom: 2px solid #2A3686; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
         .title { font-size: 22px; font-weight: bold; color: #2A3686; }
         .subtitle { font-size: 12px; color: #64748b; margin-top: 4px; }
         .hero { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 25px; }
         .score-val { font-size: 36px; font-weight: 800; color: #2A3686; }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: bold; }
-        .battery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 25px; }
+        .battery-grid { display: grid; grid-template-columns: repeat(${isEmp ? 3 : 4}, 1fr); gap: 12px; margin-bottom: 25px; }
         .battery-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; text-align: center; }
         .battery-score { font-size: 20px; font-weight: bold; color: #404041; margin-top: 4px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; font-size: 12px; }
         th { background: #f1f5f9; padding: 8px; text-align: left; font-weight: bold; color: #404041; border-bottom: 2px solid #cbd5e1; }
         h3 { font-size: 15px; color: #2A3686; margin-top: 20px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
         @media print {
-            body {
-                padding-top: 60px;
-                padding-bottom: 70px;
-                padding-left: 0;
-                padding-right: 0;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .hero, table, tr, h3, .battery-grid {
-                page-break-inside: avoid;
-            }
+            body { padding-top: 60px; padding-bottom: 70px; padding-left: 0; padding-right: 0; }
+            .no-print { display: none !important; }
+            .hero, table, tr, h3, .battery-grid { page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -2989,7 +3336,7 @@ function generatePrintableReportWindow(score, token) {
 
     <!-- REPEATING TOP BAR -->
     <div class="print-header-bar">
-        <span>Executive Assessment Dossier</span>
+        <span>${reportTitle}</span>
         <span>Candidate ID / Token: ${token}</span>
     </div>
 
@@ -3003,10 +3350,10 @@ function generatePrintableReportWindow(score, token) {
     <div class="report-content">
         <div class="header">
             <div>
-                <div class="title">Executive Leadership Assessment Dossier</div>
+                <div class="title">${reportTitle}</div>
                 <div class="subtitle">Candidate: <strong>${candidateName}</strong> &bull; Evaluation Date: ${dateStr} &bull; Token: ${token}</div>
             </div>
-            <div style="text-align: right; font-size: 11px; color: #64748b;">Psychometric Evaluation Platform</div>
+            <div style="text-align: right; font-size: 11px; color: #64748b;">${isEmp ? 'Employment Evaluation System' : 'Psychometric Evaluation Platform'}</div>
         </div>
 
         <div class="hero">
@@ -3014,14 +3361,14 @@ function generatePrintableReportWindow(score, token) {
                 <div>
                     <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b;">Overall Composite Score</div>
                     <div class="score-val">${score.compositeScore}% <span style="font-size: 13px; font-weight: normal; color: #64748b;">(Percentile: P${score.percentile})</span></div>
-                    ${score.cappedPenaltyPct && score.cappedPenaltyPct > 0 ? `
+                    ${!isEmp && score.cappedPenaltyPct && score.cappedPenaltyPct > 0 ? `
                         <div style="margin-top: 5px; font-size: 11px; color: #b45309; font-weight: bold;">
                             ⚠️ Validity Adjustment: -${score.cappedPenaltyPct}% (Raw Composite: ${score.rawCompositeScore}% &bull; Final: ${score.compositeScore}%)
                         </div>
                     ` : ''}
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b; margin-bottom: 4px;">Promotion Readiness</div>
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b; margin-bottom: 4px;">Readiness Level</div>
                     <span class="badge" style="background: #dcfce7; color: #166534; border: 1px solid #86efac;">${readiness.labelEn} / ${readiness.labelAr}</span>
                 </div>
             </div>
@@ -3032,33 +3379,35 @@ function generatePrintableReportWindow(score, token) {
 
         <div class="battery-grid">
             <div class="battery-card">
-                <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">01 &bull; Personality (PQ10)</div>
+                <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">01 &bull; Competencies (PQ10)</div>
                 <div class="battery-score">${score.personalityScorePct}%</div>
-                <div style="font-size: 10px; color: #94a3b8;">140 Items (28%)</div>
+                <div style="font-size: 10px; color: #94a3b8;">${isEmp ? '40 Items (30%)' : '140 Items (28%)'}</div>
             </div>
             <div class="battery-card">
                 <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">02 &bull; Judgment (SJT)</div>
                 <div class="battery-score">${score.sjtScorePct}%</div>
-                <div style="font-size: 10px; color: #94a3b8;">16 Scenarios (22%)</div>
+                <div style="font-size: 10px; color: #94a3b8;">${isEmp ? '10 Scenarios (30%)' : '16 Scenarios (22%)'}</div>
             </div>
+            ${isEmp ? '' : `
             <div class="battery-card">
                 <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">03 &bull; Derailers</div>
                 <div class="battery-score">${score.derailersEffectiveScorePct}%</div>
                 <div style="font-size: 10px; color: #94a3b8;">60 Items (20%)</div>
             </div>
+            `}
             <div class="battery-card">
-                <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">04 &bull; Cognitive (GCAT)</div>
+                <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">${isEmp ? '03 &bull; Cognitive (GCAT)' : '04 &bull; Cognitive (GCAT)'}</div>
                 <div class="battery-score">${score.cognitiveScorePct}%</div>
-                <div style="font-size: 10px; color: #94a3b8;">42 Items (30%)</div>
+                <div style="font-size: 10px; color: #94a3b8;">${isEmp ? '30 Items (40%)' : '42 Items (30%)'}</div>
             </div>
         </div>
 
-        <h3>1. Personality Dimensions (PQ10 8 Core Competency Traits)</h3>
+        <h3>1. ${isEmp ? 'Employment Competencies (12 Competencies)' : 'Personality Dimensions (PQ10 8 Core Competency Traits)'}</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Trait Name</th>
-                    <th>Trait Code</th>
+                    <th>Competency / Trait</th>
+                    <th>Code</th>
                     <th style="text-align: center;">Raw Points</th>
                     <th style="text-align: right;">Score %</th>
                 </tr>
@@ -3068,6 +3417,7 @@ function generatePrintableReportWindow(score, token) {
             </tbody>
         </table>
 
+        ${isEmp ? '' : `
         <h3>2. Behavioral Risk Factors (6 Derailer Categories)</h3>
         <table>
             <thead>
@@ -3081,13 +3431,14 @@ function generatePrintableReportWindow(score, token) {
                 ${derailerRows}
             </tbody>
         </table>
+        `}
 
-        <h3>3. Cognitive Aptitude Breakdown (GCAT Subtests)</h3>
+        <h3>${isEmp ? '2. Cognitive Aptitude Breakdown (GCAT - 30% Verbal, 30% Numerical, 40% Abstract)' : '3. Cognitive Aptitude Breakdown (GCAT Subtests)'}</h3>
         <table>
             <thead>
                 <tr>
                     <th>Subtest Dimension</th>
-                    <th style="text-align: center;">Questions Correct (Out of 14)</th>
+                    <th style="text-align: center;">Questions Correct (${isEmp ? 'Out of 10' : 'Out of 14'})</th>
                     <th style="text-align: right;">Accuracy %</th>
                 </tr>
             </thead>
@@ -3104,12 +3455,11 @@ function generatePrintableReportWindow(score, token) {
         printWindow.document.write(reportHtml);
         printWindow.document.close();
     } else {
-        // Fallback: download as HTML file
         const blob = new Blob([reportHtml], { type: "text/html" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `Executive_Assessment_Report_${token.substring(0, 8)}.html`;
+        a.download = `${isEmp ? 'Employment_Assessment_Report_' : 'Executive_Assessment_Report_'}${token.substring(0, 8)}.html`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -3123,6 +3473,7 @@ function updateTestSidebar(attempt) {
     if (!sidebarEl) return;
 
     const isArabic = document.documentElement.getAttribute("dir") === "rtl";
+    const isEmp = attempt && attempt.examType === 'EMPLOYMENT';
 
     // 1. EMPTY / PENDING DASHBOARD STATE: Show General Instructions
     if (!attempt || attempt.state === "EMPTY" || attempt.state === "INIT" || attempt.state === "ALL_SUBMITTED" || attempt.state === "SCORED") {
@@ -3143,7 +3494,9 @@ function updateTestSidebar(attempt) {
                         ${isArabic ? "جلسة متواصلة واحدة" : "Continuous Session"}
                     </h4>
                     <p class="text-[11px] text-slate-500 leading-relaxed">
-                        ${isArabic ? "خصّص حوالي 90 دقيقة من الوقت الهادئ دون انقطاع. المؤقت يعمل بشكل مستمر بمجرد البدء." : "Allocate approx. 90 minutes of quiet, uninterrupted time. Timers run continuously once started."}
+                        ${isArabic 
+                            ? (isEmp ? "خصّص حوالي 65 دقيقة من الوقت الهادئ دون انقطاع. المؤقت يعمل بشكل مستمر بمجرد البدء." : "خصّص حوالي 90 دقيقة من الوقت الهادئ دون انقطاع. المؤقت يعمل بشكل مستمر بمجرد البدء.") 
+                            : (isEmp ? "Allocate approx. 65 minutes of quiet, uninterrupted time. Timers run continuously once started." : "Allocate approx. 90 minutes of quiet, uninterrupted time. Timers run continuously once started.")}
                     </p>
                 </div>
                 <div class="space-y-1.5 border-t border-slate-100 pt-3">
@@ -3152,7 +3505,9 @@ function updateTestSidebar(attempt) {
                         ${isArabic ? "الإجابة العفوية والصادقة" : "Spontaneous Responses"}
                     </h4>
                     <p class="text-[11px] text-slate-500 leading-relaxed">
-                        ${isArabic ? "في اختبارات الشخصية والمخاطر، اختر الاستجابة التلقائية التي تمثلك في بيئة العمل اليومية." : "In personality & derailer batteries, choose the first response that naturally represents your behavior."}
+                        ${isArabic 
+                            ? (isEmp ? "في اختبار الكفاءات المهنية، اختر الاستجابة التلقائية التي تمثلك في بيئة العمل اليومية." : "في اختبارات الشخصية والمخاطر، اختر الاستجابة التلقائية التي تمثلك في بيئة العمل اليومية.") 
+                            : (isEmp ? "In workplace competency items, choose the first response that naturally represents your behavior." : "In personality & derailer batteries, choose the first response that naturally represents your behavior.")}
                     </p>
                 </div>
                 <div class="space-y-1.5 border-t border-slate-100 pt-3">
@@ -3166,13 +3521,13 @@ function updateTestSidebar(attempt) {
                 </div>
             </div>
         `;
-        return; // Exit here, do not render the progress tracker
+        return;
     }
 
     // 2. ACTIVE TEST STATE: Show Progress Tracker
     const currentIndex = (typeof attempt.currentBatteryIndex === 'number') ? attempt.currentBatteryIndex : 0;
+    const totalParts = isEmp ? 3 : 4;
     
-    // Inject the Progress Header and NavList container
     sidebarEl.innerHTML = `
         <div class="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
             <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
@@ -3180,22 +3535,30 @@ function updateTestSidebar(attempt) {
             </div>
             <div>
                 <h3 class="font-bold text-sm text-on-surface">${isArabic ? "نظرة عامة على التقدم" : "Progress Overview"}</h3>
-                <p id="sidebarProgressText" class="text-xs text-on-surface-variant">${isArabic ? `الجزء ${currentIndex + 1} من 4` : `Part ${currentIndex + 1} of 4`}</p>
+                <p id="sidebarProgressText" class="text-xs text-on-surface-variant">${isArabic ? `الجزء ${currentIndex + 1} من ${totalParts}` : `Part ${currentIndex + 1} of ${totalParts}`}</p>
             </div>
         </div>
         <nav id="batteryNavList" class="flex flex-col gap-1.5"></nav>
     `;
 
     const navList = document.getElementById("batteryNavList");
-    const batteryTitles = [
+    const batteryTitlesPsychometric = [
         { en: "Personality Assessment", ar: "اختبار الشخصية" },
         { en: "Situational Judgment Test (SJT)", ar: "اختبار الحكم على المواقف" },
         { en: "Derailers Assessment", ar: "اختبار السلوكيات المعطلة" },
         { en: "Cognitive Abilities Test", ar: "اختبار القدرات المعرفية" }
     ];
 
+    const batteryTitlesEmployment = [
+        { en: "Workplace Competencies (PQ10)", ar: "اختبار الكفاءات المهنية" },
+        { en: "Situational Judgment Test (SJT)", ar: "اختبار حكم المواقف" },
+        { en: "Cognitive Abilities Test (GCAT)", ar: "اختبار القدرات المعرفية" }
+    ];
+
+    const batteryTitles = isEmp ? batteryTitlesEmployment : batteryTitlesPsychometric;
+
     let html = "";
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < totalParts; i++) {
         let icon = "radio_button_unchecked";
         let colorClass = "text-slate-400 bg-slate-50";
         let textClass = "text-slate-500";

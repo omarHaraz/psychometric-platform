@@ -25,6 +25,7 @@ public class SjtScenarioAdminResponse {
     private boolean active;
     private int exposureCount;
     private Instant createdAt;
+    private String examType;
     private List<SjtOptionAdminDto> options = new ArrayList<>();
 
     public SjtScenarioAdminResponse() {
@@ -189,5 +190,13 @@ public class SjtScenarioAdminResponse {
 
     public void setOptions(List<SjtOptionAdminDto> options) {
         this.options = options;
+    }
+
+    public String getExamType() {
+        return examType;
+    }
+
+    public void setExamType(String examType) {
+        this.examType = examType;
     }
 }

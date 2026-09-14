@@ -27,6 +27,7 @@ public class GcatQuestionAdminResponse {
     private boolean active;
     private int exposureCount;
     private Instant createdAt;
+    private String examType;
     private List<GcatOptionAdminDto> options = new ArrayList<>();
 
     public GcatQuestionAdminResponse() {
@@ -200,5 +201,13 @@ public class GcatQuestionAdminResponse {
 
     public void setOptions(List<GcatOptionAdminDto> options) {
         this.options = options;
+    }
+
+    public String getExamType() {
+        return examType;
+    }
+
+    public void setExamType(String examType) {
+        this.examType = examType;
     }
 }

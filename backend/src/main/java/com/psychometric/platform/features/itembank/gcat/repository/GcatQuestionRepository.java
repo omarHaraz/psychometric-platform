@@ -16,6 +16,7 @@ import java.util.Optional;
 public interface GcatQuestionRepository extends JpaRepository<GcatQuestion, Long> {
 
     Optional<GcatQuestion> findByItemCode(String itemCode);
+    Optional<GcatQuestion> findByItemCodeAndExamType(String itemCode, String examType);
 
     List<GcatQuestion> findBySubtest_CodeAndExamModeInAndActiveTrue(GcatSubtestCode subtestCode, Collection<ExamMode> examModes);
 
@@ -25,6 +26,9 @@ public interface GcatQuestionRepository extends JpaRepository<GcatQuestion, Long
 
     @Query("SELECT DISTINCT q FROM GcatQuestion q LEFT JOIN FETCH q.subtest LEFT JOIN FETCH q.options ORDER BY q.id ASC")
     List<GcatQuestion> findAllWithSubtestAndOptions();
+
+    @Query("SELECT DISTINCT q FROM GcatQuestion q LEFT JOIN FETCH q.subtest LEFT JOIN FETCH q.options WHERE q.examType = :examType ORDER BY q.id ASC")
+    List<GcatQuestion> findAllByExamTypeWithSubtestAndOptions(@Param("examType") String examType);
 
     @Query("SELECT DISTINCT q FROM GcatQuestion q LEFT JOIN FETCH q.subtest LEFT JOIN FETCH q.options WHERE q.id = :id")
     Optional<GcatQuestion> findByIdWithOptions(@Param("id") Long id);

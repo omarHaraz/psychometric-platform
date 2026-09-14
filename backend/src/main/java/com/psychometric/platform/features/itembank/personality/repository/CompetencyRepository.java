@@ -10,5 +10,7 @@ import java.util.Optional;
 @Repository
 public interface CompetencyRepository extends JpaRepository<Competency, Long> {
     Optional<Competency> findByCode(String code);
+    Optional<Competency> findByCodeAndExamType(String code, String examType);
     List<Competency> findAllByOrderByDisplayOrderAsc();
+    List<Competency> findByExamTypeOrderByDisplayOrderAsc(String examType);
 }
