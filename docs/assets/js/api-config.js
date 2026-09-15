@@ -6,4 +6,4 @@ const isLocal = typeof window !== 'undefined' && (
 
 export const API_BASE = isLocal 
     ? 'http://localhost:8081' 
-    : 'https://traveler-million-rich-randy.trycloudflare.com';
+    : 'https://api.psychometricarab.com';

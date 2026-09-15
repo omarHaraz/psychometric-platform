@@ -253,5 +253,5 @@ window.formatCurrency = formatCurrency;
     );
     window.API_BASE_URL = isLocal 
         ? 'http://localhost:8081/api' 
-        : 'https://traveler-million-rich-randy.trycloudflare.com/api';
+        : 'https://api.psychometricarab.com/api';
 })();

@@ -7,6 +7,8 @@
 
 # Whitelist the .gitignore file itself
 !.gitignore
+!/.env.example
+
 
 # Compiled class file
 *.class
@@ -59,9 +61,15 @@ out/
 Thumbs.db
 desktop.ini
 
-application.properties
-**/application.properties
+# Local developer property overrides (keep ignored)
 application-local.properties
 **/application-local.properties
-application*.properties
-**/application*.properties
+
+# Environment variables & secret files (never commit)
+.env
+*.env
+.env.*
+!.env.example
+!backend/.env.example
+!/.env.example
+
